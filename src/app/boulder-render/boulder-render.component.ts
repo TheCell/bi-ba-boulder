@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import * as THREE from 'three';
+import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 @Component({
   selector: 'app-boulder-render',
@@ -14,26 +17,34 @@ import * as THREE from 'three';
 export class BoulderRenderComponent implements AfterViewInit {
   @ViewChild('canvas') canvas: any;
 
-  public constructor() {}
+  private scene = new THREE.Scene();
+  private loader = new GLTFLoader();
+
+  public constructor(private boulderLoaderService: BoulderLoaderService) {}
 
   public ngAfterViewInit(): void {
-    this.createThreeJsBox();
+    this.createCanvas();
+    const testBoulder = this.boulderLoaderService.loadTestBoulder();
+    testBoulder.subscribe({
+      next: (data) => {
+        this.addBoulderToScene(data);
+      }
+    })
   }
 
-  private createThreeJsBox(): void {
+  private createCanvas(): void {
     const canvas = this.canvas.nativeElement;
-    const scene = new THREE.Scene();
 
     const material = new THREE.MeshToonMaterial();
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
+    this.scene.add(ambientLight);
 
     const pointLight = new THREE.PointLight(0xffffff, 0.5);
     pointLight.position.x = 2;
     pointLight.position.y = 2;
     pointLight.position.z = 2;
-    scene.add(pointLight);
+    this.scene.add(pointLight);
 
     const box = new THREE.Mesh(
       new THREE.BoxGeometry(1.5, 1.5, 1.5),
@@ -45,7 +56,7 @@ export class BoulderRenderComponent implements AfterViewInit {
       material
     );
 
-    scene.add(torus, box);
+    this.scene.add(torus, box);
 
     const canvasSizes = {
       width: window.innerWidth,
@@ -59,9 +70,7 @@ export class BoulderRenderComponent implements AfterViewInit {
       1000
     );
     camera.position.z = 30;
-    scene.add(camera);
-
-    console.log(canvas);
+    this.scene.add(camera);
 
     if (!canvas) {
       return;
@@ -85,6 +94,13 @@ export class BoulderRenderComponent implements AfterViewInit {
     // });
 
     const clock = new THREE.Clock();
+    const controls = new OrbitControls(camera, renderer.domElement);
+    // controls.keys = {
+    //   LEFT: 'ArrowLeft', //left arrow
+    //   UP: 'ArrowUp', // up arrow
+    //   RIGHT: 'ArrowRight', // right arrow
+    //   BOTTOM: 'ArrowDown' // down arrow
+    // }
 
     const animateGeometry = () => {
       const elapsedTime = clock.getElapsedTime();
@@ -98,13 +114,31 @@ export class BoulderRenderComponent implements AfterViewInit {
       torus.rotation.y = -elapsedTime;
       torus.rotation.z = -elapsedTime;
 
+      controls.update();
+      // console.log(controls.object.position);
+
+
       // Render
-      renderer.render(scene, camera);
+      renderer.render(this.scene, camera);
 
       // Call animateGeometry again on the next frame
       window.requestAnimationFrame(animateGeometry);
     };
 
     animateGeometry();
+  }
+
+  private addBoulderToScene(buffer: ArrayBuffer): void {
+    const boulder = this.loader.parse(buffer, '', (gltf: GLTF) => {
+      console.log(gltf);
+
+      gltf.scene.position.x = 15;
+      gltf.scene.position.y = 0;
+      gltf.scene.position.z = 20;
+      this.scene.add(gltf.scene);
+    },
+    (err: ErrorEvent) => {
+      throw new Error(err.message);
+    });
   }
 }
