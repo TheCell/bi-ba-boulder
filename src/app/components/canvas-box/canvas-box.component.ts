@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 
 @Component({
@@ -8,18 +8,13 @@ import * as THREE from 'three';
   templateUrl: './canvas-box.component.html',
   styleUrl: './canvas-box.component.scss'
 })
-export class CanvasBoxComponent implements OnInit, AfterViewInit {
+export class CanvasBoxComponent implements AfterViewInit {
   @ViewChild('canvasBox') canvasBox: any;
 
   public constructor() {}
 
   public ngAfterViewInit(): void {
     this.createThreeJsBox();
-  }
-
-  public ngOnInit(): void {
-    console.log("test");
-
   }
 
   private createThreeJsBox(): void {
@@ -50,8 +45,8 @@ export class CanvasBoxComponent implements OnInit, AfterViewInit {
     scene.add(torus, box);
 
     const canvasSizes = {
-    width: 300,
-    height: 150,
+    width: window.innerWidth,
+    height: window.innerHeight,
     };
 
     const camera = new THREE.PerspectiveCamera(
