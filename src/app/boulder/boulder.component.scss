@@ -1,0 +1,29 @@
+.grid {
+    // width: 100%;
+    // height: calc(100vh - 37px);
+    display: grid;
+    height: 100%;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 60% 40%;
+    grid-template-areas: 
+    "boulder boulder"
+    "legend legend";
+}
+
+.imageContainer {
+    grid-area: boulder;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image {
+    width: 100%;
+    // object-fit: cover;
+    // object-position: 20% 50%;
+}
+
+.boulderLegend {
+    grid-area: legend;
+}
