@@ -3,7 +3,12 @@
 <div class="grid">
     <!-- boulder render  -->
     <section class="imageContainer">
-        <img class="image" [src]="image" alt="photo of the boulder">
+        @if (modelLoaded) {
+            <app-boulder-render class="render"></app-boulder-render>
+        }
+        @else {
+            <img class="image" [src]="image" alt="photo of the boulder">
+        }
     </section>
     
     <!-- legend -->
