@@ -22,8 +22,8 @@ export class BoulderComponent {
 
   public constructor(private domSanitizer: DomSanitizer) {
     this.title = 'test';
-    this.image = '/test-images/bimano-image.webp';
-    this.boulderImageUrl = this.domSanitizer.bypassSecurityTrustStyle('url(/test-images/bimano-image.webp)');
+    this.image = './test-images/bimano-image.webp';
+    this.boulderImageUrl = this.domSanitizer.bypassSecurityTrustStyle('url(./test-images/bimano-image.webp)');
 
     setTimeout(() => {
       // faking for now

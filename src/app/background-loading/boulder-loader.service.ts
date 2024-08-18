@@ -10,7 +10,7 @@ export class BoulderLoaderService {
   public constructor(private http: HttpClient) { }
 
   public loadTestBoulder(): Observable<ArrayBuffer> {
-    return this.http.get('/api-test/boulder/bimano/bimano_low.glb', { responseType: 'arraybuffer'});
+    return this.http.get('./api-test/boulder/bimano/bimano_low.glb', { responseType: 'arraybuffer'});
   }
 
 }
