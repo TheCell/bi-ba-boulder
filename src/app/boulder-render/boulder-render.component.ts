@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -15,12 +15,26 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
   styleUrl: './boulder-render.component.scss',
 })
 export class BoulderRenderComponent implements AfterViewInit {
-  @ViewChild('canvas') canvas: any;
+  @ViewChild('canvas') public canvas: ElementRef = null!;
+  @HostListener('window:resize', ['$event']) public onResize(): void {
+    if (this.renderer) {
+
+      const canvasSizes = {
+        width: this.el.nativeElement.offsetWidth,
+        height: this.el.nativeElement.offsetHeight,
+      };
+
+      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
+      this.camera.aspect = canvasSizes.width / canvasSizes.height;
+      this.camera.updateProjectionMatrix();
+    }
+  }
 
   private scene = new THREE.Scene();
   private loader = new GLTFLoader();
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
+  private renderer: THREE.WebGLRenderer = null!;
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
@@ -43,6 +57,15 @@ export class BoulderRenderComponent implements AfterViewInit {
     };
 
     const canvas = this.canvas.nativeElement;
+    if (!canvas) {
+      return;
+    }
+
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      alpha: true
+    });
+    this.renderer.setClearColor( 0x000000, 0 );
 
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -50,21 +73,12 @@ export class BoulderRenderComponent implements AfterViewInit {
       0.001,
       1000
     );
+
+    this.onResize();
     this.scene.add(this.camera);
 
-    if (!canvas) {
-      return;
-    }
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      alpha: true
-    });
-    renderer.setClearColor( 0x000000, 0 );
-    renderer.setSize(canvasSizes.width, canvasSizes.height);
-
     this.addLights(this.scene);
-    this.controls = new OrbitControls(this.camera, renderer.domElement);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     // controls.keys = {
     //   LEFT: 'ArrowLeft', //left arrow
     //   UP: 'ArrowUp', // up arrow
@@ -73,7 +87,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     // }
 
     const animateGeometry = () => {
-      renderer.render(this.scene, this.camera);
+      this.renderer.render(this.scene, this.camera);
       window.requestAnimationFrame(animateGeometry);
     };
 
@@ -81,11 +95,11 @@ export class BoulderRenderComponent implements AfterViewInit {
   }
 
   private addBoulderToScene(buffer: ArrayBuffer): void {
-    const boulder = this.loader.parse(buffer, '', (gltf: GLTF) => {
+    this.loader.parse(buffer, '', (gltf: GLTF) => {
       console.log(gltf);
 
       this.scene.add(gltf.scene);
-      this.fitSceneToBlock(gltf.scene);
+      // this.drawBoundingBox(gltf.scene);
       this.fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
     },
     (err: ErrorEvent) => {
@@ -93,12 +107,10 @@ export class BoulderRenderComponent implements AfterViewInit {
     });
   }
 
-  private fitSceneToBlock(scene: THREE.Group<THREE.Object3DEventMap>): void {
-
+  private drawBoundingBox(scene: THREE.Group<THREE.Object3DEventMap>): void {
     var bbox = new THREE.Box3().setFromObject(scene);
     const helper = new THREE.Box3Helper( bbox, 0xffff00 );
     this.scene.add( helper );
-
   }
 
   // source: https://wejn.org/2020/12/cracking-the-threejs-object-fitting-nut/
