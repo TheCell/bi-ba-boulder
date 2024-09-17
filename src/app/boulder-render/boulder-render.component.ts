@@ -4,6 +4,7 @@ import { BoulderLoaderService } from '../background-loading/boulder-loader.servi
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import {MeshLine, MeshLineGeometry, MeshLineMaterial} from '@lume/three-meshline';
 
 @Component({
   selector: 'app-boulder-render',
@@ -101,6 +102,7 @@ export class BoulderRenderComponent implements AfterViewInit {
       this.scene.add(gltf.scene);
       // this.drawBoundingBox(gltf.scene);
       this.fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+      this.addRoutes(this.scene);
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
@@ -197,4 +199,37 @@ export class BoulderRenderComponent implements AfterViewInit {
     // scene.add(pointLight);
   }
 
+  private addRoutes(scene: THREE.Scene): void {
+    const points = [];
+    for (let j = 0; j < Math.PI; j += (2 * Math.PI) / 100) {
+      points.push(Math.cos(j) * 10, Math.sin(j) * 10, 0);
+    }
+
+    // const line = new MeshLine();
+    const geometry = new MeshLineGeometry();
+    geometry.setPoints(points);
+    geometry.setPoints(points, p => 2 + Math.sin(50 * p)); // makes width sinusoidal
+  //   const material = new MeshLineMaterial( {
+  //     color: 0xffffff,
+  //     linewidth: 1,
+  //     scale: 1,
+  //     dashSize: 3,
+  //     gapSize: 1,
+  // } );
+    // const material = new THREE.MeshBasicMaterial();
+    const material = new MeshLineMaterial({
+      useMap: false,
+      color: new THREE.Color(0xffaadd),
+      opacity: 1,
+      resolution: new THREE.Vector2(this.el.nativeElement.offsetWidth, this.el.nativeElement.offsetHeight),
+      sizeAttenuation: false,
+      lineWidth: 10,
+    } as any)
+    const line = new MeshLine(geometry, material);
+    scene.add(line);
+
+    const raycaster = new THREE.Raycaster();
+    // Use raycaster as usual:
+    raycaster.intersectObject(line);
+  }
 }
