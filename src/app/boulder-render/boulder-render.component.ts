@@ -36,6 +36,10 @@ export class BoulderRenderComponent implements AfterViewInit {
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
+  private raycaster: THREE.Raycaster = null!;
+  private lineMaterial: MeshLineMaterial = null!;
+  private meshLinePointer: MeshLine = null!;
+  private meshLineGeometry = new MeshLineGeometry();
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
@@ -43,6 +47,18 @@ export class BoulderRenderComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.createCanvas();
+
+    this.lineMaterial = new MeshLineMaterial({
+      useMap: false,
+      color: new THREE.Color(0xffaadd),
+      opacity: 1,
+      resolution: new THREE.Vector2(this.el.nativeElement.offsetWidth, this.el.nativeElement.offsetHeight),
+      sizeAttenuation: false,
+      lineWidth: 10,
+    } as any);
+
+    window.addEventListener( 'click', this.getClickCoordinate.bind(this) );
+
     const testBoulder = this.boulderLoaderService.loadTestBoulder();
     testBoulder.subscribe({
       next: (data) => {
@@ -86,6 +102,8 @@ export class BoulderRenderComponent implements AfterViewInit {
     //   RIGHT: 'ArrowRight', // right arrow
     //   BOTTOM: 'ArrowDown' // down arrow
     // }
+
+    this.raycaster = new THREE.Raycaster(this.camera.position);
 
     const animateGeometry = () => {
       this.renderer.render(this.scene, this.camera);
@@ -202,7 +220,7 @@ export class BoulderRenderComponent implements AfterViewInit {
   private addRoutes(scene: THREE.Scene): void {
     const points = [];
     for (let j = 0; j < Math.PI; j += (2 * Math.PI) / 100) {
-      points.push(Math.cos(j) * 10, Math.sin(j) * 10, 0);
+      points.push(Math.cos(j) * 2.5, Math.sin(j) * 2.5, 0);
     }
 
     // const line = new MeshLine();
@@ -217,19 +235,62 @@ export class BoulderRenderComponent implements AfterViewInit {
   //     gapSize: 1,
   // } );
     // const material = new THREE.MeshBasicMaterial();
-    const material = new MeshLineMaterial({
-      useMap: false,
-      color: new THREE.Color(0xffaadd),
-      opacity: 1,
-      resolution: new THREE.Vector2(this.el.nativeElement.offsetWidth, this.el.nativeElement.offsetHeight),
-      sizeAttenuation: false,
-      lineWidth: 10,
-    } as any)
-    const line = new MeshLine(geometry, material);
+    const line = new MeshLine(geometry, this.lineMaterial);
     scene.add(line);
 
-    const raycaster = new THREE.Raycaster();
+    // const raycaster = new THREE.Raycaster();
     // Use raycaster as usual:
-    raycaster.intersectObject(line);
+    // this.raycaster.intersectObject(line);
+  }
+
+  private clickPoints:Array<THREE.Vector3> = [];
+  private getClickCoordinate(event: Event): void {
+    if (this.scene == undefined || this.scene.children == undefined) {
+      return;
+    }
+
+    const mouseEvent = event as MouseEvent;
+    let pointer = new THREE.Vector2();
+    console.log(this.canvas.nativeElement.width, mouseEvent.clientX);
+    console.log(this.canvas.nativeElement.height, mouseEvent.clientY);
+
+    pointer.x = (mouseEvent.clientX / this.canvas.nativeElement.width) * 2 - 1;
+    pointer.y = - (mouseEvent.clientY / this.canvas.nativeElement.height) * 2 + 1;
+
+    this.raycaster.setFromCamera(pointer, this.camera);
+    const intersects = this.raycaster.intersectObjects(this.scene.children);
+
+    if (intersects.length === 0) {
+      return;
+    }
+
+    this.clickPoints.push(intersects[0].point);
+    if (this.clickPoints.length < 2) {
+      return;
+    }
+    // this.clickPoints.push(this.clickPoints[this.clickPoints.length - 2]);
+
+    this.meshLineGeometry = new MeshLineGeometry();
+    this.meshLineGeometry.setPoints(this.clickPoints);
+    // this.meshLineGeometry.setPoints(this.clickPoints, p => 2 + Math.sin(50 * p));
+    this.scene.remove(this.meshLinePointer);
+    this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterial);
+    this.scene.add(this.meshLinePointer);
+    // let vec = new THREE.Vector3(); // create once and reuse
+    // let pos = new THREE.Vector3(); // create once and reuse
+
+    // vec.set(
+    //   ( event.clientX / window.innerWidth ) * 2 - 1,
+    //   - ( event.clientY / window.innerHeight ) * 2 + 1,
+    //   0.5,
+    // );
+
+    // vec.unproject( camera );
+
+    // vec.sub( camera.position ).normalize();
+
+    // let distance = - camera.position.z / vec.z;
+
+    // pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
   }
 }
