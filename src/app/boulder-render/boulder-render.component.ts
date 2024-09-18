@@ -266,12 +266,18 @@ export class BoulderRenderComponent implements AfterViewInit {
     }
 
     this.clickPoints.push(intersects[0].point);
+    console.log(this.clickPoints);
     if (this.clickPoints.length < 2) {
       return;
     }
+    console.log(this.clickPoints);
+
     // this.clickPoints.push(this.clickPoints[this.clickPoints.length - 2]);
 
     this.meshLineGeometry = new MeshLineGeometry();
+    this.meshLineGeometry.setPoints(this.clickPoints, p => 2 + Math.sin(50 * p));
+    console.log(this.clickPoints);
+
     this.scene.remove(this.meshLinePointer);
     this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterial);
     this.scene.add(this.meshLinePointer);
