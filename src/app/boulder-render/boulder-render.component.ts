@@ -25,6 +25,7 @@ export class BoulderRenderComponent implements AfterViewInit {
         height: this.el.nativeElement.offsetHeight,
       };
 
+      this.renderer.setPixelRatio(window.devicePixelRatio);
       this.renderer.setSize(canvasSizes.width, canvasSizes.height);
       this.camera.aspect = canvasSizes.width / canvasSizes.height;
       this.camera.updateProjectionMatrix();
@@ -40,6 +41,7 @@ export class BoulderRenderComponent implements AfterViewInit {
   private lineMaterial: MeshLineMaterial = null!;
   private meshLinePointer: MeshLine = null!;
   private meshLineGeometry = new MeshLineGeometry();
+  private clickPoints:Array<THREE.Vector3> = [];
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
@@ -243,7 +245,6 @@ export class BoulderRenderComponent implements AfterViewInit {
     // this.raycaster.intersectObject(line);
   }
 
-  private clickPoints:Array<THREE.Vector3> = [];
   private getClickCoordinate(event: Event): void {
     if (this.scene == undefined || this.scene.children == undefined) {
       return;
@@ -271,26 +272,10 @@ export class BoulderRenderComponent implements AfterViewInit {
     // this.clickPoints.push(this.clickPoints[this.clickPoints.length - 2]);
 
     this.meshLineGeometry = new MeshLineGeometry();
-    this.meshLineGeometry.setPoints(this.clickPoints);
-    // this.meshLineGeometry.setPoints(this.clickPoints, p => 2 + Math.sin(50 * p));
     this.scene.remove(this.meshLinePointer);
     this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterial);
     this.scene.add(this.meshLinePointer);
-    // let vec = new THREE.Vector3(); // create once and reuse
-    // let pos = new THREE.Vector3(); // create once and reuse
 
-    // vec.set(
-    //   ( event.clientX / window.innerWidth ) * 2 - 1,
-    //   - ( event.clientY / window.innerHeight ) * 2 + 1,
-    //   0.5,
-    // );
-
-    // vec.unproject( camera );
-
-    // vec.sub( camera.position ).normalize();
-
-    // let distance = - camera.position.z / vec.z;
-
-    // pos.copy( camera.position ).add( vec.multiplyScalar( distance ) );
+    // todo morphAttributes für hover benutzen? (https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_lines.html)
   }
 }
