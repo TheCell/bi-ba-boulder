@@ -54,7 +54,7 @@ export class BoulderRenderComponent implements AfterViewInit {
       useMap: false,
       color: new THREE.Color(0xffaadd),
       opacity: 1,
-      resolution: new THREE.Vector2(this.el.nativeElement.offsetWidth, this.el.nativeElement.offsetHeight),
+      resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
       sizeAttenuation: false,
       lineWidth: 10,
     } as any);
@@ -70,15 +70,15 @@ export class BoulderRenderComponent implements AfterViewInit {
   }
 
   private createCanvas(): void {
-    const canvasSizes = {
-      width: this.el.nativeElement.offsetWidth,
-      height: this.el.nativeElement.offsetHeight,
-    };
-
     const canvas = this.canvas.nativeElement;
     if (!canvas) {
       return;
     }
+
+    const canvasSizes = {
+      width: canvas.offsetWidth,
+      height: canvas.offsetHeight,
+    };
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: canvas,
@@ -236,20 +236,8 @@ export class BoulderRenderComponent implements AfterViewInit {
     const geometry = new MeshLineGeometry();
     geometry.setPoints(points);
     geometry.setPoints(points, p => 2 + Math.sin(50 * p)); // makes width sinusoidal
-  //   const material = new MeshLineMaterial( {
-  //     color: 0xffffff,
-  //     linewidth: 1,
-  //     scale: 1,
-  //     dashSize: 3,
-  //     gapSize: 1,
-  // } );
-    // const material = new THREE.MeshBasicMaterial();
     const line = new MeshLine(geometry, this.lineMaterial);
     scene.add(line);
-
-    // const raycaster = new THREE.Raycaster();
-    // Use raycaster as usual:
-    // this.raycaster.intersectObject(line);
   }
 
   private getClickCoordinate(event: Event): void {
@@ -260,8 +248,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     const mouseEvent = event as MouseEvent;
     let pointer = new THREE.Vector2();
 
-    // canvaswidth is the window width, canvasheight is shrinked by css
-    pointer.x = (mouseEvent.clientX / window.innerWidth) * 2 - 1;
+    pointer.x = (mouseEvent.clientX / this.canvas.nativeElement.offsetWidth) * 2 - 1;
     pointer.y = - (mouseEvent.clientY / this.canvas.nativeElement.offsetHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(pointer, this.camera);
@@ -279,7 +266,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     }
 
     this.meshLineGeometry = new MeshLineGeometry();
-    this.meshLineGeometry.setPoints(this.clickPoints, p => 2 + Math.sin(50 * p));
+    this.meshLineGeometry.setPoints(this.clickPoints);
 
     this.scene.remove(this.meshLinePointer);
     this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterial);
