@@ -53,25 +53,8 @@ export class BoulderRenderComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
     this.createCanvas();
 
-    const lineMaterial1 = new MeshLineMaterial({
-      useMap: false,
-      color: new THREE.Color(this.getRandomColor()),
-      opacity: 1,
-      resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
-      sizeAttenuation: false,
-      lineWidth: 10
-    } as any);
-    this.lineMaterials.push(lineMaterial1);
-
-    const lineMaterial2 = new MeshLineMaterial({
-      useMap: false,
-      color: new THREE.Color(this.getRandomColor()),
-      opacity: 1,
-      resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
-      sizeAttenuation: false,
-      lineWidth: 10
-    } as any);
-    this.lineMaterials.push(lineMaterial2);
+    this.lineMaterials.push(this.getNewMeshLineMaterial());
+    this.lineMaterials.push(this.getNewMeshLineMaterial());
 
     window.addEventListener( 'click', this.getClickCoordinate.bind(this) );
 
@@ -323,6 +306,17 @@ export class BoulderRenderComponent implements AfterViewInit {
      container.add(textMesh);
      this.textBlocks.push(container);
      scene.add(container);
+  }
+
+  private getNewMeshLineMaterial(): MeshLineMaterial {
+    return new MeshLineMaterial({
+      useMap: false,
+      color: new THREE.Color(this.getRandomColor()),
+      opacity: 1,
+      resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
+      sizeAttenuation: false,
+      lineWidth: 10
+    } as any);
   }
 
   private currentRandomRadius = Math.random() * 360;
