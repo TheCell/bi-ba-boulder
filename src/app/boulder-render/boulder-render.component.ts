@@ -7,12 +7,15 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import {MeshLine, MeshLineGeometry, MeshLineMaterial} from '@lume/three-meshline';
 import ThreeMeshUI from 'three-mesh-ui';
 import { HSLToHex } from '../utils/color-util';
+import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
+import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 
 @Component({
   selector: 'app-boulder-render',
   standalone: true,
   imports: [
     CommonModule,
+    KeyboardShortcutsModule
   ],
   templateUrl: './boulder-render.component.html',
   styleUrl: './boulder-render.component.scss',
@@ -34,6 +37,8 @@ export class BoulderRenderComponent implements AfterViewInit {
     }
   }
 
+  public shortcuts: ShortcutInput[] = [];
+
   private scene = new THREE.Scene();
   private loader = new GLTFLoader();
   private camera: THREE.PerspectiveCamera = null!;
@@ -45,6 +50,7 @@ export class BoulderRenderComponent implements AfterViewInit {
   private clickPoints: Array<THREE.Vector3> = [];
   private textBlocks: Array<ThreeMeshUI.Block> = [];
   private lineMaterials: Array<MeshLineMaterial> = [];
+  private currentRandomRadius = Math.random() * 360;
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
@@ -57,6 +63,12 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.lineMaterials.push(this.getNewMeshLineMaterial());
 
     window.addEventListener( 'click', this.getClickCoordinate.bind(this) );
+
+    this.shortcuts.push({
+      key: ['ctrl + z'],
+      preventDefault: true,
+      command: (e: ShortcutEventOutput) => this.removeLastPoint()
+    });
 
     const testBoulder = this.boulderLoaderService.loadTestBoulder();
     testBoulder.subscribe({
@@ -269,6 +281,11 @@ export class BoulderRenderComponent implements AfterViewInit {
       return;
     }
 
+    this.drawLineFromActivePoints(this.scene);
+    // todo morphAttributes für hover benutzen? (https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_lines.html)
+  }
+
+  private drawLineFromActivePoints(scene: THREE.Scene): void {
     if (this.clickPoints.length === 2) {
       const middlePoint = new THREE.Vector3();
       middlePoint.lerpVectors(this.clickPoints[0], this.clickPoints[1], 0.5);
@@ -278,12 +295,15 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.meshLineGeometry = new MeshLineGeometry();
     this.meshLineGeometry.setPoints(this.clickPoints);
 
-    this.scene.remove(this.meshLinePointer);
+    scene.remove(this.meshLinePointer);
     this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterials[1]);
     this.meshLinePointer.renderOrder = 10;
-    this.scene.add(this.meshLinePointer);
+    scene.add(this.meshLinePointer);
+  }
 
-    // todo morphAttributes für hover benutzen? (https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_lines.html)
+  private removeLastPoint(): void {
+    this.clickPoints.pop();
+    this.drawLineFromActivePoints(this.scene);
   }
 
   private addText(scene: THREE.Scene, text: string, position: THREE.Vector3): void {
@@ -319,7 +339,6 @@ export class BoulderRenderComponent implements AfterViewInit {
     } as any);
   }
 
-  private currentRandomRadius = Math.random() * 360;
   private getRandomColor(): string {
     const currentRadius =  this.currentRandomRadius;
     const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80});
