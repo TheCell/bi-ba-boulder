@@ -6,7 +6,7 @@ import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import {MeshLine, MeshLineGeometry, MeshLineMaterial} from '@lume/three-meshline';
 import ThreeMeshUI from 'three-mesh-ui';
-import { depth } from 'three/webgpu';
+import { HSLToHex } from '../utils/color-util';
 
 @Component({
   selector: 'app-boulder-render',
@@ -40,11 +40,11 @@ export class BoulderRenderComponent implements AfterViewInit {
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
   private raycaster: THREE.Raycaster = null!;
-  private lineMaterial: MeshLineMaterial = null!;
   private meshLinePointer: MeshLine = null!;
   private meshLineGeometry = new MeshLineGeometry();
   private clickPoints: Array<THREE.Vector3> = [];
   private textBlocks: Array<ThreeMeshUI.Block> = [];
+  private lineMaterials: Array<MeshLineMaterial> = [];
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
@@ -53,14 +53,25 @@ export class BoulderRenderComponent implements AfterViewInit {
   public ngAfterViewInit(): void {
     this.createCanvas();
 
-    this.lineMaterial = new MeshLineMaterial({
+    const lineMaterial1 = new MeshLineMaterial({
       useMap: false,
-      color: new THREE.Color(0xffaadd),
+      color: new THREE.Color(this.getRandomColor()),
       opacity: 1,
       resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
       sizeAttenuation: false,
       lineWidth: 10
     } as any);
+    this.lineMaterials.push(lineMaterial1);
+
+    const lineMaterial2 = new MeshLineMaterial({
+      useMap: false,
+      color: new THREE.Color(this.getRandomColor()),
+      opacity: 1,
+      resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
+      sizeAttenuation: false,
+      lineWidth: 10
+    } as any);
+    this.lineMaterials.push(lineMaterial2);
 
     window.addEventListener( 'click', this.getClickCoordinate.bind(this) );
 
@@ -246,7 +257,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     const geometry = new MeshLineGeometry();
     geometry.setPoints(points);
     geometry.setPoints(points, p => 2 + Math.sin(50 * p)); // makes width sinusoidal
-    const line = new MeshLine(geometry, this.lineMaterial);
+    const line = new MeshLine(geometry, this.lineMaterials[0]);
     scene.add(line);
   }
 
@@ -285,7 +296,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.meshLineGeometry.setPoints(this.clickPoints);
 
     this.scene.remove(this.meshLinePointer);
-    this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterial);
+    this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterials[1]);
     this.meshLinePointer.renderOrder = 10;
     this.scene.add(this.meshLinePointer);
 
@@ -312,5 +323,14 @@ export class BoulderRenderComponent implements AfterViewInit {
      container.add(textMesh);
      this.textBlocks.push(container);
      scene.add(container);
+  }
+
+  private currentRandomRadius = Math.random() * 360;
+  private getRandomColor(): string {
+    const currentRadius =  this.currentRandomRadius;
+    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80});
+    this.currentRandomRadius *= Math.E;
+    this.currentRandomRadius %= 360;
+    return randomColor;
   }
 }
