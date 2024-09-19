@@ -92,6 +92,8 @@ export class BoulderRenderComponent implements AfterViewInit {
       0.001,
       1000
     );
+    this.camera.layers.enable(0);
+    this.camera.layers.enable(1);
 
     this.onResize();
     this.scene.add(this.camera);
@@ -106,6 +108,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     // }
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
+    this.raycaster.layers.set(1); // only hit layer 1 objects
 
     const animateGeometry = () => {
       this.renderer.render(this.scene, this.camera);
@@ -117,9 +120,13 @@ export class BoulderRenderComponent implements AfterViewInit {
 
   private addBoulderToScene(buffer: ArrayBuffer): void {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
-      console.log(gltf);
 
       this.scene.add(gltf.scene);
+      gltf.scene.traverse((child) => {
+        child.layers.set(1); // set hit layer
+      });
+
+      console.log(gltf);
       // this.drawBoundingBox(gltf.scene);
       this.fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
       this.addRoutes(this.scene);
@@ -252,31 +259,27 @@ export class BoulderRenderComponent implements AfterViewInit {
 
     const mouseEvent = event as MouseEvent;
     let pointer = new THREE.Vector2();
-    console.log(this.canvas.nativeElement.width, mouseEvent.clientX);
-    console.log(this.canvas.nativeElement.height, mouseEvent.clientY);
 
-    pointer.x = (mouseEvent.clientX / this.canvas.nativeElement.width) * 2 - 1;
-    pointer.y = - (mouseEvent.clientY / this.canvas.nativeElement.height) * 2 + 1;
+    // canvaswidth is the window width, canvasheight is shrinked by css
+    pointer.x = (mouseEvent.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = - (mouseEvent.clientY / this.canvas.nativeElement.offsetHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(pointer, this.camera);
+
     const intersects = this.raycaster.intersectObjects(this.scene.children);
+    // this.scene.add(new THREE.ArrowHelper(this.raycaster.ray.direction, this.raycaster.ray.origin, 300, 0xff0000));
 
     if (intersects.length === 0) {
       return;
     }
 
     this.clickPoints.push(intersects[0].point);
-    console.log(this.clickPoints);
     if (this.clickPoints.length < 2) {
       return;
     }
-    console.log(this.clickPoints);
-
-    // this.clickPoints.push(this.clickPoints[this.clickPoints.length - 2]);
 
     this.meshLineGeometry = new MeshLineGeometry();
     this.meshLineGeometry.setPoints(this.clickPoints, p => 2 + Math.sin(50 * p));
-    console.log(this.clickPoints);
 
     this.scene.remove(this.meshLinePointer);
     this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterial);
