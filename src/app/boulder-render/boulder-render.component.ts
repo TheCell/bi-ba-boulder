@@ -68,6 +68,10 @@ export class BoulderRenderComponent implements AfterViewInit {
       key: ['ctrl + z'],
       preventDefault: true,
       command: (e: ShortcutEventOutput) => this.removeLastPoint()
+    }, {
+      key: ['ctrl + space'],
+      preventDefault: true,
+      command: (e: ShortcutEventOutput) => this.startNewLine()
     });
 
     const testBoulder = this.boulderLoaderService.loadTestBoulder();
@@ -296,8 +300,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.meshLineGeometry.setPoints(this.clickPoints);
 
     scene.remove(this.meshLinePointer);
-    this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterials[1]);
-    this.meshLinePointer.renderOrder = 10;
+    this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterials[this.lineMaterials.length - 1]);
     scene.add(this.meshLinePointer);
   }
 
@@ -337,6 +340,12 @@ export class BoulderRenderComponent implements AfterViewInit {
       sizeAttenuation: false,
       lineWidth: 10
     } as any);
+  }
+
+  private startNewLine(): void {
+    this.lineMaterials.push(this.getNewMeshLineMaterial());
+    this.clickPoints = [];
+    this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterials[this.lineMaterials.length - 1]);
   }
 
   private getRandomColor(): string {
