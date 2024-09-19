@@ -5,6 +5,8 @@ import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import {MeshLine, MeshLineGeometry, MeshLineMaterial} from '@lume/three-meshline';
+import ThreeMeshUI from 'three-mesh-ui';
+import { depth } from 'three/webgpu';
 
 @Component({
   selector: 'app-boulder-render',
@@ -56,7 +58,7 @@ export class BoulderRenderComponent implements AfterViewInit {
       opacity: 1,
       resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
       sizeAttenuation: false,
-      lineWidth: 10,
+      lineWidth: 10
     } as any);
 
     window.addEventListener( 'click', this.getClickCoordinate.bind(this) );
@@ -110,12 +112,13 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1); // only hit layer 1 objects
 
-    const animateGeometry = () => {
-      this.renderer.render(this.scene, this.camera);
-      window.requestAnimationFrame(animateGeometry);
-    };
+    this.loop();
+  }
 
-    animateGeometry();
+  private loop = () => {
+    ThreeMeshUI.update();
+    this.renderer.render(this.scene, this.camera);
+    window.requestAnimationFrame(this.loop);
   }
 
   private addBoulderToScene(buffer: ArrayBuffer): void {
@@ -126,7 +129,6 @@ export class BoulderRenderComponent implements AfterViewInit {
         child.layers.set(1); // set hit layer
       });
 
-      console.log(gltf);
       // this.drawBoundingBox(gltf.scene);
       this.fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
       this.addRoutes(this.scene);
@@ -265,13 +267,41 @@ export class BoulderRenderComponent implements AfterViewInit {
       return;
     }
 
+    if (this.clickPoints.length === 2) {
+      const middlePoint = new THREE.Vector3();
+      middlePoint.lerpVectors(this.clickPoints[0], this.clickPoints[1], 0.5);
+      this.addText(this.scene, 'A2', middlePoint);
+    }
+
     this.meshLineGeometry = new MeshLineGeometry();
     this.meshLineGeometry.setPoints(this.clickPoints);
 
     this.scene.remove(this.meshLinePointer);
     this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterial);
+    this.meshLinePointer.renderOrder = 10;
     this.scene.add(this.meshLinePointer);
 
     // todo morphAttributes für hover benutzen? (https://github.com/mrdoob/three.js/blob/master/examples/webgl_buffergeometry_lines.html)
+  }
+
+  private addText(scene: THREE.Scene, text: string, position: THREE.Vector3): void {
+    const container = new ThreeMeshUI.Block({
+      width: 0.3,
+      height: 0.3,
+      padding: 0.1,
+      fontFamily: './font/Roboto-msdf.json',
+      fontTexture: './font/Roboto-msdf.png',
+      justifyContent: 'center',
+     });
+     container.position.set(position.x, position.y, position.z);
+     container.lookAt(this.camera.position);
+     container.position.lerpVectors(container.position, this.camera.position, 0.05);
+
+     const textMesh = new ThreeMeshUI.Text({
+      content: text
+     });
+
+     container.add(textMesh);
+     scene.add(container);
   }
 }
