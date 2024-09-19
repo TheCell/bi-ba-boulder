@@ -43,7 +43,8 @@ export class BoulderRenderComponent implements AfterViewInit {
   private lineMaterial: MeshLineMaterial = null!;
   private meshLinePointer: MeshLine = null!;
   private meshLineGeometry = new MeshLineGeometry();
-  private clickPoints:Array<THREE.Vector3> = [];
+  private clickPoints: Array<THREE.Vector3> = [];
+  private textBlocks: Array<ThreeMeshUI.Block> = [];
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
@@ -117,8 +118,15 @@ export class BoulderRenderComponent implements AfterViewInit {
 
   private loop = () => {
     ThreeMeshUI.update();
+    this.updateTextRotation();
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(this.loop);
+  }
+
+  private updateTextRotation(): void {
+    this.textBlocks.forEach((block) => {
+      block.lookAt(this.camera.position);
+    });
   }
 
   private addBoulderToScene(buffer: ArrayBuffer): void {
@@ -302,6 +310,7 @@ export class BoulderRenderComponent implements AfterViewInit {
      });
 
      container.add(textMesh);
+     this.textBlocks.push(container);
      scene.add(container);
   }
 }
