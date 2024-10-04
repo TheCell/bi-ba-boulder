@@ -9,6 +9,8 @@ import ThreeMeshUI from 'three-mesh-ui';
 import { HSLToHex } from '../utils/color-util';
 import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
+import { BoulderProblemsService } from '../background-loading/boulder-problems.service';
+import { BoulderLine } from '../api/interfaces/boulder-line';
 
 @Component({
   selector: 'app-boulder-render',
@@ -54,6 +56,7 @@ export class BoulderRenderComponent implements AfterViewInit {
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
+    private boulderProblemsService: BoulderProblemsService,
     private el: ElementRef) {}
 
   public ngAfterViewInit(): void {
@@ -72,6 +75,10 @@ export class BoulderRenderComponent implements AfterViewInit {
       key: ['ctrl + space'],
       preventDefault: true,
       command: (e: ShortcutEventOutput) => this.startNewLine()
+    }, {
+      key: ['ctrl + y'],
+      preventDefault: true,
+      command: (e: ShortcutEventOutput) => this.printClickPoints()
     });
 
     const testBoulder = this.boulderLoaderService.loadTestBoulder();
@@ -80,6 +87,15 @@ export class BoulderRenderComponent implements AfterViewInit {
         this.addBoulderToScene(data);
       }
     });
+
+    const testRoutes = this.boulderProblemsService.loadTestBoulderProblem();
+    testRoutes.subscribe({
+      next: (data: Array<BoulderLine>) => {
+        data.forEach((boulderLine: BoulderLine) => {
+          this.addLineToScene(this.scene, boulderLine.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), boulderLine.color)
+        });
+      }
+    })
   }
 
   private createCanvas(): void {
@@ -149,7 +165,7 @@ export class BoulderRenderComponent implements AfterViewInit {
 
       // this.drawBoundingBox(gltf.scene);
       this.fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
-      this.addRoutes(this.scene);
+      // this.addRoutes(this.scene);
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
@@ -280,7 +296,13 @@ export class BoulderRenderComponent implements AfterViewInit {
       return;
     }
 
-    this.clickPoints.push(intersects[0].point);
+    const normal = intersects[0].normal ?? new THREE.Vector3(0, 0, 0);
+    const newPoint: THREE.Vector3 = new THREE.Vector3 (
+      intersects[0].point.x + 0.1 * normal.x,
+      intersects[0].point.y + 0.1 * normal.y,
+      intersects[0].point.z + 0.1 * normal.z
+    );
+    this.clickPoints.push(newPoint);
     if (this.clickPoints.length < 2) {
       return;
     }
@@ -302,6 +324,14 @@ export class BoulderRenderComponent implements AfterViewInit {
     scene.remove(this.meshLinePointer);
     this.meshLinePointer = new MeshLine(this.meshLineGeometry, this.lineMaterials[this.lineMaterials.length - 1]);
     scene.add(this.meshLinePointer);
+  }
+
+  private addLineToScene(scene: THREE.Scene, points: Array<THREE.Vector3>, color: string): void {
+    const geometry = new MeshLineGeometry();
+    geometry.setPoints(points);
+    const meshLineMaterial = this.getNewMeshLineMaterial(color);
+    const line = new MeshLine(geometry, meshLineMaterial);
+    scene.add(line);
   }
 
   private removeLastPoint(): void {
@@ -331,15 +361,19 @@ export class BoulderRenderComponent implements AfterViewInit {
      scene.add(container);
   }
 
-  private getNewMeshLineMaterial(): MeshLineMaterial {
+  private getNewMeshLineMaterial(color?: string): MeshLineMaterial {
     return new MeshLineMaterial({
       useMap: false,
-      color: new THREE.Color(this.getRandomColor()),
+      color: new THREE.Color(color ?? this.getRandomColor()),
       opacity: 1,
       resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
       sizeAttenuation: false,
       lineWidth: 10
     } as any);
+  }
+
+  private printClickPoints(): void {
+    console.log('Click Points:', this.clickPoints);
   }
 
   private startNewLine(): void {
