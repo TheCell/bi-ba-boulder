@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostListener, input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, input, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -9,8 +9,8 @@ import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { HSLToHex } from '../utils/color-util';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
-import { Subscription } from 'rxjs';
 import { fitCameraToCenteredObject } from '../utils/camera-utils';
+import { BoulderLine } from '../api/interfaces/boulder-line';
 
 @Component({
   selector: 'app-daone-render-test',
@@ -40,12 +40,12 @@ export class DaoneRenderTestComponent implements AfterViewInit {
     }
   }
 
-  public rawModel = input<ArrayBuffer>();
-  public testInput = input<boolean>(false);
-
   public shortcuts: ShortcutInput[] = [];
+  public rawModel = input<ArrayBuffer>();
+  public lines = input<BoulderLine[]>();
 
   private proccessedRawModel?: ArrayBuffer;
+  private processedLines: BoulderLine[] = [];
   private scene = new THREE.Scene();
   private loader = new GLTFLoader();
   private camera: THREE.PerspectiveCamera = null!;
@@ -65,6 +65,17 @@ export class DaoneRenderTestComponent implements AfterViewInit {
           this.removePreviousAndAddBoulderToScene(rawModel);
         }
         console.log('Model changed');
+      }
+
+      const lines = this.lines();
+      if (lines !== this.processedLines) {
+        if (lines !== undefined) {
+          lines.forEach((line: BoulderLine) => {
+            this.addLineToScene(this.scene, line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), line.color);
+          });
+
+          this.processedLines = lines;
+        }
       }
     });
   }
@@ -146,7 +157,7 @@ export class DaoneRenderTestComponent implements AfterViewInit {
     scene.add(ambientLight);
   }
 
-  private addLineToScene(scene: THREE.Scene, points: Array<THREE.Vector3>, color: string): void {
+  private addLineToScene(scene: THREE.Scene, points: THREE.Vector3[], color: string): void {
     const material = this.getNewLineMaterial(color);
     const geometry = new LineGeometry();
     geometry.setPositions(points.flatMap((value) => [value.x, value.y, value.z]));

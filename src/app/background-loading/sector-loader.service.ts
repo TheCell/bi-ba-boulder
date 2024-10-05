@@ -11,6 +11,8 @@ export class SectorLoaderService {
   public constructor(private http: HttpClient) { }
 
   public getTestSector(id: string): Observable<BoulderSector> {
+    console.log(id);
+
     const sector: BoulderSector = {
       id: '64b45193-594c-40d5-8fcd-033e017a1c7b',
       name: 'La Plana',

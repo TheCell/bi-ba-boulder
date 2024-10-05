@@ -7,10 +7,8 @@ import { Observable, of } from 'rxjs';
 })
 export class BoulderProblemsService {
 
-  public constructor() { }
-
-  public loadTestBoulderProblem(): Observable<Array<BoulderLine>> {
-    return of<Array<BoulderLine>>([{
+  public loadTestBoulderProblem(): Observable<BoulderLine[]> {
+    return of<BoulderLine[]>([{
       id: '9efa6e70-53a9-49f1-9d37-a333b57820a2',
       boulderBlocId: '9a3eaed7-099a-4622-ac04-b57c911e54b6',
       name: 'Blau',
@@ -41,8 +39,8 @@ export class BoulderProblemsService {
     }]);
   }
 
-  public loadDaoneTestBoulderProblem(): Observable<Array<BoulderLine>> {
-    return of<Array<BoulderLine>>([{
+  public loadDaoneTestBoulderProblem(): Observable<BoulderLine[]> {
+    return of<BoulderLine[]>([{
       id: 'dff2386c-c4c1-4c81-94cb-770cb0720b90',
       boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
       name: 'D',

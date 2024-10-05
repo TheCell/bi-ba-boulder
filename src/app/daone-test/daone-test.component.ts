@@ -4,9 +4,9 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { DaoneRenderTestComponent } from '../daone-render-test/daone-render-test.component';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { BoulderProblemsService } from '../background-loading/boulder-problems.service';
-import { interval, Subject, Subscription, timeInterval } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { ResolutionLevel } from '../api/interfaces/resolution-level';
-import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
+import { BoulderLine } from '../api/interfaces/boulder-line';
 
 @Component({
   selector: 'app-daone-test',
@@ -24,12 +24,12 @@ export class DaoneTestComponent implements OnDestroy {
   public boulderImageUrl: SafeStyle;
   public image: string;
   public modelLoaded = false;
+
   public currentRawModel?: ArrayBuffer;
-  public testbool = false;
+  public currentLines: BoulderLine[] = [];
 
   private finishedLoading = new Subject<ResolutionLevel>();
   private subscription = new Subscription();
-  private testTimer = interval(200);
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
@@ -44,13 +44,6 @@ export class DaoneTestComponent implements OnDestroy {
       // faking for now
       this.modelLoaded = true;
     }, 2000);
-
-    this.subscription.add(this.testTimer.subscribe({
-      next: () => {
-        this.testbool = !this.testbool;
-        this.changeDetectorRef.markForCheck();
-      }
-    }));
 
     const testBoulder = this.boulderLoaderService.loadTestDaoneBoulder('low');
     testBoulder.subscribe({
@@ -82,14 +75,12 @@ export class DaoneTestComponent implements OnDestroy {
       }
     }));
 
-    // const testRoutes = this.boulderProblemsService.loadDaoneTestBoulderProblem()
-    // testRoutes.subscribe({
-    //   next: (data: Array<BoulderLine>) => {
-    //     data.forEach((boulderLine: BoulderLine) => {
-    //       this.addLineToScene(this.scene, boulderLine.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), boulderLine.color)
-    //     });
-    //   }
-    // });
+    this.subscription.add(this.boulderProblemsService.loadDaoneTestBoulderProblem().subscribe({
+      next: (data: BoulderLine[]) => {
+        this.currentLines = data;
+        this.changeDetectorRef.markForCheck();
+      }
+    }));
   }
 
   public ngOnDestroy(): void {

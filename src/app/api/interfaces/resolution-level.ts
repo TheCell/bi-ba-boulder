@@ -1,4 +1,4 @@
-const RESOLUTION_LEVEL = {
+export const RESOLUTION_LEVEL = {
   low: 'low',
   medium: 'medium',
   high: 'high'

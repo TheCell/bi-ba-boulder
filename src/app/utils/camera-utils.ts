@@ -6,7 +6,7 @@ export function fitCameraToCenteredObject(camera: THREE.PerspectiveCamera, objec
   const boundingBox = new THREE.Box3();
   boundingBox.setFromObject( object );
 
-  var size = new THREE.Vector3();
+  const size = new THREE.Vector3();
   boundingBox.getSize(size);
 
   // figure out how to fit the box in the view:
@@ -46,8 +46,8 @@ export function fitCameraToCenteredObject(camera: THREE.PerspectiveCamera, objec
 
   const fov = camera.fov * ( Math.PI / 180 );
   const fovh = 2*Math.atan(Math.tan(fov/2) * camera.aspect);
-  let dx = size.z / 2 + Math.abs( size.x / 2 / Math.tan( fovh / 2 ) );
-  let dy = size.z / 2 + Math.abs( size.y / 2 / Math.tan( fov / 2 ) );
+  const dx = size.z / 2 + Math.abs( size.x / 2 / Math.tan( fovh / 2 ) );
+  const dy = size.z / 2 + Math.abs( size.y / 2 / Math.tan( fov / 2 ) );
   let cameraZ = Math.max(dx, dy);
 
   if( offset !== undefined && offset !== 0 ) {

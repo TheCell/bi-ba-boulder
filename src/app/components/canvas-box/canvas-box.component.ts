@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 
 @Component({
@@ -9,9 +9,7 @@ import * as THREE from 'three';
   styleUrl: './canvas-box.component.scss'
 })
 export class CanvasBoxComponent implements AfterViewInit {
-  @ViewChild('canvasBox') canvasBox: any;
-
-  public constructor() {}
+  @ViewChild('canvasBox') canvasBox: ElementRef = null!;
 
   public ngAfterViewInit(): void {
     this.createThreeJsBox();
