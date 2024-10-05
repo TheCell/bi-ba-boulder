@@ -1,17 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
-$fontColor: #ffaadd;
+$fontColor: #b3b3b3;
 $backgroundColor: #1f1f1f;
 
+@font-face {
+  font-family: "Roboto";
+  src: url("./../public/font/Roboto-Regular.ttf") format("truetype");
+}
 
 html {
     background-color: $backgroundColor;
     color: $fontColor;
+    font-family: "Roboto", sans-serif;
 }
 
 body {
-    // position: absolute;
-    // top: 0;
-    // left: 0;
     width: 100%;
     height: 100vh;
     margin: 0px;

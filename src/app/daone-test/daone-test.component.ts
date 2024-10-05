@@ -7,13 +7,15 @@ import { BoulderProblemsService } from '../background-loading/boulder-problems.s
 import { Subject, Subscription } from 'rxjs';
 import { ResolutionLevel } from '../api/interfaces/resolution-level';
 import { BoulderLine } from '../api/interfaces/boulder-line';
+import { BoulderLegendComponent } from '../components/boulder-legend/boulder-legend.component';
 
 @Component({
   selector: 'app-daone-test',
   standalone: true,
   imports: [
     CommonModule,
-    DaoneRenderTestComponent
+    DaoneRenderTestComponent,
+    BoulderLegendComponent
   ],
   templateUrl: './daone-test.component.html',
   styleUrl: './daone-test.component.scss',

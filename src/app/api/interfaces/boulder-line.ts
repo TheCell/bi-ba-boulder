@@ -5,7 +5,8 @@ export interface BoulderLine {
   id: string;
   points: { x: number, y: number, z: number }[];
   color: string;
-  name: string;
+  identifier: string;
+  name?: string;
   grade: FontGrade;
   description?: string;
   date?: Date;

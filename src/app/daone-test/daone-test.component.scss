@@ -39,4 +39,10 @@
 
 .boulderLegend {
   grid-area: legend;
+  border-image: linear-gradient(to right, #3acfd5 0%, #2c39e9 100%) 1;
+  border-width: 20px;
+  border-style: solid;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
 }

@@ -12,6 +12,7 @@ export class BoulderProblemsService {
       id: '9efa6e70-53a9-49f1-9d37-a333b57820a2',
       boulderBlocId: '9a3eaed7-099a-4622-ac04-b57c911e54b6',
       name: 'Blau',
+      identifier: 'Blau',
       grade: 'sixA',
       points: [
         { x: 0.8598804666588595, y: -1.7463177021401444, z: 1.5116325168490101},
@@ -25,6 +26,7 @@ export class BoulderProblemsService {
       id: 'cd889f6f-e590-48d9-bc79-ec1a4817dbb9',
       boulderBlocId: '9a3eaed7-099a-4622-ac04-b57c911e54b6',
       name: 'Geln',
+      identifier: 'Geln',
       grade: 'sixC',
       points: [
         { x: 2.9055743140095234, y: -1.7246865452582212, z: -0.27351878273736696 },
@@ -43,7 +45,8 @@ export class BoulderProblemsService {
     return of<BoulderLine[]>([{
       id: 'dff2386c-c4c1-4c81-94cb-770cb0720b90',
       boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
-      name: 'D',
+      description: 'Sit start',
+      identifier: 'D',
       grade: 'sixCPlus',
       points: [
         { x: -21.21099518690205, y: 6.421972865973612, z: 7.217585056802614 },
@@ -53,7 +56,7 @@ export class BoulderProblemsService {
     }, {
       id: '6547a270-f70d-47a2-91e2-8d9d4c69f416',
       boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
-      name: 'E',
+      identifier: 'E',
       grade: 'sevenBPlus',
       points: [
         { x: -20.966641108222202, y: 6.574789581500805, z: 7.306131091280122 },
@@ -63,7 +66,7 @@ export class BoulderProblemsService {
     }, {
       id: '9ba09448-1f00-4399-b06f-cfe9c76ee9e1',
       boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
-      name: 'F',
+      identifier: 'F',
       grade: 'sixCPlus',
       points: [
         { x: -20.74763476403384, y: 6.757334437978098, z: 7.364764370769697 },
@@ -80,7 +83,7 @@ export class BoulderProblemsService {
     }, {
       id: 'b0b86553-28d7-4377-8788-bf50b98ad0f8',
       boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
-      name: 'B',
+      identifier: 'B',
       grade: 'sixB',
       points: [
         { x: -4.85421855159792, y: 2.75892462438469, z: -0.84770541503336 },
@@ -96,7 +99,9 @@ export class BoulderProblemsService {
     }, {
       id: 'f02d57d8-1502-4f71-91ea-4f21ce02ed12',
       boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
-      name: 'A',
+      name: 'The Test',
+      identifier: 'A',
+      description: 'Sit start. Svasi e tutte le tacche',
       grade: 'sixAPlus',
       points: [
         { x: -4.85421855159792, y: 2.75892462438469, z: -0.84770541503336 },

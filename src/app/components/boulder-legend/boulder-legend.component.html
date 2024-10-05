@@ -1,0 +1,23 @@
+<h1>bloc</h1>
+
+<ul>
+  @for (line of lines(); track line.id) {
+    <li>
+      <span class="name" [ngStyle]="{ color: line.color }">
+        {{ line.identifier }}
+      </span>
+      @if (line.name) {
+        <span class="name">-</span>
+        <span class="name">{{ line.name }}</span>
+      }
+      @if (line.grade) {
+        <span>{{ FONT_GRADE[line.grade] }}</span>
+      }
+      @if (line.description) {
+        <div>
+          {{ line.description }}
+        </div>
+      }
+    </li>
+  }
+</ul>
