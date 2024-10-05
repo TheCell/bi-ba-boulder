@@ -11,6 +11,8 @@ argv = argv[argv.index("--") + 1:]
 # Parse custom arguments (input_path, reduction_factor, output_path)
 input_path = argv[0]  # Path to the input model file
 reduction_factor = float(argv[1])  # Mesh reduction factor (e.g., 0.5)
+texture_scale = float(argv[2])  # Factor to scale textures (e.g., 0.5 for 50% reduction)
+
 
 # Extract the directory, filename, and extension from the input path
 input_dir = os.path.dirname(input_path)
@@ -55,8 +57,24 @@ for obj in mesh_objects:
     # Optionally: You can also save different objects as individual glTF files
     # output_path = f"/path/to/export/{obj.name}.gltf"
 
+    # Deselect the object after applying the modifier
+    obj.select_set(False)
+
+# Function to resize textures in Blender without using PIL
+def resize_texture_blender(image, scale):
+    if image.size[0] > 0 and image.size[1] > 0:
+        new_width = int(image.size[0] * scale)
+        new_height = int(image.size[1] * scale)
+        image.scale(new_width, new_height)
+        print(f"Resized {image.name} to {new_width}x{new_height}")
+
+# Find all textures used in the scene and resize them
+for image in bpy.data.images:
+    if image.filepath:  # Only process images that have an associated file path
+        resize_texture_blender(image, texture_scale)
+
 # Export the entire scene as GLTF
 bpy.ops.export_scene.gltf(filepath=output_path)
 
 # Print confirmation
-print(f"Exported reduced mesh to {output_path}")
+print(f"Imported model from {input_path}, reduced the mesh by {reduction_factor}, resized textures by {texture_scale}, and exported to {output_path}")
