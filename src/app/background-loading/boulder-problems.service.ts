@@ -10,7 +10,9 @@ export class BoulderProblemsService {
   public constructor() { }
 
   public loadTestBoulderProblem(): Observable<Array<BoulderLine>> {
-    return of([{
+    return of<Array<BoulderLine>>([{
+      id: '9efa6e70-53a9-49f1-9d37-a333b57820a2',
+      boulderBlocId: '9a3eaed7-099a-4622-ac04-b57c911e54b6',
       name: 'Blau',
       grade: 'sixA',
       points: [
@@ -22,6 +24,8 @@ export class BoulderProblemsService {
       ],
       color: '#64de95'
     }, {
+      id: 'cd889f6f-e590-48d9-bc79-ec1a4817dbb9',
+      boulderBlocId: '9a3eaed7-099a-4622-ac04-b57c911e54b6',
       name: 'Geln',
       grade: 'sixC',
       points: [
@@ -38,7 +42,9 @@ export class BoulderProblemsService {
   }
 
   public loadDaoneTestBoulderProblem(): Observable<Array<BoulderLine>> {
-    return of([{
+    return of<Array<BoulderLine>>([{
+      id: 'dff2386c-c4c1-4c81-94cb-770cb0720b90',
+      boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
       name: 'D',
       grade: 'sixCPlus',
       points: [
@@ -47,6 +53,8 @@ export class BoulderProblemsService {
       ],
       color: '#842c36'
     }, {
+      id: '6547a270-f70d-47a2-91e2-8d9d4c69f416',
+      boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
       name: 'E',
       grade: 'sevenBPlus',
       points: [
@@ -55,6 +63,8 @@ export class BoulderProblemsService {
       ],
       color: '#842c36'
     }, {
+      id: '9ba09448-1f00-4399-b06f-cfe9c76ee9e1',
+      boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
       name: 'F',
       grade: 'sixCPlus',
       points: [
@@ -70,6 +80,8 @@ export class BoulderProblemsService {
       ],
       color: '#842c36'
     }, {
+      id: 'b0b86553-28d7-4377-8788-bf50b98ad0f8',
+      boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
       name: 'B',
       grade: 'sixB',
       points: [
@@ -84,6 +96,8 @@ export class BoulderProblemsService {
       ],
       color: '#842c36'
     }, {
+      id: 'f02d57d8-1502-4f71-91ea-4f21ce02ed12',
+      boulderBlocId: 'ecdbe5b2-b01c-4e12-a3fc-9e41eda5dad3',
       name: 'A',
       grade: 'sixAPlus',
       points: [
