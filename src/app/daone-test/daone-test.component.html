@@ -1,8 +1,15 @@
 <div class="grid">
   <!-- boulder render  -->
   <section class="imageContainer">
-      <app-daone-render-test class="render"></app-daone-render-test>
-      <img class="image" [src]="image" alt="photo of the boulder">
+    @if (currentRawModel !== undefined) {
+      <app-daone-render-test
+        class="render"
+        [testInput]="testbool"
+        [rawModel]="currentRawModel">
+      </app-daone-render-test>
+    }
+
+    <img class="image" [src]="image" [ngClass]="{ fadeOut: currentRawModel !== undefined }" alt="photo of the boulder">
 
   </section>
 
