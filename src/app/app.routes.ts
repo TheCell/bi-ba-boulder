@@ -3,6 +3,7 @@ import { HomeComponent } from './home/home.component';
 import { CanvasBoxComponent } from './components/canvas-box/canvas-box.component';
 import { BoulderRenderComponent } from './boulder-render/boulder-render.component';
 import { BoulderComponent } from './boulder/boulder.component';
+import { DaoneTestComponent } from './daone-test/daone-test.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -10,4 +11,5 @@ export const routes: Routes = [
   { path: 'canvas-box', component: CanvasBoxComponent },
   { path: 'boulder-render', component: BoulderRenderComponent },
   { path: 'single-boulder-test', component: BoulderComponent },
+  { path: 'daone-boulder-test', component: DaoneTestComponent },
 ];

@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { MeshLine, MeshLineGeometry, MeshLineMaterial } from '@lume/three-meshline';
 import ThreeMeshUI from 'three-mesh-ui';
 import { HSLToHex } from '../utils/color-util';
@@ -11,18 +14,21 @@ import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { BoulderProblemsService } from '../background-loading/boulder-problems.service';
 import { BoulderLine } from '../api/interfaces/boulder-line';
+import { Subject, Subscription } from 'rxjs';
+import { ResolutionLevel } from '../api/interfaces/resolution-level';
 
 @Component({
-  selector: 'app-boulder-render',
+  selector: 'app-daone-render-test',
   standalone: true,
   imports: [
     CommonModule,
     KeyboardShortcutsModule
   ],
-  templateUrl: './boulder-render.component.html',
-  styleUrl: './boulder-render.component.scss',
+  templateUrl: './daone-render-test.component.html',
+  styleUrl: './daone-render-test.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BoulderRenderComponent implements AfterViewInit {
+export class DaoneRenderTestComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize', ['$event']) public onResize(): void {
     if (this.renderer) {
@@ -54,10 +60,18 @@ export class BoulderRenderComponent implements AfterViewInit {
   private lineMaterials: Array<MeshLineMaterial> = [];
   private currentRandomRadius = Math.random() * 360;
 
+  private finishedLoading = new Subject<ResolutionLevel>();
+  private currentGltf?: GLTF;
+  private subcription = new Subscription();
+
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
     private boulderProblemsService: BoulderProblemsService,
     private el: ElementRef) {}
+
+  public ngOnDestroy(): void {
+    this.subcription.unsubscribe();
+  }
 
   public ngAfterViewInit(): void {
     this.createCanvas();
@@ -81,21 +95,43 @@ export class BoulderRenderComponent implements AfterViewInit {
       command: (e: ShortcutEventOutput) => this.printClickPoints()
     });
 
-    const testBoulder = this.boulderLoaderService.loadTestBoulder();
+    const testBoulder = this.boulderLoaderService.loadTestDaoneBoulder('low');
     testBoulder.subscribe({
       next: (data) => {
-        this.addBoulderToScene(data);
+        this.removePreviousAndAddBoulderToScene(data);
+        this.finishedLoading.next('low');
       }
     });
 
-    const testRoutes = this.boulderProblemsService.loadTestBoulderProblem();
+    this.subcription.add(this.finishedLoading.subscribe({
+      next: (resolutionLevel: ResolutionLevel) => {
+        if (resolutionLevel === 'low') {
+          this.boulderLoaderService.loadTestDaoneBoulder('medium').subscribe({
+            next: (data) => {
+              this.removePreviousAndAddBoulderToScene(data);
+              this.finishedLoading.next('medium');
+            }
+          });
+        } else if (resolutionLevel === 'medium') {
+          this.boulderLoaderService.loadTestDaoneBoulder('high').subscribe({
+            next: (data) => {
+              this.removePreviousAndAddBoulderToScene(data);
+              this.finishedLoading.next('high');
+            }
+          });
+        }
+      }
+    }));
+
+
+    const testRoutes = this.boulderProblemsService.loadDaoneTestBoulderProblem()
     testRoutes.subscribe({
       next: (data: Array<BoulderLine>) => {
         data.forEach((boulderLine: BoulderLine) => {
           this.addLineToScene(this.scene, boulderLine.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), boulderLine.color)
         });
       }
-    })
+    });
   }
 
   private createCanvas(): void {
@@ -110,6 +146,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     };
 
     this.renderer = new THREE.WebGLRenderer({
+      logarithmicDepthBuffer: true,
       canvas: canvas,
       alpha: true
     });
@@ -155,7 +192,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     });
   }
 
-  private addBoulderToScene(buffer: ArrayBuffer): void {
+  private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
 
       this.scene.add(gltf.scene);
@@ -163,13 +200,22 @@ export class BoulderRenderComponent implements AfterViewInit {
         child.layers.set(1); // set hit layer
       });
 
+      if (this.currentGltf !== undefined) {
+        this.removeBoulderFromScene(this.currentGltf);
+      } else {
+        this.fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+      }
       // this.drawBoundingBox(gltf.scene);
-      this.fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
       // this.addRoutes(this.scene);
+      this.currentGltf = gltf;
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
     });
+  }
+
+  private removeBoulderFromScene(gltf: GLTF): void {
+    this.scene.remove(gltf.scene);
   }
 
   private drawBoundingBox(scene: THREE.Group<THREE.Object3DEventMap>): void {
@@ -252,7 +298,7 @@ export class BoulderRenderComponent implements AfterViewInit {
   };
 
   private addLights(scene: THREE.Scene): void {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 10.5);
     scene.add(ambientLight);
 
     // const pointLight = new THREE.PointLight(0xffffff, 0.5);
@@ -298,9 +344,9 @@ export class BoulderRenderComponent implements AfterViewInit {
 
     const normal = intersects[0].normal ?? new THREE.Vector3(0, 0, 0);
     const newPoint: THREE.Vector3 = new THREE.Vector3 (
-      intersects[0].point.x + 0.1 * normal.x,
-      intersects[0].point.y + 0.1 * normal.y,
-      intersects[0].point.z + 0.1 * normal.z
+      intersects[0].point.x + 0.2 * normal.x,
+      intersects[0].point.y + 0.2 * normal.y,
+      intersects[0].point.z + 0.2 * normal.z
     );
     this.clickPoints.push(newPoint);
     if (this.clickPoints.length < 2) {
@@ -327,11 +373,18 @@ export class BoulderRenderComponent implements AfterViewInit {
   }
 
   private addLineToScene(scene: THREE.Scene, points: Array<THREE.Vector3>, color: string): void {
-    const geometry = new MeshLineGeometry();
-    geometry.setPoints(points);
-    const meshLineMaterial = this.getNewMeshLineMaterial(color);
-    const line = new MeshLine(geometry, meshLineMaterial);
-    scene.add(line);
+    // const geometry = new MeshLineGeometry();
+    // geometry.setPoints(points);
+    // const meshLineMaterial = this.getNewMeshLineMaterial(color);
+    // const line = new MeshLine(geometry, meshLineMaterial);
+    // scene.add(line);
+
+    const material = this.getNewLineBasicMaterial(color);
+    // const geometry2 = new THREE.BufferGeometry().setFromPoints(points);
+    const geometry2 = new LineGeometry();
+    geometry2.setPositions(points.flatMap((value) => [value.x, value.y, value.z]));
+    const line2 = new Line2(geometry2, material);
+    scene.add(line2);
   }
 
   private removeLastPoint(): void {
@@ -370,6 +423,16 @@ export class BoulderRenderComponent implements AfterViewInit {
       sizeAttenuation: false,
       lineWidth: 10
     } as any);
+  }
+
+  private getNewLineBasicMaterial(color?: string): LineMaterial {
+    return new LineMaterial({
+      color: new THREE.Color(color ?? this.getRandomColor()),
+      opacity: 1,
+      linewidth: 5,
+      resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
+      dashed: false,
+    });
   }
 
   private printClickPoints(): void {
