@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "b902b055-bc8c-4b4a-be44-096639d8052d",
+		"name": "bi-ba-boulder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10883073"
+	},
+	"item": [
+		{
+			"name": "boulder-line",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}{{apiurl}}boulder-line",
+					"host": [
+						"{{baseurl}}{{apiurl}}boulder-line"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "boulder-sector",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}{{apiurl}}boulder-sector",
+					"host": [
+						"{{baseurl}}{{apiurl}}boulder-sector"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseurl",
+			"value": "http://localhost/",
+			"type": "string"
+		},
+		{
+			"key": "apiurl",
+			"value": "bi-ba-boulder-backend/api/",
+			"type": "string"
+		}
+	]
+}
