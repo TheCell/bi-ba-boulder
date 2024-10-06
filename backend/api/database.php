@@ -1,6 +1,7 @@
 <?php
+require "dbsettings.php";
+
 class Database {
-  require_once("dbsettings.php");
 
   public $conn;
 

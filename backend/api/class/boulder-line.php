@@ -14,7 +14,7 @@
         public $Description;
         public $Identifier;
         public $Grade;
-        public $BoulderBlocId ;
+        public $BoulderBlocId;
 
         // Db connection
         public function __construct($db){
