@@ -23,26 +23,13 @@ SET time_zone = "+00:00";
 
 -- --------------------------------------------------------
 
-CREATE TABLE `users` (
-  `user_id` bigint(20) NOT NULL,
-  `user_email` varchar(255) NOT NULL,
-  `user_password` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `user_email` (`user_email`);
-
-ALTER TABLE `users`
-  MODIFY `user_id` bigint(20) NOT NULL AUTO_INCREMENT;
-
 --
 -- Table structure for table `blocfile`
 --
 
 CREATE TABLE `blocfile` (
-  `Id` binary(16) NOT NULL,
-  `BoulderBlocId` binary(16) NOT NULL,
+  `Id` VARBINARY(16) NOT NULL,
+  `BoulderBlocId` VARBINARY(16) NOT NULL,
   `ResolutionLevel` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -53,10 +40,10 @@ CREATE TABLE `blocfile` (
 --
 
 CREATE TABLE `boulderbloc` (
-  `Id` binary(16) NOT NULL,
+  `Id` VARBINARY(16) NOT NULL,
   `Name` varchar(1000) NOT NULL,
   `Description` varchar(1000) DEFAULT NULL,
-  `BoulderSectorId` binary(16) NOT NULL
+  `BoulderSectorId` VARBINARY(16) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -66,13 +53,13 @@ CREATE TABLE `boulderbloc` (
 --
 
 CREATE TABLE `boulderline` (
-  `Id` binary(16) NOT NULL,
+  `Id` VARBINARY(16) NOT NULL,
   `Color` varchar(9) DEFAULT NULL,
   `Name` varchar(1000) NOT NULL,
   `Description` varchar(1000) DEFAULT NULL,
   `Identifier` varchar(1000) NOT NULL,
   `Grade` varchar(255) NOT NULL,
-  `BoulderBlocId` binary(16) NOT NULL
+  `BoulderBlocId` VARBINARY(16) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -82,7 +69,7 @@ CREATE TABLE `boulderline` (
 --
 
 CREATE TABLE `bouldersector` (
-  `Id` binary(16) NOT NULL,
+  `Id` VARBINARY(16) NOT NULL,
   `Name` varchar(1000) NOT NULL,
   `Description` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -94,11 +81,11 @@ CREATE TABLE `bouldersector` (
 --
 
 CREATE TABLE `point` (
-  `Id` binary(16) NOT NULL,
+  `Id` VARBINARY(16) NOT NULL,
   `X` double NOT NULL,
   `Y` double NOT NULL,
   `Z` double NOT NULL,
-  `BoulderLineId` binary(16) NOT NULL
+  `BoulderLineId` VARBINARY(16) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
