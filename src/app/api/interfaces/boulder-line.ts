@@ -4,7 +4,7 @@ export interface BoulderLine {
   boulderBlocId: string;
   id: string;
   points: { x: number, y: number, z: number }[];
-  color: string;
+  color?: string;
   identifier: string;
   name?: string;
   grade: FontGrade;

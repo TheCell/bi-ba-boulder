@@ -21,7 +21,7 @@ input_extension = os.path.splitext(input_path)[1]
 
 
 # Create the output filename with the reduction factor included (e.g., model_0.5.gltf)
-output_filename = f"{input_filename}_reduced_{reduction_factor}{'.gltf'}"
+output_filename = f"{input_filename}_reduced_{reduction_factor}_tex_{texture_scale}{'.gltf'}"
 output_path = os.path.join(input_dir, output_filename)
 
 # Import the model (choose the correct import operator based on the file format)
