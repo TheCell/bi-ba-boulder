@@ -27,4 +27,17 @@ export class BoulderLoaderService {
     }
   }
 
+  public loadTestDaoneBoulder2(resolutionLevel: ResolutionLevel): Observable<ArrayBuffer> {
+    switch (resolutionLevel) {
+      case 'low':
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb', { responseType: 'arraybuffer'});
+      case 'medium':
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.01_tex_0.25.glb', { responseType: 'arraybuffer'});
+        case 'high':
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.02_tex_0.35.glb', { responseType: 'arraybuffer'});
+        default:
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb', { responseType: 'arraybuffer'});
+    }
+  }
+
 }

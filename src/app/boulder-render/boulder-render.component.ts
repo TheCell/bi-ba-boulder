@@ -50,9 +50,9 @@ export class BoulderRenderComponent implements AfterViewInit {
   private raycaster: THREE.Raycaster = null!;
   private meshLinePointer: MeshLine = null!;
   private meshLineGeometry = new MeshLineGeometry();
-  private clickPoints: Array<THREE.Vector3> = [];
-  private textBlocks: Array<ThreeMeshUI.Block> = [];
-  private lineMaterials: Array<MeshLineMaterial> = [];
+  private clickPoints: THREE.Vector3[] = [];
+  private textBlocks: ThreeMeshUI.Block[] = [];
+  private lineMaterials: MeshLineMaterial[] = [];
   private currentRandomRadius = Math.random() * 360;
 
   public constructor(
@@ -71,15 +71,15 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.shortcuts.push({
       key: ['ctrl + z'],
       preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.removeLastPoint()
+      command: (e: ShortcutEventOutput) => this.removeLastPoint() // eslint-disable-line @typescript-eslint/no-unused-vars
     }, {
       key: ['ctrl + space'],
       preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.startNewLine()
+      command: (e: ShortcutEventOutput) => this.startNewLine() // eslint-disable-line @typescript-eslint/no-unused-vars
     }, {
       key: ['ctrl + y'],
       preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.printClickPoints()
+      command: (e: ShortcutEventOutput) => this.printClickPoints() // eslint-disable-line @typescript-eslint/no-unused-vars
     });
 
     const testBoulder = this.boulderLoaderService.loadTestBoulder();
@@ -91,7 +91,7 @@ export class BoulderRenderComponent implements AfterViewInit {
 
     const testRoutes = this.boulderProblemsService.loadTestBoulderProblem();
     testRoutes.subscribe({
-      next: (data: Array<BoulderLine>) => {
+      next: (data: BoulderLine[]) => {
         data.forEach((boulderLine: BoulderLine) => {
           this.addLineToScene(this.scene, boulderLine.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), boulderLine.color)
         });
@@ -210,7 +210,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     }
 
     const mouseEvent = event as MouseEvent;
-    let pointer = new THREE.Vector2();
+    const pointer = new THREE.Vector2();
 
     pointer.x = (mouseEvent.clientX / this.canvas.nativeElement.offsetWidth) * 2 - 1;
     pointer.y = - (mouseEvent.clientY / this.canvas.nativeElement.offsetHeight) * 2 + 1;
@@ -254,7 +254,7 @@ export class BoulderRenderComponent implements AfterViewInit {
     scene.add(this.meshLinePointer);
   }
 
-  private addLineToScene(scene: THREE.Scene, points: Array<THREE.Vector3>, color: string): void {
+  private addLineToScene(scene: THREE.Scene, points: THREE.Vector3[], color?: string): void {
     const geometry = new MeshLineGeometry();
     geometry.setPoints(points);
     const meshLineMaterial = this.getNewMeshLineMaterial(color);
@@ -297,7 +297,7 @@ export class BoulderRenderComponent implements AfterViewInit {
       resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
       sizeAttenuation: false,
       lineWidth: 10
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   private printClickPoints(): void {

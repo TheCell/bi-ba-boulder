@@ -64,7 +64,6 @@ export class DaoneRenderTestComponent implements AfterViewInit {
         if (rawModel !== undefined) {
           this.removePreviousAndAddBoulderToScene(rawModel);
         }
-        console.log('Model changed');
       }
 
       const lines = this.lines();
@@ -157,7 +156,7 @@ export class DaoneRenderTestComponent implements AfterViewInit {
     scene.add(ambientLight);
   }
 
-  private addLineToScene(scene: THREE.Scene, points: THREE.Vector3[], color: string): void {
+  private addLineToScene(scene: THREE.Scene, points: THREE.Vector3[], color?: string): void {
     const material = this.getNewLineMaterial(color);
     const geometry = new LineGeometry();
     geometry.setPositions(points.flatMap((value) => [value.x, value.y, value.z]));

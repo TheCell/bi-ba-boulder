@@ -8,6 +8,7 @@ import { Subject, Subscription } from 'rxjs';
 import { ResolutionLevel } from '../api/interfaces/resolution-level';
 import { BoulderLine } from '../api/interfaces/boulder-line';
 import { BoulderLegendComponent } from '../components/boulder-legend/boulder-legend.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-daone-test',
@@ -32,57 +33,90 @@ export class DaoneTestComponent implements OnDestroy {
 
   private finishedLoading = new Subject<ResolutionLevel>();
   private subscription = new Subscription();
+  private number: string | null;
 
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
     private boulderProblemsService: BoulderProblemsService,
     private domSanitizer: DomSanitizer,
-    private changeDetectorRef: ChangeDetectorRef) {
+    private changeDetectorRef: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute) {
     this.title = 'test';
     this.image = './test-images/Bloc_5.jpg';
     this.boulderImageUrl = this.domSanitizer.bypassSecurityTrustStyle('url(./test-images/Bloc_5.jpg)');
+    this.number = this.activatedRoute.snapshot.paramMap.get('number');
 
     setTimeout(() => {
       // faking for now
       this.modelLoaded = true;
     }, 2000);
 
-    const testBoulder = this.boulderLoaderService.loadTestDaoneBoulder('low');
-    testBoulder.subscribe({
-      next: (data: ArrayBuffer) => {
-        this.currentRawModel = data;
-        this.finishedLoading.next('low');
-      }
-    });
+    if (this.number) {
+      const testBoulder = this.boulderLoaderService.loadTestDaoneBoulder2('low');
+      testBoulder.subscribe({
+        next: (data: ArrayBuffer) => {
+          this.currentRawModel = data;
+          this.finishedLoading.next('low');
+        }
+      });
+    } else {
+      const testBoulder = this.boulderLoaderService.loadTestDaoneBoulder('low');
+      testBoulder.subscribe({
+        next: (data: ArrayBuffer) => {
+          this.currentRawModel = data;
+          this.finishedLoading.next('low');
+        }
+      });
+    }
 
     this.subscription.add(this.finishedLoading.subscribe({
       next: (resolutionLevel: ResolutionLevel) => {
         this.changeDetectorRef.markForCheck();
 
         if (resolutionLevel === 'low') {
-          this.boulderLoaderService.loadTestDaoneBoulder('medium').subscribe({
-            next: (data) => {
-              this.currentRawModel = data;
-              this.finishedLoading.next('medium');
-            }
-          });
+          if (this.number) {
+            this.boulderLoaderService.loadTestDaoneBoulder2('medium').subscribe({
+              next: (data) => {
+                this.currentRawModel = data;
+                this.finishedLoading.next('medium');
+              }
+            });
+          } else {
+            this.boulderLoaderService.loadTestDaoneBoulder('medium').subscribe({
+              next: (data) => {
+                this.currentRawModel = data;
+                this.finishedLoading.next('medium');
+              }
+            });
+          }
         } else if (resolutionLevel === 'medium') {
-          this.boulderLoaderService.loadTestDaoneBoulder('high').subscribe({
-            next: (data) => {
-              this.currentRawModel = data;
-              this.finishedLoading.next('high');
-            }
-          });
+          if (this.number) {
+            this.boulderLoaderService.loadTestDaoneBoulder2('high').subscribe({
+              next: (data) => {
+                this.currentRawModel = data;
+                this.finishedLoading.next('high');
+              }
+            });
+          } else {
+            this.boulderLoaderService.loadTestDaoneBoulder('high').subscribe({
+              next: (data) => {
+                this.currentRawModel = data;
+                this.finishedLoading.next('high');
+              }
+            });
+          }
         }
       }
     }));
 
-    this.subscription.add(this.boulderProblemsService.loadDaoneTestBoulderProblem().subscribe({
-      next: (data: BoulderLine[]) => {
-        this.currentLines = data;
-        this.changeDetectorRef.markForCheck();
-      }
-    }));
+    if (this.number === null) {
+      this.subscription.add(this.boulderProblemsService.loadDaoneTestBoulderProblem().subscribe({
+        next: (data: BoulderLine[]) => {
+          this.currentLines = data;
+          this.changeDetectorRef.markForCheck();
+        }
+      }));
+    }
   }
 
   public ngOnDestroy(): void {

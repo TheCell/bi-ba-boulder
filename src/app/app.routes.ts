@@ -11,5 +11,12 @@ export const routes: Routes = [
   { path: 'canvas-box', component: CanvasBoxComponent },
   { path: 'boulder-render', component: BoulderRenderComponent },
   { path: 'single-boulder-test', component: BoulderComponent },
-  { path: 'daone-boulder-test', component: DaoneTestComponent },
+  {
+    path: 'daone-boulder-test',
+    component: DaoneTestComponent,
+    children: [
+      { path: '', component: DaoneTestComponent, pathMatch: 'full' },
+      { path: ':number', component: DaoneTestComponent },
+    ]
+   },
 ];
