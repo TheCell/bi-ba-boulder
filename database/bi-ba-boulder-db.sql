@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 06, 2024 at 01:27 PM
+-- Generation Time: Oct 07, 2024 at 06:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,9 +28,9 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `blocfile` (
-  `Id` VARBINARY(16) NOT NULL,
-  `BoulderBlocId` VARBINARY(16) NOT NULL,
-  `ResolutionLevel` tinyint(4) NOT NULL
+  `id` int(11) NOT NULL,
+  `boulderBlocId` int(11) NOT NULL,
+  `resolutionLevel` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -40,10 +40,10 @@ CREATE TABLE `blocfile` (
 --
 
 CREATE TABLE `boulderbloc` (
-  `Id` VARBINARY(16) NOT NULL,
-  `Name` varchar(1000) NOT NULL,
-  `Description` varchar(1000) DEFAULT NULL,
-  `BoulderSectorId` VARBINARY(16) NOT NULL
+  `id` int(11) NOT NULL,
+  `name` varchar(1000) NOT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `boulderSectorId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -53,13 +53,13 @@ CREATE TABLE `boulderbloc` (
 --
 
 CREATE TABLE `boulderline` (
-  `Id` VARBINARY(16) NOT NULL,
-  `Color` varchar(9) DEFAULT NULL,
-  `Name` varchar(1000) NOT NULL,
-  `Description` varchar(1000) DEFAULT NULL,
-  `Identifier` varchar(1000) NOT NULL,
-  `Grade` varchar(255) NOT NULL,
-  `BoulderBlocId` VARBINARY(16) NOT NULL
+  `id` int(11) NOT NULL,
+  `color` varchar(9) DEFAULT NULL,
+  `name` varchar(1000) NOT NULL,
+  `description` varchar(1000) DEFAULT NULL,
+  `identifier` varchar(1000) NOT NULL,
+  `grade` varchar(255) NOT NULL,
+  `boulderBlocId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -69,9 +69,9 @@ CREATE TABLE `boulderline` (
 --
 
 CREATE TABLE `bouldersector` (
-  `Id` VARBINARY(16) NOT NULL,
-  `Name` varchar(1000) NOT NULL,
-  `Description` varchar(1000) DEFAULT NULL
+  `id` int(11) NOT NULL,
+  `name` varchar(1000) NOT NULL,
+  `description` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -81,11 +81,11 @@ CREATE TABLE `bouldersector` (
 --
 
 CREATE TABLE `point` (
-  `Id` VARBINARY(16) NOT NULL,
-  `X` double NOT NULL,
-  `Y` double NOT NULL,
-  `Z` double NOT NULL,
-  `BoulderLineId` VARBINARY(16) NOT NULL
+  `id` int(11) NOT NULL,
+  `x` double NOT NULL,
+  `y` double NOT NULL,
+  `z` double NOT NULL,
+  `boulderLineId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -96,38 +96,79 @@ CREATE TABLE `point` (
 -- Indexes for table `blocfile`
 --
 ALTER TABLE `blocfile`
-  ADD PRIMARY KEY (`Id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `blocfile.BoulderBlocId` (`boulderBlocId`);
 
 --
 -- Indexes for table `boulderbloc`
 --
 ALTER TABLE `boulderbloc`
-  ADD PRIMARY KEY (`Id`),
-  ADD KEY `BoulderSectorId` (`BoulderSectorId`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `boulderbloc.BoulderSectorId` (`boulderSectorId`);
 
 --
 -- Indexes for table `boulderline`
 --
 ALTER TABLE `boulderline`
-  ADD PRIMARY KEY (`Id`),
-  ADD KEY `BoulderBlocId` (`BoulderBlocId`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `boulderline.BoulderBlocId` (`boulderBlocId`);
 
 --
 -- Indexes for table `bouldersector`
 --
 ALTER TABLE `bouldersector`
-  ADD PRIMARY KEY (`Id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `point`
 --
 ALTER TABLE `point`
-  ADD PRIMARY KEY (`Id`),
-  ADD KEY `BoulderLineId` (`BoulderLineId`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `point.BoulderLineId` (`boulderLineId`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `blocfile`
+--
+ALTER TABLE `blocfile`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `boulderbloc`
+--
+ALTER TABLE `boulderbloc`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `boulderline`
+--
+ALTER TABLE `boulderline`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bouldersector`
+--
+ALTER TABLE `bouldersector`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `point`
+--
+ALTER TABLE `point`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `blocfile`
+--
+ALTER TABLE `blocfile`
+  ADD CONSTRAINT `blocfile.BoulderBlocId` FOREIGN KEY (`BoulderBlocId`) REFERENCES `boulderbloc` (`Id`);
 
 --
 -- Constraints for table `boulderbloc`
@@ -146,12 +187,6 @@ ALTER TABLE `boulderline`
 --
 ALTER TABLE `point`
   ADD CONSTRAINT `point.BoulderLineId` FOREIGN KEY (`BoulderLineId`) REFERENCES `boulderline` (`Id`);
-
---
--- Constraints for table `blocfile`
---
-ALTER TABLE `blocfile`
-  ADD CONSTRAINT `blocfile.BoulderBlocId` FOREIGN KEY (`BoulderBlocId`) REFERENCES `boulderbloc` (`Id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
