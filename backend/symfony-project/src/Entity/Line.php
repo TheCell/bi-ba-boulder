@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\LineRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,12 +28,20 @@ class Line
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true)]
-    private ?array $points = null;
-
     #[ORM\ManyToOne(inversedBy: 'boulderLines')]
     #[ORM\JoinColumn(nullable: false)]
     private ?bloc $bloc = null;
+
+    /**
+     * @var Collection<int, Point>
+     */
+    #[ORM\OneToMany(targetEntity: Point::class, mappedBy: 'line', orphanRemoval: true)]
+    private Collection $points;
+
+    public function __construct()
+    {
+        $this->points = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -86,18 +96,6 @@ class Line
         return $this;
     }
 
-    public function getPoints(): ?array
-    {
-        return $this->points;
-    }
-
-    public function setPoints(?array $points): static
-    {
-        $this->points = $points;
-
-        return $this;
-    }
-
     public function getBloc(): ?bloc
     {
         return $this->bloc;
@@ -106,6 +104,36 @@ class Line
     public function setBloc(?bloc $bloc): static
     {
         $this->bloc = $bloc;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Point>
+     */
+    public function getPoints(): Collection
+    {
+        return $this->points;
+    }
+
+    public function addPoint(Point $point): static
+    {
+        if (!$this->points->contains($point)) {
+            $this->points->add($point);
+            $point->setLine($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoint(Point $point): static
+    {
+        if ($this->points->removeElement($point)) {
+            // set the owning side to null (unless already changed)
+            if ($point->getLine() === $this) {
+                $point->setLine(null);
+            }
+        }
 
         return $this;
     }
