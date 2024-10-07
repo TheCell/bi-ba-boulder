@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SectorRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,8 +22,16 @@ class Sector
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\ManyToOne(inversedBy: 'sector')]
-    private ?Bloc $blocs = null;
+    /**
+     * @var Collection<int, Bloc>
+     */
+    #[ORM\OneToMany(targetEntity: Bloc::class, mappedBy: 'sector', orphanRemoval: true)]
+    private Collection $blocs;
+
+    public function __construct()
+    {
+        $this->blocs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -52,14 +62,32 @@ class Sector
         return $this;
     }
 
-    public function getBlocs(): ?Bloc
+    /**
+     * @return Collection<int, Bloc>
+     */
+    public function getBlocs(): Collection
     {
         return $this->blocs;
     }
 
-    public function setBlocs(?Bloc $blocs): static
+    public function addBloc(Bloc $bloc): static
     {
-        $this->blocs = $blocs;
+        if (!$this->blocs->contains($bloc)) {
+            $this->blocs->add($bloc);
+            $bloc->setSector($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBloc(Bloc $bloc): static
+    {
+        if ($this->blocs->removeElement($bloc)) {
+            // set the owning side to null (unless already changed)
+            if ($bloc->getSector() === $this) {
+                $bloc->setSector(null);
+            }
+        }
 
         return $this;
     }

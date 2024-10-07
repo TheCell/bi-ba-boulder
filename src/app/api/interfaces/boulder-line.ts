@@ -9,5 +9,4 @@ export interface BoulderLine {
   name?: string;
   grade: FontGrade;
   description?: string;
-  date?: Date;
 }

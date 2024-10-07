@@ -23,14 +23,18 @@ class Bloc
     private ?string $description = null;
 
     /**
-     * @var Collection<int, Sector>
+     * @var Collection<int, Line>
      */
-    #[ORM\OneToMany(targetEntity: Sector::class, mappedBy: 'blocs')]
-    private Collection $sector;
+    #[ORM\OneToMany(targetEntity: Line::class, mappedBy: 'bloc', orphanRemoval: true)]
+    private Collection $boulderLines;
+
+    #[ORM\ManyToOne(inversedBy: 'blocs')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Sector $sector = null;
 
     public function __construct()
     {
-        $this->sector = new ArrayCollection();
+        $this->boulderLines = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -63,31 +67,43 @@ class Bloc
     }
 
     /**
-     * @return Collection<int, Sector>
+     * @return Collection<int, Line>
      */
-    public function getSector(): Collection
+    public function getBoulderLines(): Collection
     {
-        return $this->sector;
+        return $this->boulderLines;
     }
 
-    public function addSector(Sector $sector): static
+    public function addBoulderLine(Line $boulderLine): static
     {
-        if (!$this->sector->contains($sector)) {
-            $this->sector->add($sector);
-            $sector->setBlocs($this);
+        if (!$this->boulderLines->contains($boulderLine)) {
+            $this->boulderLines->add($boulderLine);
+            $boulderLine->setBloc($this);
         }
 
         return $this;
     }
 
-    public function removeSector(Sector $sector): static
+    public function removeBoulderLine(Line $boulderLine): static
     {
-        if ($this->sector->removeElement($sector)) {
+        if ($this->boulderLines->removeElement($boulderLine)) {
             // set the owning side to null (unless already changed)
-            if ($sector->getBlocs() === $this) {
-                $sector->setBlocs(null);
+            if ($boulderLine->getBloc() === $this) {
+                $boulderLine->setBloc(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSector(): ?Sector
+    {
+        return $this->sector;
+    }
+
+    public function setSector(?Sector $sector): static
+    {
+        $this->sector = $sector;
 
         return $this;
     }
