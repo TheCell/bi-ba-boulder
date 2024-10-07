@@ -1,4 +1,12 @@
 # Setup
+- Install Symfony
+
+# Start
+Open Powershell in the subfolder symfony-project
+Start the Server: ``symfony server:start``
+Stop the Server: ``symfony server:stop``
+
+# all outdated:
 Install XAMPP locally and setup the Database in the database folder.
 
 Then symlink this Folder in your XAMPP PHP directory.

@@ -1,4 +1,10 @@
 {
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
-  "recommendations": ["angular.ng-template"]
+  "recommendations": [
+    "angular.ng-template",
+    "bmewburn.vscode-intelephense-client",
+    "neilbrayfield.php-docblocker",
+    "mehedidracula.php-namespace-resolver",
+    "nadim-vscode.symfony-code-snippets"
+  ]
 }
