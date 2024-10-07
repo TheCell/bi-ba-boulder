@@ -13,3 +13,7 @@ The next todos:
 Generate interface etc. from json: https://app.quicktype.io/
 
 to simulate the database locally I use XAMPP
+
+# The Backend
+The Backend is build with PHP, MySQL
+I'm using Symfony for the Backend and Composer to create the Files etc.
