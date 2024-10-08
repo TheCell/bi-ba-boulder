@@ -20,8 +20,7 @@ Create a new Entity:
 Create a migration:
 ``symfony console make:migration``
 ``symfony console doctrine:migrations:migrate``
-``php bin/console doctrine:migrations:migrate --dry-run --write-sql=./migrations``
-
+``symfony console doctrine:migrations:migrate --dry-run --write-sql=./migrations``
 
 # all outdated:
 Install XAMPP locally and setup the Database in the database folder.
