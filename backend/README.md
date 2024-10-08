@@ -22,6 +22,12 @@ Create a migration:
 ``symfony console doctrine:migrations:migrate``
 ``symfony console doctrine:migrations:migrate --dry-run --write-sql=./migrations``
 
+Create a Controller:
+``symfony console make:controller BlocsController``
+
+Routing:
+``symfony console debug:router``
+
 # all outdated:
 Install XAMPP locally and setup the Database in the database folder.
 
