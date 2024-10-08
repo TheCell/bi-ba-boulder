@@ -15,12 +15,32 @@ class BlocsController extends AbstractController
         $this->blocRepository = $blocRepository;
     }
 
-    #[Route('/blocs', name: 'app_blocs')]
-    public function index(): JsonResponse
+    #[Route('/blocs', name: 'get-blocs')]
+    public function getBlocs(): JsonResponse
     {
         $blocs = $this->blocRepository->findAll();
-        dd($blocs); // dd is a helper function that dumps the given variables and ends execution of the script
 
-        return $this->json($blocs);
+        $blocsArray = [];
+        foreach ($blocs as $bloc) {
+            $blocsArray[] = [
+                'id' => $bloc->getId(),
+                'name' => $bloc->getName(),
+                'description' => $bloc->getDescription()
+            ];
+        }
+
+        return $this->json($blocsArray);
+    }
+
+    #[Route('/blocs/{id}', name: 'get-bloc', methods: ['GET', 'HEAD'])]
+    public function getBloc($id): JsonResponse
+    {
+        $bloc = $this->blocRepository->find($id);
+
+        return $this->json([
+          'id' => $bloc->getId(),
+          'name' => $bloc->getName(),
+          'description' => $bloc->getDescription()
+        ]);
     }
 }
