@@ -25,7 +25,10 @@ class BlocsController extends AbstractController
             $blocsArray[] = [
                 'id' => $bloc->getId(),
                 'name' => $bloc->getName(),
-                'description' => $bloc->getDescription()
+                'description' => $bloc->getDescription(),
+                'blocLowRes' => $bloc->getBlocLowRes(),
+                'blocMedRes' => $bloc->getBlocMedRes(),
+                'blocHighRes' => $bloc->getBlocHighRes(),
             ];
         }
 
@@ -40,7 +43,10 @@ class BlocsController extends AbstractController
         return $this->json([
           'id' => $bloc->getId(),
           'name' => $bloc->getName(),
-          'description' => $bloc->getDescription()
+          'description' => $bloc->getDescription(),
+          'blocLowRes' => $bloc->getBlocLowRes(),
+          'blocMedRes' => $bloc->getBlocMedRes(),
+          'blocHighRes' => $bloc->getBlocHighRes(),
         ]);
     }
 }

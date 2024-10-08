@@ -32,6 +32,15 @@ class Bloc
     #[ORM\JoinColumn(nullable: false)]
     private ?Sector $sector = null;
 
+    #[ORM\Column(length: 2048, nullable: true)]
+    private ?string $blocLowRes = null;
+
+    #[ORM\Column(length: 2048, nullable: true)]
+    private ?string $blocMedRes = null;
+
+    #[ORM\Column(length: 2048, nullable: true)]
+    private ?string $blocHighRes = null;
+
     public function __construct()
     {
         $this->boulderLines = new ArrayCollection();
@@ -104,6 +113,42 @@ class Bloc
     public function setSector(?Sector $sector): static
     {
         $this->sector = $sector;
+
+        return $this;
+    }
+
+    public function getBlocLowRes(): ?string
+    {
+        return $this->blocLowRes;
+    }
+
+    public function setBlocLowRes(?string $blocLowRes): static
+    {
+        $this->blocLowRes = $blocLowRes;
+
+        return $this;
+    }
+
+    public function getBlocMedRes(): ?string
+    {
+        return $this->blocMedRes;
+    }
+
+    public function setBlocMedRes(?string $blocMedRes): static
+    {
+        $this->blocMedRes = $blocMedRes;
+
+        return $this;
+    }
+
+    public function getBlocHighRes(): ?string
+    {
+        return $this->blocHighRes;
+    }
+
+    public function setBlocHighRes(?string $blocHighRes): static
+    {
+        $this->blocHighRes = $blocHighRes;
 
         return $this;
     }
