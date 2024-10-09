@@ -22,6 +22,8 @@ Create a migration:
 ``symfony console doctrine:migrations:migrate``
 ``php bin/console doctrine:migrations:migrate --dry-run --write-sql=./migrations``
 
+generate openAPI:
+``npx openapi-generator-cli generate -i http://localhost:8000/api/doc.json -g typescript-angular -o src/app/core/api``
 
 # all outdated:
 Install XAMPP locally and setup the Database in the database folder.
