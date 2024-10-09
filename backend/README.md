@@ -20,9 +20,15 @@ Create a new Entity:
 Create a migration:
 ``symfony console make:migration``
 ``symfony console doctrine:migrations:migrate``
-``php bin/console doctrine:migrations:migrate --dry-run --write-sql=./migrations``
+``symfony console doctrine:migrations:migrate --dry-run --write-sql=./migrations``
 
-generate openAPI:
+Create a Controller:
+``symfony console make:controller BlocsController``
+
+Routing:
+``symfony console debug:router``
+
+generate openAPI todo:
 ``npx openapi-generator-cli generate -i http://localhost:8000/api/doc.json -g typescript-angular -o src/app/core/api``
 
 # all outdated:
