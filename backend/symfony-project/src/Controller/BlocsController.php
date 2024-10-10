@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use ApiPlatform\Metadata\ApiResource;
+use App\DTO\BlocDto;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use App\Repository\BlocRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[AsController]
 class BlocsController extends AbstractController
 {
     private $blocRepository;
@@ -35,7 +39,14 @@ class BlocsController extends AbstractController
         return $this->json($blocsArray);
     }
 
-    #[Route('/blocs/{id}', name: 'get-bloc', methods: ['GET', 'HEAD'])]
+    #[Route(
+      path: '/blocs/{id}',
+      name: 'get-bloc',
+      methods: ['GET', 'HEAD'],
+      defaults: [
+        '_api_resource_class' => BlocDto::class,
+        '_api_operation_name' => 'getBloc'
+      ])]
     public function getBloc($id): JsonResponse
     {
         $bloc = $this->blocRepository->find($id);
