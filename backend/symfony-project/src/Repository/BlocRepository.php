@@ -16,20 +16,20 @@ class BlocRepository extends ServiceEntityRepository
         parent::__construct($registry, Bloc::class);
     }
 
-    //    /**
-    //     * @return Bloc[] Returns an array of Bloc objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('b.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+       /**
+        * @return Bloc[] Returns an array of Bloc objects
+        */
+       public function findBySectorId($value): array
+       {
+           return $this->createQueryBuilder('b')
+               ->andWhere('b.sector = :val')
+               ->setParameter('val', $value)
+               ->orderBy('b.id', 'ASC')
+               ->setMaxResults(100)
+               ->getQuery()
+               ->getResult()
+           ;
+       }
 
        public function findById($value): ?Bloc
        {

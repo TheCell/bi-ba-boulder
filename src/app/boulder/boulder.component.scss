@@ -1,34 +1,48 @@
 .grid {
-    display: grid;
-    height: 100%;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 60% 40%;
-    grid-template-areas:
-    "boulder boulder"
-    "legend legend";
+  display: grid;
+  height: 100%;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 60% 40%;
+  grid-template-areas:
+  "boulder boulder"
+  "legend legend";
 }
 
 .imageContainer {
-    grid-area: boulder;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+  grid-area: boulder;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 1;
+  z-index: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+  .image.fadeOut {
+  opacity: 0;
 }
 
 .render {
-    width: 100%;
-    height: 100%;
-    position: absolute;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
 }
 
 .boulderLegend {
-    grid-area: legend;
+  grid-area: legend;
+  border-image: linear-gradient(to right, #3acfd5 0%, #2c39e9 100%) 1;
+  border-width: 20px;
+  border-style: solid;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
 }

@@ -19,29 +19,30 @@ class BlocsController extends AbstractController
         $this->blocRepository = $blocRepository;
     }
 
-    #[Route('/blocs', name: 'blocs', methods: ['GET'])]
+    #[Route('/blocs/by-sector/{id}', name: 'blocs-by-sector-id', methods: ['GET'])]
     #[OA\Response(
       response: 200,
-      description: 'Returns the list of blocs',
+      description: 'Returns the list of blocs for the sector',
       content: new OA\JsonContent(
         type: 'array',
         items: new OA\Items(ref: new Model(type: BlocDto::class))
       )
     )]
-    public function getBlocs(): JsonResponse
+    public function getBlocsBySectorId($id): JsonResponse
     {
-        $blocs = $this->blocRepository->findAll();
+        $blocs = $this->blocRepository->findBySectorId($id);
 
         $blocsArray = [];
         foreach ($blocs as $bloc) {
-            $blocsArray[] = [
-                'id' => $bloc->getId(),
-                'name' => $bloc->getName(),
-                'description' => $bloc->getDescription(),
-                'blocLowRes' => $bloc->getBlocLowRes(),
-                'blocMedRes' => $bloc->getBlocMedRes(),
-                'blocHighRes' => $bloc->getBlocHighRes(),
-            ];
+            $blocDto = new BlocDto (
+                $bloc->getId(),
+                $bloc->getName(),
+                $bloc->getDescription(),
+                $bloc->getBlocLowRes(),
+                $bloc->getBlocMedRes(),
+                $bloc->getBlocHighRes()
+            );
+            array_push($blocsArray, get_object_vars($blocDto));
         }
 
         return $this->json($blocsArray);

@@ -14,6 +14,7 @@ import { FONT_GRADE } from '../../interfaces/font-grade';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoulderLegendComponent {
-  public lines = input.required<BoulderLine[]>();
+  public lines = input<BoulderLine[]>([]);
+  public title = input<string>();
   public FONT_GRADE = FONT_GRADE;
 }

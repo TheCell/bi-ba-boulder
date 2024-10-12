@@ -7,7 +7,7 @@ import { BoulderProblemsService } from '../background-loading/boulder-problems.s
 import { Subject, Subscription } from 'rxjs';
 import { BoulderLegendComponent } from '../components/boulder-legend/boulder-legend.component';
 import { ActivatedRoute } from '@angular/router';
-import { BlocDto, DefaultService } from '../api';
+import { DefaultService } from '../api';
 import { BoulderLine } from '../interfaces/boulder-line';
 import { ResolutionLevel } from '../interfaces/resolution-level';
 import { HttpClient } from '@angular/common/http';
@@ -49,22 +49,6 @@ export class DaoneTestComponent implements OnDestroy {
     this.image = './test-images/Bloc_5.jpg';
     this.boulderImageUrl = this.domSanitizer.bypassSecurityTrustStyle('url(./test-images/Bloc_5.jpg)');
     this.number = this.activatedRoute.snapshot.paramMap.get('number');
-    defaultService.getBlocs().subscribe({
-      next: (data: BlocDto[]) => {
-        console.log(data);
-      }
-    });
-
-    defaultService.getBloc("1").subscribe({
-      next: (data: BlocDto) => {
-        console.log(data);
-      }
-    });
-    this.httpClient.get('/api/blocs').subscribe({
-      next(value) {
-        console.log(value);
-      },
-    })
 
     setTimeout(() => {
       // faking for now

@@ -13,6 +13,6 @@ class SectorDto
     #[Assert\NotBlank]
     public string $name,
 
-    public string $description)
+    public ?string $description)
   { }
 }

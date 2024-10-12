@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\LineDto;
 use App\Repository\LineRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,13 +20,22 @@ class LinesController extends AbstractController
     #[Route('/lines/by-bloc/{blocId}', name: 'lines', methods: ['GET'])]
     public function getLinesByBloc($blocId): JsonResponse
     {
-        // todo
-        $lines = $this->lineRepository->findBy(['bloc' => $blocId]);
-        dd($lines);
+        $lines = $this->lineRepository->findLinesByBlocId($blocId);
+        // dd($lines);
 
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/LinesController.php',
-        ]);
+        $lineArray = [];
+        foreach ($lines as $line) {
+            $lineDto = new LineDto (
+                $line->getId(),
+                $line->getBloc().getId(),
+                $line->getIdentifier(),
+                $line->getDescription(),
+                $line->getColor(),
+                $line->getName()
+            );
+            array_push($sectorsArray, get_object_vars($lineDto));
+        }
+
+        return $this->json($lineArray);
     }
 }

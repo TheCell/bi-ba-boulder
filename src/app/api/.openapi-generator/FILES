@@ -9,5 +9,6 @@ git_push.sh
 index.ts
 model/blocDto.ts
 model/models.ts
+model/sectorDto.ts
 param.ts
 variables.ts

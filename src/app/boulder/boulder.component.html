@@ -1,17 +1,20 @@
 <div class="grid">
-    <!-- boulder render  -->
-    <section class="imageContainer">
-        <app-boulder-render class="render"></app-boulder-render>
-        <img class="image" [src]="image" alt="photo of the boulder">
+  <section class="imageContainer">
+    @if (currentRawModel !== undefined) {
+      <app-boulder-render
+        class="render"
+        [lines]="currentLines"
+        [rawModel]="currentRawModel">
+      </app-boulder-render>
+    }
 
-    </section>
+    <img class="image" [src]="image" [ngClass]="{ fadeOut: currentRawModel !== undefined }" alt="photo of the boulder">
+  </section>
 
-    <!-- legend -->
-    <section class="boulderLegend">
-        <ol>
-            <li>Boulder 1</li>
-            <li>Boulder 2</li>
-            <li>Boulder 3</li>
-        </ol>
-    </section>
+  <section class="boulderLegend">
+    <app-boulder-legend
+      [title]="bloc.name"
+      [lines]="currentLines">
+    </app-boulder-legend>
+  </section>
 </div>

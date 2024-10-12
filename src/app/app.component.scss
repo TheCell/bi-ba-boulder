@@ -1,3 +1,15 @@
 nav {
-  position: absolute;
+  // position: absolute;
+  // height: 60px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+ul li {
+  margin-right: 10px;
 }

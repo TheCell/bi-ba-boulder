@@ -1,0 +1,5 @@
+<ul>
+  @for (bloc of blocs; track bloc.id) {
+    <li><a [routerLink]="['/', 'boulder', bloc.id]" routerLinkActive="router-link-active">{{ bloc.name }}</a></li>
+  }
+</ul>

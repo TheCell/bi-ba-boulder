@@ -31,13 +31,13 @@ class SectorRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Sector
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+   public function findById($value): ?Sector
+   {
+       return $this->createQueryBuilder('s')
+           ->andWhere('s.id = :val')
+           ->setParameter('val', $value)
+           ->getQuery()
+           ->getOneOrNullResult()
+       ;
+   }
 }

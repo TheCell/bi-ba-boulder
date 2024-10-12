@@ -30,7 +30,7 @@ class Line
 
     #[ORM\ManyToOne(inversedBy: 'boulderLines')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?bloc $bloc = null;
+    private ?Bloc $bloc = null;
 
     /**
      * @var Collection<int, Point>
@@ -96,12 +96,12 @@ class Line
         return $this;
     }
 
-    public function getBloc(): ?bloc
+    public function getBloc(): ?Bloc
     {
         return $this->bloc;
     }
 
-    public function setBloc(?bloc $bloc): static
+    public function setBloc(?Bloc $bloc): static
     {
         $this->bloc = $bloc;
 
