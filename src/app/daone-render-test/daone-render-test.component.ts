@@ -10,7 +10,7 @@ import { HSLToHex } from '../utils/color-util';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { fitCameraToCenteredObject } from '../utils/camera-utils';
-import { BoulderLine } from '../api/interfaces/boulder-line';
+import { BoulderLine } from '../interfaces/boulder-line';
 
 @Component({
   selector: 'app-daone-render-test',

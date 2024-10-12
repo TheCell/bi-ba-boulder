@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build --base-href /bi-ba-boulder/",
+    "start": "ng serve --configuration=development",
+    "build": "ng build --base-href /bi-ba-boulder/ --configuration=production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "generate:api": "openapi-generator-cli generate -i http://localhost:8000/api/doc.json -g typescript-angular -o src/app/api"
   },
   "private": true,
   "dependencies": {

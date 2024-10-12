@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { BoulderLine } from '../../api/interfaces/boulder-line';
-import { FONT_GRADE } from '../../api/interfaces/font-grade';
+import { BoulderLine } from '../../interfaces/boulder-line';
+import { FONT_GRADE } from '../../interfaces/font-grade';
 
 @Component({
   selector: 'app-boulder-legend',

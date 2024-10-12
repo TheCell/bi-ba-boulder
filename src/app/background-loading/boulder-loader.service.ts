@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ResolutionLevel } from '../api/interfaces/resolution-level';
+import { ResolutionLevel } from '../interfaces/resolution-level';
 
 @Injectable({
   providedIn: 'root'

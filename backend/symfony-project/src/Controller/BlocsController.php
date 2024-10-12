@@ -2,11 +2,15 @@
 
 namespace App\Controller;
 
+use App\DTO\BlocDto;
 use App\Repository\BlocRepository;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use OpenApi\Attributes as OA;
 
+#[Route('/api', name: 'api_')]
 class BlocsController extends AbstractController
 {
     private $blocRepository;
@@ -16,6 +20,14 @@ class BlocsController extends AbstractController
     }
 
     #[Route('/blocs', name: 'get-blocs')]
+    #[OA\Response(
+      response: 200,
+      description: 'Returns the list of blocs',
+      content: new OA\JsonContent(
+        type: 'array',
+        items: new OA\Items(ref: new Model(type: BlocDto::class))
+      )
+    )]
     public function getBlocs(): JsonResponse
     {
         $blocs = $this->blocRepository->findAll();

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BoulderLine } from '../api/interfaces/boulder-line';
 import { Observable, of } from 'rxjs';
+import { BoulderLine } from '../interfaces/boulder-line';
 
 @Injectable({
   providedIn: 'root'

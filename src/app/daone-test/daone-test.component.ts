@@ -5,10 +5,12 @@ import { DaoneRenderTestComponent } from '../daone-render-test/daone-render-test
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { BoulderProblemsService } from '../background-loading/boulder-problems.service';
 import { Subject, Subscription } from 'rxjs';
-import { ResolutionLevel } from '../api/interfaces/resolution-level';
-import { BoulderLine } from '../api/interfaces/boulder-line';
 import { BoulderLegendComponent } from '../components/boulder-legend/boulder-legend.component';
 import { ActivatedRoute } from '@angular/router';
+import { BlocDto, DefaultService } from '../api';
+import { BoulderLine } from '../interfaces/boulder-line';
+import { ResolutionLevel } from '../interfaces/resolution-level';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-daone-test',
@@ -38,14 +40,25 @@ export class DaoneTestComponent implements OnDestroy {
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
     private boulderProblemsService: BoulderProblemsService,
+    private defaultService: DefaultService,
     private domSanitizer: DomSanitizer,
     private changeDetectorRef: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private httpClient: HttpClient) {
     this.title = 'test';
     this.image = './test-images/Bloc_5.jpg';
     this.boulderImageUrl = this.domSanitizer.bypassSecurityTrustStyle('url(./test-images/Bloc_5.jpg)');
     this.number = this.activatedRoute.snapshot.paramMap.get('number');
-
+    defaultService.getApiGetBlocs().subscribe({
+      next: (data: BlocDto[]) => {
+        console.log(data);
+      }
+    })
+    this.httpClient.get('/api/blocs').subscribe({
+      next(value) {
+        console.log(value);
+      },
+    })
     setTimeout(() => {
       // faking for now
       this.modelLoaded = true;

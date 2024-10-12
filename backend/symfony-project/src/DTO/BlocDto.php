@@ -13,6 +13,12 @@ class BlocDto
       #[Assert\NotBlank]
       public string $name,
 
-      public string $description)
+      public string $description,
+
+      public string $blocLowRes,
+
+      public string $blocMedRes,
+
+      public string $blocHighRes)
     { }
 }
