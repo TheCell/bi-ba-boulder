@@ -49,7 +49,7 @@ export class DaoneTestComponent implements OnDestroy {
     this.image = './test-images/Bloc_5.jpg';
     this.boulderImageUrl = this.domSanitizer.bypassSecurityTrustStyle('url(./test-images/Bloc_5.jpg)');
     this.number = this.activatedRoute.snapshot.paramMap.get('number');
-    defaultService.getApiGetBlocs().subscribe({
+    defaultService.getBlocs().subscribe({
       next: (data: BlocDto[]) => {
         console.log(data);
       }
@@ -59,6 +59,7 @@ export class DaoneTestComponent implements OnDestroy {
         console.log(value);
       },
     })
+
     setTimeout(() => {
       // faking for now
       this.modelLoaded = true;

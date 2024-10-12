@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api', name: 'api_')]
+#[Route('/api', name: '')]
 class LinesController extends AbstractController
 {
     private $lineRepository;
@@ -16,7 +16,7 @@ class LinesController extends AbstractController
         $this->lineRepository = $lineRepository;
     }
 
-    #[Route('/lines/by-bloc/{blocId}', name: 'get-lines')]
+    #[Route('/lines/by-bloc/{blocId}', name: 'lines', methods: ['GET'])]
     public function getLinesByBloc($blocId): JsonResponse
     {
         // todo

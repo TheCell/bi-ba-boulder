@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api', name: 'api_')]
+#[Route('/api', name: '')]
 class SectorsController extends AbstractController
 {
     private $sectorRepository;
@@ -16,7 +16,7 @@ class SectorsController extends AbstractController
         $this->sectorRepository = $sectorRepository;
     }
 
-    #[Route('/sectors', name: 'get-sectors')]
+    #[Route('/sectors', name: 'sectors', methods: ['GET'])]
     public function index(): JsonResponse
     {
         $sectors = $this->sectorRepository->findAll();
@@ -33,7 +33,7 @@ class SectorsController extends AbstractController
         return $this->json($sectorsArray);
     }
 
-    #[Route('/sectors/{id}', name: 'get-sector', methods: ['GET', 'HEAD'])]
+    #[Route('/sectors/{id}', name: 'sector', methods: ['GET'])]
     public function getSector($id): JsonResponse
     {
         $sector = $this->sectorRepository->find($id);

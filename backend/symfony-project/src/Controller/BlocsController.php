@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
-#[Route('/api', name: 'api_')]
+#[Route('/api', name: '')]
 class BlocsController extends AbstractController
 {
     private $blocRepository;
@@ -19,7 +19,7 @@ class BlocsController extends AbstractController
         $this->blocRepository = $blocRepository;
     }
 
-    #[Route('/blocs', name: 'get-blocs')]
+    #[Route('/blocs', name: 'blocs', methods: ['GET'])]
     #[OA\Response(
       response: 200,
       description: 'Returns the list of blocs',
@@ -47,7 +47,7 @@ class BlocsController extends AbstractController
         return $this->json($blocsArray);
     }
 
-    #[Route('/blocs/{id}', name: 'get-bloc', methods: ['GET', 'HEAD'])]
+    #[Route('/blocs/{id}', name: 'bloc', methods: ['GET'])]
     public function getBloc($id): JsonResponse
     {
         $bloc = $this->blocRepository->find($id);
