@@ -53,7 +53,13 @@ export class DaoneTestComponent implements OnDestroy {
       next: (data: BlocDto[]) => {
         console.log(data);
       }
-    })
+    });
+
+    defaultService.getBloc("1").subscribe({
+      next: (data: BlocDto) => {
+        console.log(data);
+      }
+    });
     this.httpClient.get('/api/blocs').subscribe({
       next(value) {
         console.log(value);

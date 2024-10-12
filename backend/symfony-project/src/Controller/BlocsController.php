@@ -50,7 +50,7 @@ class BlocsController extends AbstractController
     #[Route('/blocs/{id}', name: 'bloc', methods: ['GET'])]
     public function getBloc($id): JsonResponse
     {
-        $bloc = $this->blocRepository->find($id);
+        $bloc = $this->blocRepository->findById($id);
 
         return $this->json([
           'id' => $bloc->getId(),
