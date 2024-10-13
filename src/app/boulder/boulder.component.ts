@@ -8,6 +8,8 @@ import { BlocDto } from '../api';
 import { BoulderLine } from '../interfaces/boulder-line';
 import { ResolutionLevel } from '../interfaces/resolution-level';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
+import { environment } from '../../environments/environment';
+import { BoulderDebugRenderComponent } from '../boulder-debug-render/boulder-debug-render.component';
 
 @Component({
   selector: 'app-boulder',
@@ -15,6 +17,7 @@ import { BoulderLoaderService } from '../background-loading/boulder-loader.servi
   imports: [
     CommonModule,
     BoulderRenderComponent,
+    BoulderDebugRenderComponent,
     BoulderLegendComponent
   ],
   templateUrl: './boulder.component.html',
@@ -23,6 +26,7 @@ import { BoulderLoaderService } from '../background-loading/boulder-loader.servi
 })
 export class BoulderComponent implements OnDestroy {
   public bloc: BlocDto;
+  public debugRenderView = environment.debugRender;
 
   public currentRawModel?: ArrayBuffer = undefined;
   public currentLines: BoulderLine[] = [];
@@ -30,7 +34,6 @@ export class BoulderComponent implements OnDestroy {
   private loadNextResolution = new Subject<void>();
   private startLoadingBoulder = new Subject<void>();
   private subscription = new Subscription();
-  private blocId: string | null;
   private boulderUrl = '';
   private resolutionToLoad?: ResolutionLevel;
 
@@ -40,7 +43,6 @@ export class BoulderComponent implements OnDestroy {
     private activatedRoute: ActivatedRoute,
     private changeDetectorRef: ChangeDetectorRef) {
       this.bloc = this.activatedRoute.snapshot.data['bloc'];
-      this.blocId = this.activatedRoute.snapshot.paramMap.get('id');
 
       this.subscription.add(this.loadNextResolution.subscribe({
         next: () => {

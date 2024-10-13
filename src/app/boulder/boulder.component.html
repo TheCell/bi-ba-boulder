@@ -1,20 +1,39 @@
 <div class="grid">
   <section class="imageContainer">
     @if (currentRawModel !== undefined) {
-      <app-boulder-render
-        class="render"
-        [lines]="currentLines"
-        [rawModel]="currentRawModel">
-      </app-boulder-render>
+      @if (debugRenderView) {
+        <app-boulder-debug-render
+          class="render"
+          [blocId]="bloc.id"
+          [lines]="currentLines"
+          [rawModel]="currentRawModel">
+        </app-boulder-debug-render>
+      } @else {
+        <app-boulder-render
+          class="render"
+          [lines]="currentLines"
+          [rawModel]="currentRawModel">
+        </app-boulder-render>
+      }
     }
 
+    <!-- todo: replace with logo -->
     <img class="image" [src]="'./images/giphy.webp'" [ngClass]="{ fadeOut: currentRawModel !== undefined }" alt="photo of the boulder">
   </section>
 
-  <section class="boulderLegend">
-    <app-boulder-legend
-      [title]="bloc.name"
-      [lines]="currentLines">
-    </app-boulder-legend>
-  </section>
+  @if (debugRenderView) {
+    <section class="boulderLegend" [ngStyle]="{ 'border-image': 'linear-gradient(to right, red 0%, green 100%) 1' }">
+      <app-boulder-legend
+        [title]="bloc.name"
+        [lines]="currentLines">
+      </app-boulder-legend>
+    </section>
+  } @else {
+    <section class="boulderLegend">
+      <app-boulder-legend
+        [title]="bloc.name"
+        [lines]="currentLines">
+      </app-boulder-legend>
+    </section>
+  }
 </div>
