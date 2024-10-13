@@ -249,7 +249,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
   private printClickPoints(): void {
     console.log(`INSERT INTO line (bloc_id, color, name, identifier) VALUES (${this.blocId()}, "#${this.currentLineMaterial.color.getHexString()}", "${'todo'.appendUniqueId()}", "${'todo'.appendUniqueId()}")
-SET @newLineId = todo;
+SET @newLineId = (SELECT LAST_INSERT_ID());
 INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(@newLineId, ${point.x}, ${point.y}, ${point.z})`).join(', ')}`);
   }
 
