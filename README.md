@@ -23,3 +23,8 @@ to simulate the database locally I use XAMPP
 # The Backend
 The Backend is build with PHP, MySQL   
 I'm using Symfony for the Backend and Composer to create the Files etc.
+
+# Starting the Devtools
+1. start xampp
+2. npm start
+3. in a second terminal `cd .\backend\symfony-project\` and then `symfony server:start`
