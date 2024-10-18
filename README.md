@@ -14,6 +14,7 @@ The next todos:
 [] sector overview  
 [] line, boulder, sector search  
 [] hover over line  
+[] height indicator  
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/
