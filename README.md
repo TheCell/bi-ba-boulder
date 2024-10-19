@@ -1,5 +1,7 @@
 # Bibaboulder
 
+![Build and Deploy](https://github.com/thecell/bi-ba-boulder/actions/workflows/build-and-publish.yml/badge.svg)
+
 The next todos:
 
 [x] Figure a route dto out  

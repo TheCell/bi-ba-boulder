@@ -9,7 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "monthly"
-  - package-ecosystem: "Composer" # See documentation for possible values
+  - package-ecosystem: "composer" # See documentation for possible values
     directory: "/backend/symfony-project" # Location of package manifests
     schedule:
       interval: "monthly"

@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Detect package manager
         id: detect-package-manager
         run: |
@@ -48,7 +48,7 @@ jobs:
             echo "Unable to determine package manager"
             exit 1
           fi
-          
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -72,10 +72,10 @@ jobs:
       #       --site "https://newblog.thecell.eu/"
       #   working-directory: ${{ env.BUILD_PATH }}
 
-      # - name: Build Pagefind
-      #   run: npm run postbuild
-      #   working-directory: ${{ env.BUILD_PATH }}
-        
+      - name: Build Frontend
+        run: npm run buildpipeline
+        working-directory: ${{ env.BUILD_PATH }}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -87,9 +87,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
         contents: write
-        
+
     needs: build
-    
+
     steps:
     - name: Download artifact
       uses: actions/download-artifact@v4
@@ -97,15 +97,15 @@ jobs:
         name: Build
 
     - run: mkdir dist
-            
+
     - name: extract artifact for deployment
     # x – instructs tar to extract the files from the zipped file
     # v – means verbose, or to list out the files it’s extracting
     # f – tells tar the filename you want it to work on
       run: tar -xvf artifact.tar -C ./dist
-          
+
     - run: ls -R
-    
+
     - name: Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
