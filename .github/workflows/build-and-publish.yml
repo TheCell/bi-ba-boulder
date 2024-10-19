@@ -141,7 +141,7 @@ jobs:
     # x – instructs tar to extract the files from the zipped file
     # v – means verbose, or to list out the files it’s extracting
     # f – tells tar the filename you want it to work on
-      run: tar -xvf artifact.tar -C ./api
+      run: tar -xvf artifact.tar -C /api
 
     - run: ls -R
 
