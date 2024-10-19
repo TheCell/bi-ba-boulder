@@ -60,18 +60,6 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
         working-directory: ${{ env.BUILD_PATH }}
 
-      # - name: Build TinaCMS
-      #   env:
-      #     NEXT_PUBLIC_TINA_CLIENT_ID: ${{ secrets.TINA_PUBLIC_CLIENT_ID }}
-      #     TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
-      #   run: npx tinacms build
-
-      # - name: Build with Astro
-      #   run: |
-      #     ${{ steps.detect-package-manager.outputs.runner }} astro build \
-      #       --site "https://newblog.thecell.eu/"
-      #   working-directory: ${{ env.BUILD_PATH }}
-
       - name: Build Frontend
         run: npm run buildpipeline
         working-directory: ${{ env.BUILD_PATH }}
@@ -79,7 +67,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.BUILD_PATH }}/dist
+          path: ${{ env.BUILD_PATH }}/dist/bibaboulder/browser
           name: Build
 
   web-deploy:
