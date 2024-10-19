@@ -7,8 +7,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use App\DTO\BlocDto;
 
-#[ORM\Entity(repositoryClass: BlocRepository::class)]
+// #[ORM\Entity(repositoryClass: BlocRepository::class)]
+#[ORM\Entity()]
+#[ApiResource(
+    operations: [
+        new Get(uriTemplate: 'bloc/{id}', routeName: 'get-bloc', output: BlocDto::class)
+    ]
+)]
 class Bloc
 {
     #[ORM\Id]

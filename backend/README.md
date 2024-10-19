@@ -9,6 +9,7 @@ Setup Db:
 Open Powershell in the subfolder symfony-project
 Start the Server: ``symfony server:start``
 Stop the Server: ``symfony server:stop``
+Check out the documentation: ``http://localhost:8000/api``
 
 # Dev
 Get all CLI commands:
