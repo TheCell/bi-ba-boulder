@@ -3,7 +3,7 @@
 - Change sql User in .env or Add the user
 
 In this directory use:
-``composer install``
+``composer install`` or ``composer update`` if you have already installed an older version
 ``npm install @openapitools/openapi-generator-cli -g``
 
 Setup Db:
