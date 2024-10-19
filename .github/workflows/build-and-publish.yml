@@ -139,7 +139,7 @@ jobs:
 
     - run: ls -R
 
-    - run: mv *(!api) api
+    - run: mv !(api) api
 
     - run: ls -R
 
