@@ -1,4 +1,4 @@
-name: Build and deploy Astro site
+name: Build and deploy
 
 on:
   # Runs on pushes targeting the default branch
@@ -76,7 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ["8.2", "8.3"]
+        php-versions: ["8.3"]
 
     steps:
       - name: Checkout
