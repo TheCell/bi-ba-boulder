@@ -80,9 +80,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: |
-            ${{ env.BUILD_PATH }}/backend/symfony-project
-            !${{ env.BUILD_PATH }}/backend/symfony-project/migrations
+          path: ${{ env.BUILD_PATH }}/backend/symfony-project
           name: Build
 
   web-deploy:
