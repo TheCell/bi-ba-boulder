@@ -135,6 +135,8 @@ jobs:
 
     - run: mkdir api
 
+    - run: ls -R
+
     - name: extract artifact for deployment
     # x – instructs tar to extract the files from the zipped file
     # v – means verbose, or to list out the files it’s extracting
