@@ -135,11 +135,11 @@ jobs:
       with:
         name: Backend_Build
 
-    # - run: mkdir api
+    - run: mkdir api
 
     - run: ls -R
 
-    - run: mv * api
+    - run: mv *(!api) api
 
     - run: ls -R
 
