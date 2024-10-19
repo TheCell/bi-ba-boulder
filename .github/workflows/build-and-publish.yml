@@ -139,8 +139,7 @@ jobs:
 
     - run: ls -R
 
-    - run: shopt -s extglob dotglob
-    - run: mv !(api) api
+    - run: ls | grep -v api | xargs mv -t api
 
     - run: ls -R
 
