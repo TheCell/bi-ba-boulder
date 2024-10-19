@@ -3,7 +3,7 @@
 - Change sql User in .env or Add the user
 
 In this directory use:
-``composer install`` or ``composer update`` if you have already installed an older version
+``composer install`` or ``composer update``
 ``npm install @openapitools/openapi-generator-cli -g``
 
 Setup Db:
@@ -22,10 +22,13 @@ Open Powershell in the subfolder symfony-project
 Stop the Server: ``symfony server:stop``
 
 # Generate OpenApi
-
 generate openAPI:
 ``npx openapi-generator-cli generate -i http://localhost:8000/api/doc.json -g typescript-angular -o src/app/api``
 then copy the generated api
+
+# Releasing
+TODO
+``composer dump-env prod``
 
 # Dev
 Get all CLI commands:
