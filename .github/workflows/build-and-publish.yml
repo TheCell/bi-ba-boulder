@@ -25,7 +25,7 @@ env:
 
 jobs:
   build:
-    name: Build
+    name: Build Frontend
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -68,6 +68,21 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ env.BUILD_PATH }}/dist/bibaboulder/browser
+          name: Build
+
+  pack_backend:
+    name: Pack backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: |
+            ${{ env.BUILD_PATH }}/backend/symfony-project
+            !${{ env.BUILD_PATH }}/backend/symfony-project/migrations
           name: Build
 
   web-deploy:
