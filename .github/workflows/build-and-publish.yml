@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ env.BUILD_PATH }}/dist/bibaboulder/browser
-          name: Build
+          name: Frontend_Build
 
   pack_backend:
     name: Pack backend
@@ -80,7 +80,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Backend
+          name: Backend_Build
           path: |
             ${{ env.BUILD_PATH }}/backend/symfony-project
             !${{ env.BUILD_PATH }}/backend/symfony-project/migrations
@@ -97,7 +97,7 @@ jobs:
     - name: Download Frontend artifact
       uses: actions/download-artifact@v4
       with:
-        name: Build
+        name: Frontend_Build
 
     - run: mkdir dist
 
@@ -131,7 +131,7 @@ jobs:
     - name: Download Backend artifact
       uses: actions/download-artifact@v4
       with:
-        name: Backend
+        name: Backend_Build
 
     - run: mkdir api
 
