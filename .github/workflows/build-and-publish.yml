@@ -73,9 +73,79 @@ jobs:
   pack_backend:
     name: Pack backend
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ["8.2", "8.3"]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # https://github.com/shivammathur/setup-php (community)
+      - name: Setup PHP
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: xdebug
+          tools: composer:v2
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql, pgsql, dom, filter, gd, json, mbstring, pdo
+        env:
+          update: true
+
+      - name: Print PHP version
+        working-directory: ./backend/symfony-project
+        run: echo ${{ steps.setup-php.outputs.php-version }}
+
+      - name: Get composer cache directory
+        id: composer-cache
+        working-directory: ./backend/symfony-project
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          # Use composer.json for key, if composer.lock is not committed.
+          # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        working-directory: ./backend/symfony-project
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      # —— Symfony ——————————————————————————————————————————————————————————
+      - name: Check Symfony requirements
+        working-directory: ./backend/symfony-project
+        run: |
+          echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' |sudo tee /etc/apt/sources.list.d/symfony-cli.list
+          sudo apt update
+          sudo apt install symfony-cli
+          symfony check:requirements
+          php bin/console -V
+      # —— Code style —— (Based on this package: https://github.com/OskarStark/php-cs-fixer-ga)
+      #- name: PHP-CS-Fixer
+      #  uses: docker://oskarstark/php-cs-fixer-ga
+      #  with:
+      #    args: --config=.php_cs.dist --diff --dry-run
+
+      # - name: Setup Database
+      #   run: |
+      #     docker compose up -d postgres
+      #     sleep 10
+      #     docker ps -a
+      # - name: Run Migrations
+      #   run: |
+      #     php ./bin/console doctrine:schema:create -n
+      #     php ./bin/console doctrine:fixtures:load --purge-with-truncate -n
+
+      # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+      # Docs: https://getcomposer.org/doc/articles/scripts.md
+      # - name: Run Tests
+      #   run: |
+      #     composer run-script test
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -84,42 +154,6 @@ jobs:
           path: |
             ${{ env.BUILD_PATH }}/backend/symfony-project
             !${{ env.BUILD_PATH }}/backend/symfony-project/migrations
-
-  # web-deploy-frontend:
-  #   name: Deploy Frontend
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #       contents: write
-
-  #   needs: [build]
-
-  #   steps:
-  #   - name: Download Frontend artifact
-  #     uses: actions/download-artifact@v4
-  #     with:
-  #       name: Frontend_Build
-
-  #   - run: mkdir dist
-
-  #   - run: ls -R
-
-  #   - name: extract artifact for deployment
-  #   # x – instructs tar to extract the files from the zipped file
-  #   # v – means verbose, or to list out the files it’s extracting
-  #   # f – tells tar the filename you want it to work on
-  #     run: tar -xvf artifact.tar -C ./dist
-
-  #   - run: ls -R
-
-  #   - name: Sync files
-  #     uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-  #     with:
-  #       server: boulder.thecell.eu
-  #       username: ${{ secrets.FTPUSER }}
-  #       password: ${{ secrets.FTPPASSWORD }}
-  #       protocol: ftp
-  #       port: 21
-  #       local-dir: dist/
 
   web-deploy-backend:
     name: Deploy Backend
@@ -148,8 +182,6 @@ jobs:
     # v – means verbose, or to list out the files it’s extracting
     # f – tells tar the filename you want it to work on
       # run: tar -xvf artifact.tar -C /api
-
-    # - run: ls -R
 
     - name: Download Backend artifact
       uses: actions/download-artifact@v4
