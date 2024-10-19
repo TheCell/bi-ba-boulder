@@ -78,21 +78,23 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: ${{ env.BUILD_PATH }}/backend/symfony-project
-          name: Build
+          name: Backend
+          path: |
+            ${{ env.BUILD_PATH }}/backend/symfony-project
+            !${{ env.BUILD_PATH }}/backend/symfony-project/migrations
 
-  web-deploy:
+  web-deploy-frontend:
     name: Deploy
     runs-on: ubuntu-latest
     permissions:
         contents: write
 
-    needs: build
+    needs: [build]
 
     steps:
-    - name: Download artifact
+    - name: Download Frontend artifact
       uses: actions/download-artifact@v4
       with:
         name: Build
@@ -116,3 +118,37 @@ jobs:
         protocol: ftp
         port: 21
         local-dir: dist/
+
+  web-deploy-backend:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+        contents: write
+
+    needs: [pack_backend]
+
+    steps:
+    - name: Download Backend artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: Backend
+
+    - run: mkdir api
+
+    - name: extract artifact for deployment
+    # x – instructs tar to extract the files from the zipped file
+    # v – means verbose, or to list out the files it’s extracting
+    # f – tells tar the filename you want it to work on
+      run: tar -xvf artifact.tar -C ./
+
+    - run: ls -R
+
+    - name: Sync files
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: boulder.thecell.eu
+        username: ${{ secrets.FTPUSER }}
+        password: ${{ secrets.FTPPASSWORD }}
+        protocol: ftp
+        port: 21
+        local-dir: ./
