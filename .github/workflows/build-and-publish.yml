@@ -98,9 +98,9 @@ jobs:
         working-directory: ./backend/symfony-project
         run: echo ${{ steps.setup-php.outputs.php-version }}
 
-      # - name: Install symfony
-      #   working-directory: ./backend/symfony-project
-      #   run: curl -sS https://get.symfony.com/cli/installer | bash
+      - name: Install symfony
+        working-directory: ./backend/symfony-project
+        run: curl -sS https://get.symfony.com/cli/installer | bash
 
       - name: Check requirements
         working-directory: ./backend/symfony-project
