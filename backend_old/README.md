@@ -4,7 +4,7 @@
 
 In this directory use:
 Copy the .env to .env.local file and insert the missing variables
-``composer install``
+``composer install`` or ``composer update``
 ``npm install @openapitools/openapi-generator-cli -g``
 
 Setup Db:
