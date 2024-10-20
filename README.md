@@ -38,3 +38,7 @@ Check out the Readme in the backend folder to set it up
 1. start xampp
 2. npm start
 3. in a second terminal `cd .\backend\symfony-project\` and then `symfony server:start`
+
+# Deployment
+The deployment works over Github Actions  
+The .htaccess won't be copied you have to do that on your own.
