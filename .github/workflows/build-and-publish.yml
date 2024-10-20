@@ -109,8 +109,8 @@ jobs:
 
     - name: Create .env.local.php file
       run: |
-        echo "<?php" > .env.local.php
-        echo "// This file is generated in the deploy script " > .env.local.php
+        echo "<?php" >> .env.local.php
+        echo "// This file is generated in the deploy script " >> .env.local.php
         echo "" >> .env.local.php
         echo "return array (" >> .env.local.php
         echo "  'APP_ENV' => 'prod'," >> .env.local.php
