@@ -8,7 +8,10 @@ Copy the .env to .env.local file and insert the missing variables
 ``npm install @openapitools/openapi-generator-cli -g``
 
 Setup Db:
-``symfony console doctrine:database:create``
+Set up a user (on the database > Privileges > Add user account)  
+set the database user, password and database you want for develop in the env file.  
+Then run: ``symfony console doctrine:database:create``  
+you should see a new database in phpMyAdmin now  
 
 # Start
 Open Powershell in the subfolder symfony-project
@@ -23,7 +26,6 @@ generate openAPI:
 then copy the generated api
 
 # Releasing
-TODO
 ``composer dump-env prod``
 
 # Dev
