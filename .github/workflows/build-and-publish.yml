@@ -105,22 +105,20 @@ jobs:
     - name: Create .env.local.php file
       run: |
         echo "<?php \n \n // This file is generated in the deploy script \n " > .env.local.php
-        echo "" > .env.local.php
-        echo "return array (" > .env.local.php
-        echo "  'APP_ENV' => 'prod'," > .env.local.php
-        echo "  'SYMFONY_DOTENV_PATH' => './.env'," > .env.local.php
-        echo "  'APP_SECRET' => '${{ env.APP_SECRET }}'," > .env.local.php
-        echo "  'DATABASE_URL' => '${{ env.DATABASE_URL }}'," > .env.local.php
-        echo "  'DB_USER' => '${{ env.SQLUSER }}'," > .env.local.php
-        echo "  'DB_PASS' => '${{ env.SQLPASSWORD }}'," > .env.local.php
-        echo "  'TESTVAR' => '${{ env.APP_SECRET }}'," > .env.local.php
-        echo ");" > .env.local.php
+        echo "" >> .env.local.php
+        echo "return array (" >> .env.local.php
+        echo "  'APP_ENV' => 'prod'," >> .env.local.php
+        echo "  'SYMFONY_DOTENV_PATH' => './.env'," >> .env.local.php
+        echo "  'APP_SECRET' => '${{ env.APP_SECRET }}'," >> .env.local.php
+        echo "  'TESTVAR' => '${{ env.TESTVAR }}'," >> .env.local.php
+        echo ");" >> .env.local.php
 
     - run: mkdir api
 
-    - run: ls -R
+    # - run: ls -R
 
     - run: ls | grep -v api | xargs mv -t api
+    - run: mv .env.local.php api
 
     - run: ls -R
 
