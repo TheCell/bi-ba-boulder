@@ -86,10 +86,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Backend_Build
-          path: |
-            !${{ env.BUILD_PATH }}/backend/migrations
-            !${{ env.BUILD_PATH }}/backend/vendor
-            !${{ env.BUILD_PATH }}/backend/var
+          path: ${{ env.BUILD_PATH }}/backend
 
   web-deploy:
     name: Deploy to FTP
