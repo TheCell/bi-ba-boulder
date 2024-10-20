@@ -103,14 +103,14 @@ jobs:
         working-directory: ./backend/symfony-project
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - name: Cache composer dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          # Use composer.json for key, if composer.lock is not committed.
-          # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+      # - name: Cache composer dependencies
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: ${{ steps.composer-cache.outputs.dir }}
+      #     # Use composer.json for key, if composer.lock is not committed.
+      #     # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+      #     key: ${{ runner.os }}-composer-${{ hashFiles('/composer.lock') }}
+      #     restore-keys: ${{ runner.os }}-composer-
 
       # Log the PHP version in use, and copy the "prod" env file to the "local" env file
       - name: PHP utils
