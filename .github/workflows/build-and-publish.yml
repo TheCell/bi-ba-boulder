@@ -103,9 +103,9 @@ jobs:
       with:
         name: Backend_Build
 
-    - name: Create .env file
-      run: |
-        echo "APP_ENV=prod" > .env
+    # - name: Create .env file
+    #   run: |
+    #     echo "APP_ENV=prod" > .env
 
     - name: Create .env.local.php file
       run: |
