@@ -104,9 +104,15 @@ jobs:
           curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
           sudo apt install symfony-cli
 
-      - name: Check requirements
+      # —— Symfony ——————————————————————————————————————————————————————————
+      - name: Check Symfony requirements
         working-directory: ./backend/symfony-project
-        run: symfony check:requirements
+        run: |
+          echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' |sudo tee /etc/apt/sources.list.d/symfony-cli.list
+          sudo apt update
+          sudo apt install symfony-cli
+          symfony check:requirements
+          php bin/console -V
 
       # - name: Get composer cache directory
       #   id: composer-cache
@@ -127,7 +133,7 @@ jobs:
         working-directory: ./backend/symfony-project
         run: |
           php -v
-          cp .env .env.local
+          cp .env.prod .env.local
         # todo replace the env before deploy
 
       # Install composer dependencies, and dump env
@@ -141,15 +147,6 @@ jobs:
         working-directory: ./backend/symfony-project
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-      # —— Symfony ——————————————————————————————————————————————————————————
-      - name: Check Symfony requirements
-        working-directory: ./backend/symfony-project
-        run: |
-          echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' |sudo tee /etc/apt/sources.list.d/symfony-cli.list
-          sudo apt update
-          sudo apt install symfony-cli
-          symfony check:requirements
-          php bin/console -V
       # —— Code style —— (Based on this package: https://github.com/OskarStark/php-cs-fixer-ga)
       # - name: PHP-CS-Fixer
       #  uses: docker://oskarstark/php-cs-fixer-ga
