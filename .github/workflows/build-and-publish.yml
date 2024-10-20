@@ -161,6 +161,10 @@ jobs:
       #   run: |
       #     composer run-script test
 
+      - name: Check files
+        working-directory: ./backend/symfony-project
+        run: ls -R
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -169,8 +173,8 @@ jobs:
             ${{ env.BUILD_PATH }}/backend/symfony-project
             !${{ env.BUILD_PATH }}/backend/symfony-project/migrations
 
-  web-deploy-backend:
-    name: Deploy Backend
+  web-deploy:
+    name: Deploy to FTP
     runs-on: ubuntu-latest
     permissions:
         contents: write
@@ -190,6 +194,10 @@ jobs:
     - run: ls | grep -v api | xargs mv -t api
 
     - run: ls -R
+
+    # - name: Create env
+    #   run: |
+    #     docker compose up -d postgres
 
     # - name: extract artifact for deployment
     # x – instructs tar to extract the files from the zipped file
@@ -215,7 +223,7 @@ jobs:
     - name: Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: boulder.thecell.eu
+        server: bibaboulder.thecell.eu
         username: ${{ secrets.FTPUSER }}
         password: ${{ secrets.FTPPASSWORD }}
         protocol: ftp
