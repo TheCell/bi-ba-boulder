@@ -17,7 +17,8 @@ The next todos:
 [] sector overview  
 [] line, boulder, sector search  
 [] hover over line  
-[] height indicator  
+[] height indicator 
+[] switch to uuid for id's   
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/
