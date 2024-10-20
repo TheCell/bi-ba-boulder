@@ -100,11 +100,13 @@ jobs:
 
       - name: Install symfony
         working-directory: ./backend/symfony-project
-        run: curl -sS https://get.symfony.com/cli/installer | bash
+        run: |
+          curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
+          sudo apt install symfony-cli
 
       - name: Check requirements
         working-directory: ./backend/symfony-project
-        run: /home/runner/.symfony5/bin/symfony check:requirements
+        run: symfony check:requirements
 
       # - name: Get composer cache directory
       #   id: composer-cache
