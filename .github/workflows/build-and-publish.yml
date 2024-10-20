@@ -98,24 +98,6 @@ jobs:
         working-directory: ./backend
         run: echo ${{ steps.setup-php.outputs.php-version }}
 
-      # —— Symfony ——————————————————————————————————————————————————————————
-      - name: Install and Check Symfony requirements
-        working-directory: ./backend
-        run: |
-          curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
-          sudo apt install symfony-cli
-          symfony check:requirements
-          php bin/console -V
-
-      # - name: Check Symfony requirements
-      #   working-directory: ./backend
-      #   run: |
-      #     echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' |sudo tee /etc/apt/sources.list.d/symfony-cli.list
-      #     sudo apt update
-      #     sudo apt install symfony-cli
-      #     symfony check:requirements
-      #     php bin/console -V
-
       # - name: Get composer cache directory
       #   id: composer-cache
       #   working-directory: ./backend
@@ -145,9 +127,27 @@ jobs:
               composer install --no-dev --no-progress --prefer-dist -a
               composer dump-env prod
 
-      - name: Install Composer dependencies
+      # - name: Install Composer dependencies
+      #   working-directory: ./backend
+      #   run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      # —— Symfony ——————————————————————————————————————————————————————————
+      - name: Install and Check Symfony requirements
         working-directory: ./backend
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+        run: |
+          curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
+          sudo apt install symfony-cli
+          symfony check:requirements
+          php bin/console -V
+
+      # - name: Check Symfony requirements
+      #   working-directory: ./backend
+      #   run: |
+      #     echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' |sudo tee /etc/apt/sources.list.d/symfony-cli.list
+      #     sudo apt update
+      #     sudo apt install symfony-cli
+      #     symfony check:requirements
+      #     php bin/console -V
 
       # —— Code style —— (Based on this package: https://github.com/OskarStark/php-cs-fixer-ga)
       # - name: PHP-CS-Fixer
