@@ -181,7 +181,6 @@ jobs:
           name: Backend_Build
           path: |
             ${{ env.BUILD_PATH }}/backend/.env.local.php
-            ${{ env.BUILD_PATH }}/backend/.env.
             !${{ env.BUILD_PATH }}/backend/migrations
             !${{ env.BUILD_PATH }}/backend/vendor
             !${{ env.BUILD_PATH }}/backend/var
