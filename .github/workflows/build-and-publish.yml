@@ -102,6 +102,11 @@ jobs:
       with:
         name: Backend_Build
 
+
+    - name: Create .env file
+      run: |
+        echo "APP_ENV=prod" > .env
+
     - name: Create .env.local.php file
       run: |
         echo "<?php" > .env.local.php
@@ -119,6 +124,7 @@ jobs:
     # - run: ls -R
 
     - run: ls | grep -v api | xargs mv -t api
+    - run: mv .env api
     - run: mv .env.local.php api
 
     - run: ls -R
