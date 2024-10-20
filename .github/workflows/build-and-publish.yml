@@ -117,7 +117,8 @@ jobs:
         working-directory: ./backend/symfony-project
         run: |
           php -v
-          cp .env.prod .env.local
+          cp .env .env.local
+        # todo replace the env before deploy
 
       # Install composer dependencies, and dump env
       - name: Composer install & dump-env
