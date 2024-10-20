@@ -12,7 +12,7 @@ class BrandNewController extends AbstractController
     public function index(): JsonResponse
     {
         return $this->json([
-            'message' => 'Welcome to your new controller! ' . $_ENV['TESTVAR'] . ' ' . $_ENV['APP_ENV'] . '',
+            'message' => 'Welcome to your new controller! "' . $_ENV['TESTVAR'] . '" "' . $_ENV['APP_ENV'] . '"',
             'path' => 'src/Controller/BrandNewController.php',
         ]);
     }
