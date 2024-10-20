@@ -90,7 +90,7 @@ jobs:
 
 
   backend-deploy:
-    name: Deploy to FTP
+    name: Deploy Backend to FTP
     runs-on: ubuntu-latest
     permissions:
         contents: write
@@ -118,6 +118,7 @@ jobs:
         echo "  'APP_SECRET' => '${{ secrets.APP_SECRET }}'," >> .env.local.php
         echo "  'TESTVAR' => '${{ secrets.TESTVAR }}'," >> .env.local.php
         echo ");" >> .env.local.php
+        echo "?>" >> .env.local.php
 
     - run: ls -R
 
@@ -132,7 +133,7 @@ jobs:
         local-dir: ./
 
   web-deploy:
-    name: Deploy to FTP
+    name: Deploy Frontend to FTP
     runs-on: ubuntu-latest
     permissions:
         contents: write
