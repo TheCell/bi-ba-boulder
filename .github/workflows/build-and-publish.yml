@@ -98,21 +98,23 @@ jobs:
         working-directory: ./backend
         run: echo ${{ steps.setup-php.outputs.php-version }}
 
-      - name: Install symfony
+      # —— Symfony ——————————————————————————————————————————————————————————
+      - name: Install and Check Symfony requirements
         working-directory: ./backend
         run: |
           curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash
           sudo apt install symfony-cli
-
-      # —— Symfony ——————————————————————————————————————————————————————————
-      - name: Check Symfony requirements
-        working-directory: ./backend
-        run: |
-          echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' |sudo tee /etc/apt/sources.list.d/symfony-cli.list
-          sudo apt update
-          sudo apt install symfony-cli
           symfony check:requirements
           php bin/console -V
+
+      # - name: Check Symfony requirements
+      #   working-directory: ./backend
+      #   run: |
+      #     echo 'deb [trusted=yes] https://repo.symfony.com/apt/ /' |sudo tee /etc/apt/sources.list.d/symfony-cli.list
+      #     sudo apt update
+      #     sudo apt install symfony-cli
+      #     symfony check:requirements
+      #     php bin/console -V
 
       # - name: Get composer cache directory
       #   id: composer-cache
