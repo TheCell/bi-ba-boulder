@@ -113,7 +113,7 @@ jobs:
         echo "// This file is generated in the deploy script " >> .env.local.php
         echo "" >> .env.local.php
         echo "return array (" >> .env.local.php
-        echo "  'APP_ENV' => 'prod'," >> .env.local.php
+        echo "  'APP_ENV' => 'dev'," >> .env.local.php
         echo "  'SYMFONY_DOTENV_PATH' => './.env'," >> .env.local.php
         echo "  'APP_SECRET' => '${{ secrets.APP_SECRET }}'," >> .env.local.php
         echo "  'TESTVAR' => '${{ secrets.TESTVAR }}'," >> .env.local.php
