@@ -10,11 +10,6 @@ Copy the .env to .env.local file and insert the missing variables
 Setup Db:
 ``symfony console doctrine:database:create``
 
-Setup Fileshare:
-1. Open an elevated PowerShell
-2. ``New-Item -ItemType SymbolicLink -Path C:\xampp\htdocs\boulders -Target C:\dev\Git\bi-ba-boulder\backend\boulders``
-3. Now you can download the files with ``http://localhost/boulders/...`` (example ``http://localhost/boulders/bimano/bimano_high.glb``)
-
 # Start
 Open Powershell in the subfolder symfony-project
 1. ``cd .\backend\symfony-project\``

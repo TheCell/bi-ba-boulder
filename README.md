@@ -26,7 +26,13 @@ to simulate the database locally I use XAMPP
 
 # The Backend
 The Backend is build with PHP, MySQL   
-I'm using Symfony for the Backend and Composer to create the Files etc.
+I'm using Symfony for the Backend and Composer to create the Files etc.  
+Check out the Readme in the backend folder to set it up
+
+# Setup Fileshare
+1. Open an elevated PowerShell
+2. ``New-Item -ItemType SymbolicLink -Path C:\xampp\htdocs\boulders -Target C:\dev\Git\bi-ba-boulder\fileshare``
+3. Now you can download the files with ``http://localhost/boulders/...`` (example ``http://localhost/boulders/bimano/bimano_high.glb``)
 
 # Starting the Devtools
 1. start xampp
