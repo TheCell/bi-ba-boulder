@@ -1,15 +1,29 @@
-Header Set Access-Control-Allow-Methods: get,post,put,head
-Header Set Access-Control-Allow-Headers: x-pingother,content-type
+# Header Set Access-Control-Allow-Methods: get,post,put,head
+# Header Set Access-Control-Allow-Headers: x-pingother,content-type
 
-<IfModule mod_headers.c>
-    SetEnvIf Origin "http(s)?://(www\.)?(localhost:4200|localhost:8000)$" AccessControlAllowOrigin=$0$1
-    Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
-    Header set Access-Control-Allow-Credentials true
-</IfModule>
+# <IfModule mod_headers.c>
+    # SetEnvIf Origin "http(s)?://(www\.)?(localhost:4200|localhost:8000)$" AccessControlAllowOrigin=$0$1
+    # Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+    # Header set Access-Control-Allow-Credentials true
+# </IfModule>
 
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /public
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^(.*)$ /public/index.php [QSA,L]
-</IfModule>
+# <IfModule mod_rewrite.c>
+    # RewriteEngine On
+    # RewriteBase /public
+    # RewriteCond %{REQUEST_FILENAME} !-f
+    # RewriteRule ^(.*)$ /public/index.php [QSA,L]
+# </IfModule>
+
+RewriteEngine On
+RewriteBase /api/
+
+# If the request is exactly "/api", redirect it to "/api/public/index.php"
+RewriteRule ^$ /api/public/index.php [L]
+
+# Allow existing files or directories within /api/public/ to be accessed directly
+RewriteCond %{DOCUMENT_ROOT}/api/public/$1 -f [OR]
+RewriteCond %{DOCUMENT_ROOT}/api/public/$1 -d
+RewriteRule ^(.*)$ /api/public/$1 [L]
+
+# Redirect all other /api requests to /api/public/index.php
+RewriteRule ^(.*)$ /api/public/index.php [L]
