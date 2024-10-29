@@ -20,19 +20,18 @@ class LinesController extends AbstractController
     public function getLinesByBloc($blocId): JsonResponse
     {
         $lines = $this->lineRepository->findLinesByBlocId($blocId);
-        // dd($lines);
 
         $lineArray = [];
         foreach ($lines as $line) {
-            $lineDto = new LineDto (
-                $line->getId(),
-                $line->getBloc().getId(),
-                $line->getIdentifier(),
-                $line->getDescription(),
-                $line->getColor(),
-                $line->getName()
+          $lineDto = new LineDto (
+              $line->getId(),
+              $line->getBloc()->getId(),
+              $line->getIdentifier(),
+              $line->getDescription(),
+              $line->getColor(),
+              $line->getName()
             );
-            array_push($sectorsArray, get_object_vars($lineDto));
+          array_push($lineArray, get_object_vars($lineDto));
         }
 
         return $this->json($lineArray);

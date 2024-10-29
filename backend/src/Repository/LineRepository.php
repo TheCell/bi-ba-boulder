@@ -26,9 +26,9 @@ class LineRepository extends ServiceEntityRepository
            ->setParameter('val', $value)
            ->orderBy('l.id', 'ASC')
            ->setMaxResults(100)
+           ->leftJoin('l.bloc', 'b')
            ->getQuery()
-           ->getResult()
-       ;
+           ->getResult();
    }
 
 //    public function findOneBySomeField($value): ?Line

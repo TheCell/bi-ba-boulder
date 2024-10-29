@@ -15,7 +15,7 @@ you should see a new database in phpMyAdmin now
 
 # Start
 Open Powershell in the subfolder symfony-project
-1. ``cd .\backend\symfony-project\``
+1. ``cd .\backend\``
 2. Start the Server: ``symfony server:start``
 3. Start MySQL in XAMPP
 Stop the Server: ``symfony server:stop``
