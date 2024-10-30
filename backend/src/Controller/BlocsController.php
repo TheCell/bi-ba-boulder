@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\DTO\BlocDto;
 use App\Repository\BlocRepository;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
