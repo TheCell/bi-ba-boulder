@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --configuration=development",
-    "build": "ng build --base-href /bi-ba-boulder/ --configuration=production",
-    "buildpipeline": "ng build --configuration=production",
+    "start": "ng serve --configuration development",
+    "build": "ng build --base-href /bi-ba-boulder/ --configuration production",
+    "buildpipeline": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
