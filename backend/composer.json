@@ -19,6 +19,7 @@
         "symfony/yaml": "7.1.*"
     },
     "require-dev": {
+        "nelmio/api-doc-bundle": "^4.32",
         "symfony/maker-bundle": "^1.61"
     },
     "config": {

@@ -22,8 +22,9 @@ Stop the Server: ``symfony server:stop``
 
 # Generate OpenApi
 generate openAPI:
-``npx openapi-generator-cli generate -i http://localhost:8000/api/doc.json -g typescript-angular -o src/app/api``
-then copy the generated api
+1. Start the symfony server
+2. Run in the root directory: ``npx openapi-generator-cli generate -i http://localhost:8000/doc.json -g typescript-angular -o src/app/api``
+3. then copy the generated api
 
 # Releasing
 ``composer dump-env prod``
@@ -49,3 +50,6 @@ Create a Controller:
 
 Routing:
 ``symfony console debug:router``
+
+Clearing cache out
+``symfony console cache:clear``

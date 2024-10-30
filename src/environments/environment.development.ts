@@ -1,6 +1,6 @@
 export const environment = {
-  production: true,
-  apiURL: 'http://todo',
+  production: false,
+  apiURL: 'http://localhost:8000',
   boulderResourceURL: 'http://localhost/boulders',
   debugRender: true
 };
