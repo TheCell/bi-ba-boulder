@@ -1,5 +1,5 @@
 /**
- * Boulder API
+ * Bi-Ba-Boulder
  *
  * 
  *
@@ -140,7 +140,7 @@ export class DefaultService {
             }
         }
 
-        let localVarPath = `/blocs/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        let localVarPath = `/api/blocs/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         return this.httpClient.request<any>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -203,7 +203,7 @@ export class DefaultService {
             }
         }
 
-        let localVarPath = `/blocs/by-sector/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        let localVarPath = `/api/blocs/by-sector/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         return this.httpClient.request<Array<BlocDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -265,7 +265,7 @@ export class DefaultService {
             }
         }
 
-        let localVarPath = `/lines/by-bloc/${this.configuration.encodeParam({name: "blocId", value: blocId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        let localVarPath = `/api/lines/by-bloc/${this.configuration.encodeParam({name: "blocId", value: blocId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         return this.httpClient.request<any>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -328,7 +328,7 @@ export class DefaultService {
             }
         }
 
-        let localVarPath = `/sectors/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        let localVarPath = `/api/sectors/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
         return this.httpClient.request<Array<SectorDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
@@ -387,7 +387,7 @@ export class DefaultService {
             }
         }
 
-        let localVarPath = `/sectors`;
+        let localVarPath = `/api/sectors`;
         return this.httpClient.request<Array<SectorDto>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

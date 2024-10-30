@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
+#[Route('/api', name: '')]
 class BlocsController extends AbstractController
 {
     private $blocRepository;

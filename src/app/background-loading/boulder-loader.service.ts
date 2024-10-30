@@ -23,11 +23,11 @@ export class BoulderLoaderService {
 
     switch (resolutionLevel) {
       case 'low':
-        return { url: blocDto.blocLowRes, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.low) };
+        return { url: blocDto.blocLowRes!, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.low) };
       case 'medium':
-        return { url: blocDto.blocMedRes, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.medium) };
+        return { url: blocDto.blocMedRes!, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.medium) };
       case 'high':
-        return { url: blocDto.blocHighRes, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.high) };
+        return { url: blocDto.blocHighRes!, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.high) };
       default:
         return { url: '', higherResolution: undefined };
     }
