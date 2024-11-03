@@ -27,7 +27,8 @@ generate openAPI:
 3. then copy the generated api
 
 # Releasing
-``composer dump-env prod``
+``composer dump-env prod`` copy the lines from the generated file over to the deploy workflow. I don't deploy all to the server and therefore I build the env in the pipeline
+I use composer on the server to install symfony there
 
 # Dev
 Get all CLI commands:
