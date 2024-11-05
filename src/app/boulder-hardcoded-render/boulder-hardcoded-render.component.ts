@@ -96,7 +96,7 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
           this.addLineToScene(this.scene, boulderLine.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), boulderLine.color)
         });
       }
-    })
+    });
   }
 
   private createCanvas(): void {
@@ -174,7 +174,7 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
   }
 
   private drawBoundingBox(scene: THREE.Group<THREE.Object3DEventMap>): void {
-    var bbox = new THREE.Box3().setFromObject(scene);
+    const bbox = new THREE.Box3().setFromObject(scene);
     const helper = new THREE.Box3Helper( bbox, 0xffff00 );
     this.scene.add( helper );
   }

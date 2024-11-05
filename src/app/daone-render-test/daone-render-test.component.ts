@@ -47,7 +47,7 @@ export class DaoneRenderTestComponent implements AfterViewInit {
   private proccessedRawModel?: ArrayBuffer;
   private processedLines: BoulderLine[] = [];
   private scene = new THREE.Scene();
-  private loader = new GLTFLoader();
+  private gltfLoader = new GLTFLoader();
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
@@ -81,6 +81,8 @@ export class DaoneRenderTestComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.createCanvas();
+
+    this.addReferenceHuman(this.scene);
   }
 
   private createCanvas(): void {
@@ -128,7 +130,7 @@ export class DaoneRenderTestComponent implements AfterViewInit {
   }
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
-    this.loader.parse(buffer, '', (gltf: GLTF) => {
+    this.gltfLoader.parse(buffer, '', (gltf: GLTF) => {
       this.scene.add(gltf.scene);
       gltf.scene.traverse((child) => {
         child.layers.set(1);
@@ -180,5 +182,13 @@ export class DaoneRenderTestComponent implements AfterViewInit {
     this.currentRandomRadius *= Math.E;
     this.currentRandomRadius %= 360;
     return randomColor;
+  }
+
+  private addReferenceHuman(scene: THREE.Scene): void {
+    console.log('adding human WIP');
+
+    this.gltfLoader.load('reference-model/human.glb', (value) => {
+      scene.add(value.scene);
+    });
   }
 }
