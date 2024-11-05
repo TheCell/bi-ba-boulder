@@ -187,7 +187,9 @@ export class DaoneRenderTestComponent implements AfterViewInit {
   private addReferenceHuman(scene: THREE.Scene): void {
     console.log('adding human WIP');
 
-    this.gltfLoader.load('reference-model/human.glb', (value) => {
+    this.gltfLoader.load('reference-model/woman.glb', (value) => {
+      console.log(value);
+
       scene.add(value.scene);
     });
   }
