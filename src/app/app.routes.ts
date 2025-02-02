@@ -8,6 +8,7 @@ import { sectorsResolver } from './core/resolvers/sector.resolver';
 import { SectorComponent } from './sector/sector.component';
 import { blocResolver, blocsOfSectorResolver } from './core/resolvers/bloc.resolver';
 import { BoulderComponent } from './boulder/boulder.component';
+import { SpraywallTestComponent } from './spraywall-test/spraywall-test.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -44,4 +45,8 @@ export const routes: Routes = [
       bloc: blocResolver
     }
   },
+  {
+    path: 'spraywall-test',
+    component: SpraywallTestComponent
+  }
 ];

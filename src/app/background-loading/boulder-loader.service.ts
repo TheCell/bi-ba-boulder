@@ -117,4 +117,8 @@ export class BoulderLoaderService {
     }
   }
 
+  public loadTestSpraywall(): Observable<ArrayBuffer> {
+    return this.http.get('./api-test/boulder/spraywall/Spraywall_separated_test_4096.glb', { responseType: 'arraybuffer'});
+  }
+
 }
