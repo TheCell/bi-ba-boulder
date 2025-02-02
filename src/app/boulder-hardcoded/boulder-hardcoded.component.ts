@@ -4,14 +4,13 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { BoulderHardcodedRenderComponent } from "../boulder-hardcoded-render/boulder-hardcoded-render.component";
 
 @Component({
-  selector: 'app-boulder-hardcoded',
-  standalone: true,
-  imports: [
-    CommonModule,
-    BoulderHardcodedRenderComponent
-],
-  templateUrl: './boulder-hardcoded.component.html',
-  styleUrl: './boulder-hardcoded.component.scss'
+    selector: 'app-boulder-hardcoded',
+    imports: [
+        CommonModule,
+        BoulderHardcodedRenderComponent
+    ],
+    templateUrl: './boulder-hardcoded.component.html',
+    styleUrl: './boulder-hardcoded.component.scss'
 })
 export class BoulderHardcodedComponent {
   public title: string;

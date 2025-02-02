@@ -13,15 +13,14 @@ import { HSLToHex } from '../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
 @Component({
-  selector: 'app-boulder-debug-render',
-  standalone: true,
-  imports: [
-    CommonModule,
-    KeyboardShortcutsModule
-  ],
-  templateUrl: './boulder-debug-render.component.html',
-  styleUrl: './boulder-debug-render.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-boulder-debug-render',
+    imports: [
+        CommonModule,
+        KeyboardShortcutsModule
+    ],
+    templateUrl: './boulder-debug-render.component.html',
+    styleUrl: './boulder-debug-render.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoulderDebugRenderComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;

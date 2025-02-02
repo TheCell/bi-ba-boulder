@@ -4,12 +4,11 @@ import { BoulderLoaderService } from '../background-loading/boulder-loader.servi
 import { BoulderLine } from '../interfaces/boulder-line';
 
 @Component({
-  selector: 'app-spraywall-test',
-  standalone: true,
-  imports: [BoulderRenderComponent],
-  templateUrl: './spraywall-test.component.html',
-  styleUrl: './spraywall-test.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-spraywall-test',
+    imports: [BoulderRenderComponent],
+    templateUrl: './spraywall-test.component.html',
+    styleUrl: './spraywall-test.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpraywallTestComponent {
   public currentRawModel?: ArrayBuffer = undefined;

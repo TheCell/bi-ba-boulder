@@ -14,14 +14,13 @@ import { fitCameraToCenteredObject } from '../utils/camera-utils';
 import { BoulderLine } from '../interfaces/boulder-line';
 
 @Component({
-  selector: 'app-boulder-hardcoded-render',
-  standalone: true,
-  imports: [
-    CommonModule,
-    KeyboardShortcutsModule
-  ],
-  templateUrl: './boulder-hardcoded-render.component.html',
-  styleUrl: './boulder-hardcoded-render.component.scss',
+    selector: 'app-boulder-hardcoded-render',
+    imports: [
+        CommonModule,
+        KeyboardShortcutsModule
+    ],
+    templateUrl: './boulder-hardcoded-render.component.html',
+    styleUrl: './boulder-hardcoded-render.component.scss'
 })
 export class BoulderHardcodedRenderComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;

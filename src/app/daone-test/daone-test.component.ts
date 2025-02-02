@@ -13,16 +13,15 @@ import { ResolutionLevel } from '../interfaces/resolution-level';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-daone-test',
-  standalone: true,
-  imports: [
-    CommonModule,
-    DaoneRenderTestComponent,
-    BoulderLegendComponent
-  ],
-  templateUrl: './daone-test.component.html',
-  styleUrl: './daone-test.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-daone-test',
+    imports: [
+        CommonModule,
+        DaoneRenderTestComponent,
+        BoulderLegendComponent
+    ],
+    templateUrl: './daone-test.component.html',
+    styleUrl: './daone-test.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DaoneTestComponent implements OnDestroy {
   public title: string;
