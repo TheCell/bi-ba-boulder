@@ -13,14 +13,14 @@ import { fitCameraToCenteredObject } from '../utils/camera-utils';
 import { BoulderLine } from '../interfaces/boulder-line';
 
 @Component({
-    selector: 'app-daone-render-test',
-    imports: [
-        CommonModule,
-        KeyboardShortcutsModule
-    ],
-    templateUrl: './daone-render-test.component.html',
-    styleUrl: './daone-render-test.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-daone-render-test',
+  imports: [
+    CommonModule,
+    KeyboardShortcutsModule
+  ],
+  templateUrl: './daone-render-test.component.html',
+  styleUrl: './daone-render-test.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DaoneRenderTestComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;

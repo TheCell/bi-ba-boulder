@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-boulder-sector',
-  standalone: true,
   imports: [
     CommonModule,
   ],

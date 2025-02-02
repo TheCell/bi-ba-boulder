@@ -2,10 +2,10 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 
 @Component({
-    selector: 'app-canvas-box',
-    imports: [],
-    templateUrl: './canvas-box.component.html',
-    styleUrl: './canvas-box.component.scss'
+  selector: 'app-canvas-box',
+  imports: [],
+  templateUrl: './canvas-box.component.html',
+  styleUrl: './canvas-box.component.scss'
 })
 export class CanvasBoxComponent implements AfterViewInit {
   @ViewChild('canvasBox') canvasBox: ElementRef = null!;

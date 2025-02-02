@@ -18,14 +18,14 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 
 @Component({
-    selector: 'app-boulder-render',
-    imports: [
-        CommonModule,
-        KeyboardShortcutsModule
-    ],
-    templateUrl: './boulder-render.component.html',
-    styleUrl: './boulder-render.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-boulder-render',
+  imports: [
+    CommonModule,
+    KeyboardShortcutsModule
+  ],
+  templateUrl: './boulder-render.component.html',
+  styleUrl: './boulder-render.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoulderRenderComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;

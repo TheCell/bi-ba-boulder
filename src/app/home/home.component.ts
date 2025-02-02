@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 @Component({
     selector: 'app-home',
     imports: [
-        CommonModule,
+      CommonModule,
     ],
     templateUrl: './home.component.html',
     styleUrl: './home.component.scss'

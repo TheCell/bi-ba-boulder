@@ -12,16 +12,16 @@ import { environment } from '../../environments/environment';
 import { BoulderDebugRenderComponent } from '../boulder-debug-render/boulder-debug-render.component';
 
 @Component({
-    selector: 'app-boulder',
-    imports: [
-        CommonModule,
-        BoulderRenderComponent,
-        BoulderDebugRenderComponent,
-        BoulderLegendComponent
-    ],
-    templateUrl: './boulder.component.html',
-    styleUrl: './boulder.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-boulder',
+  imports: [
+    CommonModule,
+    BoulderRenderComponent,
+    BoulderDebugRenderComponent,
+    BoulderLegendComponent
+  ],
+  templateUrl: './boulder.component.html',
+  styleUrl: './boulder.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoulderComponent implements OnDestroy {
   public bloc: BlocDto;

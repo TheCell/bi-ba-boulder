@@ -4,14 +4,14 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlocDto } from '../api';
 
 @Component({
-    selector: 'app-sector',
-    imports: [
-        CommonModule,
-        RouterLink
-    ],
-    templateUrl: './sector.component.html',
-    styleUrl: './sector.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-sector',
+  imports: [
+    CommonModule,
+    RouterLink
+  ],
+  templateUrl: './sector.component.html',
+  styleUrl: './sector.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SectorComponent {
   public blocs: BlocDto[] = [];
