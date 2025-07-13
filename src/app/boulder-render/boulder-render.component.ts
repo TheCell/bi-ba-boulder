@@ -160,10 +160,10 @@ export class BoulderRenderComponent implements AfterViewInit {
     const timer = Date.now();
     // this.renderer.render(this.scene, this.camera);
     this.composer.render();
-    const endTime = Date.now();
     
     window.requestAnimationFrame(this.loop);
-    console.log(`Render time: ${endTime - timer} ms`);
+    const endTime = Date.now();
+    console.log(`Render time: ${endTime - timer} ms`, `Drawcalls: ${this.renderer.info.render.calls} calls`);
   }
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
