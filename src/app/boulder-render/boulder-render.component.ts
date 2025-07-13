@@ -157,9 +157,13 @@ export class BoulderRenderComponent implements AfterViewInit {
   }
 
   private loop = () => {
+    const timer = Date.now();
     // this.renderer.render(this.scene, this.camera);
     this.composer.render();
+    const endTime = Date.now();
+    
     window.requestAnimationFrame(this.loop);
+    console.log(`Render time: ${endTime - timer} ms`);
   }
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
@@ -242,48 +246,48 @@ export class BoulderRenderComponent implements AfterViewInit {
     const renderPass = new RenderPass(this.scene, this.camera);
     this.composer.addPass(renderPass);
 
-    this.startHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
-    this.startHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0x6ce35b));
-    this.startHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
-    this.startHoldOutlinePass.edgeStrength = 2;
-    this.startHoldOutlinePass.edgeGlow = 0;
-    this.startHoldOutlinePass.edgeThickness = 1;
-    this.startHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
-    this.composer.addPass(this.startHoldOutlinePass);
-    this.startHoldOutlinePass.selectedObjects = this.selectedStartHoldObjects;
+    // this.startHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
+    // this.startHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0x6ce35b));
+    // this.startHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
+    // this.startHoldOutlinePass.edgeStrength = 2;
+    // this.startHoldOutlinePass.edgeGlow = 0;
+    // this.startHoldOutlinePass.edgeThickness = 1;
+    // this.startHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
+    // this.composer.addPass(this.startHoldOutlinePass);
+    // this.startHoldOutlinePass.selectedObjects = this.selectedStartHoldObjects;
 
-    this.topHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
-    // this.topHoldOutlinePass.visibleEdgeColor.set(236, 79, 240);
-    this.topHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0xec4ff0));
-    this.topHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
-    this.topHoldOutlinePass.edgeStrength = 2;
-    this.topHoldOutlinePass.edgeGlow = 0;
-    this.topHoldOutlinePass.edgeThickness = 1;
-    this.topHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
-    this.composer.addPass(this.topHoldOutlinePass);
-    this.topHoldOutlinePass.selectedObjects = this.selectedTopHoldObjects;
+    // this.topHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
+    // // this.topHoldOutlinePass.visibleEdgeColor.set(236, 79, 240);
+    // this.topHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0xec4ff0));
+    // this.topHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
+    // this.topHoldOutlinePass.edgeStrength = 2;
+    // this.topHoldOutlinePass.edgeGlow = 0;
+    // this.topHoldOutlinePass.edgeThickness = 1;
+    // this.topHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
+    // this.composer.addPass(this.topHoldOutlinePass);
+    // this.topHoldOutlinePass.selectedObjects = this.selectedTopHoldObjects;
 
-    this.footOnlyHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
-    // this.footOnlyHoldOutlinePass.visibleEdgeColor.set(238, 242, 77);
-    this.footOnlyHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0xeef24d));
-    this.footOnlyHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
-    this.footOnlyHoldOutlinePass.edgeStrength = 2;
-    this.footOnlyHoldOutlinePass.edgeGlow = 0;
-    this.footOnlyHoldOutlinePass.edgeThickness = 1;
-    this.footOnlyHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
-    this.composer.addPass(this.footOnlyHoldOutlinePass);
-    this.footOnlyHoldOutlinePass.selectedObjects = this.selectedFootHoldObjects;
+    // this.footOnlyHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
+    // // this.footOnlyHoldOutlinePass.visibleEdgeColor.set(238, 242, 77);
+    // this.footOnlyHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0xeef24d));
+    // this.footOnlyHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
+    // this.footOnlyHoldOutlinePass.edgeStrength = 2;
+    // this.footOnlyHoldOutlinePass.edgeGlow = 0;
+    // this.footOnlyHoldOutlinePass.edgeThickness = 1;
+    // this.footOnlyHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
+    // this.composer.addPass(this.footOnlyHoldOutlinePass);
+    // this.footOnlyHoldOutlinePass.selectedObjects = this.selectedFootHoldObjects;
 
-    this.normalHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
-    // this.normalHoldOutlinePass.visibleEdgeColor.set(79, 204, 240);
-    this.normalHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0x4fccf0));
-    this.normalHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
-    this.normalHoldOutlinePass.edgeStrength = 2;
-    this.normalHoldOutlinePass.edgeGlow = 0;
-    this.normalHoldOutlinePass.edgeThickness = 1;
-    this.normalHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
-    this.composer.addPass(this.normalHoldOutlinePass);
-    this.normalHoldOutlinePass.selectedObjects = this.selectedNormalHoldObjects;
+    // this.normalHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
+    // // this.normalHoldOutlinePass.visibleEdgeColor.set(79, 204, 240);
+    // this.normalHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0x4fccf0));
+    // this.normalHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
+    // this.normalHoldOutlinePass.edgeStrength = 2;
+    // this.normalHoldOutlinePass.edgeGlow = 0;
+    // this.normalHoldOutlinePass.edgeThickness = 1;
+    // this.normalHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
+    // this.composer.addPass(this.normalHoldOutlinePass);
+    // this.normalHoldOutlinePass.selectedObjects = this.selectedNormalHoldObjects;
 
     const outputPass = new OutputPass();
     this.composer.addPass(outputPass);
