@@ -25,7 +25,7 @@
     "@types/three": "^0.167.1",
     "ng-keyboard-shortcuts": "^13.0.8",
     "rxjs": "~7.8.0",
-    "three": "^0.167.0",
+    "three": "^0.172.0",
     "three-mesh-ui": "^6.5.4",
     "tslib": "^2.8.1",
     "zone.js": "~0.15.0"
