@@ -95,7 +95,7 @@ jobs:
     permissions:
         contents: write
 
-    needs: [pack_backend]
+    needs: [pack_backend, build]
 
     steps:
     - name: Download Backend artifact
@@ -140,7 +140,7 @@ jobs:
     permissions:
         contents: write
 
-    needs: [build]
+    needs: [build, pack_backend]
 
     steps:
     - name: Download Frontend artifact
