@@ -1,17 +1,18 @@
 # Setup
-- Install Symfony
+- Install Symfony [https://symfony.com/download](https://symfony.com/download)
 - Change sql User in .env or Add the user
 
 In this directory use:
 Copy the .env to .env.local file and insert the missing variables
-``composer install``
+``composer install`` or ``symfony composer install``
 ``npm install @openapitools/openapi-generator-cli -g``
 
 Setup Db:
-Set up a user (on the database > Privileges > Add user account)  
-set the database user, password and database you want for develop in the env file.  
-Then run: ``symfony console doctrine:database:create``  
-you should see a new database in phpMyAdmin now  
+- Set up a user (on the database (start xampp) [http://localhost/phpmyadmin/](http://localhost/phpmyadmin/) > User accounts > Add user account)  
+- set the database user, password and database you want for develop in the env file.
+- If you copy .env to .env.local you already have an example
+- Then run: ``symfony console doctrine:database:create`` you should see a new database named ``bibaboulder`` in phpMyAdmin now  
+- apply the migrations ``symfony console doctrine:migrations:migrate``
 
 # Start
 Open Powershell in the subfolder symfony-project
@@ -20,7 +21,7 @@ Open Powershell in the subfolder symfony-project
 3. Start MySQL in XAMPP
 Stop the Server: ``symfony server:stop``
 
-# Generate OpenApi
+# Generate API with OpenApi
 generate openAPI:
 1. Start the symfony server
 2. Run in the root directory: ``npx openapi-generator-cli generate -i http://localhost:8000/api/doc.json -g typescript-angular -o src/app/api``
