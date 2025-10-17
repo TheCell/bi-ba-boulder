@@ -7,7 +7,7 @@ The next todos:
 
 [x] Figure a route dto out  
 [] login  
-[] 3D scan -> object with LOD process  
+[] 3D scan -> object with LOD process
 [x] Load LOD levels  
 [] bloc caching  
 [] Offline compatible  

@@ -32,6 +32,7 @@
 - Open the LOD Models in Blender
 - Reposition the Model
 - Export as glb (binary gltf file)
+- TODO: Scale Model to match real world size
 
 # WIP Reducing the final mesh
 For the script to work you need Blender installed and added Blender.exe as a System variable
