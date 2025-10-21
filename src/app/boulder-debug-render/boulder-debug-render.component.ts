@@ -63,6 +63,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private rgbBlockImageData?: ImageData;
   private rgbBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
+  private customUniform = 0.2;
 
   private currentGltf?: GLTF;
 
@@ -118,21 +119,19 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     loader.load('./images/rgb_blocks.png', (texture: THREE.Texture) => {
       this.rgbBlockTexture = texture;
       this.rgbBlockImageData = this.getImageDataFromTexture(texture);
-      this.rgbBlockMaterial = new THREE.MeshPhysicalMaterial({ map: this.rgbBlockTexture });
+      // this.rgbBlockMaterial = new THREE.MeshPhysicalMaterial({ map: this.rgbBlockTexture });
+      this.rgbBlockMaterial = this.getCustomShaderMaterial();
     });
   }
 
   public switchTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
       let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
-      // console.log(object.material);
-      // let objectMaterial = object.material as THREE.MeshPhysicalMaterial;
-      // objectMaterial.map = this.rgbBlockMaterial.map;
-      // console.log(objectMaterial.map, this.originalBlockMaterial.map);
-      
-      // objectMaterial.map = (objectMaterial.map === this.originalBlockMaterial.map) ? this.rgbBlockMaterial.map : this.originalBlockMaterial.map;
-      
-      object.material = object.material === this.originalBlockMaterial ? this.rgbBlockMaterial : this.originalBlockMaterial;
+
+      // object.material = object.material === this.originalBlockMaterial ? this.rgbBlockMaterial : this.originalBlockMaterial;
+      object.material = this.rgbBlockMaterial;
+      // this.rgbBlockMaterial.userData.shader
+      // this.rgbBlockMaterial.uniforms['displayRgbTexture'].value = this.rgbBlockMaterial.uniforms['displayRgbTexture'].value === 0.0 ? 1.0 : 0.0;
     }
   }
 
@@ -176,6 +175,14 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   }
 
   private loop = () => {
+    if (this.rgbBlockMaterial) {
+      const shader = this.rgbBlockMaterial.userData['shader'];
+            
+      if (shader) {
+        shader.uniforms.time.value = performance.now() / 1000;
+      }
+    }
+    
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(this.loop);
   }
@@ -189,7 +196,15 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
       gltf.scene.traverse((child) => {
         child.layers.set(1);
-        this.originalBlockMaterial = (child as THREE.Mesh).material as THREE.MeshPhysicalMaterial;
+        const mesh = (child as THREE.Mesh);
+        if (mesh.isMesh) {
+          this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
+          this.rgbBlockMaterial = this.getCustomShaderMaterial();
+  
+          console.log(this.originalBlockMaterial);
+          console.log(this.rgbBlockMaterial);
+        }
+        
         // this.rgbBlockMaterial = this.originalBlockMaterial.clone();
       });
 
@@ -383,4 +398,91 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
     return { r, g, b, a, color: new THREE.Color(r, g, b) };
   }
+
+  private getCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
+    const material = new THREE.MeshPhysicalMaterial();
+    material.onBeforeCompile = (shader) => {
+      console.log('onBeforeCompile');
+      
+      shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
+      shader.uniforms['time'] = { value: 0 };
+
+      shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        [
+          '#include <begin_vertex>',
+          `float theta = sin( time ) / ${ 1.1.toFixed(1) };`,
+          // `float theta = sin( time + position.y ) / ${ 1.1.toFixed(1) };`,
+          'transformed *= theta;',
+        ].join( '\n' )
+      );
+
+      material.userData['shader'] = shader;
+    }
+
+    return material;
+    // return new THREE.ShaderMaterial({
+    //   uniforms: THREE.UniformsUtils.merge([
+    //     THREE.UniformsLib.common,
+    //     THREE.UniformsLib.lights,
+    //     THREE.UniformsLib.points,
+    //     {
+    //       originalTexture: { value: this.originalBlockMaterial?.map },
+    //       rgbTexture: { value: this.rgbBlockTexture },
+    //       displayRgbTexture: { value: 1 }
+    //     }
+    //   ]),
+    //   vertexShader: this.vertexShader(),
+    //   fragmentShader: this.fragmentShader(),
+    //   lights: true
+    // });
+  }
+  
+  // private vertexShader(): string {
+  //   return `
+  //     #include <common>
+
+  //     uniform float displayRgbTexture;
+
+  //     varying float displayDebug;
+  //     varying vec2 vUv;
+  //     varying vec2 vUvRGB;
+
+  //     void main() {
+  //       displayDebug = displayRgbTexture;
+  //       vUv = uv;
+
+  //       gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  //     }`; 
+  // }
+  
+  // private fragmentShader(): string {
+  //   return `
+  //     #include <common>
+
+  //     uniform sampler2D originalTexture;
+  //     uniform sampler2D rgbTexture;
+  //     uniform vec3 diffuse;
+  //     uniform float opacity;
+      
+  //     varying float displayDebug;
+  //     varying vec2 vUv;
+
+  //     void main() {
+  //       vec4 diffuseColor = vec4( diffuse, opacity );
+  //       ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
+  //       reflectedLight.indirectDiffuse += vec3( 1.0 );
+  //       reflectedLight.indirectDiffuse *= diffuseColor.rgb;
+  //       vec3 outgoingLight = reflectedLight.indirectDiffuse;
+
+  //       vec4 originalColor = texture2D( originalTexture, vUv );
+  //       vec4 rgbColor = texture2D( rgbTexture, vUv );
+  //       vec4 finalColor;
+  //       finalColor = mix(originalColor, rgbColor, 0.0);
+  //       finalColor.rgb *= outgoingLight;
+  //       gl_FragColor = finalColor;
+  //       // #include <colorspace_fragment>
+  //     }`;
+  // }
 }
