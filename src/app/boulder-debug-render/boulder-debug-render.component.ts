@@ -65,6 +65,11 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
+  private highlightedHoldsTexture?: THREE.Texture;
+  // private highlightedHoldsImageData?: ImageData;
+  // private highlightedHoldsMaterial?: THREE.MeshPhysicalMaterial;
+
+  private highlightedHoldsData?: THREE.DataTexture;
 
   private currentGltf?: GLTF;
 
@@ -118,10 +123,18 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
     const loader = new THREE.TextureLoader();
     loader.load('./images/rgb_blocks.png', (texture: THREE.Texture) => {
+      texture.flipY = false;
+      texture.needsUpdate = true;
       this.rgbBlockTexture = texture;
+
       this.rgbBlockImageData = this.getImageDataFromTexture(texture);
-      // this.rgbBlockMaterial = new THREE.MeshPhysicalMaterial({ map: this.rgbBlockTexture });
       this.rgbBlockMaterial = this.getCustomShaderMaterial();
+    });
+
+    loader.load('./images/rgb_test_highlight.png', (texture: THREE.Texture) => {
+      texture.flipY = false;
+      texture.needsUpdate = true;
+      this.highlightedHoldsTexture = texture;
     });
   }
 
@@ -403,6 +416,8 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
   }
 
   private getCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
+    // this.highlightedHoldsData = this.getHighlightedHoldsData();
+
     const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
     material.onBeforeCompile = (shader) => {
       console.log('onBeforeCompile');
@@ -410,6 +425,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
       shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
       shader.uniforms['time'] = { value: 0 };
       shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
+      shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
 
       // shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
       // shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
@@ -441,6 +457,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
           'uniform float opacity;',
           'uniform float useRgbTexture;',
           'uniform sampler2D rgbTexture;',
+          'uniform sampler2D highlightedHoldsTexture;',
           'varying vec2 vUv1;'
         ].join('\n')
       );
@@ -449,11 +466,14 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
         '#include <map_fragment>',
         [
           '#ifdef USE_MAP',
-          'vec4 sampledDiffuseColor = useRgbTexture > 0.0 ? texture2D( rgbTexture, vUv1 ) : texture2D( map, vMapUv );',
+          'vec2 debug = vUv1;',
+          'vec4 sampledDiffuseColor = useRgbTexture > 0.0 ? texture2D( rgbTexture, debug ) : texture2D( map, vMapUv );',
+          'vec4 highlightedHoldsColor = texture2D( highlightedHoldsTexture, debug );',
           '#ifdef DECODE_VIDEO_TEXTURE',
           'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );',
           '#endif',
           'diffuseColor *= sampledDiffuseColor;',
+          'diffuseColor.rgb += highlightedHoldsColor.rgb;',
           '#endif'
         ].join( '\n' )
       );
