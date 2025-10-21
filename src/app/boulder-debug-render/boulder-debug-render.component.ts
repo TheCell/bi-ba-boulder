@@ -61,6 +61,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
   private rgbBlockTexture?: THREE.Texture;
   private rgbBlockImageData?: ImageData;
+  private rgbBlockMaterial?: THREE.MeshPhysicalMaterial;
+  private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
 
   private currentGltf?: GLTF;
 
@@ -116,7 +118,22 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     loader.load('./images/rgb_blocks.png', (texture: THREE.Texture) => {
       this.rgbBlockTexture = texture;
       this.rgbBlockImageData = this.getImageDataFromTexture(texture);
+      this.rgbBlockMaterial = new THREE.MeshPhysicalMaterial({ map: this.rgbBlockTexture });
     });
+  }
+
+  public switchTexture(): void {
+    if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
+      let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      // console.log(object.material);
+      // let objectMaterial = object.material as THREE.MeshPhysicalMaterial;
+      // objectMaterial.map = this.rgbBlockMaterial.map;
+      // console.log(objectMaterial.map, this.originalBlockMaterial.map);
+      
+      // objectMaterial.map = (objectMaterial.map === this.originalBlockMaterial.map) ? this.rgbBlockMaterial.map : this.originalBlockMaterial.map;
+      
+      object.material = object.material === this.originalBlockMaterial ? this.rgbBlockMaterial : this.originalBlockMaterial;
+    }
   }
 
   private createCanvas(): void {
@@ -172,6 +189,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
       gltf.scene.traverse((child) => {
         child.layers.set(1);
+        this.originalBlockMaterial = (child as THREE.Mesh).material as THREE.MeshPhysicalMaterial;
+        // this.rgbBlockMaterial = this.originalBlockMaterial.clone();
       });
 
       if (this.currentGltf !== undefined) {
