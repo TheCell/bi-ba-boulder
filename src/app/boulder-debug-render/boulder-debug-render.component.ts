@@ -63,7 +63,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private rgbBlockImageData?: ImageData;
   private rgbBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
-  private customUniform = 0.2;
+  private originalBlockTexture: THREE.Texture | null = null;
+  private useRgbTexture = 0.0;
 
   private currentGltf?: GLTF;
 
@@ -127,11 +128,11 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   public switchTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
       let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
-
-      // object.material = object.material === this.originalBlockMaterial ? this.rgbBlockMaterial : this.originalBlockMaterial;
+      // object.material = object.material === this.rgbBlockMaterial ? this.originalBlockMaterial : this.rgbBlockMaterial;
       object.material = this.rgbBlockMaterial;
-      // this.rgbBlockMaterial.userData.shader
-      // this.rgbBlockMaterial.uniforms['displayRgbTexture'].value = this.rgbBlockMaterial.uniforms['displayRgbTexture'].value === 0.0 ? 1.0 : 0.0;
+      this.useRgbTexture = this.useRgbTexture === 0.0 ? 1.0 : 0.0;
+      console.log(this.useRgbTexture);
+      
     }
   }
 
@@ -179,7 +180,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       const shader = this.rgbBlockMaterial.userData['shader'];
             
       if (shader) {
-        shader.uniforms.time.value = performance.now() / 1000;
+        // shader.uniforms.time.value = performance.now() / 1000;
+        shader.uniforms.useRgbTexture.value = this.useRgbTexture;
       }
     }
     
@@ -199,6 +201,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
         const mesh = (child as THREE.Mesh);
         if (mesh.isMesh) {
           this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
+          this.originalBlockTexture = this.originalBlockMaterial.map;
           this.rgbBlockMaterial = this.getCustomShaderMaterial();
   
           console.log(this.originalBlockMaterial);
@@ -400,21 +403,58 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
   }
 
   private getCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
-    const material = new THREE.MeshPhysicalMaterial();
+    const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
     material.onBeforeCompile = (shader) => {
       console.log('onBeforeCompile');
       
       shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
       shader.uniforms['time'] = { value: 0 };
+      shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
 
-      shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
+      // shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
+      // shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
+
+      shader.vertexShader = shader.vertexShader.replace(
+        'varying vec3 vViewPosition;',
+        [
+          'varying vec3 vViewPosition;',
+          'attribute vec2 uv1;',
+          'uniform float time;',
+          'varying vec2 vUv1;'
+        ].join('\n')
+      );
+
       shader.vertexShader = shader.vertexShader.replace(
         '#include <begin_vertex>',
         [
           '#include <begin_vertex>',
-          `float theta = sin( time ) / ${ 1.1.toFixed(1) };`,
-          // `float theta = sin( time + position.y ) / ${ 1.1.toFixed(1) };`,
-          'transformed *= theta;',
+          'vUv1 = vec3( uv1, 1 ).xy;',
+          `float theta = 1.0 + sin( time ) / ${ 1.1.toFixed(1) };`,
+          'transformed.x *= theta;',
+        ].join('\n')
+      );
+
+      // shader.fragmentShader = 'uniform sampler2D rgbTexture;\n' + shader.fragmentShader;
+      shader.fragmentShader = shader.fragmentShader.replace(
+        'uniform float opacity;',
+        [
+          'uniform float opacity;',
+          'uniform float useRgbTexture;',
+          'uniform sampler2D rgbTexture;',
+          'varying vec2 vUv1;'
+        ].join('\n')
+      );
+
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <map_fragment>',
+        [
+          '#ifdef USE_MAP',
+          'vec4 sampledDiffuseColor = useRgbTexture > 0.0 ? texture2D( rgbTexture, vUv1 ) : texture2D( map, vMapUv );',
+          '#ifdef DECODE_VIDEO_TEXTURE',
+          'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );',
+          '#endif',
+          'diffuseColor *= sampledDiffuseColor;',
+          '#endif'
         ].join( '\n' )
       );
 
@@ -422,67 +462,5 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     }
 
     return material;
-    // return new THREE.ShaderMaterial({
-    //   uniforms: THREE.UniformsUtils.merge([
-    //     THREE.UniformsLib.common,
-    //     THREE.UniformsLib.lights,
-    //     THREE.UniformsLib.points,
-    //     {
-    //       originalTexture: { value: this.originalBlockMaterial?.map },
-    //       rgbTexture: { value: this.rgbBlockTexture },
-    //       displayRgbTexture: { value: 1 }
-    //     }
-    //   ]),
-    //   vertexShader: this.vertexShader(),
-    //   fragmentShader: this.fragmentShader(),
-    //   lights: true
-    // });
   }
-  
-  // private vertexShader(): string {
-  //   return `
-  //     #include <common>
-
-  //     uniform float displayRgbTexture;
-
-  //     varying float displayDebug;
-  //     varying vec2 vUv;
-  //     varying vec2 vUvRGB;
-
-  //     void main() {
-  //       displayDebug = displayRgbTexture;
-  //       vUv = uv;
-
-  //       gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-  //     }`; 
-  // }
-  
-  // private fragmentShader(): string {
-  //   return `
-  //     #include <common>
-
-  //     uniform sampler2D originalTexture;
-  //     uniform sampler2D rgbTexture;
-  //     uniform vec3 diffuse;
-  //     uniform float opacity;
-      
-  //     varying float displayDebug;
-  //     varying vec2 vUv;
-
-  //     void main() {
-  //       vec4 diffuseColor = vec4( diffuse, opacity );
-  //       ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
-  //       reflectedLight.indirectDiffuse += vec3( 1.0 );
-  //       reflectedLight.indirectDiffuse *= diffuseColor.rgb;
-  //       vec3 outgoingLight = reflectedLight.indirectDiffuse;
-
-  //       vec4 originalColor = texture2D( originalTexture, vUv );
-  //       vec4 rgbColor = texture2D( rgbTexture, vUv );
-  //       vec4 finalColor;
-  //       finalColor = mix(originalColor, rgbColor, 0.0);
-  //       finalColor.rgb *= outgoingLight;
-  //       gl_FragColor = finalColor;
-  //       // #include <colorspace_fragment>
-  //     }`;
-  // }
 }
