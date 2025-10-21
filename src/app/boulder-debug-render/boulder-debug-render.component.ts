@@ -59,6 +59,9 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private currentLine: Line2 = new Line2();
   private vertexNormalsHelpers: VertexNormalsHelper[] = [];
 
+  private rgbBlockTexture?: THREE.Texture;
+  private rgbBlockImageData?: ImageData;
+
   private currentGltf?: GLTF;
 
   public constructor(private el: ElementRef) {
@@ -108,6 +111,12 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
         this.processedLines = lines;
       }
     }
+
+    const loader = new THREE.TextureLoader();
+    loader.load('./images/rgb_blocks.png', (texture: THREE.Texture) => {
+      this.rgbBlockTexture = texture;
+      this.rgbBlockImageData = this.getImageDataFromTexture(texture);
+    });
   }
 
   private createCanvas(): void {
@@ -158,6 +167,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
       this.scene.add(gltf.scene);
       console.log(this.dumpObject(gltf.scene).join('\n'));
+      console.log(gltf.scene);
+      
 
       gltf.scene.traverse((child) => {
         child.layers.set(1);
@@ -180,7 +191,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   }
 
   private addLights(scene: THREE.Scene): void {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 10.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
   }
 
@@ -202,6 +213,18 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
     if (intersects.length === 0) {
       return;
+    }
+
+    // console.log('intersects:', intersects[0].uv);
+    // console.log('intersects:', intersects[0].uv1);
+
+    if (this.rgbBlockImageData) {
+      const uv = intersects[0].uv1;
+      if (uv) {
+        const color = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
+        // console.log('Sampled color:', color);
+        console.log(`R=${(color.r * 255).toFixed(0)} G=${(color.g * 255).toFixed(0)} B=${(color.b * 255).toFixed(0)}`);
+      }
     }
 
     const normal = intersects[0].normal ?? new THREE.Vector3(0, 0, 0);
@@ -305,5 +328,40 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
       this.dumpObject(child as THREE.Group<THREE.Object3DEventMap>, lines, isLast, newPrefix);
     });
     return lines;
+  }
+
+  private getImageDataFromTexture(texture: THREE.Texture): ImageData {
+    const image = texture.image;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    ctx!.drawImage(image, 0, 0);
+    const imageData = ctx!.getImageData(0, 0, image.width, image.height);
+
+    console.log('getImageDataFromTexture', imageData);
+    
+    return imageData;
+  }
+
+  private sampleColorFromImageData(imageData: ImageData, u: number, v: number) {
+    const { data, width, height } = imageData;
+
+    // Clamp and flip Y (because WebGL textures are usually upside down)
+    u = THREE.MathUtils.clamp(u, 0, 1);
+    v = THREE.MathUtils.clamp(v, 0, 1);
+
+    const x = Math.floor(u * (width - 1));
+    const y = Math.floor(v * (height - 1));
+    const index = (y * width + x) * 4;
+
+    const r = data[index] / 255;
+    const g = data[index + 1] / 255;
+    const b = data[index + 2] / 255;
+    const a = data[index + 3] / 255;
+
+    return { r, g, b, a, color: new THREE.Color(r, g, b) };
   }
 }
