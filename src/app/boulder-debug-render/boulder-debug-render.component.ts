@@ -66,10 +66,6 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
   private highlightedHoldsTexture?: THREE.Texture;
-  // private highlightedHoldsImageData?: ImageData;
-  // private highlightedHoldsMaterial?: THREE.MeshPhysicalMaterial;
-
-  private highlightedHoldsData?: THREE.DataTexture;
 
   private currentGltf?: GLTF;
 
@@ -125,27 +121,36 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     loader.load('./images/rgb_blocks.png', (texture: THREE.Texture) => {
       texture.flipY = false;
       texture.needsUpdate = true;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
       this.rgbBlockTexture = texture;
-
       this.rgbBlockImageData = this.getImageDataFromTexture(texture);
       this.rgbBlockMaterial = this.getCustomShaderMaterial();
+      
+      this.swapTexture();
     });
 
     loader.load('./images/rgb_test_highlight.png', (texture: THREE.Texture) => {
       texture.flipY = false;
       texture.needsUpdate = true;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
       this.highlightedHoldsTexture = texture;
     });
   }
 
   public switchTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
-      let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
-      // object.material = object.material === this.rgbBlockMaterial ? this.originalBlockMaterial : this.rgbBlockMaterial;
-      object.material = this.rgbBlockMaterial;
+      // let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      // object.material = this.rgbBlockMaterial;
       this.useRgbTexture = this.useRgbTexture === 0.0 ? 1.0 : 0.0;
-      console.log(this.useRgbTexture);
-      
+    }
+  }
+
+  private swapTexture(): void {
+    if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
+      let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      object.material = this.rgbBlockMaterial;
     }
   }
 
@@ -207,7 +212,9 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       this.scene.add(gltf.scene);
       console.log(this.dumpObject(gltf.scene).join('\n'));
       console.log(gltf.scene);
-      
+      this.rgbBlockMaterial = undefined;
+      this.originalBlockMaterial = undefined;
+      this.originalBlockTexture = null;
 
       gltf.scene.traverse((child) => {
         child.layers.set(1);
@@ -216,12 +223,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
           this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
           this.originalBlockTexture = this.originalBlockMaterial.map;
           this.rgbBlockMaterial = this.getCustomShaderMaterial();
-  
-          console.log(this.originalBlockMaterial);
-          console.log(this.rgbBlockMaterial);
         }
-        
-        // this.rgbBlockMaterial = this.originalBlockMaterial.clone();
       });
 
       if (this.currentGltf !== undefined) {
@@ -230,6 +232,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
         fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
       }
       this.currentGltf = gltf;
+      this.swapTexture();
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
@@ -420,8 +423,6 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
     const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
     material.onBeforeCompile = (shader) => {
-      console.log('onBeforeCompile');
-      
       shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
       shader.uniforms['time'] = { value: 0 };
       shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
@@ -466,16 +467,15 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
         '#include <map_fragment>',
         [
           '#ifdef USE_MAP',
-          'vec2 debug = vUv1;',
-          'vec4 sampledDiffuseColor = useRgbTexture > 0.0 ? texture2D( rgbTexture, debug ) : texture2D( map, vMapUv );',
-          'vec4 highlightedHoldsColor = texture2D( highlightedHoldsTexture, debug );',
+          'vec4 sampledDiffuseColor = useRgbTexture > 0.0 ? texture2D( rgbTexture, vUv1 ) : texture2D( map, vMapUv );',
+          'vec4 highlightedHoldsColor = texture2D( highlightedHoldsTexture, vUv1 );',
           '#ifdef DECODE_VIDEO_TEXTURE',
           'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );',
           '#endif',
           'diffuseColor *= sampledDiffuseColor;',
-          // 'diffuseColor.rgb = mix(diffuseColor.rgb, highlightedHoldsColor.rgb, 0.8f);',
-          'if (highlightedHoldsColor.r > 0.0 || highlightedHoldsColor.g > 0.0 || highlightedHoldsColor.b > 0.0) {',
+          'if (useRgbTexture <= 0.0 && (highlightedHoldsColor.r > 0.0 || highlightedHoldsColor.g > 0.0 || highlightedHoldsColor.b > 0.0)) {',
           'diffuseColor.rgb = highlightedHoldsColor.rgb;',
+          'diffuseColor.rgb *= vec3(2.0);',
           '}',
           '#endif'
         ].join( '\n' )
