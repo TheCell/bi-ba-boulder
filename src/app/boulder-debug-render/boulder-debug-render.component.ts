@@ -11,6 +11,7 @@ import { BoulderLine } from '../interfaces/boulder-line';
 import { fitCameraToCenteredObject } from '../utils/camera-utils';
 import { HSLToHex } from '../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+import Stats from 'stats.js'
 
 @Component({
   selector: 'app-boulder-debug-render',
@@ -68,6 +69,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private currentHighlightedHoldsTexturePath = './images/rgb_test_highlight.png';
   private highlightedHoldsTexture?: THREE.Texture;
 
+  private stats?: Stats;
+
   private currentGltf?: GLTF;
 
   public constructor(private el: ElementRef) {
@@ -104,6 +107,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.createCanvas();
+    this.addStats();
 
     this.currentLineMaterial = this.getNewLineMaterial();
 
@@ -203,6 +207,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   }
 
   private loop = () => {
+    this.stats?.begin();
     if (this.rgbBlockMaterial) {
       const shader = this.rgbBlockMaterial.userData['shader'];
             
@@ -214,6 +219,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     }
     
     this.renderer.render(this.scene, this.camera);
+    this.stats?.end();
     window.requestAnimationFrame(this.loop);
   }
 
@@ -379,6 +385,24 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     });
 
     this.scene.add( ...this.vertexNormalsHelpers );
+  }
+
+  private addStats(): void {
+    this.stats = new Stats();
+    this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+    let offset = 0;
+    this.stats.dom.style.position = 'absolute';
+    this.stats.dom.style.top = `${offset}px`;
+    for (let i = 0; i < this.stats.dom.children.length; i++) {
+      offset += 50;
+      const element = this.stats.dom.children[i] as HTMLElement;
+      element.style.position = 'absolute';
+      element.style.display = 'block';
+      element.style.top = `${offset}px`;
+    }
+
+    document.body.appendChild( this.stats.dom );
   }
 
   private dumpObject(obj: THREE.Group<THREE.Object3DEventMap>, lines: string[] = [], isLast = true, prefix = '') {
