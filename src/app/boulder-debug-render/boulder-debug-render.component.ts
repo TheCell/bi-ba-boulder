@@ -473,7 +473,10 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
           'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );',
           '#endif',
           'diffuseColor *= sampledDiffuseColor;',
-          'diffuseColor.rgb += highlightedHoldsColor.rgb;',
+          // 'diffuseColor.rgb = mix(diffuseColor.rgb, highlightedHoldsColor.rgb, 0.8f);',
+          'if (highlightedHoldsColor.r > 0.0 || highlightedHoldsColor.g > 0.0 || highlightedHoldsColor.b > 0.0) {',
+          'diffuseColor.rgb = highlightedHoldsColor.rgb;',
+          '}',
           '#endif'
         ].join( '\n' )
       );
