@@ -65,6 +65,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
+  private currentHighlightedHoldsTexturePath = './images/rgb_test_highlight.png';
   private highlightedHoldsTexture?: THREE.Texture;
 
   private currentGltf?: GLTF;
@@ -130,21 +131,18 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       this.swapTexture();
     });
 
-    loader.load('./images/rgb_test_highlight.png', (texture: THREE.Texture) => {
-      texture.flipY = false;
-      texture.needsUpdate = true;
-      texture.minFilter = THREE.NearestFilter;
-      texture.magFilter = THREE.NearestFilter;
-      this.highlightedHoldsTexture = texture;
-    });
+    this.loadHighlightedHoldsTexture(this.currentHighlightedHoldsTexturePath);
   }
 
   public switchTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
-      // let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
-      // object.material = this.rgbBlockMaterial;
       this.useRgbTexture = this.useRgbTexture === 0.0 ? 1.0 : 0.0;
     }
+  }
+
+  public switchRoute(): void {
+    this.currentHighlightedHoldsTexturePath = this.currentHighlightedHoldsTexturePath === './images/rgb_test_highlight_2.png' ? './images/rgb_test_highlight.png' : './images/rgb_test_highlight_2.png';
+    this.loadHighlightedHoldsTexture(this.currentHighlightedHoldsTexturePath);
   }
 
   private swapTexture(): void {
@@ -152,6 +150,17 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
       object.material = this.rgbBlockMaterial;
     }
+  }
+
+  private loadHighlightedHoldsTexture(path: string): void {
+    const loader = new THREE.TextureLoader();
+    loader.load(path, (texture: THREE.Texture) => {
+      texture.flipY = false;
+      texture.needsUpdate = true;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
+      this.highlightedHoldsTexture = texture;
+    });
   }
 
   private createCanvas(): void {
@@ -200,6 +209,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       if (shader) {
         // shader.uniforms.time.value = performance.now() / 1000;
         shader.uniforms.useRgbTexture.value = this.useRgbTexture;
+        shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
       }
     }
     
@@ -419,17 +429,12 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
   }
 
   private getCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
-    // this.highlightedHoldsData = this.getHighlightedHoldsData();
-
     const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
     material.onBeforeCompile = (shader) => {
       shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
       shader.uniforms['time'] = { value: 0 };
       shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
       shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
-
-      // shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
-      // shader.vertexShader = 'uniform float time;\n' + shader.vertexShader;
 
       shader.vertexShader = shader.vertexShader.replace(
         'varying vec3 vViewPosition;',
@@ -451,7 +456,6 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
         ].join('\n')
       );
 
-      // shader.fragmentShader = 'uniform sampler2D rgbTexture;\n' + shader.fragmentShader;
       shader.fragmentShader = shader.fragmentShader.replace(
         'uniform float opacity;',
         [
