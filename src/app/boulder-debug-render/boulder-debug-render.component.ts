@@ -69,6 +69,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.Texture;
 
+  private drawingNewHighlight = false;
+
   private stats?: Stats;
 
   private currentGltf?: GLTF;
@@ -147,6 +149,51 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   public switchRoute(): void {
     this.currentHighlightedHoldsTexturePath = this.currentHighlightedHoldsTexturePath === './images/Bimano_Spraywall_02_highlight_02.png' ? './images/Bimano_Spraywall_02_highlight_01.png' : './images/Bimano_Spraywall_02_highlight_02.png';
     this.loadHighlightedHoldsTexture(this.currentHighlightedHoldsTexturePath);
+  }
+
+  public newRoute(): void {
+    const width = 128;
+    const height = 128;
+    const size = width * height;
+    const data = new Uint8Array( size * 4 );
+    for ( let i = 0; i < size; i ++ ) {
+      const stride = i * 4;
+      data[ stride ] = 0;     // red
+      data[ stride + 1 ] = 0; // green
+      data[ stride + 2 ] = 0; // blue
+      data[ stride + 3 ] = 255; // alpha
+    }
+
+    const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
+    texture.needsUpdate = true;
+    this.highlightedHoldsTexture = texture;
+    this.drawingNewHighlight = true;
+  }
+
+  public downloadRoute(): void {
+    if (this.highlightedHoldsTexture?.isTexture && this.highlightedHoldsTexture.image && this.highlightedHoldsTexture.image.data) {
+      let canvas = document.createElement('canvas');
+      let context = canvas.getContext('2d')!;
+      let imgData = context.createImageData(this.highlightedHoldsTexture.image.width, this.highlightedHoldsTexture.image.height);
+      canvas.width = this.highlightedHoldsTexture.image.width;
+      canvas.height = this.highlightedHoldsTexture.image.height;
+
+      for(var i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
+        imgData.data[i] = this.highlightedHoldsTexture.image.data[i];
+        imgData.data[i + 1] = this.highlightedHoldsTexture.image.data[i + 1];
+        imgData.data[i + 2] = this.highlightedHoldsTexture.image.data[i + 2];
+        imgData.data[i + 3] = 255;
+      }
+
+      context.putImageData(imgData, 0, 0);
+
+      var img = new Image();
+      img.src = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = img.src;
+      link.download = `highlighted_route_${Date.now()}.png`;
+      link.click();
+    }
   }
 
   private swapTexture(): void {
@@ -287,29 +334,26 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     // console.log('intersects:', intersects[0].uv);
     // console.log('intersects:', intersects[0].uv1);
 
-    if (this.rgbBlockImageData) {
-      const uv = intersects[0].uv1;
-      if (uv) {
-        const color = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
-        // console.log('Sampled color:', color);
-        console.log(`R=${(color.r * 255).toFixed(0)} G=${(color.g * 255).toFixed(0)} B=${(color.b * 255).toFixed(0)}`);
+    if (this.rgbBlockImageData && intersects[0].uv1) {
+      this.drawNewHighlight(intersects[0].uv1);
+    }
+
+    if (!this.drawingNewHighlight) {
+      const normal = intersects[0].normal ?? new THREE.Vector3(0, 0, 0);
+      const newPoint: THREE.Vector3 = new THREE.Vector3 (
+        intersects[0].point.x + 0.1 * normal.x,
+        intersects[0].point.y + 0.1 * normal.y,
+        intersects[0].point.z + 0.1 * normal.z
+      );
+      this.clickPoints.push(newPoint);
+      console.log('newPoint:',  `(${newPoint.x}, ${newPoint.y}, ${newPoint.z})`);
+  
+      if (this.clickPoints.length < 2) {
+        return;
       }
+  
+      this.drawLineFromActivePoints(this.scene);
     }
-
-    const normal = intersects[0].normal ?? new THREE.Vector3(0, 0, 0);
-    const newPoint: THREE.Vector3 = new THREE.Vector3 (
-      intersects[0].point.x + 0.1 * normal.x,
-      intersects[0].point.y + 0.1 * normal.y,
-      intersects[0].point.z + 0.1 * normal.z
-    );
-    this.clickPoints.push(newPoint);
-    console.log('newPoint:',  `(${newPoint.x}, ${newPoint.y}, ${newPoint.z})`);
-
-    if (this.clickPoints.length < 2) {
-      return;
-    }
-
-    this.drawLineFromActivePoints(this.scene);
   }
 
   private drawLineFromActivePoints(scene: THREE.Scene): void {
@@ -449,7 +493,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     const b = data[index + 2] / 255;
     const a = data[index + 3] / 255;
 
-    return { r, g, b, a, color: new THREE.Color(r, g, b) };
+    return { r, g, b, a, index };
   }
 
   private getCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
@@ -513,5 +557,20 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     }
 
     return material;
+  }
+
+  private drawNewHighlight(uv: THREE.Vector2): void {
+    if (!this.drawingNewHighlight || !this.rgbBlockImageData) {
+      return;
+    }
+    
+    const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
+    // console.log('Sampled color:', color);
+    console.log(`R=${(colorAndIndex.r * 255).toFixed(0)} G=${(colorAndIndex.g * 255).toFixed(0)} B=${(colorAndIndex.b * 255).toFixed(0)}`);
+
+    this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = 255;
+    this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = 0;
+    this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = 0;
+    this.highlightedHoldsTexture!.needsUpdate = true;
   }
 }
