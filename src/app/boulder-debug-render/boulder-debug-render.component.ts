@@ -13,6 +13,14 @@ import { HSLToHex } from '../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import Stats from 'stats.js'
 
+interface ColorAndIndex {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+  index: number;
+}
+
 @Component({
   selector: 'app-boulder-debug-render',
   imports: [
@@ -78,7 +86,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   ];
   public highlightColor: THREE.Color = this.holdColorOptions[2].color;
   private drawingNewHighlight = false;
-  private lastClickedGroup = 0;
+  private lastClickedHold?: ColorAndIndex;
 
   private stats?: Stats;
 
@@ -496,7 +504,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     return imageData;
   }
 
-  private sampleColorFromImageData(imageData: ImageData, u: number, v: number) {
+  private sampleColorFromImageData(imageData: ImageData, u: number, v: number): ColorAndIndex {
     const { data, width, height } = imageData;
 
     // Clamp and flip Y (because WebGL textures are usually upside down)
@@ -599,33 +607,50 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     
     const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
     console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
-    
-    if (colorAndIndex.b > 0) {
-      const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
-      if (this.lastClickedGroup === colorAndIndex.b) {
-        for (let index = 0; index < group.length; index++) {
-          this.highlightedHoldsTexture!.image.data[group[index]] = 0;
-          this.highlightedHoldsTexture!.image.data[group[index] + 1] = 0;
-          this.highlightedHoldsTexture!.image.data[group[index] + 2] = 0;
-        }
 
+    if (this.lastClickedHold?.index === colorAndIndex.index) {
+      const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
+      let everythingWasHighlighted = true;
+      let nothingWasHighlighted = true;
+      for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
+        if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] === 0) {
+          everythingWasHighlighted = false;
+        }
+        if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] +
+            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] +
+            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] > 0) {
+          nothingWasHighlighted = false;
+        }
+    
+        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] = this.highlightColor.r;
+        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = this.highlightColor.g;
+        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = this.highlightColor.b;
+      }
+
+      if (everythingWasHighlighted) {
+        for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] = 0;
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = 0;
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = 0;
+        }
+      } else if (nothingWasHighlighted) {
+        for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] = 0;
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = 0;
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = 0;
+        }
+        
         this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor.r;
         this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor.g;
         this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor.b;
-      } else {
-        for (let index = 0; index < group.length; index++) {
-          this.highlightedHoldsTexture!.image.data[group[index]] = this.highlightColor.r;
-          this.highlightedHoldsTexture!.image.data[group[index] + 1] = this.highlightColor.g;
-          this.highlightedHoldsTexture!.image.data[group[index] + 2] = this.highlightColor.b;
-        }
       }
     } else {
       this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor.r;
       this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor.g;
       this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor.b;
     }
+    
     this.highlightedHoldsTexture!.needsUpdate = true;
-
-    this.lastClickedGroup = colorAndIndex.b;
+    this.lastClickedHold = colorAndIndex;
   }
 }
