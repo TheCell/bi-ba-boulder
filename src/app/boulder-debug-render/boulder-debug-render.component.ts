@@ -69,7 +69,16 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.Texture;
 
+  public holdColorOptions = [
+    { name: 'start', color: new THREE.Color(0, 158, 115) },
+    { name: 'top', color: new THREE.Color(213, 94, 0) },
+    { name: 'hold', color: new THREE.Color(86, 180, 233) },
+    { name: 'foot', color: new THREE.Color(240, 228, 66) },
+    { name: 'custom', color: new THREE.Color(204, 121, 167) }
+  ];
+  public highlightColor: THREE.Color = this.holdColorOptions[2].color;
   private drawingNewHighlight = false;
+  private lastClickedGroup = 0;
 
   private stats?: Stats;
 
@@ -193,6 +202,16 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       link.href = img.src;
       link.download = `highlighted_route_${Date.now()}.png`;
       link.click();
+    }
+  }
+
+  public onHoldColorChange(event: EventTarget | null): void {
+    const selectElement = event as HTMLSelectElement;
+    const selectedColorName = selectElement.value;
+    const selectedColorOption = this.holdColorOptions.find(option => option.name === selectedColorName);
+    if (selectedColorOption) {
+      this.highlightColor = selectedColorOption.color;
+      console.log('Hold color changed to:', this.highlightColor);
     }
   }
 
@@ -435,7 +454,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     this.stats = new Stats();
     this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 
-    let offset = 0;
+    let offset = 10;
     this.stats.dom.style.position = 'absolute';
     this.stats.dom.style.top = `${offset}px`;
     for (let i = 0; i < this.stats.dom.children.length; i++) {
@@ -488,12 +507,26 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     const y = Math.floor(v * (height - 1));
     const index = (y * width + x) * 4;
 
-    const r = data[index] / 255;
-    const g = data[index + 1] / 255;
-    const b = data[index + 2] / 255;
-    const a = data[index + 3] / 255;
+    const r = data[index];
+    const g = data[index + 1];
+    const b = data[index + 2];
+    const a = data[index + 3];
 
     return { r, g, b, a, index };
+  }
+
+  private getIndicesForGroup(imageData: ImageData, group: number): number[] {
+    const indices: number[] = [];
+    const { data, width, height } = imageData;
+
+    for (let index = 2; index < data.length; index += 4) {
+      const blue = data[index];
+      if (blue === group) {
+        indices.push(index - 2);
+      }
+    }
+
+    return indices;
   }
 
   private getCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
@@ -565,12 +598,34 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     }
     
     const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
-    // console.log('Sampled color:', color);
-    console.log(`R=${(colorAndIndex.r * 255).toFixed(0)} G=${(colorAndIndex.g * 255).toFixed(0)} B=${(colorAndIndex.b * 255).toFixed(0)}`);
+    console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
+    
+    if (colorAndIndex.b > 0) {
+      const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
+      if (this.lastClickedGroup === colorAndIndex.b) {
+        for (let index = 0; index < group.length; index++) {
+          this.highlightedHoldsTexture!.image.data[group[index]] = 0;
+          this.highlightedHoldsTexture!.image.data[group[index] + 1] = 0;
+          this.highlightedHoldsTexture!.image.data[group[index] + 2] = 0;
+        }
 
-    this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = 255;
-    this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = 0;
-    this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = 0;
+        this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor.r;
+        this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor.g;
+        this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor.b;
+      } else {
+        for (let index = 0; index < group.length; index++) {
+          this.highlightedHoldsTexture!.image.data[group[index]] = this.highlightColor.r;
+          this.highlightedHoldsTexture!.image.data[group[index] + 1] = this.highlightColor.g;
+          this.highlightedHoldsTexture!.image.data[group[index] + 2] = this.highlightColor.b;
+        }
+      }
+    } else {
+      this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor.r;
+      this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor.g;
+      this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor.b;
+    }
     this.highlightedHoldsTexture!.needsUpdate = true;
+
+    this.lastClickedGroup = colorAndIndex.b;
   }
 }

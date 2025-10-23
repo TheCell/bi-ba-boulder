@@ -5,4 +5,11 @@
     <button (click)="switchRoute()">Switch Route</button>
     <button (click)="newRoute()">New Route</button>
     <button (click)="downloadRoute()">Download Route</button>
+
+    <div class="hold-color-options">
+        <label for="holdColorSelect">Hold Color:</label>
+        <select id="holdColorSelect" (change)="onHoldColorChange($event.target!)">
+            <option *ngFor="let option of holdColorOptions" [value]="option.name" [selected]="option.color.equals(highlightColor)">{{ option.name }}</option>
+        </select>
+    </div>
 </div>
