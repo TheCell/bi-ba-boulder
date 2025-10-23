@@ -30,9 +30,16 @@
 
 # Prepare Model for export
 - Open the LOD Models in Blender
-- Reposition the Model
+- Reposition the Model and rotate
 - Export as glb (binary gltf file)
 - TODO: Scale Model to match real world size
+
+# UV Grouping
+UVs of Holds are grouped on the Texture as follows: R and G are just unique identifiers. Holds on top of other Holds are grouped by B values.
+
+# Highlighting images
+The highlighting images are 128x128 pixels in 24 bit depth. If a file is opened and saved in paint it will be converted to 32 bit.
+Use Paint.NET.
 
 # WIP Reducing the final mesh
 For the script to work you need Blender installed and added Blender.exe as a System variable

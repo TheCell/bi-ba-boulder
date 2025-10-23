@@ -20,7 +20,10 @@ The next todos:
 [] height indicator  
 [] switch to uuid for id's   
 [] split model into parts   
-[] highlight of parts
+[x] highlight of parts
+[x] texture rework
+[] custom highlighting texture
+[] build highlight texture optimizer
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/

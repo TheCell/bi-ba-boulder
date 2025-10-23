@@ -66,7 +66,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
-  private currentHighlightedHoldsTexturePath = './images/rgb_test_highlight.png';
+  private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.Texture;
 
   private stats?: Stats;
@@ -123,7 +123,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     }
 
     const loader = new THREE.TextureLoader();
-    loader.load('./images/rgb_blocks.png', (texture: THREE.Texture) => {
+    loader.load('./api-test/boulder/spraywall2/Bimano_Spraywall_02_LOD0_UV.png', (texture: THREE.Texture) => {
       texture.flipY = false;
       texture.needsUpdate = true;
       texture.minFilter = THREE.NearestFilter;
@@ -145,7 +145,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   }
 
   public switchRoute(): void {
-    this.currentHighlightedHoldsTexturePath = this.currentHighlightedHoldsTexturePath === './images/rgb_test_highlight_2.png' ? './images/rgb_test_highlight.png' : './images/rgb_test_highlight_2.png';
+    this.currentHighlightedHoldsTexturePath = this.currentHighlightedHoldsTexturePath === './images/Bimano_Spraywall_02_highlight_02.png' ? './images/Bimano_Spraywall_02_highlight_01.png' : './images/Bimano_Spraywall_02_highlight_02.png';
     this.loadHighlightedHoldsTexture(this.currentHighlightedHoldsTexturePath);
   }
 
