@@ -539,6 +539,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
   private getCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
     const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
+
     material.onBeforeCompile = (shader) => {
       shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
       shader.uniforms['time'] = { value: 0 };
@@ -551,7 +552,8 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
           'varying vec3 vViewPosition;',
           'attribute vec2 uv1;',
           'uniform float time;',
-          'varying vec2 vUv1;'
+          'varying vec2 vUv1;',
+          'varying float fresnel;'
         ].join('\n')
       );
 
@@ -560,8 +562,29 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
         [
           '#include <begin_vertex>',
           'vUv1 = vec3( uv1, 1 ).xy;',
-          `float theta = 1.0 + sin( time ) / ${ 1.1.toFixed(1) };`,
-          'transformed.x *= theta;',
+          // `float theta = 1.0 + sin( time ) / ${ 1.1.toFixed(1) };`,
+          // 'transformed.x *= theta;',
+        ].join('\n')
+      );
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <worldpos_vertex>',
+        [
+          '#if defined( USE_ENVMAP ) || defined( DISTANCE ) || defined ( USE_SHADOWMAP ) || defined ( USE_TRANSMISSION ) || NUM_SPOT_LIGHT_COORDS > 0',
+          '	vec4 worldPosition = vec4( transformed, 1.0 );',
+          '	#ifdef USE_BATCHING',
+          '		worldPosition = batchingMatrix * worldPosition;',
+          '	#endif',
+          '	#ifdef USE_INSTANCING',
+          '		worldPosition = instanceMatrix * worldPosition;',
+          '	#endif',
+          '	worldPosition = modelMatrix * worldPosition;',
+          '#endif',
+          'fresnel = abs(dot(normalize(vViewPosition), normal));',
+          // 'fresnel = normal.z;',
+          // 'fresnel = dot( normalize( vViewPosition ), normal );',
+          // 'fresnel = dot( normalize( vViewPosition ), normal );',
+          // 'fresnel = dot(normalize(vViewPosition), normal);',
         ].join('\n')
       );
 
@@ -572,7 +595,8 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
           'uniform float useRgbTexture;',
           'uniform sampler2D rgbTexture;',
           'uniform sampler2D highlightedHoldsTexture;',
-          'varying vec2 vUv1;'
+          'varying vec2 vUv1;',
+          'varying float fresnel;'
         ].join('\n')
       );
 
@@ -587,12 +611,43 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
           '#endif',
           'diffuseColor *= sampledDiffuseColor;',
           'if (useRgbTexture <= 0.0 && (highlightedHoldsColor.r > 0.0 || highlightedHoldsColor.g > 0.0 || highlightedHoldsColor.b > 0.0)) {',
-          'diffuseColor.rgb = highlightedHoldsColor.rgb;',
-          'diffuseColor.rgb *= vec3(2.0);',
+          // 'float grid_position = rand( vMapUv.xy );',
+          // 'float grid_position = clamp(rand( vMapUv.xy ) - 0.5, 0.0, 1.0);',
+          // 'vec3 truecolor = vec3(highlightedHoldsColor.r * grid_position + diffuseColor.r * (1.0 - grid_position), highlightedHoldsColor.g * grid_position + diffuseColor.g * (1.0 - grid_position), highlightedHoldsColor.b * grid_position + diffuseColor.b * (1.0 - grid_position));',
+          // 'diffuseColor.rgb = truecolor;',
+          // 'totalEmissiveRadiance  = truecolor;',
+          // 'vec3 mixedHighlight = vec3(highlightedHoldsColor.r * grid_position, highlightedHoldsColor.g * grid_position, highlightedHoldsColor.b * grid_position);',
+          'vec3 sampledGray = vec3((sampledDiffuseColor.r + sampledDiffuseColor.g + sampledDiffuseColor.b) / 3.0);',
+          // 'totalEmissiveRadiance.rgb = highlightedHoldsColor.rgb * sampledGray;',
+          // 'float normaliedFresnel = clamp( (fresnel - 0.5) * 2.0, 0.0, 1.0);',
+          // 'float clampedFresnel = clamp(fresnel, 0.0, 1.0);',
+          // 'totalEmissiveRadiance.rgb = highlightedHoldsColor.rgb * (1.0 - fresnel) * 0.5;',
+          // 'totalEmissiveRadiance.rgb = highlightedHoldsColor.rgb * (1.0 - clampedFresnel) * 0.5;',
+          'totalEmissiveRadiance.rgb = highlightedHoldsColor.rgb * (1.0 - fresnel) * 0.5;',
+          // 'diffuseColor.rgb = vec3(1.0 - fresnel);',
+          // 'diffuseColor.rgb = diffuseColor.rgb * vec3(1.0 - fresnel);',
+          // 'diffuseColor.rgb = diffuseColor.rgb * vec3(1.0 - fresnel);',
+          // 'diffuseColor.rgb = highlightedHoldsColor.rgb;',
+          // 'diffuseColor.rgb *= vec3(2.0);',
           '}',
           '#endif'
         ].join( '\n' )
       );
+
+      // shader.fragmentShader = shader.fragmentShader.replace(
+      //   '#include <emissivemap_fragment>',
+      //   [
+      //     '#ifdef USE_EMISSIVEMAP',
+      //       'vec4 emissiveColor = texture2D( emissiveMap, vEmissiveMapUv );',
+      //       '#ifdef DECODE_VIDEO_TEXTURE_EMISSIVE',
+      //         '// use inline sRGB decode until browsers properly support SRGB8_ALPHA8 with video textures (#26516)',
+      //         'emissiveColor = sRGBTransferEOTF( emissiveColor );',
+      //       '#endif',
+      //       'totalEmissiveRadiance *= emissiveColor.rgb;',
+      //       '#endif',
+      //     'totalEmissiveRadiance.rgb += highlightedHoldsColor.rgb * vec3(0.5);',
+      //   ].join( '\n' )
+      // );
 
       material.userData['shader'] = shader;
     }

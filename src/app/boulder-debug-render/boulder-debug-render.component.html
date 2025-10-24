@@ -8,7 +8,7 @@
 
     <div class="hold-color-options">
         <label for="holdColorSelect">Hold Color:</label>
-        <select id="holdColorSelect" (change)="onHoldColorChange($event.target!)">
+        <select id="holdColorSelect" (change)="onHoldColorChange($event.target)">
             <option *ngFor="let option of holdColorOptions" [value]="option.name" [selected]="option.color.equals(highlightColor)">{{ option.name }}</option>
         </select>
     </div>
