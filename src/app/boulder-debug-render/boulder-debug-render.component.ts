@@ -21,6 +21,25 @@ interface ColorAndIndex {
   index: number;
 }
 
+interface TypeAndIndex {
+  type: Type;
+  index: number;
+}
+
+interface TypeAndColor {
+  type: Type;
+  color: THREE.Color;
+}
+
+enum Type {
+  undefined = 0,
+  start = 1,
+  top = 2,
+  hold = 3,
+  foot = 4,
+  custom = 5
+}
+
 @Component({
   selector: 'app-boulder-debug-render',
   imports: [
@@ -77,12 +96,12 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.Texture;
 
-  public holdColorOptions = [
-    { name: 'start', color: new THREE.Color(0, 158, 115) },
-    { name: 'top', color: new THREE.Color(213, 94, 0) },
-    { name: 'hold', color: new THREE.Color(86, 180, 233) },
-    { name: 'foot', color: new THREE.Color(240, 228, 66) },
-    { name: 'custom', color: new THREE.Color(204, 121, 167) }
+  public holdColorOptions: TypeAndColor[] = [
+    { type: Type.start, color: new THREE.Color(0, 158, 115) },
+    { type: Type.top, color: new THREE.Color(213, 94, 0) },
+    { type: Type.hold, color: new THREE.Color(86, 180, 233) },
+    { type: Type.foot, color: new THREE.Color(240, 228, 66) },
+    { type: Type.custom, color: new THREE.Color(204, 121, 167) }
   ];
   public highlightColor: THREE.Color = this.holdColorOptions[2].color;
   private drawingNewHighlight = false;
@@ -195,7 +214,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       canvas.width = this.highlightedHoldsTexture.image.width;
       canvas.height = this.highlightedHoldsTexture.image.height;
 
-      for(var i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
+      for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
         imgData.data[i] = this.highlightedHoldsTexture.image.data[i];
         imgData.data[i + 1] = this.highlightedHoldsTexture.image.data[i + 1];
         imgData.data[i + 2] = this.highlightedHoldsTexture.image.data[i + 2];
@@ -203,24 +222,76 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       }
 
       context.putImageData(imgData, 0, 0);
-
-      var img = new Image();
+      
+      let img = new Image();
       img.src = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = img.src;
       link.download = `highlighted_route_${Date.now()}.png`;
       link.click();
+      URL.revokeObjectURL(link.href);
+
+      // let timer1a = performance.now();
+      // let customRouteData: TypeAndIndex[] = [];
+      // for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
+      //   if (this.highlightedHoldsTexture.image.data[i] > 0 || this.highlightedHoldsTexture.image.data[i + 1] > 0 || this.highlightedHoldsTexture.image.data[i + 2] > 0) {          
+      //     customRouteData.push({
+      //       type: Type.hold,
+      //       index: i
+      //     });
+      //   }
+      // }
+      // // console.log(customImage);
+      // let timer1b = performance.now();
+      // console.log('Custom image processing time:', timer1b - timer1a);
+
+      let indexAndType16BitArray: number[] = [];
+      let binaryString = '';
+      for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
+        if (this.highlightedHoldsTexture.image.data[i] > 0 || this.highlightedHoldsTexture.image.data[i + 1] > 0 || this.highlightedHoldsTexture.image.data[i + 2] > 0) {          
+          const type = this.holdColorOptions.find((typeAndColor: TypeAndColor) => {
+            if (typeAndColor.color.r === this.highlightedHoldsTexture!.image.data[i] &&
+              typeAndColor.color.g === this.highlightedHoldsTexture!.image.data[i + 1] &&
+              typeAndColor.color.b === this.highlightedHoldsTexture!.image.data[i + 2]) {
+              return true;
+            }
+
+            return false;
+          });
+
+          if (type !== undefined) {
+            console.log(type.type);
+            let twoByteInfo = this.getBitsFromNumber(type.type, i);
+            console.log(twoByteInfo, this.dec2bin24(twoByteInfo));
+            binaryString += this.dec2bin24(twoByteInfo);
+            
+            indexAndType16BitArray.push(twoByteInfo);
+          }
+        }
+      }
+
+      const binLink = document.createElement('a');
+      binLink.href = URL.createObjectURL(new Blob([binaryString], { type: 'application/octet-stream' }));
+      binLink.download = `highlighted_route_${Date.now()}.bin`;
+      binLink.click();
+      URL.revokeObjectURL(binLink.href);
+      console.log(indexAndType16BitArray, binaryString);
     }
   }
 
   public onHoldColorChange(event: EventTarget | null): void {
     const selectElement = event as HTMLSelectElement;
-    const selectedColorName = selectElement.value;
-    const selectedColorOption = this.holdColorOptions.find(option => option.name === selectedColorName);
+    const selectedColorType = parseInt(selectElement.value);
+    const selectedColorOption = this.holdColorOptions.find(option => option.type === selectedColorType);
     if (selectedColorOption) {
       this.highlightColor = selectedColorOption.color;
-      console.log('Hold color changed to:', this.highlightColor);
+      console.log(`Hold color changed to : ${this.enumName(selectedColorOption.type)} `, this.highlightColor);
     }
+  }
+
+  public enumName(type: Type): string {
+    const enumNames = Object.keys(Type).filter(key => isNaN(Number(key)));
+    return enumNames[type];
   }
 
   private swapTexture(): void {
@@ -716,5 +787,17 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     
     this.highlightedHoldsTexture!.needsUpdate = true;
     this.lastClickedHold = colorAndIndex;
+  }
+
+  private getBitsFromNumber(type: Type, index: number): number {
+    // saving the type in the high endian 2 bits, and the index in the low endian 14 bits
+    let twoByteInfo = 0x00000;
+    twoByteInfo = (type << 16) | (index);
+    return twoByteInfo;
+  }
+
+  private dec2bin24(num: number): string {
+    // shift value 0 bits to the right
+    return (num >>> 0).toString(2).padStart(24, '0');
   }
 }
