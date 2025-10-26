@@ -245,6 +245,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       // let timer1b = performance.now();
       // console.log('Custom image processing time:', timer1b - timer1a);
 
+
+      // this is less efficient and won't save data if many holds are selected.
       let indexAndType16BitArray: number[] = [];
       let binaryString = '';
       for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
