@@ -3,8 +3,8 @@
 - Change sql User in .env or Add the user
 
 In this directory use:
-Copy the .env to .env.local file and insert the missing variables
-``composer install`` or ``symfony composer install``
+Copy the .env to .env.local file and insert the missing variables   
+``composer install`` or ``symfony composer install``   
 ``npm install @openapitools/openapi-generator-cli -g``
 
 Setup Db:

@@ -25,16 +25,16 @@ final class SpraywallController extends AbstractController
         $this->filesystem = new Filesystem();
     }
 
-    #[Route('/spraywall', name: 'app_spraywall')]
-    public function index(): JsonResponse
-    {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/SpraywallController.php',
-        ]);
-    }
+    // #[Route('/spraywall', name: 'app_spraywall')]
+    // public function index(): JsonResponse
+    // {
+    //     return $this->json([
+    //         'message' => 'Welcome to your new controller!',
+    //         'path' => 'src/Controller/SpraywallController.php',
+    //     ]);
+    // }
 
-    #[Route('/spraywall/{id}/problems', name: 'app_spraywall_problems')]
+    #[Route('/spraywall/{id}/problems', name: 'spraywall_problems', methods: ['GET'])]
     #[OA\Response(
       response: 200,
       description: 'Returns a list of problems',
