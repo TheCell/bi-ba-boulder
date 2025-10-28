@@ -20,10 +20,10 @@ The next todos:
 [] height indicator  
 [] switch to uuid for id's   
 [] split model into parts   
-[x] highlight of parts
-[x] texture rework
-[] custom highlighting texture
-[] build highlight texture optimizer
+[x] highlight of parts   
+[x] texture rework   
+[] custom highlighting texture   
+[] build highlight texture optimizer   
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/
@@ -38,7 +38,8 @@ Check out the Readme in the backend folder to set it up
 # Setup Fileshare
 1. Open an elevated PowerShell
 2. ``New-Item -ItemType SymbolicLink -Path C:\xampp\htdocs\boulders -Target C:\dev\Git\bi-ba-boulder\fileshare``
-3. Now you can download the files with ``http://localhost/boulders/...`` (example ``http://localhost/boulders/bimano/bimano_high.glb``)
+3. start the Devtools
+4. Now you can download the files with ``http://localhost/boulders/...`` (example ``http://localhost/boulders/bimano/bimano_high.glb``)
 
 # Starting the Devtools
 1. start xampp
