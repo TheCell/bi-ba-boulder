@@ -9,14 +9,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 #[Route('/api', name: '')]
 final class SpraywallController extends AbstractController
 {
     private $spraywallProblemRepository;
+    private $filesystem;
+
     public function __construct(SpraywallProblemRepository $spraywallProblemRepository)
     {
         $this->spraywallProblemRepository = $spraywallProblemRepository;
+        $this->filesystem = new Filesystem();
     }
 
     #[Route('/spraywall', name: 'app_spraywall')]
@@ -41,13 +47,21 @@ final class SpraywallController extends AbstractController
     {
         $spraywallProblems = $this->spraywallProblemRepository->findBySpraywallId($id);
 
-        $spraywallProblemsDto = array_map(fn($spraywallProblem) => new SpraywallProblemsDto(
-            $spraywallProblem->getId(),
-            $spraywallProblem->getName(),
-            $spraywallProblem->getDescription()
-        ), $spraywallProblems);
+        $exists = $this->filesystem->exists("spraywalls/{$id}");
+        
+        $spraywallProblemsDto = array_map(fn($spraywallProblem) => 
+            new SpraywallProblemsDto(
+                $spraywallProblem->getId(),
+                $spraywallProblem->getName(),
+                $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
+                $spraywallProblem->getDescription()), $spraywallProblems);
 
         return $this->json($spraywallProblemsDto);
+    }
+
+    private function getSpraywallProblemImage($spraywallId, $spraywallProblemId): string {
+        $contents = $this->filesystem->readFile("spraywalls/{$spraywallId}/{$spraywallProblemId}.png");
+        return base64_encode($contents);
     }
 
     

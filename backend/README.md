@@ -5,7 +5,6 @@
 In this directory use:
 Copy the .env to .env.local file and insert the missing variables
 ``composer install`` or ``symfony composer install``
-``composer require symfony/validator`` or ``symfony composer require symfony/validator``
 ``npm install @openapitools/openapi-generator-cli -g``
 
 Setup Db:

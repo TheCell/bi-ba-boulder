@@ -12,7 +12,10 @@ class SpraywallProblemsDto
 
     #[Assert\NotBlank]
     public string $name,
-
+    
+    #[Assert\NotBlank]
+    public string $image,
+    
     public ?string $description)
   { }
 }
