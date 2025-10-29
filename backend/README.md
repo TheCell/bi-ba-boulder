@@ -3,8 +3,8 @@
 - Change sql User in .env or Add the user
 
 In this directory use:
-Copy the .env to .env.local file and insert the missing variables
-``composer install`` or ``symfony composer install``
+Copy the .env to .env.local file and insert the missing variables   
+``composer install`` or ``symfony composer install``   
 ``npm install @openapitools/openapi-generator-cli -g``
 
 Setup Db:
@@ -42,10 +42,10 @@ Create a migration:
 ``symfony console make:migration``
 
 Generate a migration sql:
-``symfony console doctrine:migrations:migrate --dry-run --write-sql=./migrations``
-
-Apply migration:
-``symfony console doctrine:migrations:migrate``
+``symfony console doctrine:migrations:migrate --write-sql=./migrations`` (create sql. You do not want the new migration to be applied before running this command)
+``symfony console doctrine:migrations:status``
+``symfony console doctrine:migrations:migrate`` (apply migration)
+``symfony console doctrine:migrations:migrate DoctrineMigrations\Version20241020215213`` (apply migration down)
 
 Create a Controller:
 ``symfony console make:controller BlocsController``

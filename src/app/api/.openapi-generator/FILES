@@ -10,5 +10,6 @@ index.ts
 model/blocDto.ts
 model/models.ts
 model/sectorDto.ts
+model/spraywallProblemsDto.ts
 param.ts
 variables.ts

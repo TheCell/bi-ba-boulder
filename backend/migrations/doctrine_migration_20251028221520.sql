@@ -1,0 +1,6 @@
+-- Doctrine Migration File Generated on 2025-10-28 22:15:20
+
+-- Version DoctrineMigrations\Version20251028205745
+CREATE TABLE spraywall (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(512) NOT NULL, description LONGTEXT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+CREATE TABLE spraywall_problem (id INT AUTO_INCREMENT NOT NULL, spraywall_id INT NOT NULL, name VARCHAR(512) NOT NULL, description LONGTEXT DEFAULT NULL, INDEX IDX_D547E14C82CD71EE (spraywall_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+ALTER TABLE spraywall_problem ADD CONSTRAINT FK_D547E14C82CD71EE FOREIGN KEY (spraywall_id) REFERENCES spraywall (id);
