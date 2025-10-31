@@ -231,6 +231,9 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       link.click();
       URL.revokeObjectURL(link.href);
 
+      console.log(canvas.toDataURL('image/png'));
+      
+
       // let timer1a = performance.now();
       // let customRouteData: TypeAndIndex[] = [];
       // for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
@@ -262,9 +265,9 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
           });
 
           if (type !== undefined) {
-            console.log(type.type);
+            // console.log(type.type);
             let twoByteInfo = this.getBitsFromNumber(type.type, i);
-            console.log(twoByteInfo, this.dec2bin24(twoByteInfo));
+            // console.log(twoByteInfo, this.dec2bin24(twoByteInfo));
             binaryString += this.dec2bin24(twoByteInfo);
             
             indexAndType16BitArray.push(twoByteInfo);
@@ -277,7 +280,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       binLink.download = `highlighted_route_${Date.now()}.bin`;
       binLink.click();
       URL.revokeObjectURL(binLink.href);
-      console.log(indexAndType16BitArray, binaryString);
+      // console.log(indexAndType16BitArray, binaryString);
     }
   }
 

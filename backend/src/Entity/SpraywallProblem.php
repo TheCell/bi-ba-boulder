@@ -53,12 +53,12 @@ class SpraywallProblem
         return $this;
     }
 
-    public function getSpraywall(): ?spraywall
+    public function getSpraywall(): ?Spraywall
     {
         return $this->spraywall;
     }
 
-    public function setSpraywall(?spraywall $spraywall): static
+    public function setSpraywall(?Spraywall $spraywall): static
     {
         $this->spraywall = $spraywall;
 

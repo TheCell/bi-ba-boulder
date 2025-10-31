@@ -31,6 +31,20 @@ class SpraywallProblemRepository extends ServiceEntityRepository
         ;
     }
 
+    public function addProblem(SpraywallProblem $spraywallProblem): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($spraywallProblem);
+        $entityManager->flush();
+    }
+
+    public function removeProblem(SpraywallProblem $spraywallProblem): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($spraywallProblem);
+        $entityManager->flush();
+    }
+
     //    public function findOneBySomeField($value): ?SpraywallProblem
     //    {
     //        return $this->createQueryBuilder('s')

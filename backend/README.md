@@ -7,7 +7,10 @@ Copy the .env to .env.local file and insert the missing variables
 ``composer install`` or ``symfony composer install``   
 ``npm install @openapitools/openapi-generator-cli -g``
 
-Setup Db:
+## Important PHP configuration
+if you are using xampp you need to enable the `gd` extension. Go to `xampp/php/php.ini` look for `extension=gd2` and uncomment it
+
+Setup Db:  
 - Set up a user (on the database (start xampp) [http://localhost/phpmyadmin/](http://localhost/phpmyadmin/) > User accounts > Add user account)  
 - set the database user, password and database you want for develop in the env file.
 - If you copy .env to .env.local you already have an example
@@ -41,10 +44,10 @@ Create a new Entity:
 Create a migration:
 ``symfony console make:migration``
 
-Generate a migration sql:
-``symfony console doctrine:migrations:migrate --write-sql=./migrations`` (create sql. You do not want the new migration to be applied before running this command)
-``symfony console doctrine:migrations:status``
-``symfony console doctrine:migrations:migrate`` (apply migration)
+Generate a migration sql:  
+``symfony console doctrine:migrations:migrate --write-sql=./migrations`` (create sql. You do not want the new migration to be applied before running this command)  
+``symfony console doctrine:migrations:status``  
+``symfony console doctrine:migrations:migrate`` (apply migration)  
 ``symfony console doctrine:migrations:migrate DoctrineMigrations\Version20241020215213`` (apply migration down)
 
 Create a Controller:

@@ -4,7 +4,7 @@ namespace App\DTO;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpraywallProblemsDto
+class SpraywallProblemDto
 {
   public function __construct(
     #[Assert\NotBlank]
