@@ -5,6 +5,12 @@
     <button (click)="switchRoute()">Switch Route</button>
     <button (click)="newRoute()">New Route</button>
     <button (click)="downloadRoute()">Download Route</button>
+    <button (click)="uploadRoute()">Upload Route</button>
+
+    <form [formGroup]="form">
+        <label for="tempPsw">Temp PSW:</label>
+        <input id="tempPsw" type="text" formControlName="tempPsw" />
+    </form>
 
     <div class="hold-color-options">
         <label for="holdColorSelect">Hold Color:</label>

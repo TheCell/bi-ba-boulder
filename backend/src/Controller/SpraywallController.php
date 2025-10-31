@@ -160,6 +160,34 @@ final class SpraywallController extends AbstractController
         ]
       )
     )]
+    #[OA\Response(
+      response: 500,
+      description: 'Internal server error',
+      content: new OA\JsonContent(
+        type: 'object',
+        properties: [
+          new OA\Property(
+            property: 'error',
+            type: 'string',
+            description: 'Error message'
+          )
+        ]
+      )
+    )]
+    #[OA\Response(
+      response: 401,
+      description: 'Unauthorized - invalid temporary password',
+      content: new OA\JsonContent(
+        type: 'object',
+        properties: [
+          new OA\Property(
+            property: 'error',
+            type: 'string',
+            description: 'Error message'
+          )
+        ]
+      )
+    )]
     public function addProblem($id, Request $request): JsonResponse
     {
         $testpasscode = $_ENV['TESTINGPASSCODE'];

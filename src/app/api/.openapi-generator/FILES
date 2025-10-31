@@ -9,7 +9,9 @@ git_push.sh
 index.ts
 model/blocDto.ts
 model/models.ts
+model/postSpraywallProblemCreate400Response.ts
+model/postSpraywallProblemCreateRequest.ts
 model/sectorDto.ts
-model/spraywallProblemsDto.ts
+model/spraywallProblemDto.ts
 param.ts
 variables.ts
