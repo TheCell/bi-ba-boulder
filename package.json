@@ -19,7 +19,7 @@
     "@angular/core": "^19.1.4",
     "@angular/forms": "^19.1.4",
     "@angular/platform-browser": "^19.1.4",
-    "@angular/platform-browser-dynamic": "^19.1.4",
+    "@angular/platform-browser-dynamic": "^20.3.9",
     "@angular/router": "^19.1.4",
     "@lume/three-meshline": "^4.0.5",
     "@types/three": "^0.180.0",
