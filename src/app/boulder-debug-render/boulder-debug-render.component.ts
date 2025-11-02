@@ -259,55 +259,6 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       link.download = `highlighted_route_${Date.now()}.png`;
       link.click();
       URL.revokeObjectURL(link.href);
-      // console.log(canvas.toDataURL('image/png'));
-      
-      // let timer1a = performance.now();
-      // let customRouteData: TypeAndIndex[] = [];
-      // for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
-      //   if (this.highlightedHoldsTexture.image.data[i] > 0 || this.highlightedHoldsTexture.image.data[i + 1] > 0 || this.highlightedHoldsTexture.image.data[i + 2] > 0) {          
-      //     customRouteData.push({
-      //       type: Type.hold,
-      //       index: i
-      //     });
-      //   }
-      // }
-      // // console.log(customImage);
-      // let timer1b = performance.now();
-      // console.log('Custom image processing time:', timer1b - timer1a);
-
-
-      // this is less efficient and won't save data if many holds are selected.
-      // let indexAndType16BitArray: number[] = [];
-      // let binaryString = '';
-      // for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
-      //   if (this.highlightedHoldsTexture.image.data[i] > 0 || this.highlightedHoldsTexture.image.data[i + 1] > 0 || this.highlightedHoldsTexture.image.data[i + 2] > 0) {          
-      //     const type = this.holdColorOptions.find((typeAndColor: TypeAndColor) => {
-      //       if (typeAndColor.color.r === this.highlightedHoldsTexture!.image.data[i] &&
-      //         typeAndColor.color.g === this.highlightedHoldsTexture!.image.data[i + 1] &&
-      //         typeAndColor.color.b === this.highlightedHoldsTexture!.image.data[i + 2]) {
-      //         return true;
-      //       }
-
-      //       return false;
-      //     });
-
-      //     if (type !== undefined) {
-      //       // console.log(type.type);
-      //       let twoByteInfo = this.getBitsFromNumber(type.type, i);
-      //       // console.log(twoByteInfo, this.dec2bin24(twoByteInfo));
-      //       binaryString += this.dec2bin24(twoByteInfo);
-            
-      //       indexAndType16BitArray.push(twoByteInfo);
-      //     }
-      //   }
-      // }
-
-      // const binLink = document.createElement('a');
-      // binLink.href = URL.createObjectURL(new Blob([binaryString], { type: 'application/octet-stream' }));
-      // binLink.download = `highlighted_route_${Date.now()}.bin`;
-      // binLink.click();
-      // URL.revokeObjectURL(binLink.href);
-      // console.log(indexAndType16BitArray, binaryString);
     }
   }
 
@@ -461,8 +412,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
       this.scene.add(gltf.scene);
-      console.log(this.dumpObject(gltf.scene).join('\n'));
-      console.log(gltf.scene);
+      // console.log(this.dumpObject(gltf.scene).join('\n'));
+      // console.log(gltf.scene);
       this.rgbBlockMaterial = undefined;
       this.originalBlockMaterial = undefined;
       this.originalBlockTexture = null;
@@ -660,7 +611,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     ctx!.drawImage(image, 0, 0);
     const imageData = ctx!.getImageData(0, 0, image.width, image.height);
 
-    console.log('getImageDataFromTexture', imageData);
+    // console.log('getImageDataFromTexture', imageData);
     
     return imageData;
   }
@@ -839,7 +790,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     }
     
     const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
-    console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
+    // console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
 
     if (this.lastClickedHold?.index === colorAndIndex.index) {
       const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
