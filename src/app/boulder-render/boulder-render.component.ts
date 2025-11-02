@@ -31,7 +31,6 @@ export class BoulderRenderComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize', ['$event']) public onResize(): void {
     if (this.renderer) {
-
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,
         height: this.el.nativeElement.offsetHeight,

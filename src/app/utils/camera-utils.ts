@@ -50,11 +50,14 @@ export function fitCameraToCenteredObject(camera: THREE.PerspectiveCamera, objec
   const dy = size.z / 2 + Math.abs( size.y / 2 / Math.tan( fov / 2 ) );
   let cameraZ = Math.max(dx, dy);
 
-  if( offset !== undefined && offset !== 0 ) {
+  if (offset && offset !== 0) {
     cameraZ *= offset;
   }
+    
+  let center = new THREE.Vector3();
+  center = boundingBox.getCenter(center);
 
-  camera.position.set( 0, 0, cameraZ );
+  camera.position.set( center.x, center.y, cameraZ );
 
   const minZ = boundingBox.min.z;
   const cameraToFarEdge = ( minZ < 0 ) ? -minZ + cameraZ : cameraZ - minZ;
@@ -62,8 +65,8 @@ export function fitCameraToCenteredObject(camera: THREE.PerspectiveCamera, objec
   camera.far = cameraToFarEdge * 3;
   camera.updateProjectionMatrix();
 
-  if ( orbitControls !== undefined ) {
-    orbitControls.target = new THREE.Vector3(0, 0, 0);
+  if (orbitControls) {
+    orbitControls.target = center;
     orbitControls.maxDistance = cameraToFarEdge * 2;
   }
 };
