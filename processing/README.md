@@ -1,5 +1,6 @@
 # Reality Scan steps
 - Alignment > Import and Align Images
+- Put some Control Points in
 - Mesh Model
   - Pre-steps > Set Reconstruction Area
   - Create Model > High Detail
