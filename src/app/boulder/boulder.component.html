@@ -16,9 +16,8 @@
         </app-boulder-render>
       }
     }
-
-    <!-- todo: replace with logo -->
-    <img class="image" [src]="'./images/giphy.webp'" [ngClass]="{ fadeOut: currentRawModel !== undefined }" alt="photo of the boulder">
+    
+    <app-loading-image [ngClass]="{ fadeOut: currentRawModel !== undefined }"></app-loading-image>
   </section>
 
   @if (debugRenderView) {

@@ -10,11 +10,13 @@ import { ResolutionLevel } from '../interfaces/resolution-level';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { environment } from '../../environments/environment';
 import { BoulderDebugRenderComponent } from '../boulder-debug-render/boulder-debug-render.component';
+import { LoadingImageComponent } from '../common/loading-image/loading-image.component';
 
 @Component({
   selector: 'app-boulder',
   imports: [
     CommonModule,
+    LoadingImageComponent,
     BoulderRenderComponent,
     BoulderDebugRenderComponent,
     BoulderLegendComponent

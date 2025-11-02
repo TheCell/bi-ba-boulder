@@ -1,1 +1,13 @@
-<app-boulder-render></app-boulder-render>
+<div class="grid">
+  <section class="renderContainer">
+    @if (currentRawModel) {
+        <app-boulder-render
+            class="render"
+            [rawModel]="currentRawModel">
+        </app-boulder-render>
+    } @else {
+        <app-loading-image
+            class="render">
+        </app-loading-image>
+    }
+  </section>

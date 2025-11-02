@@ -1,0 +1,20 @@
+.grid {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 60% 40%;
+  grid-template-areas:
+  "boulder boulder"
+  "legend legend";
+}
+
+.renderContainer {
+  grid-area: boulder;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.render {
+  width: 100%;
+  height: 100%;
+}

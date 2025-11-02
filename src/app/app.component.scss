@@ -1,6 +1,6 @@
 nav {
   // position: absolute;
-  // height: 60px;
+  height: 60px;
 }
 
 ul {
@@ -12,4 +12,8 @@ ul {
 
 ul li {
   margin-right: 10px;
+}
+
+.content {
+  height: calc(100vh - 60px);
 }
