@@ -39,22 +39,6 @@ export class BoulderRenderComponent implements AfterViewInit {
 
       this.renderer.setPixelRatio(window.devicePixelRatio);
       this.renderer.setSize(canvasSizes.width, canvasSizes.height);
-      if (this.startHoldOutlinePass) {
-        this.startHoldOutlinePass.setSize(canvasSizes.width, canvasSizes.height);
-        this.startHoldOutlinePass.resolution.set(canvasSizes.width, canvasSizes.height);
-      }
-      if (this.topHoldOutlinePass) {
-        this.topHoldOutlinePass.setSize(canvasSizes.width, canvasSizes.height);
-        this.topHoldOutlinePass.resolution.set(canvasSizes.width, canvasSizes.height);
-      }
-      if (this.footOnlyHoldOutlinePass) {
-        this.footOnlyHoldOutlinePass.setSize(canvasSizes.width, canvasSizes.height);
-        this.footOnlyHoldOutlinePass.resolution.set(canvasSizes.width, canvasSizes.height);
-      }
-      if (this.normalHoldOutlinePass) {
-        this.normalHoldOutlinePass.setSize(canvasSizes.width, canvasSizes.height);
-        this.normalHoldOutlinePass.resolution.set(canvasSizes.width, canvasSizes.height);
-      }
       this.camera.aspect = canvasSizes.width / canvasSizes.height;
       this.camera.updateProjectionMatrix();
     }
@@ -71,17 +55,6 @@ export class BoulderRenderComponent implements AfterViewInit {
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
-  
-  // outline objects
-  private composer: EffectComposer = null!;
-  private selectedStartHoldObjects: THREE.Object3D[] = [];
-  private selectedTopHoldObjects: THREE.Object3D[] = [];
-  private selectedFootHoldObjects: THREE.Object3D[] = [];
-  private selectedNormalHoldObjects: THREE.Object3D[] = [];
-  private startHoldOutlinePass: OutlinePass = null!;
-  private topHoldOutlinePass: OutlinePass = null!;
-  private footOnlyHoldOutlinePass: OutlinePass = null!;
-  private normalHoldOutlinePass: OutlinePass = null!;
 
   private raycaster: THREE.Raycaster = null!;
   private currentRandomRadius = Math.random() * 360;
@@ -148,7 +121,6 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.addLights(this.scene);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
-    this.setupComposer();
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
 
@@ -157,12 +129,8 @@ export class BoulderRenderComponent implements AfterViewInit {
   }
 
   private loop = () => {
-    const timer = Date.now();
-    // this.renderer.render(this.scene, this.camera);
-    this.composer.render();
-    
     window.requestAnimationFrame(this.loop);
-    const endTime = Date.now();
+    this.renderer.render(this.scene, this.camera);
     // console.log(`Render time: ${endTime - timer} ms`, `Drawcalls: ${this.renderer.info.render.calls} calls`);
   }
 
@@ -173,22 +141,6 @@ export class BoulderRenderComponent implements AfterViewInit {
       this.scene.add(gltf.scene);
       let childCounter = 0;
       gltf.scene.traverse((child) => {
-        if (childCounter > 1) {
-          // todo: only highlight objects for active routes
-          switch (childCounter % 4) {
-            case 0:
-              this.selectedStartHoldObjects.push(child);
-              break;
-            case 1:
-              this.selectedFootHoldObjects.push(child);
-              break;
-            case 2:
-              this.selectedNormalHoldObjects.push(child);
-              break;
-            case 3:
-              this.selectedTopHoldObjects.push(child);
-          }
-        }
         child.layers.set(1);
         childCounter++;
       });
@@ -239,62 +191,6 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.currentRandomRadius *= Math.E;
     this.currentRandomRadius %= 360;
     return randomColor;
-  }
-
-  private setupComposer(): void {
-    this.composer = new EffectComposer(this.renderer);
-    const renderPass = new RenderPass(this.scene, this.camera);
-    this.composer.addPass(renderPass);
-
-    // this.startHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
-    // this.startHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0x6ce35b));
-    // this.startHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
-    // this.startHoldOutlinePass.edgeStrength = 2;
-    // this.startHoldOutlinePass.edgeGlow = 0;
-    // this.startHoldOutlinePass.edgeThickness = 1;
-    // this.startHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
-    // this.composer.addPass(this.startHoldOutlinePass);
-    // this.startHoldOutlinePass.selectedObjects = this.selectedStartHoldObjects;
-
-    // this.topHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
-    // // this.topHoldOutlinePass.visibleEdgeColor.set(236, 79, 240);
-    // this.topHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0xec4ff0));
-    // this.topHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
-    // this.topHoldOutlinePass.edgeStrength = 2;
-    // this.topHoldOutlinePass.edgeGlow = 0;
-    // this.topHoldOutlinePass.edgeThickness = 1;
-    // this.topHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
-    // this.composer.addPass(this.topHoldOutlinePass);
-    // this.topHoldOutlinePass.selectedObjects = this.selectedTopHoldObjects;
-
-    // this.footOnlyHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
-    // // this.footOnlyHoldOutlinePass.visibleEdgeColor.set(238, 242, 77);
-    // this.footOnlyHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0xeef24d));
-    // this.footOnlyHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
-    // this.footOnlyHoldOutlinePass.edgeStrength = 2;
-    // this.footOnlyHoldOutlinePass.edgeGlow = 0;
-    // this.footOnlyHoldOutlinePass.edgeThickness = 1;
-    // this.footOnlyHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
-    // this.composer.addPass(this.footOnlyHoldOutlinePass);
-    // this.footOnlyHoldOutlinePass.selectedObjects = this.selectedFootHoldObjects;
-
-    // this.normalHoldOutlinePass = new OutlinePass(new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), this.scene, this.camera);
-    // // this.normalHoldOutlinePass.visibleEdgeColor.set(79, 204, 240);
-    // this.normalHoldOutlinePass.visibleEdgeColor.set(new THREE.Color(0x4fccf0));
-    // this.normalHoldOutlinePass.hiddenEdgeColor.set(0, 0, 0);
-    // this.normalHoldOutlinePass.edgeStrength = 2;
-    // this.normalHoldOutlinePass.edgeGlow = 0;
-    // this.normalHoldOutlinePass.edgeThickness = 1;
-    // this.normalHoldOutlinePass.oldClearColor = new THREE.Color(0x000000);
-    // this.composer.addPass(this.normalHoldOutlinePass);
-    // this.normalHoldOutlinePass.selectedObjects = this.selectedNormalHoldObjects;
-
-    const outputPass = new OutputPass();
-    this.composer.addPass(outputPass);
-
-    const effectFXAA = new ShaderPass( FXAAShader );
-    effectFXAA.uniforms[ 'resolution' ].value.set( 1 / this.canvas.nativeElement.offsetWidth, 1 / this.canvas.nativeElement.offsetHeight );
-    this.composer.addPass( effectFXAA );
   }
 }
 
