@@ -381,7 +381,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     const image = new Image();
     const texture = new THREE.Texture(image);
     image.onload = () => {
-      console.log(image.onload);
+      // console.log(image.onload);
       
       texture.flipY = false;
       texture.needsUpdate = true;
@@ -396,8 +396,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
     }
     image.src = 'data:image/png;base64,' + base64String;
-    console.log(image.src);
-    console.log(base64String, image.src);
+    // console.log(image.src);
+    // console.log(base64String, image.src);
     
     // const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
   }
@@ -780,7 +780,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
           'vec3 baseColor = diffuseColor.rgb * (1.0 - fresnel) + sampledGray * fresnel;',
           'vec3 highlightColor = highlightedHoldsColor.rgb * fresnel;',
           'totalEmissiveRadiance.rgb = mix(totalEmissiveRadiance.rgb, highlightColor, hasHighlight);',
-          'diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.0 - fresnel), hasHighlight);',
+          // 'diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.0 - fresnel), hasHighlight);',
           // 'if (useRgbTexture <= 0.0 && (highlightedHoldsColor.r > 0.0 || highlightedHoldsColor.g > 0.0 || highlightedHoldsColor.b > 0.0)) {',
           // 'vec3 sampledGray = vec3((sampledDiffuseColor.r + sampledDiffuseColor.g + sampledDiffuseColor.b) / 3.0);',
           // 'diffuseColor.rgb = diffuseColor.rgb * (1.0 - fresnel) + sampledGray * fresnel;',
