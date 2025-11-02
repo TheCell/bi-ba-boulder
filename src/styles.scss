@@ -1,6 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-$fontColor: #b3b3b3;
-$backgroundColor: #1f1f1f;
+@use 'styles/variables' as *;
 
 @font-face {
   font-family: "Roboto";

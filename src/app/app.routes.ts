@@ -10,6 +10,7 @@ import { blocResolver, blocsOfSectorResolver } from './core/resolvers/bloc.resol
 import { BoulderComponent } from './boulder/boulder.component';
 import { SpraywallTestComponent } from './spraywall-test/spraywall-test.component';
 import { SpraywallTest2Component } from './spraywall-test-2/spraywall-test-2.component';
+import { SpraywallComponent } from './spraywall/spraywall.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -45,6 +46,10 @@ export const routes: Routes = [
     resolve: {
       bloc: blocResolver
     }
+  },
+  {
+    path: 'spraywall/:id',
+    component: SpraywallComponent
   },
   {
     path: 'spraywall-test',
