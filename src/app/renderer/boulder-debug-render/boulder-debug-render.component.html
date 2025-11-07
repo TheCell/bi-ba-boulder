@@ -6,6 +6,7 @@
     <button (click)="newRoute()">New Route</button>
     <button (click)="downloadRoute()">Download Route</button>
     <button (click)="uploadRoute()">Upload Route</button>
+    <button (click)="displayStats()">Display Stats</button>
 
     <form [formGroup]="form">
         <label for="tempPsw">Temp PSW:</label>
@@ -15,7 +16,9 @@
     <div class="hold-color-options">
         <label for="holdColorSelect">Hold Color:</label>
         <select id="holdColorSelect" (change)="onHoldColorChange($event.target)">
-            <option *ngFor="let option of holdColorOptions" [value]="option.type" [selected]="option.color.equals(highlightColor)">{{ enumName(option.type) }}</option>
+            @for (option of holdColorOptions; track option.type) {
+                <option [value]="option.type" [selected]="option.color.equals(highlightColor)">{{ enumName(option.type) }}</option>
+            }
         </select>
     </div>
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -15,7 +15,7 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import Stats from 'stats.js'
 import { DefaultService, SpraywallProblemDto } from '../../api';
 import { beginVertex, mapFragment, opacity, vViewPositionReplace, worldposVertex } from '../common/shader-code';
-import { getImageDataFromTexture } from '../common/util';
+import { downloadSpraywallProblemImage, getImageDataFromTexture, prepareHighlightDebugTexture } from '../common/util';
 import { ActivatedRoute } from '@angular/router';
 
 interface ColorAndIndex {
@@ -61,7 +61,7 @@ enum Type {
   styleUrl: './boulder-debug-render.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BoulderDebugRenderComponent implements AfterViewInit {
+export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   private defaultService = inject(DefaultService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
@@ -95,6 +95,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
+  private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, 2.0);
+  
   private raycaster: THREE.Raycaster = null!;
   private currentRandomRadius = Math.random() * 360;
 
@@ -142,17 +144,17 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
     effect(() => {
       const selectedId = this.selectedProblemId();
+      this.ambientLight.intensity = 2.0;
+
       if (selectedId && selectedId.length > 0) {
         const problem = this.boulderProblems().find((p) => p.id === selectedId);
 
         if (problem) {
-          this.loadHighlightedHoldsTextureFromData(problem.image, 128, 128);
+          this.setHighlightedHoldsTextureFromData(problem.image, 128, 128);
+          this.ambientLight.intensity = 0.7;
         }
       }
     });
-    
-    const activatedRoute = inject(ActivatedRoute);
-    this.rgbBlockTexture = activatedRoute.snapshot.data['spraywallDebugTexture'];
 
     this.shortcuts.push({
       key: ['ctrl + z'],
@@ -179,10 +181,12 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     });
   }
 
+  public ngOnInit(): void {
+    this.setupHighlightDebugTexture();
+  }
+
   public ngAfterViewInit(): void {
     this.createCanvas();
-    this.addStats();
-
     this.currentLineMaterial = this.getNewLineMaterial();
 
     const lines = this.lines();
@@ -195,20 +199,6 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
         this.processedLines = lines;
       }
     }
-
-    const loader = new THREE.TextureLoader();
-    // loader.parse(this.rgbBlockTexture);
-    loader.load('./images/highlight_debug.png', (texture: THREE.Texture) => {
-      texture.flipY = false;
-      texture.needsUpdate = true;
-      texture.minFilter = THREE.NearestFilter;
-      texture.magFilter = THREE.NearestFilter;
-      this.rgbBlockTexture = texture;
-      this.rgbBlockImageData = getImageDataFromTexture(texture);
-      this.rgbBlockMaterial = this.setupCustomShaderMaterial();
-      
-      this.swapTexture();
-    });
 
     this.loadHighlightedHoldsTexture(this.currentHighlightedHoldsTexturePath);
   }
@@ -244,29 +234,8 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   }
 
   public downloadRoute(): void {
-    if (this.highlightedHoldsTexture?.isTexture && this.highlightedHoldsTexture.image && this.highlightedHoldsTexture.image.data) {
-      let canvas = document.createElement('canvas');
-      let context = canvas.getContext('2d')!;
-      let imgData = context.createImageData(this.highlightedHoldsTexture.image.width, this.highlightedHoldsTexture.image.height);
-      canvas.width = this.highlightedHoldsTexture.image.width;
-      canvas.height = this.highlightedHoldsTexture.image.height;
-
-      for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
-        imgData.data[i] = this.highlightedHoldsTexture.image.data[i];
-        imgData.data[i + 1] = this.highlightedHoldsTexture.image.data[i + 1];
-        imgData.data[i + 2] = this.highlightedHoldsTexture.image.data[i + 2];
-        imgData.data[i + 3] = 255;
-      }
-
-      context.putImageData(imgData, 0, 0);
-      
-      let img = new Image();
-      img.src = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = img.src;
-      link.download = `highlighted_route_${Date.now()}.png`;
-      link.click();
-      URL.revokeObjectURL(link.href);
+    if (this.highlightedHoldsTexture) {
+      downloadSpraywallProblemImage(this.highlightedHoldsTexture);
     }
   }
 
@@ -317,7 +286,43 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     return enumNames[type];
   }
 
-  private swapTexture(): void {
+  public displayStats(): void {
+    if (this.stats) {
+      return;
+    }
+
+    this.stats = new Stats();
+    this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+    let offset = 10;
+    this.stats.dom.style.position = 'absolute';
+    this.stats.dom.style.top = `${offset}px`;
+    for (let i = 0; i < this.stats.dom.children.length; i++) {
+      offset += 50;
+      const element = this.stats.dom.children[i] as HTMLElement;
+      element.style.position = 'absolute';
+      element.style.display = 'block';
+      element.style.top = `${offset}px`;
+    }
+
+    this.el.nativeElement.appendChild( this.stats.dom );
+  }
+
+  private setupHighlightDebugTexture() {
+    const loader = new THREE.TextureLoader();
+    loader.load('./images/highlight_debug.png', (texture: THREE.Texture) => {
+      texture.flipY = false;
+      texture.needsUpdate = true;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
+      this.rgbBlockTexture = texture;
+      this.rgbBlockImageData = getImageDataFromTexture(texture);
+      this.rgbBlockMaterial = this.setupCustomShaderMaterial();
+      this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
+    });
+  }
+
+  private setupHighlightTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
       let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
       object.material = this.rgbBlockMaterial;
@@ -335,13 +340,10 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
     });
   }
 
-  private loadHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
-    
-    const image = new Image();
+  private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
+    const image = new Image(width, height);
     const texture = new THREE.Texture(image);
     image.onload = () => {
-      // console.log(image.onload);
-      
       texture.flipY = false;
       texture.needsUpdate = true;
       texture.minFilter = THREE.NearestFilter;
@@ -355,10 +357,6 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
     }
     image.src = 'data:image/png;base64,' + base64String;
-    // console.log(image.src);
-    // console.log(base64String, image.src);
-    
-    // const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
   }
 
   private createCanvas(): void {
@@ -390,8 +388,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
     this.onResize();
     this.scene.add(this.camera);
-
-    this.addLights(this.scene);
+    this.scene.add(this.ambientLight);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
@@ -420,8 +417,6 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
       this.scene.add(gltf.scene);
-      // console.log(this.dumpObject(gltf.scene).join('\n'));
-      // console.log(gltf.scene);
       this.rgbBlockMaterial = undefined;
       this.originalBlockMaterial = undefined;
       this.originalBlockTexture = null;
@@ -442,7 +437,7 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
         fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
       }
       this.currentGltf = gltf;
-      this.swapTexture();
+      this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
@@ -451,11 +446,6 @@ export class BoulderDebugRenderComponent implements AfterViewInit {
 
   private removeBoulderFromScene(gltf: GLTF): void {
     this.scene.remove(gltf.scene);
-  }
-
-  private addLights(scene: THREE.Scene): void {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-    scene.add(ambientLight);
   }
 
   private getClickCoordinate(event: Event): void {
@@ -576,24 +566,6 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     });
 
     this.scene.add( ...this.vertexNormalsHelpers );
-  }
-
-  private addStats(): void {
-    this.stats = new Stats();
-    this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-
-    let offset = 10;
-    this.stats.dom.style.position = 'absolute';
-    this.stats.dom.style.top = `${offset}px`;
-    for (let i = 0; i < this.stats.dom.children.length; i++) {
-      offset += 50;
-      const element = this.stats.dom.children[i] as HTMLElement;
-      element.style.position = 'absolute';
-      element.style.display = 'block';
-      element.style.top = `${offset}px`;
-    }
-
-    document.body.appendChild( this.stats.dom );
   }
 
   private dumpObject(obj: THREE.Group<THREE.Object3DEventMap>, lines: string[] = [], isLast = true, prefix = '') {

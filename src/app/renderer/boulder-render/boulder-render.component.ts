@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -19,6 +19,7 @@ import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { beginVertex, mapFragment, opacity, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { getImageDataFromTexture } from '../common/util';
 import { ActivatedRoute } from '@angular/router';
+import { SpraywallProblemDto } from '../../api';
 
 @Component({
   selector: 'app-boulder-render',
@@ -30,7 +31,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './boulder-render.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BoulderRenderComponent implements AfterViewInit {
+export class BoulderRenderComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize', ['$event']) public onResize(): void {
     if (this.renderer) {
@@ -49,6 +50,7 @@ export class BoulderRenderComponent implements AfterViewInit {
   public shortcuts: ShortcutInput[] = [];
   public rawModel = input<ArrayBuffer>();
   public lines = input<BoulderLine[]>();
+  public boulderProblem = input<SpraywallProblemDto>();
 
   private proccessedRawModel?: ArrayBuffer;
   private processedLines: BoulderLine[] = [];
@@ -57,6 +59,7 @@ export class BoulderRenderComponent implements AfterViewInit {
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
+  private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, 2.0);
 
   private raycaster: THREE.Raycaster = null!;
   private currentRandomRadius = Math.random() * 360;
@@ -84,8 +87,24 @@ export class BoulderRenderComponent implements AfterViewInit {
       }
     });
 
+    effect(() => {
+      const boulderProblem = this.boulderProblem();
+      
+      if (boulderProblem) {
+        this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
+        this.ambientLight.intensity = 0.7;
+      } else {
+        this.highlightedHoldsTexture = undefined;
+        this.ambientLight.intensity = 2.0;
+      }
+    });
+
     const activatedRoute = inject(ActivatedRoute);
     this.rgbBlockTexture = activatedRoute.snapshot.data['spraywallDebugTexture'];
+  }
+
+  public ngOnInit(): void {
+    this.setupHighlightDebugTexture();
   }
 
   public ngAfterViewInit(): void {
@@ -100,6 +119,12 @@ export class BoulderRenderComponent implements AfterViewInit {
 
         this.processedLines = lines;
       }
+    }
+  }
+
+  public switchTexture(): void {
+    if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
+      this.useRgbTexture = this.useRgbTexture === 0.0 ? 1.0 : 0.0;
     }
   }
 
@@ -132,32 +157,43 @@ export class BoulderRenderComponent implements AfterViewInit {
 
     this.onResize();
     this.scene.add(this.camera);
-
-    this.addLights(this.scene);
+    this.scene.add(this.ambientLight);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
 
-
     this.loop();
   }
 
   private loop = () => {
-    window.requestAnimationFrame(this.loop);
+
+    if (this.rgbBlockMaterial) {
+      const shader = this.rgbBlockMaterial.userData['shader'];
+            
+      if (shader) {
+        shader.uniforms.useRgbTexture.value = this.useRgbTexture;
+        shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
+      }
+    }
+
     this.renderer.render(this.scene, this.camera);
-    // console.log(`Render time: ${endTime - timer} ms`, `Drawcalls: ${this.renderer.info.render.calls} calls`);
+    window.requestAnimationFrame(this.loop);
   }
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
-      // console.log('gltf', gltf);
-      
       this.scene.add(gltf.scene);
       let childCounter = 0;
       gltf.scene.traverse((child) => {
         child.layers.set(1);
         childCounter++;
+        const mesh = (child as THREE.Mesh);
+        if (mesh.isMesh) {
+          this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
+          this.originalBlockTexture = this.originalBlockMaterial.map;
+          this.rgbBlockMaterial = this.setupCustomShaderMaterial();
+        }
       });
 
       if (this.currentGltf !== undefined) {
@@ -166,6 +202,7 @@ export class BoulderRenderComponent implements AfterViewInit {
         fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
       }
       this.currentGltf = gltf;
+      this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
@@ -174,11 +211,6 @@ export class BoulderRenderComponent implements AfterViewInit {
 
   private removeBoulderFromScene(gltf: GLTF): void {
     this.scene.remove(gltf.scene);
-  }
-
-  private addLights(scene: THREE.Scene): void {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 3);
-    scene.add(ambientLight);
   }
 
   private addLineToScene(scene: THREE.Scene, points: THREE.Vector3[], color?: string): void {
@@ -208,44 +240,84 @@ export class BoulderRenderComponent implements AfterViewInit {
     return randomColor;
   }
   
-    private setupCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
-      const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
-  
-      material.onBeforeCompile = (shader) => {
-        shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
-        shader.uniforms['time'] = { value: 0 };
-        shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
-        shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
-  
-        shader.vertexShader = shader.vertexShader.replace(
-          'varying vec3 vViewPosition;',
-          vViewPositionReplace.join('\n')
-        );
-  
-        shader.vertexShader = shader.vertexShader.replace(
-          '#include <begin_vertex>',
-          beginVertex.join('\n')
-        );
-  
-        shader.vertexShader = shader.vertexShader.replace(
-          '#include <worldpos_vertex>',
-          worldposVertex.join('\n')
-        );
-  
-        shader.fragmentShader = shader.fragmentShader.replace(
-          'uniform float opacity;',
-          opacity.join('\n')
-        );
-  
-        shader.fragmentShader = shader.fragmentShader.replace(
-          '#include <map_fragment>',
-          mapFragment.join( '\n' )
-        );
-  
-        material.userData['shader'] = shader;
-      }
-  
-      return material;
+  private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
+    const image = new Image(width, height);
+    const texture = new THREE.Texture(image);
+    image.onload = () => {
+      texture.flipY = false;
+      texture.needsUpdate = true;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
+      this.highlightedHoldsTexture = texture;
     }
+    image.onabort = (ev) => {
+      console.error('Failed to load highlighted holds texture from base64 data.', ev);
+    }
+    image.onerror = (ev) => {
+      console.error('Failed to load highlighted holds texture from base64 data.', ev);
+    }
+    image.src = 'data:image/png;base64,' + base64String;
+  }
+  
+  private setupHighlightTexture(): void {
+    if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
+      let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      object.material = this.rgbBlockMaterial;
+    }
+  }
+  
+  private setupHighlightDebugTexture() {
+    const loader = new THREE.TextureLoader();
+    loader.load('./images/highlight_debug.png', (texture: THREE.Texture) => {
+      texture.flipY = false;
+      texture.needsUpdate = true;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
+      this.rgbBlockTexture = texture;
+      this.rgbBlockImageData = getImageDataFromTexture(texture);
+      this.rgbBlockMaterial = this.setupCustomShaderMaterial();
+      this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
+    });
+  }
+  
+  private setupCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
+    const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
+
+    material.onBeforeCompile = (shader) => {
+      shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
+      shader.uniforms['time'] = { value: 0 };
+      shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
+      shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
+
+      shader.vertexShader = shader.vertexShader.replace(
+        'varying vec3 vViewPosition;',
+        vViewPositionReplace.join('\n')
+      );
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        beginVertex.join('\n')
+      );
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <worldpos_vertex>',
+        worldposVertex.join('\n')
+      );
+
+      shader.fragmentShader = shader.fragmentShader.replace(
+        'uniform float opacity;',
+        opacity.join('\n')
+      );
+
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <map_fragment>',
+        mapFragment.join( '\n' )
+      );
+
+      material.userData['shader'] = shader;
+    }
+
+    return material;
+  }
 }
 

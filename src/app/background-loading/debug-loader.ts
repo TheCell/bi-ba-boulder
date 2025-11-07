@@ -11,7 +11,7 @@ export class DebugLoader {
   constructor() { }
 
 
-  public loadSpraywallDebugTexture(): Observable<ArrayBuffer> {
-    return this.http.get('./images/highlight_debug.png', { responseType: 'arraybuffer'});
-  }
+  // public loadSpraywallDebugTexture(): Observable<ArrayBuffer> {
+  //   return this.http.get('./images/highlight_debug.png', { responseType: 'arraybuffer'});
+  // }
 }

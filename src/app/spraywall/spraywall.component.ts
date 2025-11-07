@@ -5,10 +5,11 @@ import { LoadingImageComponent } from '../common/loading-image/loading-image.com
 import { DefaultService, SpraywallProblemDto } from '../api';
 import { ActivatedRoute } from '@angular/router';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
+import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
 
 @Component({
   selector: 'app-spraywall',
-  imports: [CommonModule, LoadingImageComponent, BoulderRenderComponent],
+  imports: [CommonModule, LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
 })
@@ -18,6 +19,9 @@ export class SpraywallComponent implements OnInit {
 
   public currentRawModel?: ArrayBuffer;
   public spraywallId = '';
+
+  public listOfProblems: SpraywallProblemDto[] = [];
+  public selectedProblem?: SpraywallProblemDto = undefined;
 
   public constructor() {
     const route = inject(ActivatedRoute);
@@ -33,9 +37,16 @@ export class SpraywallComponent implements OnInit {
 
     this.defaultService.getSpraywallProblems(this.spraywallId).subscribe({
       next: (problems: SpraywallProblemDto[]) => {
-        console.log(problems);
-        
+        this.listOfProblems = problems;
       }
     });
+  }
+  
+  public onSelectedProblem(problem: SpraywallProblemDto): void {
+    this.selectedProblem = problem;
+  }
+
+  public onResetSelection(): void {
+    this.selectedProblem = undefined;
   }
 }

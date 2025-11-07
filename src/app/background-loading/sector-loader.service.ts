@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { BoulderSector } from '../api/interfaces/boulder-sector';
+import { BoulderSector } from '../interfaces/boulder-sector';
 
 @Injectable({
   providedIn: 'root'

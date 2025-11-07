@@ -25,3 +25,36 @@
   grid-area: legend;
   background-image: linear-gradient(180deg, $black 0%, $dark 20%);
 }
+
+.actions {
+  height: 2em;
+  width: 100%;
+}
+
+.legend-list {
+  height: calc(100% - 2em);
+  width: 100%;
+  overflow-y: auto;
+}
+
+.action-button {
+  cursor: pointer;
+  display: inline-block;
+  height: 100%;
+  padding-left: 1em;
+  padding-right: 1em;
+  border: none;
+  background-color: $secondary;
+}
+
+.action-button:hover, .action-button:focus {
+  background-color: rgba($primary, 0.5);
+}
+
+.action-button:active {
+  background-color: rgba($primary, 1.0);
+}
+
+.li-item:nth-child(odd) {
+  background-color: rgba($light, 0.05);
+}

@@ -11,7 +11,6 @@ import { BoulderComponent } from './boulder/boulder.component';
 import { SpraywallTestComponent } from './spraywall-test/spraywall-test.component';
 import { SpraywallTest2Component } from './spraywall-test-2/spraywall-test-2.component';
 import { SpraywallComponent } from './spraywall/spraywall.component';
-import { spraywallDebugTextureResolver } from './core/resolvers/debug-resolver';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -54,16 +53,10 @@ export const routes: Routes = [
   },
   {
     path: 'spraywall-test',
-    component: SpraywallTestComponent,
-    resolve: {
-      spraywallDebugTexture: spraywallDebugTextureResolver
-    }
+    component: SpraywallTestComponent
   },
   {
     path: 'spraywall-test-2',
-    component: SpraywallTest2Component,
-    resolve: {
-      spraywallDebugTexture: spraywallDebugTextureResolver
-    }
+    component: SpraywallTest2Component
   }
 ];

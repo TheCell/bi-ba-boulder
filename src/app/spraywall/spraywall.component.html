@@ -3,7 +3,8 @@
     @if (currentRawModel) {
         <app-boulder-render
             class="render"
-            [rawModel]="currentRawModel">
+            [rawModel]="currentRawModel"
+            [boulderProblem]="selectedProblem">
         </app-boulder-render>
     } @else {
         <app-loading-image
@@ -12,6 +13,18 @@
     }
   </section>
   <section class="legend">
-    
+    <div class="actions">
+        <button class="action-button" (click)="onResetSelection()">Reset</button>
+    </div>
+    <div class="legend-list">
+        @for (problem of listOfProblems; track problem.id) {
+            <app-spraywall-legend-item
+                class="li-item"
+                [problem]="problem"
+                [isSelected]="selectedProblem?.id === problem.id"
+                (selected)="onSelectedProblem($event)">
+            </app-spraywall-legend-item>
+        }
+    </div>
   </section>
 </div>
