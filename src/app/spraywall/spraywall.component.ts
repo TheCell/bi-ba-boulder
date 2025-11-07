@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { BoulderRenderComponent } from '../boulder-render/boulder-render.component';
+import { BoulderRenderComponent } from '../renderer/boulder-render/boulder-render.component';
 import { CommonModule } from '@angular/common';
 import { LoadingImageComponent } from '../common/loading-image/loading-image.component';
 import { DefaultService, SpraywallProblemDto } from '../api';

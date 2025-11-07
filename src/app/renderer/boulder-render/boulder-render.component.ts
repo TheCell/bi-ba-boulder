@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -7,15 +7,18 @@ import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { BoulderLine } from '../interfaces/boulder-line';
-import { fitCameraToCenteredObject } from '../utils/camera-utils';
-import { HSLToHex } from '../utils/color-util';
+import { BoulderLine } from '../../interfaces/boulder-line';
+import { fitCameraToCenteredObject } from '../../utils/camera-utils';
+import { HSLToHex } from '../../utils/color-util';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+import { beginVertex, mapFragment, opacity, vViewPositionReplace, worldposVertex } from '../common/shader-code';
+import { getImageDataFromTexture } from '../common/util';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-boulder-render',
@@ -58,6 +61,16 @@ export class BoulderRenderComponent implements AfterViewInit {
   private raycaster: THREE.Raycaster = null!;
   private currentRandomRadius = Math.random() * 360;
 
+  // Shader material related
+  private rgbBlockTexture?: THREE.Texture;
+  private rgbBlockImageData?: ImageData;
+  private rgbBlockMaterial?: THREE.MeshPhysicalMaterial;
+  private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
+  private originalBlockTexture: THREE.Texture | null = null;
+  private useRgbTexture = 0.0;
+  private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
+  private highlightedHoldsTexture?: THREE.Texture;
+
   private currentGltf?: GLTF;
 
   public constructor(private el: ElementRef) {
@@ -70,6 +83,9 @@ export class BoulderRenderComponent implements AfterViewInit {
         }
       }
     });
+
+    const activatedRoute = inject(ActivatedRoute);
+    this.rgbBlockTexture = activatedRoute.snapshot.data['spraywallDebugTexture'];
   }
 
   public ngAfterViewInit(): void {
@@ -191,5 +207,45 @@ export class BoulderRenderComponent implements AfterViewInit {
     this.currentRandomRadius %= 360;
     return randomColor;
   }
+  
+    private setupCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
+      const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
+  
+      material.onBeforeCompile = (shader) => {
+        shader.uniforms['rgbTexture'] = { value: this.rgbBlockTexture };
+        shader.uniforms['time'] = { value: 0 };
+        shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
+        shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
+  
+        shader.vertexShader = shader.vertexShader.replace(
+          'varying vec3 vViewPosition;',
+          vViewPositionReplace.join('\n')
+        );
+  
+        shader.vertexShader = shader.vertexShader.replace(
+          '#include <begin_vertex>',
+          beginVertex.join('\n')
+        );
+  
+        shader.vertexShader = shader.vertexShader.replace(
+          '#include <worldpos_vertex>',
+          worldposVertex.join('\n')
+        );
+  
+        shader.fragmentShader = shader.fragmentShader.replace(
+          'uniform float opacity;',
+          opacity.join('\n')
+        );
+  
+        shader.fragmentShader = shader.fragmentShader.replace(
+          '#include <map_fragment>',
+          mapFragment.join( '\n' )
+        );
+  
+        material.userData['shader'] = shader;
+      }
+  
+      return material;
+    }
 }
 

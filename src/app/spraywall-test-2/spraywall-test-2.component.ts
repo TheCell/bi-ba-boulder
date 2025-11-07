@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { BoulderLine } from '../interfaces/boulder-line';
-import { BoulderDebugRenderComponent } from '../boulder-debug-render/boulder-debug-render.component';
+import { BoulderDebugRenderComponent } from '../renderer/boulder-debug-render/boulder-debug-render.component';
 import { DefaultService, SpraywallProblemDto } from '../api';
 
 @Component({

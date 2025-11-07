@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { BoulderRenderComponent } from '../boulder-render/boulder-render.component';
+import { BoulderRenderComponent } from '../renderer/boulder-render/boulder-render.component';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { BoulderLine } from '../interfaces/boulder-line';
 

@@ -22,8 +22,8 @@ The next todos:
 [] split model into parts   
 [x] highlight of parts   
 [x] texture rework   
-[] custom highlighting texture   
-[] build highlight texture optimizer   
+[x] custom highlighting texture   
+[x] build highlight texture optimizer   
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/

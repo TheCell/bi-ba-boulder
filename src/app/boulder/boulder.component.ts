@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy } from '@angular/core';
 import { BoulderLegendComponent } from '../components/boulder-legend/boulder-legend.component';
-import { BoulderRenderComponent } from '../boulder-render/boulder-render.component';
+import { BoulderRenderComponent } from '../renderer/boulder-render/boulder-render.component';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { BlocDto } from '../api';
@@ -9,7 +9,7 @@ import { BoulderLine } from '../interfaces/boulder-line';
 import { ResolutionLevel } from '../interfaces/resolution-level';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { environment } from '../../environments/environment';
-import { BoulderDebugRenderComponent } from '../boulder-debug-render/boulder-debug-render.component';
+import { BoulderDebugRenderComponent } from '../renderer/boulder-debug-render/boulder-debug-render.component';
 import { LoadingImageComponent } from '../common/loading-image/loading-image.component';
 
 @Component({

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RESOLUTION_LEVEL, ResolutionLevel } from '../interfaces/resolution-level';
 import { BlocDto } from '../api';
@@ -9,8 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class BoulderLoaderService {
-
-  public constructor(private http: HttpClient) { }
+  private http: HttpClient = inject(HttpClient);
 
   public loadBoulder(url: string): Observable<ArrayBuffer> {
     return this.http.get(`${environment.boulderResourceURL}/${url}`, { responseType: 'arraybuffer'});
