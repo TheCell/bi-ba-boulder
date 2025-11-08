@@ -66,11 +66,12 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private highlightedHoldsTexture?: THREE.Texture;
 
   private currentGltf?: GLTF;
+  private initialized = false; // temporary fix for a timing problem
 
   public constructor(private el: ElementRef) {
     effect(() => {
       const rawModel = this.rawModel();
-      if (rawModel !== this.proccessedRawModel) {
+      if (this.initialized && rawModel !== this.proccessedRawModel) {
         this.proccessedRawModel = rawModel;
         if (rawModel !== undefined) {
           // this effect can run through before afterInit is finished. Needs fixing.
@@ -112,6 +113,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
         this.processedLines = lines;
       }
     }
+    this.initialized = true;
   }
 
   public switchTexture(): void {

@@ -67,7 +67,6 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize', ['$event']) public onResize(): void {
     if (this.renderer) {
-
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,
         height: this.el.nativeElement.offsetHeight,
@@ -129,12 +128,13 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   private stats?: Stats;
 
   private currentGltf?: GLTF;
+  private initialized = false; // temporary fix for a timing problem
 
   public constructor(
     private el: ElementRef) {
     effect(() => {
       const rawModel = this.rawModel();
-      if (rawModel !== this.proccessedRawModel) {
+      if (this.initialized && rawModel !== this.proccessedRawModel) {
         this.proccessedRawModel = rawModel;
         if (rawModel !== undefined) {
           this.removePreviousAndAddBoulderToScene(rawModel);
@@ -201,6 +201,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     }
 
     this.loadHighlightedHoldsTexture(this.currentHighlightedHoldsTexturePath);
+    this.initialized = true;
   }
 
   public switchTexture(): void {
