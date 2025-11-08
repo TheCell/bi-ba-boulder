@@ -9,7 +9,7 @@ import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { HSLToHex } from '../utils/color-util';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
-import { fitCameraToCenteredObject } from '../utils/camera-utils';
+import { fitCameraToCenteredObject } from '../renderer/common/camera-utils';
 import { BoulderLine } from '../interfaces/boulder-line';
 
 @Component({

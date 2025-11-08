@@ -10,7 +10,7 @@ import { HSLToHex } from '../utils/color-util';
 import { ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { BoulderProblemsService } from '../background-loading/boulder-problems.service';
-import { fitCameraToCenteredObject } from '../utils/camera-utils';
+import { fitCameraToCenteredObject } from '../renderer/common/camera-utils';
 import { BoulderLine } from '../interfaces/boulder-line';
 
 @Component({

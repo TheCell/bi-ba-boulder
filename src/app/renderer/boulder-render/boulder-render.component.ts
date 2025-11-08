@@ -8,7 +8,7 @@ import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { BoulderLine } from '../../interfaces/boulder-line';
-import { fitCameraToCenteredObject } from '../../utils/camera-utils';
+import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
 import { beginVertex, mapFragment, opacity, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { ActivatedRoute } from '@angular/router';
