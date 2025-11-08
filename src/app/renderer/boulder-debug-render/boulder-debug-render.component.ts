@@ -128,13 +128,13 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   private stats?: Stats;
 
   private currentGltf?: GLTF;
-  private initialized = false; // temporary fix for a timing problem
+  private initialized = false; // temporary 'fix' for a timing problem
 
   public constructor(
     private el: ElementRef) {
     effect(() => {
       const rawModel = this.rawModel();
-      if (this.initialized && rawModel !== this.proccessedRawModel) {
+      if (rawModel !== this.proccessedRawModel) {
         this.proccessedRawModel = rawModel;
         if (rawModel !== undefined) {
           this.removePreviousAndAddBoulderToScene(rawModel);
@@ -435,7 +435,9 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       if (this.currentGltf !== undefined) {
         this.removeBoulderFromScene(this.currentGltf);
       } else {
-        fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+        if (this.initialized) {
+          fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+        }
       }
       this.currentGltf = gltf;
       this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
