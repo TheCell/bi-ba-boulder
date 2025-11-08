@@ -458,9 +458,16 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
     const mouseEvent = event as MouseEvent;
     const pointer = new THREE.Vector2();
+    const canvasWidth = this.canvas.nativeElement.offsetWidth;
+    const canvasHeight = this.canvas.nativeElement.offsetHeight;
+    const canvasTop = this.canvas.nativeElement.getBoundingClientRect().top;
+    const canvasLeft = this.canvas.nativeElement.getBoundingClientRect().left;
 
-    pointer.x = (mouseEvent.clientX / this.canvas.nativeElement.offsetWidth) * 2 - 1;
-    pointer.y = - (mouseEvent.clientY / this.canvas.nativeElement.offsetHeight) * 2 + 1;
+    const mouseX = mouseEvent.clientX - canvasLeft;
+    const mouseY = mouseEvent.clientY - canvasTop;
+
+    pointer.x = (mouseX / (canvasWidth)) * 2 - 1;
+    pointer.y = - (mouseY / (canvasHeight)) * 2 + 1;
 
     this.raycaster.setFromCamera(pointer, this.camera);
 
