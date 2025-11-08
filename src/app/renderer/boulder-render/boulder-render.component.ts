@@ -10,14 +10,7 @@ import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { BoulderLine } from '../../interfaces/boulder-line';
 import { fitCameraToCenteredObject } from '../../utils/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { OutlinePass } from 'three/examples/jsm/postprocessing/OutlinePass.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { beginVertex, mapFragment, opacity, vViewPositionReplace, worldposVertex } from '../common/shader-code';
-import { getImageDataFromTexture } from '../common/util';
 import { ActivatedRoute } from '@angular/router';
 import { SpraywallProblemDto } from '../../api';
 
@@ -66,12 +59,10 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
   // Shader material related
   private rgbBlockTexture?: THREE.Texture;
-  private rgbBlockImageData?: ImageData;
   private rgbBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
-  private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.Texture;
 
   private currentGltf?: GLTF;
@@ -82,6 +73,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       if (rawModel !== this.proccessedRawModel) {
         this.proccessedRawModel = rawModel;
         if (rawModel !== undefined) {
+          // this effect can run through before afterInit is finished. Needs fixing.
           this.removePreviousAndAddBoulderToScene(rawModel);
         }
       }
@@ -274,7 +266,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
       this.rgbBlockTexture = texture;
-      this.rgbBlockImageData = getImageDataFromTexture(texture);
+      // this.rgbBlockImageData = getImageDataFromTexture(texture);
       this.rgbBlockMaterial = this.setupCustomShaderMaterial();
       this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
     });
