@@ -14,7 +14,7 @@ import { HSLToHex } from '../../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import Stats from 'stats.js'
 import { DefaultService, SpraywallProblemDto } from '../../api';
-import { beginVertex, mapFragment, opacity, vViewPositionReplace, worldposVertex } from '../common/shader-code';
+import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { downloadSpraywallProblemImage, getImageDataFromTexture, prepareHighlightDebugTexture } from '../common/util';
 import { ActivatedRoute } from '@angular/router';
 
@@ -710,7 +710,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
       shader.fragmentShader = shader.fragmentShader.replace(
         'uniform float opacity;',
-        opacity.join('\n')
+        uniforms.join('\n')
       );
 
       shader.fragmentShader = shader.fragmentShader.replace(
