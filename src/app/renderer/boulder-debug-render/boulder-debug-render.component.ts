@@ -15,7 +15,7 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import Stats from 'stats.js'
 import { DefaultService, SpraywallProblemDto } from '../../api';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
-import { downloadSpraywallProblemImage, getImageDataFromTexture, prepareHighlightDebugTexture } from '../common/util';
+import { downloadSpraywallProblemImage, getImageDataFromTexture } from '../common/util';
 import { ActivatedRoute } from '@angular/router';
 
 interface ColorAndIndex {
@@ -65,7 +65,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   private defaultService = inject(DefaultService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize', ['$event']) public onResize(): void {
+  @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,
@@ -106,13 +106,13 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
   // Shader material related
   private rgbBlockTexture?: THREE.Texture;
-  private rgbBlockImageData?: ImageData;
+  private rgbBlockImageData?: THREE.DataTextureImageData;
   private rgbBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
   private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
-  private highlightedHoldsTexture?: THREE.Texture;
+  private highlightedHoldsTexture?: THREE.DataTexture;
 
   public holdColorOptions: TypeAndColor[] = [
     { type: Type.start, color: new THREE.Color(0, 158, 115) },
@@ -311,12 +311,14 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
   private setupHighlightDebugTexture() {
     const loader = new THREE.TextureLoader();
-    loader.load('./images/highlight_debug.png', (texture: THREE.Texture) => {
+    loader.load('./images/highlight_debug.png', (texture) => {
       texture.flipY = false;
       texture.needsUpdate = true;
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
       this.rgbBlockTexture = texture;
+      console.log(texture);
+      
       this.rgbBlockImageData = getImageDataFromTexture(texture);
       this.rgbBlockMaterial = this.setupCustomShaderMaterial();
       this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
@@ -331,8 +333,8 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   }
 
   private loadHighlightedHoldsTexture(path: string): void {
-    const loader = new THREE.TextureLoader();
-    loader.load(path, (texture: THREE.Texture) => {
+    const loader = new THREE.DataTextureLoader();
+    loader.load(path, (texture: THREE.DataTexture) => {
       texture.flipY = false;
       texture.needsUpdate = true;
       texture.minFilter = THREE.NearestFilter;
@@ -342,22 +344,32 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   }
 
   private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
-    const image = new Image(width, height);
-    const texture = new THREE.Texture(image);
-    image.onload = () => {
+    // const image = new Image(width, height);
+    const loader = new THREE.DataTextureLoader();
+    loader.load('data:image/png;base64,' + base64String, (texture: THREE.DataTexture) => {
       texture.flipY = false;
       texture.needsUpdate = true;
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
       this.highlightedHoldsTexture = texture;
-    }
-    image.onabort = (ev) => {
-      console.error('Failed to load highlighted holds texture from base64 data.', ev);
-    }
-    image.onerror = (ev) => {
-      console.error('Failed to load highlighted holds texture from base64 data.', ev);
-    }
-    image.src = 'data:image/png;base64,' + base64String;
+    });
+    // const texture = new THREE.DataTexture(undefined, width, height, THREE.RGBFormat);
+    // texture.source
+
+  //   image.onload = () => {
+  //     texture.flipY = false;
+  //     texture.needsUpdate = true;
+  //     texture.minFilter = THREE.NearestFilter;
+  //     texture.magFilter = THREE.NearestFilter;
+  //     this.highlightedHoldsTexture = texture;
+  //   }
+  //   image.onabort = (ev) => {
+  //     console.error('Failed to load highlighted holds texture from base64 data.', ev);
+  //   }
+  //   image.onerror = (ev) => {
+  //     console.error('Failed to load highlighted holds texture from base64 data.', ev);
+  //   }
+  //   image.src = 'data:image/png;base64,' + base64String;
   }
 
   private createCanvas(): void {
@@ -477,10 +489,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     if (intersects.length === 0) {
       return;
     }
-
-    // console.log('intersects:', intersects[0].uv);
-    // console.log('intersects:', intersects[0].uv1);
-
+    
     if (this.rgbBlockImageData && intersects[0].uv1) {
       this.drawNewHighlight(intersects[0].uv1);
     }
@@ -592,8 +601,12 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
   
 
-  private sampleColorFromImageData(imageData: ImageData, u: number, v: number): ColorAndIndex {
+  private sampleColorFromImageData(imageData: THREE.DataTextureImageData, u: number, v: number): ColorAndIndex {
     const { data, width, height } = imageData;
+
+    if (!data) {
+      throw new Error('Image data is null or undefined.');
+    }
 
     // Clamp and flip Y (because WebGL textures are usually upside down)
     u = THREE.MathUtils.clamp(u, 0, 1);
@@ -611,9 +624,13 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     return { r, g, b, a, index };
   }
 
-  private getIndicesForGroup(imageData: ImageData, group: number): number[] {
+  private getIndicesForGroup(imageData: THREE.DataTextureImageData, group: number): number[] {
     const indices: number[] = [];
     const { data, width, height } = imageData;
+
+    if (!data) {
+      throw new Error('Image data is null or undefined.');
+    }
 
     for (let index = 2; index < data.length; index += 4) {
       const blue = data[index];
@@ -632,12 +649,17 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     
     const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
     // console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
+    if (!this.highlightedHoldsTexture || this.highlightedHoldsTexture.image.data === null) {
+      console.error('No highlighted holds texture or data to draw on.');
+      return;
+    }
 
     if (this.lastClickedHold?.index === colorAndIndex.index) {
       const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
       let everythingWasHighlighted = true;
       let nothingWasHighlighted = true;
       for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
+        
         if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] === 0) {
           everythingWasHighlighted = false;
         }

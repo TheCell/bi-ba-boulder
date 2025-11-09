@@ -26,7 +26,7 @@ import { SpraywallProblemDto } from '../../api';
 })
 export class BoulderRenderComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize', ['$event']) public onResize(): void {
+  @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,

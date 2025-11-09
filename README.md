@@ -7,7 +7,7 @@ The next todos:
 
 [x] Figure a route dto out  
 [] login  
-[] 3D scan -> object with LOD process
+[~] 3D scan -> object with LOD process   
 [x] Load LOD levels  
 [] bloc caching  
 [] Offline compatible  
@@ -19,7 +19,7 @@ The next todos:
 [] hover over line  
 [] height indicator  
 [] switch to uuid for id's   
-[] split model into parts   
+[~] split model into parts   
 [x] highlight of parts   
 [x] texture rework   
 [x] custom highlighting texture   

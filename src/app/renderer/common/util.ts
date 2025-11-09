@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function getImageDataFromTexture(texture: THREE.Texture): ImageData {
+export function getImageDataFromTexture(texture: THREE.Texture<HTMLImageElement>): ImageData {
   const image = texture.image;
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -10,24 +10,10 @@ export function getImageDataFromTexture(texture: THREE.Texture): ImageData {
 
   ctx!.drawImage(image, 0, 0);
   const imageData = ctx!.getImageData(0, 0, image.width, image.height);
-
-  // console.log('getImageDataFromTexture', imageData);
-
   return imageData;
 }
 
-export function prepareHighlightDebugTexture(imageData: ArrayBuffer): THREE.Texture {
-  const texture = new THREE.Texture();
-  texture.image = new Image();
-  texture.image.src = URL.createObjectURL(new Blob([imageData]));
-  texture.flipY = false;
-  texture.minFilter = THREE.NearestFilter;
-  texture.magFilter = THREE.NearestFilter;
-  texture.needsUpdate = true;
-  return texture;
-}
-
-export function downloadSpraywallProblemImage(texture: THREE.Texture): void {
+export function downloadSpraywallProblemImage(texture: THREE.DataTexture): void {
   if (texture.isTexture && texture.image && texture.image.data) {
     let canvas = document.createElement('canvas');
     let context = canvas.getContext('2d')!;
