@@ -23,12 +23,15 @@
 
 .legend {
   grid-area: legend;
-  background-image: linear-gradient(180deg, $black 0%, $dark 20%);
+  // background-image: linear-gradient(180deg, $black 0%, $dark 20%);
 }
 
 .actions {
   height: 2em;
   width: 100%;
+  background-color: rgba($light, 0.05);
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .legend-list {
@@ -55,6 +58,6 @@
   background-color: rgba($primary, 1.0);
 }
 
-.li-item:nth-child(odd) {
+.li-item:nth-child(even) {
   background-color: rgba($light, 0.05);
 }
