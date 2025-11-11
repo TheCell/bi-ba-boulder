@@ -49,3 +49,6 @@ Check out the Readme in the backend folder to set it up
 # Deployment
 The deployment works over Github Actions  
 The .htaccess won't be copied you have to do that on your own.
+
+# Testing out ChatGPT
+To test functionality I used the chatmodes described here ![https://gist.github.com/kasuken/d68d3cabfb22ff75a44b8bd538d5a7ec](https://gist.github.com/kasuken/d68d3cabfb22ff75a44b8bd538d5a7ec) described here: https://www.emanuelebartolesi.com/blog/github-copilot-a-persona-based-approach-to-real-world-development-56ee
