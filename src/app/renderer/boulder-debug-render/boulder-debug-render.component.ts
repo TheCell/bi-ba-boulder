@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
-import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { BoulderLine } from '../../interfaces/boulder-line';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
@@ -95,7 +95,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, 2.0);
-  
+
   private raycaster: THREE.Raycaster = null!;
   private currentRandomRadius = Math.random() * 360;
 
@@ -247,14 +247,14 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       let imgData = context.createImageData(this.highlightedHoldsTexture.image.width, this.highlightedHoldsTexture.image.height);
       canvas.width = this.highlightedHoldsTexture.image.width;
       canvas.height = this.highlightedHoldsTexture.image.height;
-  
+
       for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
         imgData.data[i] = this.highlightedHoldsTexture.image.data[i];
         imgData.data[i + 1] = this.highlightedHoldsTexture.image.data[i + 1];
         imgData.data[i + 2] = this.highlightedHoldsTexture.image.data[i + 2];
         imgData.data[i + 3] = 255;
       }
-  
+
       context.putImageData(imgData, 0, 0);
       this.defaultService.postSpraywallProblemCreate('1', {
         tempPwd: this.form.controls.tempPsw.value,
@@ -318,7 +318,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       texture.magFilter = THREE.NearestFilter;
       this.rgbBlockTexture = texture;
       console.log(texture);
-      
+
       this.rgbBlockImageData = getImageDataFromTexture(texture);
       this.rgbBlockMaterial = this.setupCustomShaderMaterial();
       this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
@@ -414,14 +414,14 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     this.stats?.begin();
     if (this.rgbBlockMaterial) {
       const shader = this.rgbBlockMaterial.userData['shader'];
-            
+
       if (shader) {
         // shader.uniforms.time.value = performance.now() / 1000;
         shader.uniforms.useRgbTexture.value = this.useRgbTexture;
         shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
       }
     }
-    
+
     this.renderer.render(this.scene, this.camera);
     this.stats?.end();
     window.requestAnimationFrame(this.loop);
@@ -440,6 +440,12 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
         if (mesh.isMesh) {
           this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
           this.originalBlockTexture = this.originalBlockMaterial.map;
+
+          this.originalBlockMaterial.needsUpdate = true;
+          // this.originalBlockTexture!.needsUpdate = true;
+          this.originalBlockTexture!.colorSpace = THREE.LinearSRGBColorSpace;
+          this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+          // this.originalBlockMaterial.wireframe = true;
           this.rgbBlockMaterial = this.setupCustomShaderMaterial();
         }
       });
@@ -489,7 +495,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     if (intersects.length === 0) {
       return;
     }
-    
+
     if (this.rgbBlockImageData && intersects[0].uv1) {
       this.drawNewHighlight(intersects[0].uv1);
     }
@@ -503,11 +509,11 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       );
       this.clickPoints.push(newPoint);
       console.log('newPoint:',  `(${newPoint.x}, ${newPoint.y}, ${newPoint.z})`);
-  
+
       if (this.clickPoints.length < 2) {
         return;
       }
-  
+
       this.drawLineFromActivePoints(this.scene);
     }
   }
@@ -599,7 +605,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     return lines;
   }
 
-  
+
 
   private sampleColorFromImageData(imageData: THREE.DataTextureImageData, u: number, v: number): ColorAndIndex {
     const { data, width, height } = imageData;
@@ -646,7 +652,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     if (!this.drawingNewHighlight || !this.rgbBlockImageData) {
       return;
     }
-    
+
     const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
     // console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
     if (!this.highlightedHoldsTexture || this.highlightedHoldsTexture.image.data === null) {
@@ -659,7 +665,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
       let everythingWasHighlighted = true;
       let nothingWasHighlighted = true;
       for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
-        
+
         if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] === 0) {
           everythingWasHighlighted = false;
         }
@@ -668,7 +674,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
             this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] > 0) {
           nothingWasHighlighted = false;
         }
-    
+
         this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] = this.highlightColor.r;
         this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = this.highlightColor.g;
         this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = this.highlightColor.b;
@@ -686,7 +692,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
           this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = 0;
           this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = 0;
         }
-        
+
         this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor.r;
         this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor.g;
         this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor.b;
@@ -696,7 +702,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
       this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor.g;
       this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor.b;
     }
-    
+
     this.highlightedHoldsTexture!.needsUpdate = true;
     this.lastClickedHold = colorAndIndex;
   }

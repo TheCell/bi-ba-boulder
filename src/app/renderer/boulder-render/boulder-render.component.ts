@@ -6,7 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
-import { GLTFLoader, GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { BoulderLine } from '../../interfaces/boulder-line';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
@@ -82,7 +82,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
     effect(() => {
       const boulderProblem = this.boulderProblem();
-      
+
       if (boulderProblem) {
         this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
         this.ambientLight.intensity = 0.7;
@@ -164,7 +164,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
     if (this.rgbBlockMaterial) {
       const shader = this.rgbBlockMaterial.userData['shader'];
-            
+
       if (shader) {
         shader.uniforms.useRgbTexture.value = this.useRgbTexture;
         shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
@@ -186,6 +186,11 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
         if (mesh.isMesh) {
           this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
           this.originalBlockTexture = this.originalBlockMaterial.map;
+          this.originalBlockMaterial.needsUpdate = true;
+          // this.originalBlockTexture!.needsUpdate = true;
+          this.originalBlockTexture!.colorSpace = THREE.LinearSRGBColorSpace;
+          this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+          // this.originalBlockMaterial.wireframe = true;
           this.rgbBlockMaterial = this.setupCustomShaderMaterial();
         }
       });
@@ -235,7 +240,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     this.currentRandomRadius %= 360;
     return randomColor;
   }
-  
+
   private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
     const image = new Image(width, height);
     const texture = new THREE.Texture(image);
@@ -254,14 +259,14 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     }
     image.src = 'data:image/png;base64,' + base64String;
   }
-  
+
   private setupHighlightTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
       let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
       object.material = this.rgbBlockMaterial;
     }
   }
-  
+
   private setupHighlightDebugTexture() {
     const loader = new THREE.TextureLoader();
     loader.load('./images/highlight_debug.png', (texture: THREE.Texture) => {
@@ -275,7 +280,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
     });
   }
-  
+
   private setupCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
     const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
 
