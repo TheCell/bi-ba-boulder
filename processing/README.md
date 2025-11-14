@@ -5,6 +5,7 @@
   - Pre-steps > Set Reconstruction Area
   - Create Model > High Detail
 - Tools (Scene 3D) > Mesh Model > Cut by Box
+  - Set Ground Plane
   - Cut with "Fill cut holes"
 - Mesh Model
   - Check Integrity
