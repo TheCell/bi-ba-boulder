@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --configuration development",
+    "host": "ng serve --host 0.0.0.0 --configuration development",
     "build": "ng build --base-href /bi-ba-boulder/ --configuration production",
     "buildpipeline": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
