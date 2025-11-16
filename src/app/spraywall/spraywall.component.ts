@@ -29,7 +29,7 @@ export class SpraywallComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.boulderLoaderService.loadTestSpraywall2().subscribe({
+    this.boulderLoaderService.loadTestSpraywall3().subscribe({
       next: (data: ArrayBuffer) => {
         this.currentRawModel = data;
       }

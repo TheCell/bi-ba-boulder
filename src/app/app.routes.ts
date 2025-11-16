@@ -11,11 +11,17 @@ import { BoulderComponent } from './boulder/boulder.component';
 import { SpraywallTestComponent } from './spraywall-test/spraywall-test.component';
 import { SpraywallTest2Component } from './spraywall-test-2/spraywall-test-2.component';
 import { SpraywallComponent } from './spraywall/spraywall.component';
+import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.component';
+import { TermsComponent } from './legal/terms.component/terms.component';
+import { LoginComponent } from './login/login.component/login.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
   { path: 'home', component: HomeComponent },
+  { path: 'privacy-policy', component: PrivacyPolicyComponent },
+  { path: 'terms', component: TermsComponent },
   { path: 'canvas-box', component: CanvasBoxComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'single-boulder-test', component: BoulderHardcodedComponent },
   {
     path: 'daone-boulder-test',

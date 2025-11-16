@@ -5,6 +5,7 @@
   - Pre-steps > Set Reconstruction Area
   - Create Model > High Detail
 - Tools (Scene 3D) > Mesh Model > Cut by Box
+  - Set Ground Plane
   - Cut with "Fill cut holes"
 - Mesh Model
   - Check Integrity
@@ -13,12 +14,14 @@
 - Tools (Scene 1D)
   - Simplify Tool
     - Target 100'000 triangle count
-    - Smoothing Tool (Noise Removal)
+    - Part merging: Create a singleton
+    - Smoothing Tool (Noise Removal (Only do this on the original model))
+    - If needed reduce in multiple steps
 - Mesh Model
   - Mesh Color & Texture: Unwrap
     - (Or just Load the settings file)
     - Settings > Texture resolution 4096 x 4096
-    - Settings > Unwrap Method: Mosaicing based
+    - Settings > Unwrap Method: Geometric
   - Export Levels of Detail
     - (Or just Load the settings file)
     - Model Count: 3
@@ -26,12 +29,15 @@
     - Simplification type: Absolute
     - Minimal triangles: 500
     - Export textures: Yes
+      - Texel size: 4 x optimal (25% texture quality)
+      - Texture format: WebP
     - Export vertex normals: No
     - Export vertex colors: No
 
 # Prepare Model for export
 - Open the LOD Models in Blender
 - Reposition the Model and rotate
+  - Front should face in -y direction
 - Export as glb (binary gltf file)
 - TODO: Scale Model to match real world size
 

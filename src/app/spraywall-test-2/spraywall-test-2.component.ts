@@ -22,7 +22,7 @@ export class SpraywallTest2Component implements OnInit {
   
   public constructor(
     private boulderLoaderService: BoulderLoaderService) {
-    const testBoulder = this.boulderLoaderService.loadTestSpraywall2();
+    const testBoulder = this.boulderLoaderService.loadTestSpraywall3();
     testBoulder.subscribe({
       next: (data) => {
         // console.log('data', data);
