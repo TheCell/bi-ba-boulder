@@ -269,7 +269,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
   private setupHighlightDebugTexture() {
     const loader = new THREE.TextureLoader();
-    loader.load('./images/highlight_debug.png', (texture: THREE.Texture) => {
+    loader.load('./images/highlight_debug_spraywall_test.png', (texture: THREE.Texture) => {
       texture.flipY = false;
       texture.needsUpdate = true;
       texture.minFilter = THREE.NearestFilter;
