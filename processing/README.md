@@ -40,15 +40,27 @@
   - Front should face in -y direction
 - Export as glb (binary gltf file)
 - TODO: Scale Model to match real world size
+- for Spraywalls: Add a second UV Map 128x128. See UV Grouping
 
 # UV Grouping
-UVs of Holds are grouped on the Texture as follows: R and G are just unique identifiers. Holds on top of other Holds are grouped by B values.
+- Create a second UV Map
+  - Add Second Material
+  - Copy the rgb_blocks texture from the processing folder
+  - Use the 128x128 RGB Texture to sort the UV Vertices
+  - Data > UV Maps > Add and name it UVMap_Holds
+
+UVs of Holds are grouped on the Texture as follows: R and G are just unique identifiers. Holds on top of other Holds are grouped by B values.   
+
+After sorting all UVs. Paint B values over all the holds that are on top of other holds   
+
+With Paint.NET you can paint Colors additively. Add a unique B value to each grouping.
 
 # Highlighting images
 The highlighting images are 128x128 pixels in 24 bit depth. If a file is opened and saved in paint it will be converted to 32 bit.
 Use Paint.NET.
 
 # WIP Reducing the final mesh
+Outdated:
 For the script to work you need Blender installed and added Blender.exe as a System variable
 
 Use the following format in the command line:

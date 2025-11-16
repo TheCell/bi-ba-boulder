@@ -311,7 +311,8 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
   private setupHighlightDebugTexture() {
     const loader = new THREE.TextureLoader();
-    loader.load('./images/highlight_debug.png', (texture) => {
+    // this texture is unique for every spraywall model. It contains the unique B values for the groupings
+    loader.load('./images/Bimano_Spraywall_2025_rgb_blocks_128x128.png', (texture) => {
       texture.flipY = false;
       texture.needsUpdate = true;
       texture.minFilter = THREE.NearestFilter;
@@ -660,6 +661,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
       return;
     }
 
+    console.log(colorAndIndex.b);
     if (this.lastClickedHold?.index === colorAndIndex.index) {
       const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
       let everythingWasHighlighted = true;
