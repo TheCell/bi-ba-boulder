@@ -150,6 +150,12 @@
             "./config/routes/security.yaml"
         ]
     },
+    "symfony/uid": {
+        "version": "7.3",
+        "recipe": {
+            "version": "7.0"
+        }
+    },
     "symfony/validator": {
         "version": "7.1",
         "recipe": {

@@ -27,7 +27,7 @@ Stop the Server: ``symfony server:stop``
 # Generate API with OpenApi
 generate openAPI:
 1. Start the symfony server
-2. Run in the root directory: ``npx openapi-generator-cli generate -i http://localhost:8000/api/doc.json -g typescript-angular -o src/app/api``
+2. Run in the root directory: ``npm run generate:api``
 3. then copy the generated api
 
 # Releasing
