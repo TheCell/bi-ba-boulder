@@ -27,7 +27,7 @@ Stop the Server: ``symfony server:stop``
 # Generate API with OpenApi
 generate openAPI:
 1. Start the symfony server
-2. Run in the root directory: ``npm run generate:api``
+2. Run in the root directory: ``npm run generate:api`` (You must have the java binary executable available on your PATH for this to work.)
 3. then copy the generated api
 
 # Releasing
