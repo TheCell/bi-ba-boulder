@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\SpraywallProblem;
 use App\DTO\SpraywallProblemDto;
-use App\Entity\Spraywall;
 use App\Repository\SpraywallRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use App\Repository\SpraywallProblemRepository;
@@ -15,7 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api', name: '')]

@@ -8,14 +8,17 @@ Copy the .env to .env.local file and insert the missing variables
 ``npm install @openapitools/openapi-generator-cli -g``
 
 ## Important PHP configuration
-if you are using xampp you need to enable the `gd` extension. Go to `xampp/php/php.ini` look for `extension=gd2` and uncomment it
+if you are using xampp you need to enable sopme extensions. Go to `xampp/php/php.ini` look for `;extension=gd2`, `;extension=openssl` and `;extension=sodium`. Uncomment all.   
 
 Setup Db:  
 - Set up a user (on the database (start xampp) [http://localhost/phpmyadmin/](http://localhost/phpmyadmin/) > User accounts > Add user account)  
 - set the database user, password and database you want for develop in the env file.
 - If you copy .env to .env.local you already have an example
 - Then run: ``symfony console doctrine:database:create`` you should see a new database named ``bibaboulder`` in phpMyAdmin now  
-- apply the migrations ``symfony console doctrine:migrations:migrate``
+- apply the migrations ``symfony console doctrine:migrations:migrate``   
+
+Generating JWT Tokens:
+- `symfony console lexik:jwt:generate-keypair` to generate a private.pem and public.pem. Add them to `/config/jwt/` and add the passphrase you chose to `.env.local` (JWT_PASSPHRASE=your_secure_passphrase)
 
 # Start
 Open Powershell in the subfolder symfony-project

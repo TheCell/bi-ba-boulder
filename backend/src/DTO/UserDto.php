@@ -12,7 +12,10 @@ class UserDto
     public Uuid $id,
     
     #[Assert\NotBlank]
-    public string $email
+    public string $email,
+    
+    #[Assert\NotBlank]
+    public array $roles
     )
   { }
 }
