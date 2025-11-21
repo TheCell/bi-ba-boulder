@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\DTO\UserDto;
+use App\DTO\ErrorDto;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[Route('/api', name: '')]
+#[OA\Tag(name: "User")]
 final class UserController extends AbstractController
 {
 
@@ -19,14 +22,7 @@ final class UserController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns user by ID',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'id', type: 'integer'),
-                new OA\Property(property: 'email', type: 'string'),
-                new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string'))
-            ]
-        )
+        content: new OA\JsonContent(ref: new Model(type: UserDto::class))
     )]
     public function getUserById(User $user): JsonResponse
     {
@@ -43,29 +39,17 @@ final class UserController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns current user',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'id', type: 'integer'),
-                new OA\Property(property: 'email', type: 'string'),
-                new OA\Property(property: 'roles', type: 'array', items: new OA\Items(type: 'string'))
-            ]
-        )
+        content: new OA\JsonContent(ref: new Model(type: UserDto::class))
     )]
     #[OA\Response(
         response: Response::HTTP_NOT_FOUND,
         description: 'User not found',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'error', type: 'string')
-            ]
-        )
+        content: new OA\JsonContent(ref: new Model(type: ErrorDto::class))
     )]
     public function getCurrentUser(#[CurrentUser] ?User $user): JsonResponse
     {
         if (null === $user) {
-            return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+            return $this->json(new ErrorDto('User not found', null), Response::HTTP_NOT_FOUND);
         }
         $userDto = new UserDto(
             $user->getId(),

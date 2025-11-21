@@ -9,14 +9,7 @@
  */
 
 
-export interface GetRegistrationRequest { 
-    /**
-     * Email of the user
-     */
-    email: string;
-    /**
-     * Password of the user
-     */
-    password: string;
+export interface TokenDto { 
+    token: string;
 }
 

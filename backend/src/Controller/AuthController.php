@@ -3,6 +3,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\DTO\UserDto;
+use App\DTO\ErrorDto;
+use App\DTO\TokenDto;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
@@ -17,6 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api', name: '')]
+#[OA\Tag(name: "Auth")]
 final class AuthController extends AbstractController
 {
     public function __construct(
@@ -42,33 +45,21 @@ final class AuthController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_CREATED,
         description: 'Returns the created user',
-        content: new OA\MediaType(
-            mediaType: 'application/json',
-            schema: new OA\Schema(ref: new Model(type: UserDto::class))
-        )
+        content: new OA\JsonContent(ref: new Model(type: UserDto::class))
     )]
     #[OA\Response(
         response: Response::HTTP_BAD_REQUEST,
         description: 'Validation error',
-        content: new OA\MediaType(
-            mediaType: 'application/json',
-            schema: new OA\Schema(
-                type: 'object',
-                properties: [
-                    new OA\Property(property: 'error', type: 'string'),
-                    new OA\Property(property: 'errors', type: 'object')
-                ]
-            )
-        )
+        content: new OA\JsonContent(ref: new Model(type: ErrorDto::class))
     )]
     public function register(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         if (!isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            return $this->json(['error' => 'Invalid email address'], Response::HTTP_BAD_REQUEST);
+            return $this->json(new ErrorDto('Invalid email address', null), Response::HTTP_BAD_REQUEST);
         }
         if (!isset($data['password']) || strlen($data['password']) < 8) {
-            return $this->json(['error' => 'Password must be at least 8 characters'], Response::HTTP_BAD_REQUEST);
+            return $this->json(new ErrorDto('Password must be at least 8 characters', null), Response::HTTP_BAD_REQUEST);
         }
 
         $user = new User();
@@ -84,7 +75,7 @@ final class AuthController extends AbstractController
             foreach ($errors as $error) {
                 $errorMessages[$error->getPropertyPath()] = $error->getMessage();
             }
-            return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
+            return $this->json(new ErrorDto('Validation error', $errorMessages), Response::HTTP_BAD_REQUEST);
         }
 
         $this->userRepository->addUser($user);
@@ -114,28 +105,12 @@ final class AuthController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns JWT token',
-        content: new OA\MediaType(
-            mediaType: 'application/json',
-            schema: new OA\Schema(
-                type: 'object',
-                properties: [
-                    new OA\Property(property: 'token', type: 'string')
-                ]
-            )
-        )
+        content: new OA\JsonContent(ref: new Model(type: TokenDto::class))
     )]
     #[OA\Response(
         response: Response::HTTP_UNAUTHORIZED,
         description: 'Invalid credentials',
-        content: new OA\MediaType(
-            mediaType: 'application/json',
-            schema: new OA\Schema(
-                type: 'object',
-                properties: [
-                    new OA\Property(property: 'error', type: 'string')
-                ]
-            )
-        )
+        content: new OA\JsonContent(ref: new Model(type: ErrorDto::class))
     )]
     public function login(): void
     {
@@ -146,23 +121,12 @@ final class AuthController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns the user profile',
-        content: new OA\MediaType(
-            mediaType: 'application/json',
-            schema: new OA\Schema(ref: new Model(type: UserDto::class))
-        )
+        content: new OA\JsonContent(ref: new Model(type: UserDto::class))
     )]
     #[OA\Response(
         response: Response::HTTP_NOT_FOUND,
         description: 'User not found',
-        content: new OA\MediaType(
-            mediaType: 'application/json',
-            schema: new OA\Schema(
-                type: 'object',
-                properties: [
-                    new OA\Property(property: 'error', type: 'string')
-                ]
-            )
-        )
+        content: new OA\JsonContent(ref: new Model(type: ErrorDto::class))
     )]
     public function getProfile(): JsonResponse
     {

@@ -9,9 +9,14 @@
  */
 
 
-export interface UserDto { 
-    id: string;
+export interface PostAppAuthRegisterRequest { 
+    /**
+     * Email of the user
+     */
     email: string;
-    roles: Array<any>;
+    /**
+     * Password of the user
+     */
+    password: string;
 }
 

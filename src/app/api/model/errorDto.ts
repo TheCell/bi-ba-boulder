@@ -9,9 +9,8 @@
  */
 
 
-export interface UserDto { 
-    id: string;
-    email: string;
-    roles: Array<any>;
+export interface ErrorDto { 
+    error: string;
+    errors?: Array<any> | null;
 }
 

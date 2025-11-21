@@ -9,9 +9,12 @@
  */
 
 
-export interface UserDto { 
+export interface LineDto { 
     id: string;
-    email: string;
-    roles: Array<any>;
+    blocId: string;
+    identifier: string;
+    description?: string | null;
+    color?: string | null;
+    name?: string | null;
 }
 

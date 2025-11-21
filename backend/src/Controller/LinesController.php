@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\ErrorDto;
 use App\DTO\LineDto;
 use App\Repository\LineRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -12,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
 #[Route('/api', name: '')]
+#[OA\Tag(name: "Line")]
 class LinesController extends AbstractController
 {
     private $lineRepository;
@@ -46,6 +48,6 @@ class LinesController extends AbstractController
             );
         }
 
-        return $this->json($lineDtos, Response::HTTP_OK);
+        return $this->json(new ErrorDto('Some error'), Response::HTTP_BAD_REQUEST);
     }
 }

@@ -9,10 +9,12 @@
 ### Backend (Symfony + PHP)
 - **Endpoints**: Located in `backend/src/Controller/` - separate files per Entity
 - **Repositories**: Doctrine ORM in `backend/src/Repository/`
-- **Data**: Entities in `backend/src/Entity/` mapped to MySQL Server tables
+- **Data**: Entities in `backend/src/Entity/` mapped to MySQL Server tables. Dtos are under `backend/src/DTO/`.
 - **Code style**: PSR-12 with Symfony Best Practices
 - **Authentication**: JWT tokens via `lexik/jwt-authentication-bundle`
 - **Coding guidelines**: Indentation with 4 spaces, strict types, type hints, and PHPDoc comments
+- **API Documentation**: OpenAPI annotations using `NelmioApiDocBundle` and `zircote/swagger-php`
+- **Response Handling**: JSON responses with proper HTTP status codes. Always with defined dtos.
 
 ### Frontend (Angular + TypeScript + Three.js)
 - **Auth**: TBD <!--MSAL React in `src/auth/` with `AuthProvider.tsx` wrapper-->

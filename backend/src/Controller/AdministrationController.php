@@ -9,6 +9,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use OpenApi\Attributes as OA;
 
 #[Route('/api', name: '')]
+#[OA\Tag(name: "Administration")]
 #[IsGranted('ROLE_USER')]
 final class AdministrationController extends AbstractController
 {

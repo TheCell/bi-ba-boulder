@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\SectorDto;
+use App\DTO\ErrorDto;
 use App\Repository\SectorRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,6 +13,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api', name: '')]
+#[OA\Tag(name: "Sector")]
 class SectorsController extends AbstractController
 {
     private $sectorRepository;
@@ -52,27 +54,24 @@ class SectorsController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns a sector by ID',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(property: 'id', type: 'integer'),
-                new OA\Property(property: 'name', type: 'string'),
-                new OA\Property(property: 'description', type: 'string')
-            ]
-        )
+        content: new OA\JsonContent(ref: new Model(type: SectorDto::class))
+    )]
+    #[OA\Response(
+        response: Response::HTTP_NOT_FOUND,
+        description: 'Sector not found',
+        content: new OA\JsonContent(ref: new Model(type: ErrorDto::class))
     )]
     public function getSector($id): JsonResponse
     {
         $sector = $this->sectorRepository->findById($id);
         if (!$sector) {
-            return $this->json(['error' => 'Sector not found'], Response::HTTP_NOT_FOUND);
+            return $this->json(new ErrorDto('Sector not found', null), Response::HTTP_NOT_FOUND);
         }
         $sectorDto = new SectorDto(
             $sector->getId(),
             $sector->getName(),
             $sector->getDescription()
         );
-
         return $this->json($sectorDto, Response::HTTP_OK);
     }
 }

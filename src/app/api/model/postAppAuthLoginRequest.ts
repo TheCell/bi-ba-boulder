@@ -9,10 +9,8 @@
  */
 
 
-export interface SpraywallProblemsDto { 
-    id: string;
-    name: string;
-    image: string;
-    description?: string | null;
+export interface PostAppAuthLoginRequest { 
+    email: string;
+    password: string;
 }
 

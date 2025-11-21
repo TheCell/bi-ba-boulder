@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\ErrorDto;
 use App\Entity\SpraywallProblem;
 use App\DTO\SpraywallProblemDto;
 use App\Repository\SpraywallRepository;
@@ -17,6 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api', name: '')]
+#[OA\Tag(name: "Spraywall")]
 final class SpraywallController extends AbstractController
 {
     private $spraywallProblemRepository;
@@ -34,10 +36,7 @@ final class SpraywallController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns a spraywall problem',
-        content: new OA\MediaType(
-            mediaType: 'application/json',
-            schema: new OA\Schema(ref: new Model(type: SpraywallProblemDto::class))
-        )
+        content: new OA\JsonContent(ref: new Model(type: SpraywallProblemDto::class))
     )]
     public function getProblem($id, $problemId): JsonResponse
     {
@@ -117,10 +116,7 @@ final class SpraywallController extends AbstractController
     #[OA\Response(
         response: Response::HTTP_CREATED,
         description: 'Returns the created spraywall problem',
-        content: new OA\MediaType(
-            mediaType: 'application/json',
-            schema: new OA\Schema(ref: new Model(type: SpraywallProblemDto::class))
-        )
+        content: new OA\JsonContent(ref: new Model(type: SpraywallProblemDto::class))
     )]
     #[OA\Response(
         response: Response::HTTP_BAD_REQUEST,
@@ -199,24 +195,24 @@ final class SpraywallController extends AbstractController
         }
         
         if (!$data || !isset($data['name']) || empty(trim($data['name']))) {
-            return $this->json(['error' => 'Name is required and cannot be empty'], Response::HTTP_BAD_REQUEST);
+            return $this->json(new ErrorDto('Name is required and cannot be empty', null), Response::HTTP_BAD_REQUEST);
         }
 
         if (!isset($data['image']) || empty($data['image'])) {
-            return $this->json(['error' => 'Image is required'], Response::HTTP_BAD_REQUEST);
+           return $this->json(new ErrorDto('Image is required', null), Response::HTTP_BAD_REQUEST);
         }
 
         // Validate and process base64 image
         $imageData = $data['image'];
         if (!preg_match('/^data:image\/png;base64,(.+)$/', $imageData, $matches)) {
-            return $this->json(['error' => 'Image must be a valid base64 PNG string with data:image/png;base64, prefix'], Response::HTTP_BAD_REQUEST);
+            return $this->json(new ErrorDto('Image must be a valid base64 PNG string with data:image/png;base64, prefix', null), Response::HTTP_BAD_REQUEST);
         }
 
         $base64Data = $matches[1];
         $binaryData = base64_decode($base64Data, true);
         
         if ($binaryData === false) {
-            return $this->json(['error' => 'Invalid base64 image data'], Response::HTTP_BAD_REQUEST);
+            return $this->json(new ErrorDto('Invalid base64 image data', null), Response::HTTP_BAD_REQUEST);
         }
 
         // Create new SpraywallProblem
@@ -246,7 +242,7 @@ final class SpraywallController extends AbstractController
             
         } catch (IOExceptionInterface $exception) {
             $this->spraywallProblemRepository->removeProblem($spraywallProblem);
-            return $this->json(['error' => 'Failed to save image: ' . $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(new ErrorDto('Failed to save image: ' . $exception->getMessage(), null), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         // Return the created problem with 201 status
