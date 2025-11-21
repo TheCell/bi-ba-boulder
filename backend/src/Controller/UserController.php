@@ -30,11 +30,12 @@ final class UserController extends AbstractController
     )]
     public function getUserById(User $user): JsonResponse
     {
-        return $this->json([
-            'id' => $user->getId(),
-            'email' => $user->getEmail(),
-            'roles' => $user->getRoles(),
-        ], Response::HTTP_OK);
+        $userDto = new UserDto(
+            $user->getId(),
+            $user->getEmail(),
+            $user->getRoles()
+        );
+        return $this->json($userDto, Response::HTTP_OK);
     }
 
 

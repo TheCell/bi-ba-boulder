@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\LineDto;
 use App\Repository\LineRepository;
+use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,30 +23,29 @@ class LinesController extends AbstractController
 
     #[Route('/lines/by-bloc/{blocId}', name: 'lines', methods: ['GET'])]
     #[OA\Response(
-      response: Response::HTTP_OK,
-      description: 'Returns the list of lines for the bloc',
-      content: new OA\JsonContent(
-        type: 'array',
-        items: new OA\Items(ref: new \Nelmio\ApiDocBundle\Attribute\Model(type: LineDto::class))
-      )
+        response: Response::HTTP_OK,
+        description: 'Returns the list of lines for the bloc',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: LineDto::class))
+        )
     )]
     public function getLinesByBloc($blocId): JsonResponse
     {
-      $lines = $this->lineRepository->findLinesByBlocId($blocId);
+        $lines = $this->lineRepository->findLinesByBlocId($blocId);
 
-      $lineArray = [];
-      foreach ($lines as $line) {
-        $lineDto = new LineDto(
-          $line->getId(),
-          $line->getBloc()->getId(),
-          $line->getIdentifier(),
-          $line->getDescription(),
-          $line->getColor(),
-          $line->getName()
-        );
-        array_push($lineArray, get_object_vars($lineDto));
-      }
+        $lineDtos = [];
+        foreach ($lines as $line) {
+            $lineDtos[] = new LineDto(
+                $line->getId(),
+                $line->getBloc()->getId(),
+                $line->getIdentifier(),
+                $line->getDescription(),
+                $line->getColor(),
+                $line->getName()
+            );
+        }
 
-      return $this->json($lineArray, Response::HTTP_OK);
+        return $this->json($lineDtos, Response::HTTP_OK);
     }
 }

@@ -34,17 +34,16 @@ class SectorsController extends AbstractController
     public function index(): JsonResponse
     {
         $sectors = $this->sectorRepository->findAll();
-        $sectorsArray = [];
+        $sectorDtos = [];
         foreach ($sectors as $sector) {
-            $sectorDto = new SectorDto(
+            $sectorDtos[] = new SectorDto(
                 $sector->getId(),
                 $sector->getName(),
                 $sector->getDescription()
             );
-            array_push($sectorsArray, get_object_vars($sectorDto));
         }
 
-        return $this->json($sectorsArray, Response::HTTP_OK);
+        return $this->json($sectorDtos, Response::HTTP_OK);
     }
 
 
@@ -74,6 +73,6 @@ class SectorsController extends AbstractController
             $sector->getDescription()
         );
 
-        return $this->json(get_object_vars($sectorDto), Response::HTTP_OK);
+        return $this->json($sectorDto, Response::HTTP_OK);
     }
 }

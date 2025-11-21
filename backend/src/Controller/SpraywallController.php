@@ -41,19 +41,19 @@ final class SpraywallController extends AbstractController
 
     #[Route('/spraywall/{id}/problems/{problemId}', name: 'spraywall_problem_get', methods: ['GET'])]
     #[OA\Response(
-      response: Response::HTTP_OK,
-      description: 'Returns a spraywall problem',
-      content: new OA\MediaType(
-        mediaType: 'application/json',
-        schema: new OA\Schema(ref: new Model(type: SpraywallProblemDto::class))
-      )
+        response: Response::HTTP_OK,
+        description: 'Returns a spraywall problem',
+        content: new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(ref: new Model(type: SpraywallProblemDto::class))
+        )
     )]
     public function getProblem($id, $problemId): JsonResponse
     {
         $spraywallProblem = $this->spraywallProblemRepository->find($problemId);
 
         if (!$spraywallProblem) {
-          return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
         }
 
         // $exists = $this->filesystem->exists("spraywalls/{$id}");
@@ -69,12 +69,12 @@ final class SpraywallController extends AbstractController
 
     #[Route('/spraywall/{id}/problems', name: 'spraywall_problems', methods: ['GET'])]
     #[OA\Response(
-      response: Response::HTTP_OK,
-      description: 'Returns a list of problems',
-      content: new OA\JsonContent(
-        type: 'array',
-        items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
-      )
+        response: Response::HTTP_OK,
+        description: 'Returns a list of problems',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
+        )
     )]
     public function getProblems($id): JsonResponse
     {
@@ -82,13 +82,15 @@ final class SpraywallController extends AbstractController
 
         $exists = $this->filesystem->exists("spraywalls/{$id}");
         
-        $spraywallProblemsDto = array_map(fn($spraywallProblem) => 
-            new SpraywallProblemDto(
-                $spraywallProblem->getId(),
-                $spraywallProblem->getName(),
-                $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-                $spraywallProblem->getDescription()), $spraywallProblems);
-
+        $spraywallProblemsDto = [];
+        foreach ($spraywallProblems as $spraywallProblem) {
+            $spraywallProblemsDto[] = new SpraywallProblemDto(
+            $spraywallProblem->getId(),
+            $spraywallProblem->getName(),
+            $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
+            $spraywallProblem->getDescription()
+          );
+        }
         return $this->json($spraywallProblemsDto, Response::HTTP_OK);
     }
 
@@ -96,136 +98,136 @@ final class SpraywallController extends AbstractController
     #[OA\RequestBody(
       required: true,
       content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'name',
-            type: 'string',
-            description: 'Name of the spraywall problem'
-          ),
-          new OA\Property(
-            property: 'description',
-            type: 'string',
-            description: 'Description of the spraywall problem',
-            nullable: true
-          ),
-          new OA\Property(
-            property: 'image',
-            type: 'string',
-            description: 'PNG image as base64 string (format: data:image/png;base64,<base64-data>)'
-          ),
-          new OA\Property(
-            property: 'tempPwd',
-            type: 'string',
-            description: 'Temporary password for authentication'
-          ),
-        ],
-        required: ['name', 'image', 'tempPwd']
+          type: 'object',
+          properties: [
+              new OA\Property(
+                  property: 'name',
+                  type: 'string',
+                  description: 'Name of the spraywall problem'
+              ),
+              new OA\Property(
+                  property: 'description',
+                  type: 'string',
+                  description: 'Description of the spraywall problem',
+                  nullable: true
+              ),
+              new OA\Property(
+                  property: 'image',
+                  type: 'string',
+                  description: 'PNG image as base64 string (format: data:image/png;base64,<base64-data>)'
+              ),
+              new OA\Property(
+                  property: 'tempPwd',
+                  type: 'string',
+                  description: 'Temporary password for authentication'
+              ),
+          ],
+          required: ['name', 'image', 'tempPwd']
       )
     )]
     #[OA\Response(
-      response: Response::HTTP_CREATED,
-      description: 'Returns the created spraywall problem',
-      content: new OA\MediaType(
-        mediaType: 'application/json',
-        schema: new OA\Schema(ref: new Model(type: SpraywallProblemDto::class))
-      )
+        response: Response::HTTP_CREATED,
+        description: 'Returns the created spraywall problem',
+        content: new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(ref: new Model(type: SpraywallProblemDto::class))
+        )
     )]
     #[OA\Response(
-      response: Response::HTTP_BAD_REQUEST,
-      description: 'Bad request - invalid data',
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'error',
-            type: 'string',
-            description: 'Error message'
-          )
-        ]
-      )
+        response: Response::HTTP_BAD_REQUEST,
+        description: 'Bad request - invalid data',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+            new OA\Property(
+                property: 'error',
+                type: 'string',
+                description: 'Error message'
+            )
+          ]
+        )
     )]
     #[OA\Response(
-      response: Response::HTTP_NOT_FOUND,
-      description: 'Spraywall not found',
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'error',
-            type: 'string',
-            description: 'Error message'
-          )
-        ]
-      )
+        response: Response::HTTP_NOT_FOUND,
+        description: 'Spraywall not found',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(
+                    property: 'error',
+                    type: 'string',
+                    description: 'Error message'
+                )
+            ]
+        )
     )]
     #[OA\Response(
-      response: Response::HTTP_INTERNAL_SERVER_ERROR,
-      description: 'Internal server error',
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'error',
-            type: 'string',
-            description: 'Error message'
-          )
-        ]
-      )
+        response: Response::HTTP_INTERNAL_SERVER_ERROR,
+        description: 'Internal server error',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(
+                    property: 'error',
+                    type: 'string',
+                    description: 'Error message'
+                )
+            ]
+        )
     )]
     #[OA\Response(
-      response: Response::HTTP_UNAUTHORIZED,
-      description: 'Unauthorized - invalid temporary password',
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'error',
-            type: 'string',
-            description: 'Error message'
-          )
-        ]
-      )
+        response: Response::HTTP_UNAUTHORIZED,
+        description: 'Unauthorized - invalid temporary password',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(
+                    property: 'error',
+                    type: 'string',
+                    description: 'Error message'
+                )
+            ]
+        )
     )]
     public function addProblem($id, Request $request): JsonResponse
     {
         $testpasscode = $_ENV['TESTINGPASSCODE'];
         if (!$testpasscode || empty($testpasscode)) {
-          return $this->json(['error' => 'Could not read environment variable'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['error' => 'Could not read environment variable'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         // Find the spraywall to ensure it exists
         $spraywall = $this->spraywallRepository->find($id);
         if (!$spraywall) {
-          return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);
+            return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);
         }
 
         // Get and validate request data
         $data = json_decode($request->getContent(), true);
         
         if (!isset($data['tempPwd']) || $data['tempPwd'] !== $_ENV['TESTINGPASSCODE']) {
-          return $this->json(['error' => 'Invalid temporary password'], Response::HTTP_UNAUTHORIZED);
+            return $this->json(['error' => 'Invalid temporary password'], Response::HTTP_UNAUTHORIZED);
         }
         
         if (!$data || !isset($data['name']) || empty(trim($data['name']))) {
-          return $this->json(['error' => 'Name is required and cannot be empty'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => 'Name is required and cannot be empty'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!isset($data['image']) || empty($data['image'])) {
-          return $this->json(['error' => 'Image is required'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => 'Image is required'], Response::HTTP_BAD_REQUEST);
         }
 
         // Validate and process base64 image
         $imageData = $data['image'];
         if (!preg_match('/^data:image\/png;base64,(.+)$/', $imageData, $matches)) {
-          return $this->json(['error' => 'Image must be a valid base64 PNG string with data:image/png;base64, prefix'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => 'Image must be a valid base64 PNG string with data:image/png;base64, prefix'], Response::HTTP_BAD_REQUEST);
         }
 
         $base64Data = $matches[1];
         $binaryData = base64_decode($base64Data, true);
         
         if ($binaryData === false) {
-          return $this->json(['error' => 'Invalid base64 image data'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['error' => 'Invalid base64 image data'], Response::HTTP_BAD_REQUEST);
         }
 
         // Create new SpraywallProblem
