@@ -30,15 +30,6 @@ final class SpraywallController extends AbstractController
         $this->filesystem = new Filesystem();
     }
 
-    // #[Route('/spraywall', name: 'app_spraywall')]
-    // public function index(): JsonResponse
-    // {
-    //     return $this->json([
-    //         'message' => 'Welcome to your new controller!',
-    //         'path' => 'src/Controller/SpraywallController.php',
-    //     ]);
-    // }
-
     #[Route('/spraywall/{id}/problems/{problemId}', name: 'spraywall_problem_get', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
@@ -55,8 +46,6 @@ final class SpraywallController extends AbstractController
         if (!$spraywallProblem) {
             return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
         }
-
-        // $exists = $this->filesystem->exists("spraywalls/{$id}");
 
         $spraywallProblemDto = new SpraywallProblemDto(
             $spraywallProblem->getId(),
@@ -288,7 +277,7 @@ final class SpraywallController extends AbstractController
             $newImage = imagecreatetruecolor($width, $height);
             
             if ($newImage === false) {
-                imagedestroy($sourceImage);
+                $sourceImage = null;
                 throw new \RuntimeException('Failed to create new image canvas');
             }
             
@@ -298,8 +287,8 @@ final class SpraywallController extends AbstractController
             $backgroundColor = imagecolorallocate($newImage, 0, 0, 0);
             
             if ($backgroundColor === false) {
-                imagedestroy($sourceImage);
-                imagedestroy($newImage);
+                $sourceImage = null;
+                $newImage = null;
                 throw new \RuntimeException('Failed to allocate background color');
             }
             
@@ -313,8 +302,8 @@ final class SpraywallController extends AbstractController
             $copyResult = imagecopy($newImage, $sourceImage, 0, 0, 0, 0, $width, $height);
             
             if (!$copyResult) {
-                imagedestroy($sourceImage);
-                imagedestroy($newImage);
+                $sourceImage = null;
+                $newImage = null;
                 throw new \RuntimeException('Failed to copy source image to new canvas');
             }
             
@@ -324,8 +313,8 @@ final class SpraywallController extends AbstractController
             
             if (!$pngResult) {
                 ob_end_clean();
-                imagedestroy($sourceImage);
-                imagedestroy($newImage);
+                $sourceImage = null;
+                $newImage = null;
                 throw new \RuntimeException('Failed to generate PNG output');
             }
             
@@ -333,8 +322,8 @@ final class SpraywallController extends AbstractController
             ob_end_clean();
             
             // Clean up memory
-            imagedestroy($sourceImage);
-            imagedestroy($newImage);
+            $sourceImage = null;
+            $newImage = null;
             
             if ($processedImageData === false || empty($processedImageData)) {
                 throw new \RuntimeException('Generated PNG data is empty or invalid');
