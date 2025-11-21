@@ -53,7 +53,7 @@ final class SpraywallController extends AbstractController
         $spraywallProblem = $this->spraywallProblemRepository->find($problemId);
 
         if (!$spraywallProblem) {
-            return $this->json(['error' => 'Problem not found'], 404);
+          return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
         }
 
         // $exists = $this->filesystem->exists("spraywalls/{$id}");
@@ -64,7 +64,7 @@ final class SpraywallController extends AbstractController
             $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
             $spraywallProblem->getDescription());
 
-        return $this->json($spraywallProblemDto);
+        return $this->json($spraywallProblemDto, Response::HTTP_OK);
     }
 
     #[Route('/spraywall/{id}/problems', name: 'spraywall_problems', methods: ['GET'])]
@@ -89,7 +89,7 @@ final class SpraywallController extends AbstractController
                 $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
                 $spraywallProblem->getDescription()), $spraywallProblems);
 
-        return $this->json($spraywallProblemsDto);
+        return $this->json($spraywallProblemsDto, Response::HTTP_OK);
     }
 
     #[Route('/spraywall/{id}/problem', name: 'spraywall_problem_create', methods: ['POST'])]
@@ -191,41 +191,41 @@ final class SpraywallController extends AbstractController
     {
         $testpasscode = $_ENV['TESTINGPASSCODE'];
         if (!$testpasscode || empty($testpasscode)) {
-            return $this->json(['error' => 'Could not read environment variable'], 500);
+          return $this->json(['error' => 'Could not read environment variable'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         // Find the spraywall to ensure it exists
         $spraywall = $this->spraywallRepository->find($id);
         if (!$spraywall) {
-            return $this->json(['error' => 'Spraywall not found'], 404);
+          return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);
         }
 
         // Get and validate request data
         $data = json_decode($request->getContent(), true);
         
         if (!isset($data['tempPwd']) || $data['tempPwd'] !== $_ENV['TESTINGPASSCODE']) {
-            return $this->json(['error' => 'Invalid temporary password'], 400);
+          return $this->json(['error' => 'Invalid temporary password'], Response::HTTP_UNAUTHORIZED);
         }
         
         if (!$data || !isset($data['name']) || empty(trim($data['name']))) {
-            return $this->json(['error' => 'Name is required and cannot be empty'], 400);
+          return $this->json(['error' => 'Name is required and cannot be empty'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!isset($data['image']) || empty($data['image'])) {
-            return $this->json(['error' => 'Image is required'], 400);
+          return $this->json(['error' => 'Image is required'], Response::HTTP_BAD_REQUEST);
         }
 
         // Validate and process base64 image
         $imageData = $data['image'];
         if (!preg_match('/^data:image\/png;base64,(.+)$/', $imageData, $matches)) {
-            return $this->json(['error' => 'Image must be a valid base64 PNG string with data:image/png;base64, prefix'], 400);
+          return $this->json(['error' => 'Image must be a valid base64 PNG string with data:image/png;base64, prefix'], Response::HTTP_BAD_REQUEST);
         }
 
         $base64Data = $matches[1];
         $binaryData = base64_decode($base64Data, true);
         
         if ($binaryData === false) {
-            return $this->json(['error' => 'Invalid base64 image data'], 400);
+          return $this->json(['error' => 'Invalid base64 image data'], Response::HTTP_BAD_REQUEST);
         }
 
         // Create new SpraywallProblem
@@ -255,7 +255,7 @@ final class SpraywallController extends AbstractController
             
         } catch (IOExceptionInterface $exception) {
             $this->spraywallProblemRepository->removeProblem($spraywallProblem);
-            return $this->json(['error' => 'Failed to save image: ' . $exception->getMessage()], 500);
+            return $this->json(['error' => 'Failed to save image: ' . $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         // Return the created problem with 201 status

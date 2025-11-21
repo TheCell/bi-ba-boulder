@@ -20,22 +20,23 @@ class SectorsController extends AbstractController
         $this->sectorRepository = $sectorRepository;
     }
 
+
+
     #[Route('/sectors', name: 'sectors', methods: ['GET'])]
     #[OA\Response(
-      response: Response::HTTP_OK,
-      description: 'Returns a list of sectors',
-      content: new OA\JsonContent(
-        type: 'array',
-        items: new OA\Items(ref: new Model(type: SectorDto::class))
-      )
+        response: Response::HTTP_OK,
+        description: 'Returns a list of sectors',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: SectorDto::class))
+        )
     )]
     public function index(): JsonResponse
     {
         $sectors = $this->sectorRepository->findAll();
-        // dd($sectors);
         $sectorsArray = [];
         foreach ($sectors as $sector) {
-            $sectorDto = new SectorDto (
+            $sectorDto = new SectorDto(
                 $sector->getId(),
                 $sector->getName(),
                 $sector->getDescription()
@@ -43,27 +44,36 @@ class SectorsController extends AbstractController
             array_push($sectorsArray, get_object_vars($sectorDto));
         }
 
-        return $this->json($sectorsArray);
+        return $this->json($sectorsArray, Response::HTTP_OK);
     }
+
+
 
     #[Route('/sectors/{id}', name: 'sector', methods: ['GET'])]
     #[OA\Response(
-      response: Response::HTTP_OK,
-      description: 'Returns a list of sectors',
-      content: new OA\JsonContent(
-        type: 'array',
-        items: new OA\Items(ref: new Model(type: SectorDto::class))
-      )
+        response: Response::HTTP_OK,
+        description: 'Returns a sector by ID',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'id', type: 'integer'),
+                new OA\Property(property: 'name', type: 'string'),
+                new OA\Property(property: 'description', type: 'string')
+            ]
+        )
     )]
     public function getSector($id): JsonResponse
     {
         $sector = $this->sectorRepository->findById($id);
-        $sectorDto = new SectorDto (
+        if (!$sector) {
+            return $this->json(['error' => 'Sector not found'], Response::HTTP_NOT_FOUND);
+        }
+        $sectorDto = new SectorDto(
             $sector->getId(),
             $sector->getName(),
             $sector->getDescription()
         );
 
-        return $this->json(get_object_vars($sectorDto));
+        return $this->json(get_object_vars($sectorDto), Response::HTTP_OK);
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use App\Entity\User;
@@ -30,35 +29,44 @@ final class AuthController extends AbstractController
 
     #[Route('/register', methods: ['POST'])]
     #[OA\RequestBody(
-      required: true,
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'email',
-            type: 'string',
-            description: 'Email of the user'
-          ),
-          new OA\Property(
-            property: 'password',
-            type: 'string',
-            description: 'Password of the user',
-          )
-        ],
-        required: ['email', 'password']
-      )
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'email', type: 'string', description: 'Email of the user'),
+                new OA\Property(property: 'password', type: 'string', description: 'Password of the user')
+            ],
+            required: ['email', 'password']
+        )
     )]
     #[OA\Response(
-      response: Response::HTTP_CREATED,
-      description: 'Returns the created user',
-      content: new OA\MediaType(
-        mediaType: 'application/json',
-        schema: new OA\Schema(ref: new Model(type: UserDto::class))
-      )
+        response: Response::HTTP_CREATED,
+        description: 'Returns the created user',
+        content: new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(ref: new Model(type: UserDto::class))
+        )
+    )]
+    #[OA\Response(
+        response: Response::HTTP_BAD_REQUEST,
+        description: 'Validation error',
+        content: new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'error', type: 'string'),
+                    new OA\Property(property: 'errors', type: 'object')
+                ]
+            )
+        )
     )]
     public function register(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
+        if (!isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            return $this->json(['error' => 'Invalid email address'], Response::HTTP_BAD_REQUEST);
+        }
         if (!isset($data['password']) || strlen($data['password']) < 8) {
             return $this->json(['error' => 'Password must be at least 8 characters'], Response::HTTP_BAD_REQUEST);
         }
@@ -66,14 +74,8 @@ final class AuthController extends AbstractController
         $user = new User();
         $user->setEmail($data['email']);
         $user->setRoles(['ROLE_USER']);
-        // $user->setName($data['name']);
-        
         $plaintextPassword = $data['password'];
-
-        $hashedPassword = $this->passwordHasher->hashPassword(
-            $user,
-            $plaintextPassword
-        );
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $plaintextPassword);
         $user->setPassword($hashedPassword);
 
         $errors = $this->validator->validate($user);
@@ -84,7 +86,7 @@ final class AuthController extends AbstractController
             }
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
-        
+
         $this->userRepository->addUser($user);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -92,18 +94,76 @@ final class AuthController extends AbstractController
         $userDto = new UserDto(
             $user->getId(),
             $user->getEmail(),
-            $user->getRoles());
-
+            $user->getRoles()
+        );
         return $this->json($userDto, Response::HTTP_CREATED);
     }
 
     #[Route('/login_check', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'email', type: 'string'),
+                new OA\Property(property: 'password', type: 'string')
+            ],
+            required: ['email', 'password']
+        )
+    )]
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Returns JWT token',
+        content: new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'token', type: 'string')
+                ]
+            )
+        )
+    )]
+    #[OA\Response(
+        response: Response::HTTP_UNAUTHORIZED,
+        description: 'Invalid credentials',
+        content: new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'error', type: 'string')
+                ]
+            )
+        )
+    )]
     public function login(): void
     {
         throw new \RuntimeException('This method should not be called directly.');
     }
 
     #[Route('/profile', methods: ['GET'])]
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Returns the user profile',
+        content: new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(ref: new Model(type: UserDto::class))
+        )
+    )]
+    #[OA\Response(
+        response: Response::HTTP_NOT_FOUND,
+        description: 'User not found',
+        content: new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'error', type: 'string')
+                ]
+            )
+        )
+    )]
     public function getProfile(): JsonResponse
     {
         $user = $this->getUser();
@@ -113,8 +173,8 @@ final class AuthController extends AbstractController
         $userDto = new UserDto(
             $user->getId(),
             $user->getEmail(),
-            $user->getRoles());
-
+            $user->getRoles()
+        );
         return $this->json($userDto, Response::HTTP_OK);
     }
 }
