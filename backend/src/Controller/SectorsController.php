@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api', name: '')]
 class SectorsController extends AbstractController
@@ -21,7 +22,7 @@ class SectorsController extends AbstractController
 
     #[Route('/sectors', name: 'sectors', methods: ['GET'])]
     #[OA\Response(
-      response: 200,
+      response: Response::HTTP_OK,
       description: 'Returns a list of sectors',
       content: new OA\JsonContent(
         type: 'array',
@@ -47,7 +48,7 @@ class SectorsController extends AbstractController
 
     #[Route('/sectors/{id}', name: 'sector', methods: ['GET'])]
     #[OA\Response(
-      response: 200,
+      response: Response::HTTP_OK,
       description: 'Returns a list of sectors',
       content: new OA\JsonContent(
         type: 'array',

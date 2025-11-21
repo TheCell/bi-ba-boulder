@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use OpenApi\Attributes as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api', name: '')]
 final class RegistrationController extends AbstractController
@@ -44,7 +45,7 @@ final class RegistrationController extends AbstractController
       )
     )]
     #[OA\Response(
-      response: 201,
+      response: Response::HTTP_CREATED,
       description: 'Returns the created user',
       content: new OA\MediaType(
         mediaType: 'application/json',

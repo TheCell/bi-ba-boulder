@@ -16,6 +16,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/api', name: '')]
 final class SpraywallController extends AbstractController
@@ -42,7 +43,7 @@ final class SpraywallController extends AbstractController
 
     #[Route('/spraywall/{id}/problems/{problemId}', name: 'spraywall_problem_get', methods: ['GET'])]
     #[OA\Response(
-      response: 200,
+      response: Response::HTTP_OK,
       description: 'Returns a spraywall problem',
       content: new OA\MediaType(
         mediaType: 'application/json',
@@ -70,7 +71,7 @@ final class SpraywallController extends AbstractController
 
     #[Route('/spraywall/{id}/problems', name: 'spraywall_problems', methods: ['GET'])]
     #[OA\Response(
-      response: 200,
+      response: Response::HTTP_OK,
       description: 'Returns a list of problems',
       content: new OA\JsonContent(
         type: 'array',
@@ -125,7 +126,7 @@ final class SpraywallController extends AbstractController
       )
     )]
     #[OA\Response(
-      response: 201,
+      response: Response::HTTP_CREATED,
       description: 'Returns the created spraywall problem',
       content: new OA\MediaType(
         mediaType: 'application/json',
@@ -133,7 +134,7 @@ final class SpraywallController extends AbstractController
       )
     )]
     #[OA\Response(
-      response: 400,
+      response: Response::HTTP_BAD_REQUEST,
       description: 'Bad request - invalid data',
       content: new OA\JsonContent(
         type: 'object',
@@ -147,7 +148,7 @@ final class SpraywallController extends AbstractController
       )
     )]
     #[OA\Response(
-      response: 404,
+      response: Response::HTTP_NOT_FOUND,
       description: 'Spraywall not found',
       content: new OA\JsonContent(
         type: 'object',
@@ -161,7 +162,7 @@ final class SpraywallController extends AbstractController
       )
     )]
     #[OA\Response(
-      response: 500,
+      response: Response::HTTP_INTERNAL_SERVER_ERROR,
       description: 'Internal server error',
       content: new OA\JsonContent(
         type: 'object',
@@ -175,7 +176,7 @@ final class SpraywallController extends AbstractController
       )
     )]
     #[OA\Response(
-      response: 401,
+      response: Response::HTTP_UNAUTHORIZED,
       description: 'Unauthorized - invalid temporary password',
       content: new OA\JsonContent(
         type: 'object',
