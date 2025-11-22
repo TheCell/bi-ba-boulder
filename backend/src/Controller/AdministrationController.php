@@ -10,7 +10,7 @@ use OpenApi\Attributes as OA;
 
 #[Route('/api', name: '')]
 #[OA\Tag(name: "Administration")]
-#[IsGranted('ROLE_USER')]
+#[IsGranted('ROLE_ADMIN')]
 final class AdministrationController extends AbstractController
 {
     public function __construct()

@@ -33,7 +33,7 @@ final class UserController extends AbstractController
         if (null === $currentUser || (!in_array('ROLE_ADMIN', $currentUser->getRoles()))) {
             return $this->json(new ErrorDto('unauthorized', null), Response::HTTP_UNAUTHORIZED);
         }
-        // todo only if logged in user is admin or the user himself
+        
         $userDto = new UserDto(
             $user->getId(),
             $user->getEmail(),
@@ -53,15 +53,15 @@ final class UserController extends AbstractController
         description: 'User not found',
         content: new OA\JsonContent(ref: new Model(type: ErrorDto::class))
     )]
-    public function getCurrentUser(#[CurrentUser] ?User $user): JsonResponse
+    public function getCurrentUser(#[CurrentUser] ?User $currentUser): JsonResponse
     {
-        if (null === $user) {
+        if (null === $currentUser) {
             return $this->json(new ErrorDto('User not found', null), Response::HTTP_NOT_FOUND);
         }
         $userDto = new UserDto(
-            $user->getId(),
-            $user->getEmail(),
-            $user->getRoles()
+            $currentUser->getId(),
+            $currentUser->getEmail(),
+            $currentUser->getRoles()
         );
         return $this->json($userDto, Response::HTTP_OK);
     }

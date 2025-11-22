@@ -6,7 +6,7 @@
 The next todos:
 
 [x] Figure a route dto out  
-[~] login  
+[-] login  
 [x] 3D scan -> object with LOD process   
 [x] Load LOD levels  
 [] bloc caching  
@@ -18,7 +18,7 @@ The next todos:
 [] line, boulder, sector search  
 [] hover over line  
 [] height indicator  
-[~] switch to uuid for id's   
+[-] switch to uuid for id's   
 [x] split model into parts   
 [x] highlight of parts   
 [x] texture rework   
@@ -27,6 +27,8 @@ The next todos:
 [] streamline spraywall + rgb texture download not hardcoded
 [] Refresh token https://github.com/markitosgv/JWTRefreshTokenBundle
 [] logout
+[] rate limiting
+[] upload only while logged in and verified
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/

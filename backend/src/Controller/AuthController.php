@@ -17,6 +17,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
 
 #[Route('/api', name: '')]
 #[OA\Tag(name: "Auth")]
@@ -27,7 +32,9 @@ final class AuthController extends AbstractController
         private UserPasswordHasherInterface $passwordHasher,
         private JWTTokenManagerInterface $jwtManager,
         private ValidatorInterface $validator,
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+        private EventDispatcherInterface $eventDispatcher,
+        private TokenStorageInterface $tokenStorage
     ) {}
 
     #[Route('/register', methods: ['POST'])]
@@ -116,6 +123,35 @@ final class AuthController extends AbstractController
     {
         throw new \RuntimeException('This method should not be called directly.');
     }
+
+    // #[Route('/logout', name: 'logout', methods: ['POST'])]
+    // #[OA\Response(
+    //     response: Response::HTTP_OK,
+    //     description: 'Returns user by ID',
+    //     content: new OA\JsonContent(ref: new Model(type: UserDto::class))
+    // )]
+    // #[OA\Response(
+    //     response: Response::HTTP_UNAUTHORIZED,
+    //     description: 'Unauthorized access',
+    //     content: new OA\JsonContent(ref: new Model(type: ErrorDto::class))
+    // )]
+    // public function logout(Request $request, #[CurrentUser] ?User $currentUser): JsonResponse
+    // {
+    //     $user = $this->getUser();
+    //     if (!$user instanceof User) {
+    //         return $this->json(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+    //     }
+    //     // $this->jwtManager->logout();
+
+    //     if (null === $currentUser || (!in_array('ROLE_USER', $currentUser->getRoles()))) {
+    //         return $this->json(new ErrorDto('unauthorized' . $currentUser, $currentUser), Response::HTTP_UNAUTHORIZED);
+    //     }
+
+    //     $this->eventDispatcher->dispatch(new LogoutEvent($request, $this->tokenStorage->getToken()));
+    //     // $response = $this->security->logout();
+    //     // return $response;
+    //     return $this->json(['message' => 'Logged out successfully'], Response::HTTP_OK);
+    // }
 
     #[Route('/profile', methods: ['GET'])]
     #[OA\Response(
