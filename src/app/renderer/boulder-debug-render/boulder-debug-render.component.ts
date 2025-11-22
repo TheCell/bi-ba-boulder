@@ -311,6 +311,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
   private setupHighlightDebugTexture() {
     const loader = new THREE.TextureLoader();
+    // todo
     // this texture is unique for every spraywall model. It contains the unique B values for the groupings
     loader.load('./images/Bimano_Spraywall_2025_rgb_blocks_128x128.png', (texture) => {
       texture.flipY = false;
@@ -318,7 +319,6 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
       this.rgbBlockTexture = texture;
-      console.log(texture);
 
       this.rgbBlockImageData = getImageDataFromTexture(texture);
       this.rgbBlockMaterial = this.setupCustomShaderMaterial();
@@ -444,7 +444,9 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
           this.originalBlockMaterial.needsUpdate = true;
           // this.originalBlockTexture!.needsUpdate = true;
-          this.originalBlockTexture!.colorSpace = THREE.LinearSRGBColorSpace;
+          if (this.originalBlockTexture) {
+            this.originalBlockTexture.colorSpace = THREE.LinearSRGBColorSpace;
+          }
           this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
           // this.originalBlockMaterial.wireframe = true;
           this.rgbBlockMaterial = this.setupCustomShaderMaterial();

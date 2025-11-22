@@ -6,6 +6,7 @@ use App\DTO\BlocDto;
 use App\Repository\BlocRepository;
 use App\DTO\ErrorDto;
 use Nelmio\ApiDocBundle\Attribute\Model;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,8 +34,9 @@ class BlocsController extends AbstractController
     )]
     public function getBlocsBySectorId($id): JsonResponse
     {
-        $blocs = $this->blocRepository->findBySectorId($id);
+        $blocs = $this->blocRepository->findBySectorId(Uuid::fromString($id));
 
+        // var_dump($blocs);
         $blocDtos = [];
         foreach ($blocs as $bloc) {
             $blocDtos[] = new BlocDto(
@@ -58,7 +60,7 @@ class BlocsController extends AbstractController
     )]
     public function getBloc($id): JsonResponse
     {
-        $bloc = $this->blocRepository->findById($id);
+        $bloc = $this->blocRepository->findById(Uuid::fromString($id));
         if (!$bloc) {
             return $this->json(new ErrorDto('Bloc not found', null), Response::HTTP_NOT_FOUND);
         }

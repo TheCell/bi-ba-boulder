@@ -6,15 +6,18 @@ use App\Repository\SectorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SectorRepository::class)]
 class Sector
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -23,7 +26,7 @@ class Sector
     private ?string $description = null;
 
     /**
-     * @var Collection<int, Bloc>
+     * @var Collection<Uuid, Bloc>
      */
     #[ORM\OneToMany(targetEntity: Bloc::class, mappedBy: 'sector', orphanRemoval: true)]
     private Collection $blocs;
@@ -33,7 +36,7 @@ class Sector
         $this->blocs = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
@@ -63,7 +66,7 @@ class Sector
     }
 
     /**
-     * @return Collection<int, Bloc>
+     * @return Collection<Uuid, Bloc>
      */
     public function getBlocs(): Collection
     {

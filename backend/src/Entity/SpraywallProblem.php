@@ -4,15 +4,18 @@ namespace App\Entity;
 
 use App\Repository\SpraywallProblemRepository;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: SpraywallProblemRepository::class)]
 class SpraywallProblem
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $id = null;
 
     #[ORM\Column(length: 512)]
     private ?string $name = null;
@@ -24,7 +27,7 @@ class SpraywallProblem
     #[ORM\JoinColumn(nullable: false)]
     private ?Spraywall $spraywall = null;
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

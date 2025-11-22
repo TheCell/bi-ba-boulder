@@ -41,6 +41,7 @@ I use composer on the server to install symfony there
 Get all CLI commands: `symfony console list`   
 
 ## Create
+Binary 16 bit Guids: [https://robobunny.com/cgi-bin/guid](https://robobunny.com/cgi-bin/guid)   
 `symfony console make:entity _entityname_` // Create a new Entity   
 `symfony console make:migration` // Create a migration   
 `symfony console make:controller BlocsController` // Create a Controller    
@@ -50,7 +51,7 @@ Generate a migration sql:
 `symfony console doctrine:migrations:migrate --write-sql=./migrations` (create sql. You do not want the new migration to be applied before running this command)  
 `symfony console doctrine:migrations:status`  
 `symfony console doctrine:migrations:migrate` (apply migration)  
-`symfony console doctrine:migrations:migrate DoctrineMigrations\Version20241020215213` (apply migration down)
+`symfony console doctrine:migrations:migrate DoctrineMigrations\Version20241020215213` (apply migration down)   
 
 ## Debug
 `symfony console debug:config security` // Debug routing security   

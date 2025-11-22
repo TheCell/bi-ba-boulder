@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Sector;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\DBAL\ParameterType;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @extends ServiceEntityRepository<Sector>
@@ -31,11 +33,11 @@ class SectorRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-   public function findById($value): ?Sector
+   public function findById(Uuid $value): ?Sector
    {
        return $this->createQueryBuilder('s')
            ->andWhere('s.id = :val')
-           ->setParameter('val', $value)
+           ->setParameter('val', $value->toBinary(), ParameterType::BINARY)
            ->getQuery()
            ->getOneOrNullResult()
        ;

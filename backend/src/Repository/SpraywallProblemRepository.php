@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\SpraywallProblem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\DBAL\ParameterType;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @extends ServiceEntityRepository<SpraywallProblem>
@@ -19,11 +21,11 @@ class SpraywallProblemRepository extends ServiceEntityRepository
     /**
     * @return SpraywallProblem[] Returns an array of SpraywallProblem objects
     */
-    public function findBySpraywallId($value): array
+    public function findBySpraywallId(Uuid $value): array
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.spraywall = :val')
-            ->setParameter('val', $value)
+            ->setParameter('val', $value->toBinary(), ParameterType::BINARY)
             ->orderBy('s.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()

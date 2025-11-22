@@ -6,15 +6,18 @@ use App\Repository\BlocRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: BlocRepository::class)]
 class Bloc
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -23,7 +26,7 @@ class Bloc
     private ?string $description = null;
 
     /**
-     * @var Collection<int, Line>
+     * @var Collection<Uuid, Line>
      */
     #[ORM\OneToMany(targetEntity: Line::class, mappedBy: 'bloc', orphanRemoval: true)]
     private Collection $boulderLines;
@@ -46,7 +49,7 @@ class Bloc
         $this->boulderLines = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
@@ -76,7 +79,7 @@ class Bloc
     }
 
     /**
-     * @return Collection<int, Line>
+     * @return Collection<Uuid, Line>
      */
     public function getBoulderLines(): Collection
     {
