@@ -17,15 +17,23 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 #[OA\Tag(name: "User")]
 final class UserController extends AbstractController
 {
-
     #[Route('/users/{id}', name: 'getUserById', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns user by ID',
         content: new OA\JsonContent(ref: new Model(type: UserDto::class))
     )]
-    public function getUserById(User $user): JsonResponse
+    #[OA\Response(
+        response: Response::HTTP_UNAUTHORIZED,
+        description: 'Unauthorized access',
+        content: new OA\JsonContent(ref: new Model(type: ErrorDto::class))
+    )]
+    public function getUserById(User $user, #[CurrentUser] ?User $currentUser): JsonResponse
     {
+        if (null === $currentUser || (!in_array('ROLE_ADMIN', $currentUser->getRoles()))) {
+            return $this->json(new ErrorDto('unauthorized', null), Response::HTTP_UNAUTHORIZED);
+        }
+        // todo only if logged in user is admin or the user himself
         $userDto = new UserDto(
             $user->getId(),
             $user->getEmail(),
@@ -33,7 +41,6 @@ final class UserController extends AbstractController
         );
         return $this->json($userDto, Response::HTTP_OK);
     }
-
 
     #[Route('/users/me', name: 'getCurrentUser', methods: ['GET'])]
     #[OA\Response(

@@ -7,7 +7,6 @@ import { BoulderProblemsService } from '../background-loading/boulder-problems.s
 import { Subject, Subscription } from 'rxjs';
 import { BoulderLegendComponent } from '../components/boulder-legend/boulder-legend.component';
 import { ActivatedRoute } from '@angular/router';
-import { DefaultService } from '../api';
 import { BoulderLine } from '../interfaces/boulder-line';
 import { ResolutionLevel } from '../interfaces/resolution-level';
 import { HttpClient } from '@angular/common/http';
@@ -39,7 +38,6 @@ export class DaoneTestComponent implements OnDestroy {
   public constructor(
     private boulderLoaderService: BoulderLoaderService,
     private boulderProblemsService: BoulderProblemsService,
-    private defaultService: DefaultService,
     private domSanitizer: DomSanitizer,
     private changeDetectorRef: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,

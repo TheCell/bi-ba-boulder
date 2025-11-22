@@ -18,13 +18,15 @@ The next todos:
 [] line, boulder, sector search  
 [] hover over line  
 [] height indicator  
-[] switch to uuid for id's   
+[~] switch to uuid for id's   
 [x] split model into parts   
 [x] highlight of parts   
 [x] texture rework   
 [x] custom highlighting texture   
 [x] build highlight texture optimizer   
 [] streamline spraywall + rgb texture download not hardcoded
+[] Refresh token https://github.com/markitosgv/JWTRefreshTokenBundle
+[] logout
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/

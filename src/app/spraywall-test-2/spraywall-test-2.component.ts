@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit }
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { BoulderLine } from '../interfaces/boulder-line';
 import { BoulderDebugRenderComponent } from '../renderer/boulder-debug-render/boulder-debug-render.component';
-import { DefaultService, SpraywallProblemDto } from '../api';
+import { SpraywallProblemDto, SpraywallService } from '../api';
 
 @Component({
   selector: 'app-spraywall-test-2',
@@ -12,7 +12,7 @@ import { DefaultService, SpraywallProblemDto } from '../api';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpraywallTest2Component implements OnInit {
-  private defaultService = inject(DefaultService);
+  private spraywallService = inject(SpraywallService);
   private changeDetectorRef = inject(ChangeDetectorRef);
 
   public currentRawModel?: ArrayBuffer = undefined;
@@ -34,7 +34,7 @@ export class SpraywallTest2Component implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.defaultService.getSpraywallProblems("1").subscribe({
+    this.spraywallService.getSpraywallProblems("1").subscribe({
       next: (spraywallProblems: SpraywallProblemDto[]) => {
         this.spraywallProblems = spraywallProblems;
         this.changeDetectorRef.markForCheck();

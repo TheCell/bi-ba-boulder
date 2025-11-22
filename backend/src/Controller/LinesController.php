@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\DTO\ErrorDto;
 use App\DTO\LineDto;
 use App\Repository\LineRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -48,6 +47,6 @@ class LinesController extends AbstractController
             );
         }
 
-        return $this->json(new ErrorDto('Some error'), Response::HTTP_BAD_REQUEST);
+        return $this->json($lineDtos, Response::HTTP_OK);
     }
 }

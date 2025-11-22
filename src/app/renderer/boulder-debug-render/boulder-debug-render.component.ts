@@ -13,7 +13,7 @@ import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import Stats from 'stats.js'
-import { DefaultService, SpraywallProblemDto } from '../../api';
+import { SpraywallService, SpraywallProblemDto } from '../../api';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { downloadSpraywallProblemImage, getImageDataFromTexture } from '../common/util';
 import { ActivatedRoute } from '@angular/router';
@@ -62,7 +62,7 @@ enum Type {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
-  private defaultService = inject(DefaultService);
+  private spraywallService = inject(SpraywallService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
@@ -256,7 +256,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       }
 
       context.putImageData(imgData, 0, 0);
-      this.defaultService.postSpraywallProblemCreate('1', {
+      this.spraywallService.postSpraywallProblemCreate('1', {
         tempPwd: this.form.controls.tempPsw.value,
         name: 'New Problem',
         description: 'Description of the new problem',
