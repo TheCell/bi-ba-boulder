@@ -1,4 +1,5 @@
 .gitignore
+.openapi-generator-ignore
 README.md
 api.module.ts
 api/administration.service.ts
@@ -19,7 +20,7 @@ model/getAppAdministration200Response.ts
 model/lineDto.ts
 model/models.ts
 model/postAppAuthLoginRequest.ts
-model/postAppAuthRegisterRequest.ts
+model/postRegisterRequest.ts
 model/postSpraywallProblemCreate400Response.ts
 model/postSpraywallProblemCreateRequest.ts
 model/sectorDto.ts

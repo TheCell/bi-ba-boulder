@@ -9,7 +9,7 @@
  */
 
 
-export interface PostAppAuthRegisterRequest { 
+export interface PostRegisterRequest { 
     /**
      * Email of the user
      */

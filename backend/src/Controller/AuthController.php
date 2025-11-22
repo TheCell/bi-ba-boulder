@@ -22,6 +22,9 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
+use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use App\Security\EmailVerifier;
 
 #[Route('/api', name: '')]
 #[OA\Tag(name: "Auth")]
@@ -34,10 +37,12 @@ final class AuthController extends AbstractController
         private ValidatorInterface $validator,
         private UserRepository $userRepository,
         private EventDispatcherInterface $eventDispatcher,
-        private TokenStorageInterface $tokenStorage
+        private TokenStorageInterface $tokenStorage,
+        private VerifyEmailHelperInterface $verifyEmailHelper,
+        private EmailVerifier $emailVerifier
     ) {}
 
-    #[Route('/register', methods: ['POST'])]
+    #[Route('/register', name: 'register', methods: ['POST'])]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
@@ -94,6 +99,17 @@ final class AuthController extends AbstractController
             $user->getEmail(),
             $user->getRoles()
         );
+
+        $signatureComponents = $this->verifyEmailHelper->generateSignature(
+            'verify_email',
+            $user->getId(),
+            $user->getEmail(),
+            ['id' => $user->getId()]
+        );
+
+        // todo send via email
+        var_dump($signatureComponents->getSignedUrl());
+
         return $this->json($userDto, Response::HTTP_CREATED);
     }
 
@@ -152,6 +168,38 @@ final class AuthController extends AbstractController
     //     // return $response;
     //     return $this->json(['message' => 'Logged out successfully'], Response::HTTP_OK);
     // }
+
+    #[Route('/verify-email', name: 'verify_email', methods: ['GET'])]
+    public function verifyEmail(Request $request): JsonResponse
+    {
+        $id = $request->query->get('id'); // retrieve the user id from the url
+ 
+        if (null === $id) {
+            return $this->json(new ErrorDto('Invalid verification link', null), Response::HTTP_BAD_REQUEST);
+        }
+ 
+        $user = $this->userRepository->find($id);
+ 
+        if (null === $user) {
+            return $this->json(new ErrorDto('User not found', null), Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($user->isVerified()) {
+            return $this->json(new ErrorDto('Email already verified', null), Response::HTTP_BAD_REQUEST);
+        }
+        
+        try {
+            $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, $user->getId(), $user->getEmail());
+        } catch (VerifyEmailExceptionInterface $exception) {
+            return $this->json(new ErrorDto('Email verification failed: ' . $exception->getReason(), null), Response::HTTP_BAD_REQUEST);
+        }
+
+        $user->setIsVerified(true);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $this->json(['message' => 'Email verified successfully'], Response::HTTP_OK);
+    }
 
     #[Route('/profile', methods: ['GET'])]
     #[OA\Response(

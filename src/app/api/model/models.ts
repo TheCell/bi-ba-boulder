@@ -3,7 +3,7 @@ export * from './errorDto';
 export * from './getAppAdministration200Response';
 export * from './lineDto';
 export * from './postAppAuthLoginRequest';
-export * from './postAppAuthRegisterRequest';
+export * from './postRegisterRequest';
 export * from './postSpraywallProblemCreate400Response';
 export * from './postSpraywallProblemCreateRequest';
 export * from './sectorDto';

@@ -1,6 +1,14 @@
 framework:
     rate_limiter:
-        login_limiter:
-            policy: token_bucket
-            limit: 5
-            rate: { interval: '1 minute', amount: 1 }
+        anonymous_api:
+            policy: 'sliding_window'
+            limit: 100
+            interval: '15 minutes'
+        registration_api:
+            policy: 'sliding_window'
+            limit: 1
+            interval: '15 minutes'
+        admin_api:
+            policy: 'token_bucket'
+            limit: 10
+            rate: { interval: '1 minute', amount: 5 }
