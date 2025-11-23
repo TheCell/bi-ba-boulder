@@ -1,10 +1,11 @@
-import { ApplicationConfig, Provider, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, ErrorHandler, Provider, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { Configuration, ConfigurationParameters } from './api';
 import { environment } from '../environments/environment';
+import { ErrorHandlerService } from './core/error/error-handler.service';
 
 function apiConfigFactory (): Configuration {
   const params: ConfigurationParameters = {
@@ -28,5 +29,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withFetch()
     ),
+    { provide: ErrorHandler, useClass: ErrorHandlerService }
   ]
 };
