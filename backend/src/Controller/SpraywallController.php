@@ -16,6 +16,7 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Uid\Uuid;
 
 #[Route('/api', name: '')]
 #[OA\Tag(name: "Spraywall")]
@@ -64,7 +65,7 @@ final class SpraywallController extends AbstractController
             items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
         )
     )]
-    public function getProblems($id): JsonResponse
+    public function getProblems(Uuid $id): JsonResponse
     {
         $spraywallProblems = $this->spraywallProblemRepository->findBySpraywallId($id);
 
@@ -174,7 +175,7 @@ final class SpraywallController extends AbstractController
             ]
         )
     )]
-    public function addProblem($id, Request $request): JsonResponse
+    public function addProblem(Uuid $id, Request $request): JsonResponse
     {
         $testpasscode = $_ENV['TESTINGPASSCODE'];
         if (!$testpasscode || empty($testpasscode)) {
@@ -182,7 +183,7 @@ final class SpraywallController extends AbstractController
         }
 
         // Find the spraywall to ensure it exists
-        $spraywall = $this->spraywallRepository->find($id);
+        $spraywall = $this->spraywallRepository->findOneBy(['id' => $id]);
         if (!$spraywall) {
             return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);
         }
@@ -249,7 +250,7 @@ final class SpraywallController extends AbstractController
         return $this->getProblem($id, $spraywallProblem->getId())->setStatusCode(201);
     }
 
-    private function getSpraywallProblemImage($spraywallId, $spraywallProblemId): string {
+    private function getSpraywallProblemImage(Uuid $spraywallId, Uuid $spraywallProblemId): string {
         $contents = $this->filesystem->readFile("spraywalls/{$spraywallId}/{$spraywallProblemId}.png");
         return base64_encode($contents);
     }

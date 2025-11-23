@@ -256,7 +256,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       }
 
       context.putImageData(imgData, 0, 0);
-      this.spraywallService.postSpraywallProblemCreate('1', {
+      this.spraywallService.postSpraywallProblemCreate('1c99b5e4-c854-11f0-9457-71a4df1b7093', {
         tempPwd: this.form.controls.tempPsw.value,
         name: 'New Problem',
         description: 'Description of the new problem',
