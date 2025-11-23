@@ -1,6 +1,8 @@
 <?php
 namespace App\Security;
 
+use App\Entity\User;
+use App\MailTemplates\MailTemplates;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,18 +15,27 @@ class EmailVerifier
 {
     public function __construct(
         private VerifyEmailHelperInterface $verifyEmailHelper,
-        private EntityManagerInterface $entityManager
-    ) {
-    }
+        private EntityManagerInterface $entityManager,
+        private MailTemplates $mailTemplates,
+    ) { }
 
-    public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user): void
+    public function sendEmailConfirmation(string $verifyEmailRouteName, User $user): void
     {
-        // $signatureComponents = $this->verifyEmailHelper->generateSignature(
-        //     $verifyEmailRouteName,
-        //     $user->getId(),
-        //     $user->getEmail(),
-        //     ['id' => $user->getId()]
-        // );
+        $signatureComponents = $this->verifyEmailHelper->generateSignature(
+            $verifyEmailRouteName,
+            $user->getId(),
+            $user->getEmail(),
+            ['id' => $user->getId()]
+        );
+
+        $signedUrl = $signatureComponents->getSignedUrl();
+
+        $template = $this->mailTemplates->getVerifyMailTemplate([
+            'signedUrl' => $signedUrl
+        ]);
+
+        // todo save mail content to database and send via a mailer worker
+        mail($user->getEmail(), 'Please verify your email', $template, array("Content-Type" => "text/html", "From" => "no-reply@example.com"));
 
         // $context = $email->getContext();
         // $context['signedUrl'] = $signatureComponents->getSignedUrl();

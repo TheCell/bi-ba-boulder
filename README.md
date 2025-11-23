@@ -31,6 +31,7 @@ The next todos:
 [] rate limiting
 [] upload only while logged in and verified
 [] Version Number
+[] resend verify email
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/

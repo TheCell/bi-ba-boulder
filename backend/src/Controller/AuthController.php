@@ -100,15 +100,10 @@ final class AuthController extends AbstractController
             $user->getRoles()
         );
 
-        $signatureComponents = $this->verifyEmailHelper->generateSignature(
-            'verify_email',
-            $user->getId(),
-            $user->getEmail(),
-            ['id' => $user->getId()]
-        );
+        $this->emailVerifier->sendEmailConfirmation('verify_email', $user);
 
-        // todo send via email
-        var_dump($signatureComponents->getSignedUrl());
+        $utc_time = new \DateTime("now", new \DateTimeZone("UTC"));
+        $this->userRepository->updateVerifyMailSentTime($user, $utc_time);
 
         return $this->json($userDto, Response::HTTP_CREATED);
     }
@@ -195,6 +190,11 @@ final class AuthController extends AbstractController
         }
 
         $user->setIsVerified(true);
+        $currentRoles = $user->getRoles();
+        // $newRoles = array_push($currentRoles, "ROLE_EDITOR");
+        $currentRoles[] = "ROLE_EDITOR";
+        // dd($currentRoles);
+        $user->setRoles($currentRoles);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 

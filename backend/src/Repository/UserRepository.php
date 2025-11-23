@@ -42,6 +42,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $entityManager->flush();
     }
 
+    public function updateVerifyMailSentTime(User $user, \DateTime $time): void
+    {
+        $user->setVerifyMailSentTime($time);
+        $this->getEntityManager()->persist($user);
+        $this->getEntityManager()->flush();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
