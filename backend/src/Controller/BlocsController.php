@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
-#[Route('/api', name: '')]
+#[Route('/api/blocs', name: '')]
 #[OA\Tag(name: "Bloc")]
 class BlocsController extends AbstractController
 {
@@ -23,7 +23,7 @@ class BlocsController extends AbstractController
         $this->blocRepository = $blocRepository;
     }
 
-    #[Route('/blocs/by-sector/{id}', name: 'blocs-by-sector-id', methods: ['GET'])]
+    #[Route('/by-sector/{id}', name: 'blocs-by-sector-id', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns the list of blocs for the sector',
@@ -52,7 +52,7 @@ class BlocsController extends AbstractController
         return $this->json($blocDtos, Response::HTTP_OK);
     }
 
-    #[Route('/blocs/{id}', name: 'bloc', methods: ['GET'])]
+    #[Route('/{id}', name: 'bloc', methods: ['GET'])]
     #[OA\Response(
     response: Response::HTTP_OK,
     description: 'Returns a bloc by ID',

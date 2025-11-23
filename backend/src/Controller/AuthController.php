@@ -191,9 +191,7 @@ final class AuthController extends AbstractController
 
         $user->setIsVerified(true);
         $currentRoles = $user->getRoles();
-        // $newRoles = array_push($currentRoles, "ROLE_EDITOR");
         $currentRoles[] = "ROLE_EDITOR";
-        // dd($currentRoles);
         $user->setRoles($currentRoles);
         $this->entityManager->persist($user);
         $this->entityManager->flush();

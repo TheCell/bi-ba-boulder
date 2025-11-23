@@ -12,3 +12,7 @@ framework:
             policy: 'token_bucket'
             limit: 10
             rate: { interval: '1 minute', amount: 5 }
+        spraywall_api:
+            policy: 'fixed_window'
+            limit: 1
+            interval: '30 seconds'

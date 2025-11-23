@@ -18,7 +18,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Uid\Uuid;
 
-#[Route('/api', name: '')]
+#[Route('/api/spraywall', name: '')]
 #[OA\Tag(name: "Spraywall")]
 final class SpraywallController extends AbstractController
 {
@@ -33,7 +33,7 @@ final class SpraywallController extends AbstractController
         $this->filesystem = new Filesystem();
     }
 
-    #[Route('/spraywall/{id}/problems/{problemId}', name: 'spraywall_problem_get', methods: ['GET'])]
+    #[Route('/{id}/problems/{problemId}', name: 'get_problem', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns a spraywall problem',
@@ -56,7 +56,7 @@ final class SpraywallController extends AbstractController
         return $this->json($spraywallProblemDto, Response::HTTP_OK);
     }
 
-    #[Route('/spraywall/{id}/problems', name: 'spraywall_problems', methods: ['GET'])]
+    #[Route('/{id}/problems', name: 'get_problems', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns a list of problems',
@@ -83,7 +83,7 @@ final class SpraywallController extends AbstractController
         return $this->json($spraywallProblemsDto, Response::HTTP_OK);
     }
 
-    #[Route('/spraywall/{id}/problem', name: 'spraywall_problem_create', methods: ['POST'])]
+    #[Route('/{id}/problem', name: 'create_problem', methods: ['PUT'])]
     #[OA\RequestBody(
       required: true,
       content: new OA\JsonContent(
@@ -175,7 +175,7 @@ final class SpraywallController extends AbstractController
             ]
         )
     )]
-    public function addProblem(Uuid $id, Request $request): JsonResponse
+    public function createProblem(Uuid $id, Request $request): JsonResponse
     {
         $testpasscode = $_ENV['TESTINGPASSCODE'];
         if (!$testpasscode || empty($testpasscode)) {

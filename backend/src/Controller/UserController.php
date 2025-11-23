@@ -13,11 +13,11 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
-#[Route('/api', name: '')]
+#[Route('/api/users', name: '')]
 #[OA\Tag(name: "User")]
 final class UserController extends AbstractController
 {
-    #[Route('/users/{id}', name: 'getUserById', methods: ['GET'])]
+    #[Route('/{id}', name: 'getUserById', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns user by ID',
@@ -42,7 +42,7 @@ final class UserController extends AbstractController
         return $this->json($userDto, Response::HTTP_OK);
     }
 
-    #[Route('/users/me', name: 'getCurrentUser', methods: ['GET'])]
+    #[Route('/me', name: 'getCurrentUser', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns current user',

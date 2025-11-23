@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 
-#[Route('/api', name: '')]
+#[Route('/api/sectors', name: '')]
 #[OA\Tag(name: "Sector")]
 class SectorsController extends AbstractController
 {
@@ -24,7 +24,7 @@ class SectorsController extends AbstractController
 
 
 
-    #[Route('/sectors', name: 'sectors', methods: ['GET'])]
+    #[Route('', name: 'sectors', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns a list of sectors',
@@ -50,7 +50,7 @@ class SectorsController extends AbstractController
 
 
 
-    #[Route('/sectors/{id}', name: 'sector', methods: ['GET'])]
+    #[Route('/{id}', name: 'sector', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns a sector by ID',

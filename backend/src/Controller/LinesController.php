@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 
-#[Route('/api', name: '')]
+#[Route('/api/lines', name: '')]
 #[OA\Tag(name: "Line")]
 class LinesController extends AbstractController
 {
@@ -23,7 +23,7 @@ class LinesController extends AbstractController
     }
 
 
-    #[Route('/lines/by-bloc/{blocId}', name: 'lines', methods: ['GET'])]
+    #[Route('/by-bloc/{blocId}', name: 'lines', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns the list of lines for the bloc',
