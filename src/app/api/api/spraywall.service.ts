@@ -17,9 +17,9 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { PostSpraywallProblemCreate400Response } from '../model/postSpraywallProblemCreate400Response';
+import { PutCreate400Response } from '../model/putCreate400Response';
 // @ts-ignore
-import { PostSpraywallProblemCreateRequest } from '../model/postSpraywallProblemCreateRequest';
+import { PutCreateRequest } from '../model/putCreateRequest';
 // @ts-ignore
 import { SpraywallProblemDto } from '../model/spraywallProblemDto';
 
@@ -100,15 +100,15 @@ export class SpraywallService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getSpraywallProblemGet(id: string, problemId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SpraywallProblemDto>;
-    public getSpraywallProblemGet(id: string, problemId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SpraywallProblemDto>>;
-    public getSpraywallProblemGet(id: string, problemId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SpraywallProblemDto>>;
-    public getSpraywallProblemGet(id: string, problemId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public deleteProblem(id: string, problemId: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any>;
+    public deleteProblem(id: string, problemId: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<any>>;
+    public deleteProblem(id: string, problemId: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<any>>;
+    public deleteProblem(id: string, problemId: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling getSpraywallProblemGet.');
+            throw new Error('Required parameter id was null or undefined when calling deleteProblem.');
         }
         if (problemId === null || problemId === undefined) {
-            throw new Error('Required parameter problemId was null or undefined when calling getSpraywallProblemGet.');
+            throw new Error('Required parameter problemId was null or undefined when calling deleteProblem.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -117,7 +117,6 @@ export class SpraywallService {
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
             const httpHeaderAccepts: string[] = [
-                'application/json'
             ];
             localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         }
@@ -147,8 +146,8 @@ export class SpraywallService {
             }
         }
 
-        let localVarPath = `/api/spraywall/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/problems/${this.configuration.encodeParam({name: "problemId", value: problemId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
-        return this.httpClient.request<SpraywallProblemDto>('get', `${this.configuration.basePath}${localVarPath}`,
+        let localVarPath = `/api/spraywall/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/problem/${this.configuration.encodeParam({name: "problemId", value: problemId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}`;
+        return this.httpClient.request<any>('delete', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -166,12 +165,12 @@ export class SpraywallService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getSpraywallProblems(id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<SpraywallProblemDto>>;
-    public getSpraywallProblems(id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<SpraywallProblemDto>>>;
-    public getSpraywallProblems(id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<SpraywallProblemDto>>>;
-    public getSpraywallProblems(id: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public getProblems(id: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<Array<SpraywallProblemDto>>;
+    public getProblems(id: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<Array<SpraywallProblemDto>>>;
+    public getProblems(id: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<Array<SpraywallProblemDto>>>;
+    public getProblems(id: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling getSpraywallProblems.');
+            throw new Error('Required parameter id was null or undefined when calling getProblems.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -226,19 +225,19 @@ export class SpraywallService {
 
     /**
      * @param id 
-     * @param postSpraywallProblemCreateRequest 
+     * @param putCreateRequest 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public postSpraywallProblemCreate(id: string, postSpraywallProblemCreateRequest: PostSpraywallProblemCreateRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SpraywallProblemDto>;
-    public postSpraywallProblemCreate(id: string, postSpraywallProblemCreateRequest: PostSpraywallProblemCreateRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SpraywallProblemDto>>;
-    public postSpraywallProblemCreate(id: string, postSpraywallProblemCreateRequest: PostSpraywallProblemCreateRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SpraywallProblemDto>>;
-    public postSpraywallProblemCreate(id: string, postSpraywallProblemCreateRequest: PostSpraywallProblemCreateRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public putCreate(id: string, putCreateRequest: PutCreateRequest, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<SpraywallProblemDto>;
+    public putCreate(id: string, putCreateRequest: PutCreateRequest, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<SpraywallProblemDto>>;
+    public putCreate(id: string, putCreateRequest: PutCreateRequest, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<SpraywallProblemDto>>;
+    public putCreate(id: string, putCreateRequest: PutCreateRequest, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
         if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling postSpraywallProblemCreate.');
+            throw new Error('Required parameter id was null or undefined when calling putCreate.');
         }
-        if (postSpraywallProblemCreateRequest === null || postSpraywallProblemCreateRequest === undefined) {
-            throw new Error('Required parameter postSpraywallProblemCreateRequest was null or undefined when calling postSpraywallProblemCreate.');
+        if (putCreateRequest === null || putCreateRequest === undefined) {
+            throw new Error('Required parameter putCreateRequest was null or undefined when calling putCreate.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -287,10 +286,10 @@ export class SpraywallService {
         }
 
         let localVarPath = `/api/spraywall/${this.configuration.encodeParam({name: "id", value: id, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: undefined})}/problem`;
-        return this.httpClient.request<SpraywallProblemDto>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<SpraywallProblemDto>('put', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
-                body: postSpraywallProblemCreateRequest,
+                body: putCreateRequest,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

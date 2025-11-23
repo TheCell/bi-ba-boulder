@@ -9,7 +9,7 @@
  */
 
 
-export interface PostSpraywallProblemCreateRequest { 
+export interface PutCreateRequest { 
     /**
      * Name of the spraywall problem
      */

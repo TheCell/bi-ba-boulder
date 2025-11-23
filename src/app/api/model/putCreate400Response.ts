@@ -9,7 +9,7 @@
  */
 
 
-export interface PostSpraywallProblemCreate400Response { 
+export interface PutCreate400Response { 
     /**
      * Error message
      */

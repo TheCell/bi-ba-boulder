@@ -32,6 +32,7 @@ The next todos:
 [] upload only while logged in and verified
 [] Version Number
 [] resend verify email
+[] make http failure cases generic
 
 # helpful resources
 Generate interface etc. from json: https://app.quicktype.io/

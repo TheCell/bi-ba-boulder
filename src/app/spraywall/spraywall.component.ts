@@ -35,7 +35,7 @@ export class SpraywallComponent implements OnInit {
       }
     });
 
-    this.spraywallService.getSpraywallProblems(this.spraywallId).subscribe({
+    this.spraywallService.getProblems(this.spraywallId).subscribe({
       next: (problems: SpraywallProblemDto[]) => {
         this.listOfProblems = problems;
       }

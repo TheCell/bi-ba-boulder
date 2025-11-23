@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\DTO\ErrorDto;
 use App\Entity\SpraywallProblem;
 use App\DTO\SpraywallProblemDto;
@@ -17,6 +18,8 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/spraywall', name: '')]
 #[OA\Tag(name: "Spraywall")]
@@ -33,7 +36,7 @@ final class SpraywallController extends AbstractController
         $this->filesystem = new Filesystem();
     }
 
-    #[Route('/{id}/problems/{problemId}', name: 'get_problem', methods: ['GET'])]
+    #[Route('/{id}/problems/{problemId}', name: 'problem', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns a spraywall problem',
@@ -56,7 +59,7 @@ final class SpraywallController extends AbstractController
         return $this->json($spraywallProblemDto, Response::HTTP_OK);
     }
 
-    #[Route('/{id}/problems', name: 'get_problems', methods: ['GET'])]
+    #[Route('/{id}/problems', name: 'problems', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns a list of problems',
@@ -83,7 +86,8 @@ final class SpraywallController extends AbstractController
         return $this->json($spraywallProblemsDto, Response::HTTP_OK);
     }
 
-    #[Route('/{id}/problem', name: 'create_problem', methods: ['PUT'])]
+    #[Route('/{id}/problem', name: 'create', methods: ['PUT'])]
+    #[IsGranted('ROLE_EDITOR')]
     #[OA\RequestBody(
       required: true,
       content: new OA\JsonContent(
@@ -177,12 +181,6 @@ final class SpraywallController extends AbstractController
     )]
     public function createProblem(Uuid $id, Request $request): JsonResponse
     {
-        $testpasscode = $_ENV['TESTINGPASSCODE'];
-        if (!$testpasscode || empty($testpasscode)) {
-            return $this->json(['error' => 'Could not read environment variable'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        // Find the spraywall to ensure it exists
         $spraywall = $this->spraywallRepository->findOneBy(['id' => $id]);
         if (!$spraywall) {
             return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);
@@ -190,10 +188,6 @@ final class SpraywallController extends AbstractController
 
         // Get and validate request data
         $data = json_decode($request->getContent(), true);
-        
-        if (!isset($data['tempPwd']) || $data['tempPwd'] !== $_ENV['TESTINGPASSCODE']) {
-            return $this->json(['error' => 'Invalid temporary password'], Response::HTTP_UNAUTHORIZED);
-        }
         
         if (!$data || !isset($data['name']) || empty(trim($data['name']))) {
             return $this->json(new ErrorDto('Name is required and cannot be empty', null), Response::HTTP_BAD_REQUEST);
@@ -230,15 +224,15 @@ final class SpraywallController extends AbstractController
 
         // Save image file using the generated problem ID
         try {
-            $spraywallDir = "spraywalls/{$id}";
+            $spraywallDir = 'spraywalls' . DIRECTORY_SEPARATOR . $id;
             if (!$this->filesystem->exists($spraywallDir)) {
                 $this->filesystem->mkdir($spraywallDir);
             }
-            
+
             // Convert 32-bit PNG to 24-bit PNG using ImageMagick
             $processedImageData = $this->convertTo24BitPng($binaryData);
-            
-            $imagePath = "{$spraywallDir}/{$spraywallProblem->getId()}.png";
+
+            $imagePath = $spraywallDir . DIRECTORY_SEPARATOR . $spraywallProblem->getId() . '.png';
             $this->filesystem->dumpFile($imagePath, $processedImageData);
             
         } catch (IOExceptionInterface $exception) {
@@ -250,8 +244,39 @@ final class SpraywallController extends AbstractController
         return $this->getProblem($id, $spraywallProblem->getId())->setStatusCode(201);
     }
 
+    #[Route('/{id}/problem/{problemId}', name: 'problem', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteProblem(Uuid $id, Uuid $problemId): JsonResponse
+    {
+        $spraywallProblem = $this->spraywallProblemRepository->find($problemId);
+
+        if (!$spraywallProblem) {
+            return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            // Delete image file
+            $imagePath = 'spraywalls' . DIRECTORY_SEPARATOR . $id . DIRECTORY_SEPARATOR . $problemId . '.png';
+            if ($this->filesystem->exists($imagePath)) {
+                $this->filesystem->remove($imagePath);
+            }
+
+            // Remove problem from database
+            $this->spraywallProblemRepository->removeProblem($spraywallProblem);
+
+        } catch (IOExceptionInterface $exception) {
+            return $this->json(['error' => 'Failed to delete problem: ' . $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $this->spraywallProblemRepository->removeProblem($spraywallProblem);
+        
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+
     private function getSpraywallProblemImage(Uuid $spraywallId, Uuid $spraywallProblemId): string {
-        $contents = $this->filesystem->readFile("spraywalls/{$spraywallId}/{$spraywallProblemId}.png");
+        $imagePath = 'spraywalls' . DIRECTORY_SEPARATOR . $spraywallId . DIRECTORY_SEPARATOR . $spraywallProblemId . '.png';
+        $contents = $this->filesystem->readFile($imagePath);
         return base64_encode($contents);
     }
 
