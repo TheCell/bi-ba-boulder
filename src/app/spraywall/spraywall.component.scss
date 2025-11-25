@@ -41,13 +41,11 @@
 }
 
 .action-button {
-  cursor: pointer;
+  // cursor: pointer;
   display: inline-block;
   height: 100%;
-  padding-left: 1em;
-  padding-right: 1em;
   border: none;
-  background-color: $secondary;
+  // background-color: $secondary;
 }
 
 .action-button:hover, .action-button:focus {

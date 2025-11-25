@@ -21,3 +21,15 @@ body {
     height: 100vh;
     margin: 0px;
 }
+
+.button {
+  all: unset;
+  cursor: pointer;
+  background-color: $lightDark;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.button:hover, .button:focus {
+  background-color: mix($dark, $highlight, 0.5);
+}

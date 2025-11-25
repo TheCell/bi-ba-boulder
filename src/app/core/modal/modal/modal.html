@@ -1,0 +1,10 @@
+<div [id]="id" role="region" class="modal" [ngClass]="{ 'isVisible': isOpen }" (click)="close()" (keyup.escape)="close()">
+    <div role="dialog" class="modal-content" (click)="$event.stopPropagation()" (keyup)="$event.stopPropagation()">
+        <div class="modal-taskbar">
+            <button aria-label="Close modal" class="button" (click)="close()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>
