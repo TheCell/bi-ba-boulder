@@ -23,3 +23,4 @@
 - **Components**: Feature-based folders in `src/components/`
 - **3D Rendering**: Three.js scenes in `src/app/renderer/` with GLTFLoader for 3D models
 - **Angular Setup**: This project uses Angular with standalone components.
+- **Coding guidelines**: Prettier and ESLint with Angular recommended rules. Type safety enforced. Only Strict Typed Forms.
