@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit }
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { BoulderLine } from '../interfaces/boulder-line';
 import { BoulderDebugRenderComponent } from '../renderer/boulder-debug-render/boulder-debug-render.component';
-import { SpraywallProblemDto, SpraywallService } from '../api';
+import { SpraywallProblemDto, SpraywallService } from '@api/index';
 
 @Component({
   selector: 'app-spraywall-test-2',
@@ -25,10 +25,8 @@ export class SpraywallTest2Component implements OnInit {
     const testBoulder = this.boulderLoaderService.loadTestSpraywall3();
     testBoulder.subscribe({
       next: (data) => {
-        // console.log('data', data);
         this.currentRawModel = data;
         this.changeDetectorRef.markForCheck();
-        // this.addBoulderToScene(data);
       }
     });
   }

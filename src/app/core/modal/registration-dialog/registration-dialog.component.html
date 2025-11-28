@@ -1,6 +1,11 @@
-<h2>Login</h2>
+<h2>Registration</h2>
 
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group form-input">
+        <input id="username" placeholder="" autocomplete="off" type="text" formControlName="username" />
+        <label for="username" class="form-label">Username</label>
+    </div>
+
     <div class="form-group form-input">
         <input id="email" placeholder="" autocomplete="off" type="text" formControlName="email" />
         <label for="email" class="form-label">Email</label>
@@ -12,6 +17,13 @@
     </div>
     
     <div class="form-group form-action">
-        <button type="submit" class="button">Login</button>
+        <button type="submit" class="button" [disabled]="isLoading">
+            @if (isLoading) {
+                <span class="loading-spinner">llooo</span>
+                
+            } @else {
+                Register
+            }
+        </button>
     </div>
 </form>

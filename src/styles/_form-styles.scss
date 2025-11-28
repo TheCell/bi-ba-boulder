@@ -1,0 +1,48 @@
+@use 'variables' as *;
+
+input, select, textarea {
+  all: unset;
+  color: $fontColor;
+  border-bottom: 1px solid $lightDark;
+  width: 100%;
+}
+
+input {
+  padding: 4px 0px;
+}
+
+// .form-input {
+// }
+
+.form-group {
+  padding-top: 20px;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  // display: block;
+  position: absolute;
+  top: 23px;
+  left: 0px;
+  transition: 0.25s cubic-bezier(0, 0, 0.1, 1.0);
+  color: $gray;
+  pointer-events: none;
+  // -webkit-transition: 0.25s ease;
+}
+
+input:not(:placeholder-shown) + .form-label,
+input:focus + .form-label {
+  top: 1px;
+  font-size: 11px;
+  pointer-events: initial;
+  // background-color: green;
+}
+
+input:focus + .form-label {
+  color: $primary;
+}
+
+.form-action {
+  text-align: right;
+}

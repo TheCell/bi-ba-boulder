@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, inject, input, OnDestroy, OnInit } from '@angular/core';
 import { ModalService } from '../modal.service';
 import { NgClass } from '@angular/common';
 // import { Subscription } from 'rxjs';
@@ -11,6 +11,8 @@ import { NgClass } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Modal implements OnInit, OnDestroy {
+  public isSmall = input<boolean>(false);
+
   public id: string = 'modal'.appendUniqueId();
   public isOpen = false;
 

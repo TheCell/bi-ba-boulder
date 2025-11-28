@@ -13,7 +13,7 @@ import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import Stats from 'stats.js'
-import { SpraywallService, SpraywallProblemDto } from '../../api';
+import { SpraywallService, SpraywallProblemDto } from '@api/index';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { downloadSpraywallProblemImage, getImageDataFromTexture } from '../common/util';
 import { ActivatedRoute } from '@angular/router';

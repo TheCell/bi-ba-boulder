@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RESOLUTION_LEVEL, ResolutionLevel } from '../interfaces/resolution-level';
-import { BlocDto } from '../api';
+import { BlocDto } from '@api/index';
 import { environment } from '../../environments/environment';
 
 @Injectable({

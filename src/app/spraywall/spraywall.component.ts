@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { BoulderRenderComponent } from '../renderer/boulder-render/boulder-render.component';
 import { CommonModule } from '@angular/common';
 import { LoadingImageComponent } from '../common/loading-image/loading-image.component';
-import { SpraywallProblemDto, SpraywallService } from '../api';
+import { SpraywallProblemDto, SpraywallService } from '@api/index';
 import { ActivatedRoute } from '@angular/router';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';

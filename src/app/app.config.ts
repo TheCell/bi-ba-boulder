@@ -3,11 +3,11 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { Configuration, ConfigurationParameters } from './api';
+import { ApiModule, Configuration, ConfigurationParameters } from './api';
 import { environment } from '../environments/environment';
 import { ErrorHandlerService } from './core/error/error-handler.service';
 
-function apiConfigFactory (): Configuration {
+function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.apiURL,
     withCredentials: false
@@ -18,6 +18,7 @@ function apiConfigFactory (): Configuration {
 const configurationProvider: Provider = {
   provide: Configuration,
   useFactory: apiConfigFactory,
+  // (new Configuration()),
 };
 
 export const appConfig: ApplicationConfig = {

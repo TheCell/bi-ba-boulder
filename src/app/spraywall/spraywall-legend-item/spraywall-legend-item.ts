@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { SpraywallProblemDto } from '../../api';
+import { SpraywallProblemDto } from '@api/index';
 
 @Component({
   selector: 'app-spraywall-legend-item',

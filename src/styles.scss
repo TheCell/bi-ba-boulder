@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @use 'styles/variables' as *;
+@use 'styles/form-styles' as *;
 
 @font-face {
   font-family: "Roboto";
@@ -10,6 +11,7 @@ html {
     background-color: $backgroundColor;
     color: $fontColor;
     font-family: "Roboto", sans-serif;
+    font-size: 14px;
 }
 
 a {
@@ -17,19 +19,34 @@ a {
 }
 
 body {
-    width: 100%;
-    height: 100vh;
-    margin: 0px;
+  width: 100%;
+  height: 100vh;
+  margin: 0px;
 }
 
 .button {
   all: unset;
   cursor: pointer;
+  padding: 3px 14px;
   background-color: $lightDark;
-  padding-left: 1em;
-  padding-right: 1em;
 }
 
 .button:hover, .button:focus {
   background-color: mix($dark, $highlight, 0.5);
+}
+
+// todo: fix autofill styles
+// input:-webkit-autofill, select:-webkit-autofill, textarea:-webkit-autofill {
+//   background-color: $lightDark;
+// }
+
+select, textarea {
+  border-top: 1px solid $lightDark;
+  border-right: 1px solid $lightDark;
+  border-left: 1px solid $lightDark;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: $primary;
+  transition: border-color 0.25s cubic-bezier(0, 0, 0.1, 1.0);
 }

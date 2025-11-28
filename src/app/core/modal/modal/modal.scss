@@ -10,25 +10,42 @@
   inset: 0;
   z-index: 1000;
   background-color: color-mix(in srgb, $black, transparent 50%);
-  // opacity: 0.8;
+  justify-content: center;
+  align-items: center;
 }
 
 .isVisible {
-  display: block;
   display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .modal-content {
   overflow: hidden;
   background-color: $backgroundColor;
   width: max(50%, 500px);
+  min-width: 300px;
   max-width: 800px;
-  height: max(50%, 500px);
-  max-height: 800%;
+  // height: max(50%, 500px);
+  // max-height: 800px;
   border: 1px solid $lightDark;
   border-radius: 5px;
+}
+
+.small-modal {
+  width: max(30%, 200px);
+  min-width: 300px;
+  max-width: 400px;
+}
+
+@media (max-width: 600px) {
+  .modal-content {
+    width: 100%;
+    max-width: unset;
+  }
+
+  .small-modal {
+    width: 100%;
+    max-width: unset;
+  }
 }
 
 .modal-taskbar {
@@ -48,11 +65,10 @@
   height: 100%;
   width: 2em;
   text-align: center;
-  padding-left: 0;
-  padding-right: 0;
+  padding: 0px;
 }
 
-.button:hover {
+.button:hover, .button:focus {
   background-color: color-mix(in srgb, $dark 100%, $danger 100%);
 }
 
