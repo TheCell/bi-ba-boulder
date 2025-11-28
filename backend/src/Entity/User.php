@@ -40,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?\DateTime $VerifyMailSentTime = null;
 
+    #[ORM\Column(length: 255, unique: true)]
+    private ?string $username = null;
+
     public function getId(): ?Uuid
     {
         return $this->id;
@@ -139,6 +142,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerifyMailSentTime(?\DateTime $VerifyMailSentTime): static
     {
         $this->VerifyMailSentTime = $VerifyMailSentTime;
+
+        return $this;
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    public function setUsername(string $username): static
+    {
+        $this->username = $username;
 
         return $this;
     }

@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20251122160915 extends AbstractMigration
+final class Version20251128132913 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -26,7 +26,7 @@ final class Version20251122160915 extends AbstractMigration
         $this->addSql('CREATE TABLE sector (id BINARY(16) NOT NULL COMMENT \'(DC2Type:uuid)\', name VARCHAR(255) NOT NULL, description LONGTEXT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE spraywall (id BINARY(16) NOT NULL COMMENT \'(DC2Type:uuid)\', name VARCHAR(512) NOT NULL, description LONGTEXT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE spraywall_problem (id BINARY(16) NOT NULL COMMENT \'(DC2Type:uuid)\', spraywall_id BINARY(16) NOT NULL COMMENT \'(DC2Type:uuid)\', name VARCHAR(512) NOT NULL, description LONGTEXT DEFAULT NULL, INDEX IDX_D547E14C82CD71EE (spraywall_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('CREATE TABLE user (id BINARY(16) NOT NULL COMMENT \'(DC2Type:uuid)\', email VARCHAR(180) NOT NULL, roles JSON NOT NULL COMMENT \'(DC2Type:json)\', password VARCHAR(255) NOT NULL, is_verified TINYINT(1) NOT NULL, UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE user (id BINARY(16) NOT NULL COMMENT \'(DC2Type:uuid)\', email VARCHAR(180) NOT NULL, roles JSON NOT NULL COMMENT \'(DC2Type:json)\', password VARCHAR(255) NOT NULL, is_verified TINYINT(1) NOT NULL, verify_mail_sent_time DATETIME DEFAULT NULL, username VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_8D93D649F85E0677 (username), UNIQUE INDEX UNIQ_IDENTIFIER_EMAIL (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE bloc ADD CONSTRAINT FK_C778955ADE95C867 FOREIGN KEY (sector_id) REFERENCES sector (id)');
         $this->addSql('ALTER TABLE line ADD CONSTRAINT FK_D114B4F65582E9C0 FOREIGN KEY (bloc_id) REFERENCES bloc (id)');
         $this->addSql('ALTER TABLE point ADD CONSTRAINT FK_B7A5F3244D7B7542 FOREIGN KEY (line_id) REFERENCES line (id)');
