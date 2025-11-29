@@ -29,10 +29,11 @@ body {
   cursor: pointer;
   padding: 3px 14px;
   background-color: $lightDark;
+  // min-width: 50px;
 }
 
 .button:hover, .button:focus {
-  background-color: mix($dark, $highlight, 0.5);
+  background-color: color-mix(in srgb, $dark 50%, $highlight 50%);
 }
 
 // todo: fix autofill styles
