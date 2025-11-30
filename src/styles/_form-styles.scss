@@ -4,11 +4,11 @@ input, select, textarea {
   all: unset;
   color: $fontColor;
   border-bottom: 1px solid $lightDark;
-  width: 100%;
+  width: calc(100% - 10px);
 }
 
 input {
-  padding: 4px 0px;
+  padding: 4px 5px;
 }
 
 // .form-input {
@@ -24,7 +24,7 @@ input {
   // display: block;
   position: absolute;
   top: 23px;
-  left: 0px;
+  left: 5px;
   transition: 0.25s cubic-bezier(0, 0, 0.1, 1.0);
   color: $gray;
   pointer-events: none;
@@ -36,13 +36,64 @@ input:focus + .form-label {
   top: 1px;
   font-size: 11px;
   pointer-events: initial;
+  left: 0px;
   // background-color: green;
+}
+
+input.ng-invalid.ng-touched + .form-label {
+  color: $danger;
 }
 
 input:focus + .form-label {
   color: $primary;
 }
 
+input.ng-invalid.ng-touched {
+  border-bottom: 1px solid $danger;
+}
+
 .form-action {
   text-align: right;
+}
+
+.form-action .button {
+  text-align: center;
+  min-width: 70px;
+}
+
+.button.disabled {
+  background-color: $gray;
+  cursor: default;
+}
+
+input.disabled {
+  background-color: $gray;
+  cursor: default;
+}
+
+.button.disabled:hover {
+  background-color: $gray;
+}
+
+input.disabled:hover {
+  background-color: $gray;
+}
+
+// .form-group.disabled .form-label {
+//   color: $lightDark;
+// }
+
+input:disabled {
+  color: $gray;
+}
+
+input:disabled {
+  // background-color: $black;
+  background: repeating-linear-gradient(
+    -55deg,
+    $dark,
+    $dark 5px,
+    $lightDark 5px,
+    $lightDark 10px
+  );
 }

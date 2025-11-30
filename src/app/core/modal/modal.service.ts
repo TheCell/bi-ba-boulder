@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Type } from '@angular/core';
 import { Modal } from './modal/modal';
 
 @Injectable({
@@ -21,14 +21,18 @@ export class ModalService {
     this.modals = this.modals.filter(m => m.id !== id);
   }
 
-  public open(id: string): void {
+  public open(id: string, component?: Type<unknown>): void {
     const modal = this.modals.find(m => m.id === id);
 
     if (!modal) {
       throw new Error('modal not found');
     }
     
-    modal.open();
+    if (component) {
+      modal.open(component);
+    } else {
+      modal.openWithExternalContent();
+    }
   }
 
   public close(): void {

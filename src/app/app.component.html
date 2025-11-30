@@ -20,12 +20,8 @@
   <router-outlet />
 </div>
 
-<app-modal #loginModal 
-  [isSmall]="true">
-  <app-login-dialog></app-login-dialog>
-</app-modal>
+<app-toast></app-toast>
 
-<app-modal #registrationModal 
+<app-modal #modal 
   [isSmall]="true">
-  <app-registration-dialog></app-registration-dialog>
 </app-modal>

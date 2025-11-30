@@ -6,8 +6,8 @@ framework:
             interval: '15 minutes'
         registration_api:
             policy: 'sliding_window'
-            limit: 1
-            interval: '15 minutes'
+            limit: 10
+            interval: '1 minutes'
         admin_api:
             policy: 'token_bucket'
             limit: 10

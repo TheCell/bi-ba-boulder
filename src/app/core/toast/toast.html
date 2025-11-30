@@ -1,0 +1,15 @@
+<div class="toast-container">
+    @for (toast of toastService.toasts; track toast.id) {
+      <div [id]="id" role="dialog" [class]="'toast ' + toast.classname">
+        <div class="toast-content">
+            <div class="toast-taskbar">
+                <button aria-label="Close toast" class="button close-button" (click)="toastService.remove(toast.id)">&times;</button>
+            </div>
+            <div class="toast-body">
+                <h4 [class]="toast.classname">{{ toast.title }}</h4>
+                {{ toast.message }}
+            </div>
+        </div>
+      </div>
+    }
+</div>

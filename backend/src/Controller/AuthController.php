@@ -49,9 +49,10 @@ final class AuthController extends AbstractController
             type: 'object',
             properties: [
                 new OA\Property(property: 'email', type: 'string', description: 'Email of the user'),
+                new OA\Property(property: 'username', type: 'string', description: 'Username of the user'),
                 new OA\Property(property: 'password', type: 'string', description: 'Password of the user')
             ],
-            required: ['email', 'password']
+            required: ['email', 'username', 'password']
         )
     )]
     #[OA\Response(
@@ -70,12 +71,18 @@ final class AuthController extends AbstractController
         if (!isset($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             return $this->json(new ErrorDto('Invalid email address', null), Response::HTTP_BAD_REQUEST);
         }
+
+        if (!isset($data['username']) || strlen($data['username']) < 3) {
+            return $this->json(new ErrorDto('Username must be at least 3 characters', null), Response::HTTP_BAD_REQUEST);
+        }
+
         if (!isset($data['password']) || strlen($data['password']) < 8) {
             return $this->json(new ErrorDto('Password must be at least 8 characters', null), Response::HTTP_BAD_REQUEST);
         }
 
         $user = new User();
         $user->setEmail($data['email']);
+        $user->setUsername($data['username']);
         $user->setRoles(['ROLE_USER']);
         $plaintextPassword = $data['password'];
         $hashedPassword = $this->passwordHasher->hashPassword($user, $plaintextPassword);

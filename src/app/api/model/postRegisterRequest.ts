@@ -15,6 +15,10 @@ export interface PostRegisterRequest {
      */
     email: string;
     /**
+     * Username of the user
+     */
+    username: string;
+    /**
      * Password of the user
      */
     password: string;

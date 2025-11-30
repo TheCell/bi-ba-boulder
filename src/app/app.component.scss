@@ -13,6 +13,7 @@ ul {
   overflow-y: hidden;
   background-color: $lightDark;
   display: flex;
+  align-items: center;
 }
 
 a {
@@ -35,6 +36,10 @@ a:hover, a:focus, .button:hover, .button:focus {
 
 a:active, .button:active, .button:active {
   background-color: color-mix(in srgb, $dark 100%, $primary 100%);
+}
+
+.button {
+  padding: 14px 16px;
 }
 
 // li:nth-child(even) {
