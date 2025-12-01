@@ -7,9 +7,8 @@ import { ToastService } from './toast.service';
   imports: [Toast],
   templateUrl: './toast-container.html',
   styleUrl: './toast-container.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class ToastContainer {
   public toastService = inject(ToastService);
-
 }

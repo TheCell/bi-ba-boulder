@@ -1,5 +1,11 @@
 
-<div [id]="id" role="dialog" [class]="'toast ' + toast().classname">
+<div
+  [id]="id" role="dialog"
+  [class]="'toast ' + toast().classname"
+  [ngClass]="{'fadeout': showFadeout }"
+  (mouseenter)="stopDelay()"
+  (mouseleave)="startDelay()">
+  <!-- todo: make phone accessible -->
   <div class="toast-content">
     <div class="toast-taskbar">
       <button aria-label="Close toast" class="button close-button" (click)="toastService.remove(toast().id)">&times;</button>

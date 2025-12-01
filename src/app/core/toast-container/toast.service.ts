@@ -11,6 +11,8 @@ import { IToastInternal } from './I-toast-internal';
 export class ToastService {
   public toasts: IToastInternal[] = [];
 
+  private standardDelay: number = 2000;
+
   public constructor() { }
 
   public show(toast: IToast): void {
@@ -21,11 +23,11 @@ export class ToastService {
   }
 
   public showInfo(title: string, message: string, delay?: number): void {
-    this.show({ title, message, delay });
+    this.show({ title, message, delay: delay ?? this.standardDelay });
   }
 
   public showSuccess(title: string, message: string, delay?: number): void {
-    this.show({ title, message, classname: 'success', delay });
+    this.show({ title, message, classname: 'success', delay: delay ?? this.standardDelay });
   }
 
   public showDanger(title: string, message: string): void {
@@ -33,7 +35,7 @@ export class ToastService {
   }
 
   public showWarning(title: string, message: string, delay?: number): void {
-    this.show({ title, message, classname: 'warning', delay });
+    this.show({ title, message, classname: 'warning', delay: delay ?? this.standardDelay });
   }
 
   public remove(id: string): void {
