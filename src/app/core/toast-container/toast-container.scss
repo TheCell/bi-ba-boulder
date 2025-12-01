@@ -1,0 +1,27 @@
+@use '../../../styles/variables' as *;
+
+:host {
+  display: block;
+}
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+  // font-size: 11px;
+}
+
+.toast-container .danger {
+  background: repeating-linear-gradient(
+    -55deg,
+    color-mix(in srgb, $dark 100%, $danger 10%),
+    color-mix(in srgb, $dark 100%, $danger 10%) 5px,
+    $dark 5px,
+    $dark 10px
+  );
+}

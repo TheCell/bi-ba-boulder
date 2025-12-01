@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Toast } from './toast';
-import { IToast } from './I-toast';
+import { Toast } from './toast/toast';
+import { IToast } from './toast/I-toast';
+import { IToastInternal } from './I-toast-internal';
 
-interface IToastInternal extends IToast {
-  id: string;
-}
+
 
 @Injectable({
   providedIn: 'root'
