@@ -8,9 +8,9 @@ import { sectorsResolver } from './core/resolvers/sector.resolver';
 import { SectorComponent } from './sector/sector.component';
 import { blocResolver, blocsOfSectorResolver } from './core/resolvers/bloc.resolver';
 import { BoulderComponent } from './boulder/boulder.component';
-import { SpraywallTestComponent } from './spraywall-test/spraywall-test.component';
-import { SpraywallTest2Component } from './spraywall-test-2/spraywall-test-2.component';
-import { SpraywallComponent } from './spraywall/spraywall.component';
+import { SpraywallTestComponent } from './spraywalls/spraywall-test/spraywall-test.component';
+import { SpraywallTest2Component } from './spraywalls/spraywall-test-2/spraywall-test-2.component';
+import { SpraywallComponent } from './spraywalls/spraywall/spraywall.component';
 import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './legal/terms.component/terms.component';
 

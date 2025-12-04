@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { BoulderRenderComponent } from '../renderer/boulder-render/boulder-render.component';
-import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
-import { BoulderLine } from '../interfaces/boulder-line';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
+import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
+import { BoulderLine } from '../../interfaces/boulder-line';
 
 @Component({
   selector: 'app-spraywall-test',
@@ -11,15 +11,15 @@ import { BoulderLine } from '../interfaces/boulder-line';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpraywallTestComponent {
+  private boulderLoaderService: BoulderLoaderService = inject(BoulderLoaderService);
+  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   public currentRawModel?: ArrayBuffer = undefined;
     public currentLines: BoulderLine[] = [];
   
-  public constructor(
-    private boulderLoaderService: BoulderLoaderService,
-    private changeDetectorRef: ChangeDetectorRef) {
+  public constructor() {
     const testBoulder = this.boulderLoaderService.loadTestSpraywall();
     testBoulder.subscribe({
-      next: (data) => {
+      next: (data: ArrayBuffer) => {
         // console.log('data', data);
         this.currentRawModel = data;
         this.changeDetectorRef.markForCheck();

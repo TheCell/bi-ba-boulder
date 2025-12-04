@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
-import { BoulderLine } from '../interfaces/boulder-line';
-import { BoulderDebugRenderComponent } from '../renderer/boulder-debug-render/boulder-debug-render.component';
+import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
+import { BoulderLine } from '../../interfaces/boulder-line';
+import { BoulderDebugRenderComponent } from '../../renderer/boulder-debug-render/boulder-debug-render.component';
 import { SpraywallProblemDto, SpraywallService } from '@api/index';
 
 @Component({
@@ -12,16 +12,16 @@ import { SpraywallProblemDto, SpraywallService } from '@api/index';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpraywallTest2Component implements OnInit {
-  private spraywallService = inject(SpraywallService);
-  private changeDetectorRef = inject(ChangeDetectorRef);
+  private spraywallService: SpraywallService = inject(SpraywallService);
+  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private boulderLoaderService: BoulderLoaderService = inject(BoulderLoaderService);
 
   public currentRawModel?: ArrayBuffer = undefined;
   public currentLines: BoulderLine[] = [];
   public selectedProblemId?: string;
   public spraywallProblems: SpraywallProblemDto[] = [];
   
-  public constructor(
-    private boulderLoaderService: BoulderLoaderService) {
+  public constructor() {
     const testBoulder = this.boulderLoaderService.loadTestSpraywall3();
     testBoulder.subscribe({
       next: (data) => {
