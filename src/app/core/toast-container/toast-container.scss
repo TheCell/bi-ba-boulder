@@ -15,13 +15,3 @@
   width: 300px;
   // font-size: 11px;
 }
-
-.toast-container .danger {
-  background: repeating-linear-gradient(
-    -55deg,
-    color-mix(in srgb, $dark 100%, $danger 10%),
-    color-mix(in srgb, $dark 100%, $danger 10%) 5px,
-    $dark 5px,
-    $dark 10px
-  );
-}

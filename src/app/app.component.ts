@@ -22,11 +22,11 @@ export class AppComponent {
   public title = 'bibaboulder';
 
   public constructor() {
-    this.toastService.show({ title: 'Info', message: 'Welcome', delay: 1000 });
-    this.toastService.showInfo('Info', 'Welcome to BiBa Boulder!');
-    this.toastService.showSuccess('Success', 'You have successfully logged in!');
-    this.toastService.showDanger('Error', 'Error: Unable to load user data.');
-    this.toastService.showWarning('Warning', 'Warning: Your password will expire in 7 days.');
+    // this.toastService.show({ title: 'Info', message: 'Welcome', delay: 1000 });
+    // this.toastService.showInfo('Info', 'Welcome to BiBa Boulder!');
+    // this.toastService.showSuccess('Success', 'You have successfully logged in!');
+    // this.toastService.showDanger('Error', 'Error: Unable to load user data.');
+    // this.toastService.showWarning('Warning', 'Warning: Your password will expire in 7 days.');
     // this.toastService.show({ message: 'Welcome to BiBa Boulder!' });
     // this.toastService.show({ message: 'Welcome to BiBa asdfas dfasdf asdfas dfsdfa adf  Boulder!' });
     // this.toastService.show({ message: 'Welcome to BiBa asdf asdf asdf asdf asd fasdf asdf asdf asdf asdf asdf asdf asdf asdf asdf asdf Boulder!' });

@@ -11,15 +11,13 @@ import { IToastInternal } from './I-toast-internal';
 export class ToastService {
   public toasts: IToastInternal[] = [];
 
-  private standardDelay: number = 2000;
+  private standardDelay: number = 3000;
 
   public constructor() { }
 
   public show(toast: IToast): void {
     const id = ''.appendUniqueId();
     this.toasts.push({ ...toast, id: id });
-    // todo move this into the toast component and add animation
-    // this.setRemoveAfterDelay(id, toast.delay);
   }
 
   public showInfo(title: string, message: string, delay?: number): void {
@@ -41,13 +39,5 @@ export class ToastService {
   public remove(id: string): void {
     this.toasts = this.toasts.filter(t => t.id !== id);
   }
-
-  // private setRemoveAfterDelay(id: string, delay?: number): void {
-  //   if (delay && delay > 0) {
-  //     setTimeout(() => {
-  //       this.remove(id);
-  //     }, delay);
-  //   }
-  // }
 
 }
