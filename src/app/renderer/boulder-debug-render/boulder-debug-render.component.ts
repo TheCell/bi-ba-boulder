@@ -16,7 +16,7 @@ import Stats from 'stats.js'
 import { SpraywallService, SpraywallProblemDto } from '@api/index';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { downloadSpraywallProblemImage, getImageDataFromTexture } from '../common/util';
-import { ActivatedRoute } from '@angular/router';
+import { holdColorOptions, SpraywallHoldType, TypeAndColor } from '../common/spraywall-hold-types';
 
 interface ColorAndIndex {
   r: number;
@@ -26,27 +26,8 @@ interface ColorAndIndex {
   index: number;
 }
 
-interface TypeAndIndex {
-  type: Type;
-  index: number;
-}
-
-interface TypeAndColor {
-  type: Type;
-  color: THREE.Color;
-}
-
 interface ITempForm {
   tempPsw: FormControl<string>;
-}
-
-enum Type {
-  undefined = 0,
-  start = 1,
-  top = 2,
-  hold = 3,
-  foot = 4,
-  custom = 5
 }
 
 @Component({
@@ -62,6 +43,7 @@ enum Type {
 })
 export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   private spraywallService = inject(SpraywallService);
+  private el: ElementRef = inject(ElementRef);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
@@ -78,6 +60,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     }
   }
 
+  public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public shortcuts: ShortcutInput[] = [];
   public rawModel = input<ArrayBuffer>();
   public blocId = input.required<string>();
@@ -113,14 +96,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.DataTexture;
 
-  public holdColorOptions: TypeAndColor[] = [
-    { type: Type.start, color: new THREE.Color(0, 158, 115) },
-    { type: Type.top, color: new THREE.Color(213, 94, 0) },
-    { type: Type.hold, color: new THREE.Color(86, 180, 233) },
-    { type: Type.foot, color: new THREE.Color(240, 228, 66) },
-    { type: Type.custom, color: new THREE.Color(204, 121, 167) }
-  ];
-  public highlightColor: THREE.Color = this.holdColorOptions[2].color;
+  public highlightColor: THREE.Color = holdColorOptions[2].color;
   private drawingNewHighlight = false;
   private lastClickedHold?: ColorAndIndex;
 
@@ -129,8 +105,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
 
-  public constructor(
-    private el: ElementRef) {
+  public constructor() {
     effect(() => {
       const rawModel = this.rawModel();
       if (rawModel !== this.proccessedRawModel) {
@@ -149,7 +124,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
         const problem = this.boulderProblems().find((p) => p.id === selectedId);
 
         if (problem) {
-          this.setHighlightedHoldsTextureFromData(problem.image, 128, 128);
+          this.setHighlightedHoldsTextureFromData(problem.image);
           this.ambientLight.intensity = 0.7;
         }
       }
@@ -241,9 +216,9 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
   public uploadRoute(): void {
     if (this.highlightedHoldsTexture?.isTexture && this.highlightedHoldsTexture.image && this.highlightedHoldsTexture.image.data) {
-      let canvas = document.createElement('canvas');
-      let context = canvas.getContext('2d')!;
-      let imgData = context.createImageData(this.highlightedHoldsTexture.image.width, this.highlightedHoldsTexture.image.height);
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d')!;
+      const imgData = context.createImageData(this.highlightedHoldsTexture.image.width, this.highlightedHoldsTexture.image.height);
       canvas.width = this.highlightedHoldsTexture.image.width;
       canvas.height = this.highlightedHoldsTexture.image.height;
 
@@ -274,15 +249,15 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   public onHoldColorChange(event: EventTarget | null): void {
     const selectElement = event as HTMLSelectElement;
     const selectedColorType = parseInt(selectElement.value);
-    const selectedColorOption = this.holdColorOptions.find(option => option.type === selectedColorType);
+    const selectedColorOption = holdColorOptions.find(option => option.type === selectedColorType);
     if (selectedColorOption) {
       this.highlightColor = selectedColorOption.color;
       console.log(`Hold color changed to : ${this.enumName(selectedColorOption.type)} `, this.highlightColor);
     }
   }
 
-  public enumName(type: Type): string {
-    const enumNames = Object.keys(Type).filter(key => isNaN(Number(key)));
+  public enumName(type: SpraywallHoldType): string {
+    const enumNames = Object.keys(SpraywallHoldType).filter(key => isNaN(Number(key)));
     return enumNames[type];
   }
 
@@ -297,9 +272,9 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     let offset = 10;
     this.stats.dom.style.position = 'absolute';
     this.stats.dom.style.top = `${offset}px`;
-    for (let i = 0; i < this.stats.dom.children.length; i++) {
+    for (const child of this.stats.dom.children) {
       offset += 50;
-      const element = this.stats.dom.children[i] as HTMLElement;
+      const element = child as HTMLElement;
       element.style.position = 'absolute';
       element.style.display = 'block';
       element.style.top = `${offset}px`;
@@ -327,7 +302,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
   private setupHighlightTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
-      let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      const object = (this.currentGltf.scene.children[0] as THREE.Mesh);
       object.material = this.rgbBlockMaterial;
     }
   }
@@ -343,7 +318,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
+  private setHighlightedHoldsTextureFromData(base64String: string): void {
     // const image = new Image(width, height);
     const loader = new THREE.DataTextureLoader();
     loader.load('data:image/png;base64,' + base64String, (texture: THREE.DataTexture) => {
@@ -634,7 +609,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
   private getIndicesForGroup(imageData: THREE.DataTextureImageData, group: number): number[] {
     const indices: number[] = [];
-    const { data, width, height } = imageData;
+    const { data } = imageData;
 
     if (!data) {
       throw new Error('Image data is null or undefined.');
@@ -667,6 +642,8 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
       const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
       let everythingWasHighlighted = true;
       let nothingWasHighlighted = true;
+
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
 
         if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] === 0) {
@@ -684,12 +661,14 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
       }
 
       if (everythingWasHighlighted) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
           this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] = 0;
           this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = 0;
           this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = 0;
         }
       } else if (nothingWasHighlighted) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
           this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] = 0;
           this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = 0;
@@ -710,7 +689,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     this.lastClickedHold = colorAndIndex;
   }
 
-  private getBitsFromNumber(type: Type, index: number): number {
+  private getBitsFromNumber(type: SpraywallHoldType, index: number): number {
     // saving the type in the high endian 2 bits, and the index in the low endian 14 bits
     let twoByteInfo = 0x00000;
     twoByteInfo = (type << 16) | (index);

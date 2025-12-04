@@ -3,8 +3,7 @@
     @if (currentRawModel) {
         <app-boulder-render
             class="render"
-            [rawModel]="currentRawModel"
-            [boulderProblem]="selectedProblem">
+            [rawModel]="currentRawModel">
         </app-boulder-render>
     } @else {
         <app-loading-image
@@ -15,17 +14,16 @@
   <section class="legend">
     <div class="actions">
         <button class="button action-button" (click)="onResetSelection()">Reset</button>
-        <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
     </div>
     <div class="legend-list">
-        @for (problem of listOfProblems; track problem.id) {
+        <!-- @for (problem of listOfProblems; track problem.id) {
             <app-spraywall-legend-item
                 class="li-item"
                 [problem]="problem"
                 [isSelected]="selectedProblem?.id === problem.id"
                 (selected)="onSelectedProblem($event)">
             </app-spraywall-legend-item>
-        }
+        } -->
     </div>
   </section>
 </div>

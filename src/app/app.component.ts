@@ -4,8 +4,6 @@ import { Modal } from './core/modal/modal/modal';
 import { ModalService } from './core/modal/modal.service';
 import { LoginDialogComponent } from './core/modal/login-dialog/login-dialog.component';
 import { RegistrationDialogComponent } from './core/modal/registration-dialog/registration-dialog.component';
-import { Toast } from './core/toast-container/toast/toast';
-import { ToastService } from './core/toast-container/toast.service';
 import { ToastContainer } from "./core/toast-container/toast-container";
 
 @Component({
@@ -17,7 +15,6 @@ import { ToastContainer } from "./core/toast-container/toast-container";
 export class AppComponent {
   @ViewChild('modal') private modal!: Modal;
   private modalService = inject(ModalService);
-  private toastService = inject(ToastService);
 
   public title = 'bibaboulder';
 

@@ -13,6 +13,7 @@ import { SpraywallTest2Component } from './spraywalls/spraywall-test-2/spraywall
 import { SpraywallComponent } from './spraywalls/spraywall/spraywall.component';
 import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './legal/terms.component/terms.component';
+import { SpraywallEditor } from './spraywalls/spraywall-editor/spraywall-editor';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -54,6 +55,10 @@ export const routes: Routes = [
   {
     path: 'spraywall/:id',
     component: SpraywallComponent
+  },
+  {
+    path: 'spraywall-editor/:id',
+    component: SpraywallEditor
   },
   {
     path: 'spraywall-test',

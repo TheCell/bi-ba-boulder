@@ -3,13 +3,13 @@ import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-re
 
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { SpraywallProblemDto, SpraywallService } from '@api/index';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
 
 @Component({
   selector: 'app-spraywall',
-  imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem],
+  imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, RouterLink],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
 })
