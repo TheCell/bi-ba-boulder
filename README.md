@@ -5,35 +5,35 @@
 
 The next todos:
 
-[x] Figure a route dto out  
-[-] login (needs frontend)  
-[-] verify email mail (needs redirect to success page)
+[x] Figure a route dto out   
+[x] login (needs frontend)   
+[-] verify email mail (needs redirect to success page)   
 [x] 3D scan -> object with LOD process   
-[x] Load LOD levels  
-[] bloc caching  
+[x] Load LOD levels   
+[] bloc caching   
 [] Offline compatible  
-[] setup cdn  
-[] lines only load after login  
-[] figure out enums for grading  
-[] sector overview  
-[] line, boulder, sector search  
-[] hover over line  
-[] height indicator  
+[] setup cdn   
+[] lines only load after login   
+[] figure out enums for grading   
+[] sector overview   
+[] line, boulder, sector search   
+[] hover over line   
+[] height indicator   
 [x] switch to uuid for id's   
 [x] split model into parts   
 [x] highlight of parts   
 [x] texture rework   
 [x] custom highlighting texture   
 [x] build highlight texture optimizer   
-[] streamline spraywall + rgb texture download not hardcoded
-[] Refresh token [https://github.com/markitosgv/JWTRefreshTokenBundle](https://github.com/markitosgv/JWTRefreshTokenBundle)
-[] logout
-[] rate limiting
-[] upload only while logged in and verified
-[] Version Number
-[] resend verify email
-[x] make http failure cases generic
-[] user profile page
+[] streamline spraywall + rgb texture download not hardcoded   
+[] Refresh token [https://github.com/markitosgv/JWTRefreshTokenBundle](https://github.com/markitosgv/JWTRefreshTokenBundle)   
+[] logout   
+[] rate limiting   
+[] upload only while logged in and verified   
+[] Version Number   
+[] resend verify email   
+[x] make http failure cases generic   
+[] user profile page   
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)
