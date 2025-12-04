@@ -24,6 +24,8 @@ import { SpraywallProblemDto } from '@api/index';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoulderRenderComponent implements OnInit, AfterViewInit {
+  private el: ElementRef = inject(ElementRef);
+
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
@@ -67,7 +69,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
 
-  public constructor(private el: ElementRef) {
+  public constructor() {
     effect(() => {
       const rawModel = this.rawModel();
       if (rawModel !== this.proccessedRawModel) {
@@ -177,10 +179,10 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
       this.scene.add(gltf.scene);
-      let childCounter = 0;
+      // let childCounter = 0;
       gltf.scene.traverse((child) => {
         child.layers.set(1);
-        childCounter++;
+        // childCounter++;
         const mesh = (child as THREE.Mesh);
         if (mesh.isMesh) {
           this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
@@ -261,7 +263,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
   private setupHighlightTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
-      let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      const object = (this.currentGltf.scene.children[0] as THREE.Mesh);
       object.material = this.rgbBlockMaterial;
     }
   }

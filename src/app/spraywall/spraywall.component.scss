@@ -43,7 +43,7 @@
 .action-button {
   // cursor: pointer;
   display: inline-block;
-  height: 100%;
+  height: calc(100% - 6px);
   border: none;
   // background-color: $secondary;
 }
