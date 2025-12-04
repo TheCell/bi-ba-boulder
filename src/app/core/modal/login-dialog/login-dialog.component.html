@@ -12,6 +12,14 @@
     </div>
     
     <div class="form-group form-action">
-        <button type="submit" class="button">Login</button>
+        <button type="submit" class="button"
+            [ngClass]="{'disabled': isLoading || loginForm.invalid || loginForm.disabled }"
+            [disabled]="isLoading || loginForm.invalid || loginForm.disabled">
+            @if (isLoading) {
+                <span class="loading-spinner"><app-icon></app-icon></span>
+            } @else {
+                Login
+            }
+        </button>
     </div>
 </form>

@@ -4,21 +4,25 @@ import { NonNullableFormBuilder, ReactiveFormsModule, FormsModule, Validators } 
 import { AuthService, PostAppAuthLoginRequest } from '@api/index';
 import { IStopClosing } from '../modal/I-stop-closing';
 import { Subscription } from 'rxjs';
+import { Icon } from '../../icon/icon';
+import { ToastService } from '../../toast-container/toast.service';
 
 interface IloginForm extends PostAppAuthLoginRequest { }
 
 @Component({
   selector: 'app-login-dialog',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, Icon],
   templateUrl: './login-dialog.component.html',
   styleUrl: './login-dialog.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class LoginDialogComponent implements IStopClosing, OnDestroy {
   private _fb = inject(NonNullableFormBuilder);
-  private s = inject(AuthService)
-  public canCloseWithoutPermission: boolean = true;
+  private authService = inject(AuthService)
+  private toastService = inject(ToastService);
 
+  public canCloseWithoutPermission: boolean = true;
+  public isLoading = false;
   public loginForm = this._fb.group<IloginForm>({
     email: (''),
     password: (''),
@@ -27,11 +31,15 @@ export class LoginDialogComponent implements IStopClosing, OnDestroy {
   private subscription: Subscription = new Subscription();
   
   public constructor() {
-    this.loginForm.controls.email.addValidators([Validators.email]);
+    this.loginForm.controls.email.addValidators([Validators.required,Validators.email]);
     this.loginForm.controls.password.addValidators([Validators.required]);
     
     this.loginForm.valueChanges.subscribe(() => {
-      this.canCloseWithoutPermission = false;
+      if (this.loginForm.controls.email.value || this.loginForm.controls.password.value) {
+        this.canCloseWithoutPermission = false;
+      } else {
+        this.canCloseWithoutPermission = true;
+      }
     });
   }
 
@@ -40,6 +48,22 @@ export class LoginDialogComponent implements IStopClosing, OnDestroy {
   }
 
   public onSubmit(): void {
-    console.log('loginForm', this.loginForm.value);
+    this.isLoading = true;
+    this.loginForm.disable();
+    const loginRequest: PostAppAuthLoginRequest = {
+      email: this.loginForm.controls.email.value,
+      password: this.loginForm.controls.password.value,
+    };
+
+    this.authService.postAppAuthLogin(loginRequest).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.toastService.showSuccess('Login Successful', 'You have successfully logged in!');
+      },
+      error: () => {
+        this.isLoading = false;
+        this.loginForm.enable();
+      }
+    });
   }
 }

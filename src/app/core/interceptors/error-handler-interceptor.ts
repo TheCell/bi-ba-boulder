@@ -21,6 +21,8 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
               message = message.concat(`${err.error}`);
             } else if (typeof err.error.error === 'string') {
               message = message.concat(`${err.error.error}`);
+            } else if (err.error && typeof err.error.message === 'string') {
+              message = message.concat(`${err.error.message}`);
             } else {
               message = message.concat(`${JSON.stringify(err.error)}`);
             }

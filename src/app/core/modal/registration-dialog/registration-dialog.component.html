@@ -1,26 +1,26 @@
 <h2>Registration</h2>
 
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()"
-    [ngClass]="{'disabled': loginForm.disabled}">
-    <div class="form-group form-input" [ngClass]="{'disabled': loginForm.controls.username.disabled}">
+<form [formGroup]="registrationForm" (ngSubmit)="onSubmit()"
+    [ngClass]="{'disabled': registrationForm.disabled}">
+    <div class="form-group form-input" [ngClass]="{'disabled': registrationForm.controls.username.disabled}">
         <input id="username" placeholder="" autocomplete="off" type="text" formControlName="username" />
         <label for="username" class="form-label">Username</label>
     </div>
 
-    <div class="form-group form-input" [ngClass]="{'disabled': loginForm.controls.email.disabled}">
+    <div class="form-group form-input" [ngClass]="{'disabled': registrationForm.controls.email.disabled}">
         <input id="email" placeholder="" autocomplete="off" type="text" formControlName="email" />
         <label for="email" class="form-label">Email</label>
     </div>
     
-    <div class="form-group form-input" [ngClass]="{'disabled': loginForm.controls.password.disabled}">
+    <div class="form-group form-input" [ngClass]="{'disabled': registrationForm.controls.password.disabled}">
         <input id="password" placeholder="" autocomplete="off" type="password" formControlName="password" />
         <label for="password" class="form-label">Password</label>
     </div>
     
     <div class="form-group form-action">
         <button type="submit" class="button"
-            [ngClass]="{'disabled': isLoading || loginForm.invalid || loginForm.disabled }"
-            [disabled]="isLoading || loginForm.invalid || loginForm.disabled">
+            [ngClass]="{'disabled': isLoading || registrationForm.invalid || registrationForm.disabled }"
+            [disabled]="isLoading || registrationForm.invalid || registrationForm.disabled">
             @if (isLoading) {
                 <span class="loading-spinner"><app-icon></app-icon></span>
             } @else {

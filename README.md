@@ -7,7 +7,7 @@ The next todos:
 
 [x] Figure a route dto out  
 [-] login (needs frontend)  
-[-] verify email mail   
+[-] verify email mail (needs redirect to success page)
 [x] 3D scan -> object with LOD process   
 [x] Load LOD levels  
 [] bloc caching  
@@ -32,7 +32,8 @@ The next todos:
 [] upload only while logged in and verified
 [] Version Number
 [] resend verify email
-[] make http failure cases generic
+[x] make http failure cases generic
+[] user profile page
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)
