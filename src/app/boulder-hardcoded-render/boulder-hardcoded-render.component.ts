@@ -23,7 +23,7 @@ import { BoulderLine } from '../interfaces/boulder-line';
 })
 export class BoulderHardcodedRenderComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize', ['$event']) public onResize(): void {
+  @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
 
       const canvasSizes = {
