@@ -6,6 +6,7 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { Configuration, ConfigurationParameters } from './api';
 import { environment } from '../environments/environment';
 import { errorHandlerInterceptor } from './core/interceptors/error-handler-interceptor';
+import { loggedInInterceptor } from './core/interceptors/logged-in-interceptor';
 
 function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -28,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withFetch(),
-      withInterceptors([errorHandlerInterceptor])
+      withInterceptors([errorHandlerInterceptor, loggedInInterceptor])
     )
   ]
 };

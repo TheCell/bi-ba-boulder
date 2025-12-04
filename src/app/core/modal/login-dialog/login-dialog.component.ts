@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
-import { AuthService, PostAppAuthLoginRequest } from '@api/index';
+import { AuthService, PostAppAuthLoginRequest, TokenDto } from '@api/index';
 import { IStopClosing } from '../modal/I-stop-closing';
 import { Subscription } from 'rxjs';
 import { Icon } from '../../icon/icon';
 import { ToastService } from '../../toast-container/toast.service';
+import { ModalService } from '../modal.service';
 
 interface IloginForm extends PostAppAuthLoginRequest { }
 
@@ -18,8 +19,9 @@ interface IloginForm extends PostAppAuthLoginRequest { }
 })
 export class LoginDialogComponent implements IStopClosing, OnDestroy {
   private _fb = inject(NonNullableFormBuilder);
-  private authService = inject(AuthService)
+  private authService = inject(AuthService);
   private toastService = inject(ToastService);
+  private modalService = inject(ModalService);
 
   public canCloseWithoutPermission: boolean = true;
   public isLoading = false;
@@ -56,8 +58,12 @@ export class LoginDialogComponent implements IStopClosing, OnDestroy {
     };
 
     this.authService.postAppAuthLogin(loginRequest).subscribe({
-      next: () => {
+      next: (token: TokenDto) => {
+        localStorage.setItem('auth_token', token.token);
+        
         this.isLoading = false;
+        this.loginForm.reset();
+        this.modalService.close();
         this.toastService.showSuccess('Login Successful', 'You have successfully logged in!');
       },
       error: () => {

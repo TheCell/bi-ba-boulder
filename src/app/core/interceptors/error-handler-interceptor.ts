@@ -24,6 +24,12 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
             } else {
               message = 'An error occurred while processing your request.';
             }
+
+            // needs testing
+            if (err.error.code === 401 && err.error.message === 'Expired JWT Token') {
+              message = 'Logged you out.';
+              localStorage.removeItem('auth_token');
+            }
           }
 
           toastService.showDanger(title, message);
