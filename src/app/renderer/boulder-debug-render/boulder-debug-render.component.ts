@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as THREE from 'three';
@@ -52,7 +52,6 @@ enum Type {
 @Component({
   selector: 'app-boulder-debug-render',
   imports: [
-    CommonModule,
     KeyboardShortcutsModule,
     FormsModule,
     ReactiveFormsModule

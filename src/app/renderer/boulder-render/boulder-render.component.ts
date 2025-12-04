@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -17,7 +17,6 @@ import { SpraywallProblemDto } from '@api/index';
 @Component({
   selector: 'app-boulder-render',
   imports: [
-    CommonModule,
     KeyboardShortcutsModule
   ],
   templateUrl: './boulder-render.component.html',

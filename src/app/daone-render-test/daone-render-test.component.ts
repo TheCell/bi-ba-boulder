@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, input, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -15,7 +15,6 @@ import { BoulderLine } from '../interfaces/boulder-line';
 @Component({
   selector: 'app-daone-render-test',
   imports: [
-    CommonModule,
     KeyboardShortcutsModule
   ],
   templateUrl: './daone-render-test.component.html',
@@ -24,7 +23,7 @@ import { BoulderLine } from '../interfaces/boulder-line';
 })
 export class DaoneRenderTestComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize', ['$event']) public onResize(): void {
+  @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
 
       const canvasSizes = {

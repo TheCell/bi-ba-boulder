@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlocDto } from '@api/index';
@@ -6,7 +6,6 @@ import { BlocDto } from '@api/index';
 @Component({
   selector: 'app-sector',
   imports: [
-    CommonModule,
     RouterLink
   ],
   templateUrl: './sector.component.html',
