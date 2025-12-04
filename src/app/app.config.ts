@@ -2,10 +2,10 @@ import { ApplicationConfig, ErrorHandler, Provider, provideZoneChangeDetection }
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch } from '@angular/common/http';
-import { ApiModule, Configuration, ConfigurationParameters } from './api';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { Configuration, ConfigurationParameters } from './api';
 import { environment } from '../environments/environment';
-import { ErrorHandlerService } from './core/error/error-handler.service';
+import { errorHandlerInterceptor } from './core/interceptors/error-handler-interceptor';
 
 function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -17,8 +17,7 @@ function apiConfigFactory(): Configuration {
 
 const configurationProvider: Provider = {
   provide: Configuration,
-  useFactory: apiConfigFactory,
-  // (new Configuration()),
+  useFactory: apiConfigFactory
 };
 
 export const appConfig: ApplicationConfig = {
@@ -28,8 +27,8 @@ export const appConfig: ApplicationConfig = {
     // provideRouter(routes, withDebugTracing()),
     provideRouter(routes),
     provideHttpClient(
-      withFetch()
-    ),
-    { provide: ErrorHandler, useClass: ErrorHandlerService }
+      withFetch(),
+      withInterceptors([errorHandlerInterceptor])
+    )
   ]
 };
