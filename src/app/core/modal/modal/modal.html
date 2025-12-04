@@ -8,7 +8,7 @@
                 <div class="permission-modal">
                     <h1>Discard changes?</h1>
                     <div class="permission-action">
-                        <button class="button" (click)="onPermissionToCloseDenied()">No</button>
+                        <button class="button primary" #noButton (click)="onPermissionToCloseDenied()">No</button>
                         <button class="button" (click)="onPermissionToCloseGranted()">Yes</button>
                     </div>
                 </div>

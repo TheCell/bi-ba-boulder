@@ -61,6 +61,26 @@ input.ng-invalid.ng-touched {
   min-width: 70px;
 }
 
+.button.primary {
+  background-color: color-mix(in srgb, $dark 0%, $primary 100%);
+}
+
+.button.secondary {
+  background-color: color-mix(in srgb, $dark 0%, $secondary 100%);
+}
+
+.button.success {
+  background-color: color-mix(in srgb, $dark 0%, $success 100%);
+}
+
+.button.warning {
+  background-color: color-mix(in srgb, $dark 0%, $warning 100%);
+}
+
+.button.danger {
+  background-color: color-mix(in srgb, $dark 0%, $danger 100%);
+}
+
 .button.disabled {
   background-color: $gray;
   cursor: default;

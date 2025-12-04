@@ -10,7 +10,8 @@ import { NgClass } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Modal implements OnInit, OnDestroy {
-  @ViewChild('dynamicContent', { read: ViewContainerRef }) dynamicContent!: ViewContainerRef;
+  @ViewChild('dynamicContent', { read: ViewContainerRef }) public dynamicContent!: ViewContainerRef;
+  @ViewChild('noButton') public noButton!: ElementRef<HTMLElement>;
   public isSmall = input<boolean>(false);
 
   public id: string = 'modal'.appendUniqueId();
@@ -57,6 +58,9 @@ export class Modal implements OnInit, OnDestroy {
   public close(): void {
     if (this.componentRef?.instance.canCloseWithoutPermission === false) {
       this.showAskForPermissionToClose = true;
+      setTimeout(() => {
+        this.noButton.nativeElement.focus();
+      });
       return;
     }
     this.closeModal();
