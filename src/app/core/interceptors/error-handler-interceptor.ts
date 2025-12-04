@@ -17,14 +17,12 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
           const title = `Error: ${err.status} (${err.statusText})`;
           let message = '';
           if (err.error) {
-            if (typeof err.error === 'string') {
-              message = message.concat(`${err.error}`);
-            } else if (typeof err.error.error === 'string') {
+            if (typeof err.error.error === 'string') {
               message = message.concat(`${err.error.error}`);
             } else if (err.error && typeof err.error.message === 'string') {
               message = message.concat(`${err.error.message}`);
             } else {
-              message = message.concat(`${JSON.stringify(err.error)}`);
+              message = 'An error occurred while processing your request.';
             }
           }
 

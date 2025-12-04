@@ -63,8 +63,8 @@ export class RegistrationDialogComponent implements IStopClosing, OnDestroy {
     this.authService.postRegister(postRegisterRequest).subscribe({
       next: () => {
         this.isLoading = false;
+        this.registrationForm.reset();
         this.modalService.close();
-        this.registrationForm.enable();
         this.toastService.showSuccess('Registration Successful', 'You have successfully registered. Please check your email to verify your account.');
       },
       error: () => {
