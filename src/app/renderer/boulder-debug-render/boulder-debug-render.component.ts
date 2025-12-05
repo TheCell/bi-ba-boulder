@@ -1,4 +1,3 @@
-
 import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as THREE from 'three';
@@ -17,14 +16,7 @@ import { SpraywallService, SpraywallProblemDto } from '@api/index';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { downloadSpraywallProblemImage, getImageDataFromTexture } from '../common/util';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from '../common/spraywall-hold-types';
-
-interface ColorAndIndex {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-  index: number;
-}
+import { ColorAndIndex } from '../common/spraywall-color-and-index';
 
 interface ITempForm {
   tempPsw: FormControl<string>;
@@ -42,7 +34,7 @@ interface ITempForm {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
-  private spraywallService = inject(SpraywallService);
+  private spraywallService = inject(SpraywallService); // na
   private el: ElementRef = inject(ElementRef);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
@@ -569,20 +561,6 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
     this.scene.add( ...this.vertexNormalsHelpers );
   }
-
-  private dumpObject(obj: THREE.Group<THREE.Object3DEventMap>, lines: string[] = [], isLast = true, prefix = '') {
-    const localPrefix = isLast ? '└─' : '├─';
-    lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
-    const newPrefix = prefix + (isLast ? '  ' : '│ ');
-    const lastNdx = obj.children.length - 1;
-    obj.children.forEach((child, ndx) => {
-      const isLast = ndx === lastNdx;
-      this.dumpObject(child as THREE.Group<THREE.Object3DEventMap>, lines, isLast, newPrefix);
-    });
-    return lines;
-  }
-
-
 
   private sampleColorFromImageData(imageData: THREE.DataTextureImageData, u: number, v: number): ColorAndIndex {
     const { data, width, height } = imageData;

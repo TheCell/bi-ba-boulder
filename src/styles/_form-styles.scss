@@ -1,7 +1,7 @@
 @use 'variables' as *;
 
 input, select, textarea {
-  all: unset;
+  all: unset; // todo
   color: $fontColor;
   border-bottom: 1px solid $lightDark;
   width: calc(100% - 10px);
@@ -11,8 +11,12 @@ input {
   padding: 4px 5px;
 }
 
-// .form-input {
-// }
+input[type="radio"] {
+  border: none;
+  padding: 5px; // todo
+  padding: 0;
+  cursor: pointer;
+}
 
 .form-group {
   padding-top: 20px;
@@ -20,7 +24,38 @@ input {
   margin-bottom: 20px;
 }
 
-.form-label {
+.form-radio {
+  // width: 100%;
+  height: 28px;
+}
+
+.form-radio input:focus {
+  background-color: color-mix(in srgb, $dark 100%, $primary 100%);
+
+  // display: inline-block;
+}
+
+
+// a:hover, a:focus, .button:hover, .button:focus {
+//   background-color: color-mix(in srgb, $dark 100%, $primary 50%);
+// }
+
+// a:active, .button:active, .button:active {
+//   background-color: color-mix(in srgb, $dark 100%, $primary 100%);
+// }
+.radio-option:has(.selected) {
+  background-color: color-mix(in srgb, $dark 100%, $primary 50%);
+}
+
+.radio-option:hover, .radio-option:focus {
+  background-color: color-mix(in srgb, $dark 100%, $primary 100%);
+}
+
+.radio-option:active {
+  background-color: $primary;
+}
+
+.group-label {
   // display: block;
   position: absolute;
   top: 23px;
@@ -31,20 +66,62 @@ input {
   // -webkit-transition: 0.25s ease;
 }
 
-input:not(:placeholder-shown) + .form-label,
-input:focus + .form-label {
+.form-label {
+  position: relative;
+  padding: 1px;
+  top: 16px;
+  left: 1px;
+  color: $gray;
+  font-size: 11px;
+}
+
+.radio-label {
+  pointer-events: none;
+  position: relative;
+  top: -25px;
+  // left: 5px;
+}
+
+.radio-option {
+  display: inline-block;
+  min-width: 70px;
+  height: 26px;
+  text-align: center;
+  border-top: 1px solid $lightDark;
+  border-bottom: 1px solid $lightDark;
+  cursor: pointer;
+}
+
+.radio-option:first-child {
+  border-left: 1px solid $lightDark;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.radio-option:last-child {
+  border-right: 1px solid $lightDark;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.radio-option input {
+  width: 100%;
+  height: 100%;
+}
+
+input:not(:placeholder-shown) + .group-label,
+input:focus + .group-label {
   top: 1px;
   font-size: 11px;
   pointer-events: initial;
   left: 0px;
-  // background-color: green;
 }
 
-input.ng-invalid.ng-touched + .form-label {
+input.ng-invalid.ng-touched + .group-label {
   color: $danger;
 }
 
-input:focus + .form-label {
+input:focus + .group-label {
   color: $primary;
 }
 
@@ -99,7 +176,7 @@ input.disabled:hover {
   background-color: $gray;
 }
 
-// .form-group.disabled .form-label {
+// .form-group.disabled .group-label {
 //   color: $lightDark;
 // }
 

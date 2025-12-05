@@ -15,9 +15,9 @@ export function getImageDataFromTexture(texture: THREE.Texture<HTMLImageElement>
 
 export function downloadSpraywallProblemImage(texture: THREE.DataTexture): void {
   if (texture.isTexture && texture.image && texture.image.data) {
-    let canvas = document.createElement('canvas');
-    let context = canvas.getContext('2d')!;
-    let imgData = context.createImageData(texture.image.width, texture.image.height);
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d')!;
+    const imgData = context.createImageData(texture.image.width, texture.image.height);
     canvas.width = texture.image.width;
     canvas.height = texture.image.height;
 
@@ -30,7 +30,7 @@ export function downloadSpraywallProblemImage(texture: THREE.DataTexture): void 
 
     context.putImageData(imgData, 0, 0);
 
-    let img = new Image();
+    const img = new Image();
     img.src = canvas.toDataURL('image/png');
     const link = document.createElement('a');
     link.href = img.src;
@@ -38,4 +38,16 @@ export function downloadSpraywallProblemImage(texture: THREE.DataTexture): void 
     link.click();
     URL.revokeObjectURL(link.href);
   }
+}
+
+export function dumpObject(obj: THREE.Group<THREE.Object3DEventMap>, lines: string[] = [], isLast = true, prefix = '') {
+  const localPrefix = isLast ? '└─' : '├─';
+  lines.push(`${prefix}${prefix ? localPrefix : ''}${obj.name || '*no-name*'} [${obj.type}]`);
+  const newPrefix = prefix + (isLast ? '  ' : '│ ');
+  const lastNdx = obj.children.length - 1;
+  obj.children.forEach((child, ndx) => {
+    const isLast = ndx === lastNdx;
+    dumpObject(child as THREE.Group<THREE.Object3DEventMap>, lines, isLast, newPrefix);
+  });
+  return lines;
 }

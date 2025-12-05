@@ -1,45 +1,101 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { BoulderRenderComponent } from 'src/app/renderer/boulder-render/boulder-render.component';
 import { LoadingImageComponent } from 'src/app/common/loading-image/loading-image.component';
-import { SpraywallProblemDto, SpraywallService } from '@api/index';
+import { SpraywallService } from '@api/index';
 import { BoulderLoaderService } from 'src/app/background-loading/boulder-loader.service';
+import { SpraywallEditorRenderer } from 'src/app/renderer/spraywall-editor-renderer/spraywall-editor-renderer';
+import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';
+import * as THREE from 'three';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
+import { NgClass } from '@angular/common';
+import { Subject } from 'rxjs';
+
+interface iHoldColorForm { 
+    spraywallHoldType: SpraywallHoldType;
+}
 
 @Component({
   selector: 'app-spraywall-editor',
-  imports: [LoadingImageComponent, BoulderRenderComponent],
+  imports: [LoadingImageComponent, SpraywallEditorRenderer, FormsModule, ReactiveFormsModule, NgClass],
   templateUrl: './spraywall-editor.html',
   styleUrl: './spraywall-editor.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class SpraywallEditor implements OnInit {
+  private _fb = inject(NonNullableFormBuilder);
   private spraywallService = inject(SpraywallService);
-  private boulderLoaderService = inject(BoulderLoaderService)
+  private boulderLoaderService = inject(BoulderLoaderService);
+
+  public colorForm = this._fb.group<iHoldColorForm>({
+    spraywallHoldType: (SpraywallHoldType.start),
+  });
+  public colorFormId = ''.appendUniqueId();
 
   public currentRawModel?: ArrayBuffer;
+  public currentHighlightUv?: THREE.Texture<HTMLImageElement>;
+  public currentHoldColor: THREE.Color = null!;
+  public resetSignal: Subject<void> = new Subject<void>();
+
   public spraywallId = '';
-  public selectedProblem?: SpraywallProblemDto = undefined;
+  // public selectedProblem?: SpraywallProblemDto = undefined;
+  public holdColorOptions: TypeAndColor[] = holdColorOptions;
+  public currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
+  
+  public constructor() {
+    this.currentHoldColor = this.holdColorOptions[0].color;
+
+    this.colorForm.controls.spraywallHoldType.valueChanges.subscribe({
+      next: (value) => {
+        console.log(value);
+        this.currentHoldColor = holdColorOptions[value - 1].color;
+      }
+    });
+
+    // this.colorForm.controls.spraywallHoldType.setValue(this.currentHoldColor);
+  }
 
   public ngOnInit() {
-    console.log('temp');
-    
-    // this.boulderLoaderService.loadTestSpraywall3().subscribe({
-    //   next: (data: ArrayBuffer) => {
-    //     this.currentRawModel = data;
-    //   }
-    // });
+    // todo cache when switching from spraywall
+    this.boulderLoaderService.loadTestSpraywall3().subscribe({
+      next: (data: ArrayBuffer) => {
+        this.currentRawModel = data;
+      }
+    });
 
-    // this.spraywallService.getProblems(this.spraywallId).subscribe({
-    //   next: (problems: SpraywallProblemDto[]) => {
-    //     this.listOfProblems = problems;
-    //   }
-    // });
+    const todo = './images/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
+    this.loadCustomUv(todo);
   }
   
   // public onSelectedProblem(problem: SpraywallProblemDto): void {
   //   this.selectedProblem = problem;
   // }
 
-  public onResetSelection(): void {
-    this.selectedProblem = undefined;
+  // public onResetSelection(): void {
+  //   this.selectedProblem = undefined;
+  // }
+  
+  public enumName(type: SpraywallHoldType): string {
+    const enumNames = Object.keys(SpraywallHoldType).filter(key => isNaN(Number(key)));
+    return enumNames[type];
+  }
+
+  public onHoldColorChange(event: EventTarget | null): void {
+    const selectElement = event as HTMLSelectElement;
+    const selectedColorType = parseInt(selectElement.value);
+    const selectedColorOption = holdColorOptions.find(option => option.type === selectedColorType);
+    if (selectedColorOption) {
+      this.currentHoldColor = selectedColorOption.color;
+    }
+  }
+
+  private loadCustomUv(uvPath: string): void {
+    const loader = new THREE.TextureLoader();
+    loader.load(uvPath, (texture: THREE.Texture<HTMLImageElement>) => {
+      texture.flipY = false;
+      texture.needsUpdate = true;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
+      this.currentHighlightUv = texture;
+    });
   }
 }

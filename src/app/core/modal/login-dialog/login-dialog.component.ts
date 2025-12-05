@@ -8,6 +8,7 @@ import { Icon } from '../../icon/icon';
 import { ToastService } from '../../toast-container/toast.service';
 import { ModalService } from '../modal.service';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface IloginForm extends PostAppAuthLoginRequest { }
 
 @Component({
@@ -23,7 +24,7 @@ export class LoginDialogComponent implements IStopClosing, OnDestroy {
   private toastService = inject(ToastService);
   private modalService = inject(ModalService);
 
-  public canCloseWithoutPermission: boolean = true;
+  public canCloseWithoutPermission = true;
   public isLoading = false;
   public loginForm = this._fb.group<IloginForm>({
     email: (''),
