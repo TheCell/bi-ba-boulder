@@ -1,0 +1,13 @@
+-- Doctrine Migration File Generated on 2025-12-06 12:39:35
+
+-- Version DoctrineMigrations\Version20251206113517
+CREATE TABLE bookmark (id BINARY(16) NOT NULL COMMENT '(DC2Type:uuid)', user_id BINARY(16) NOT NULL COMMENT '(DC2Type:uuid)', is_project TINYINT(1) NOT NULL, is_favourite TINYINT(1) NOT NULL, INDEX IDX_DA62921DA76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+CREATE TABLE boulder_log (id BINARY(16) NOT NULL COMMENT '(DC2Type:uuid)', user_id BINARY(16) NOT NULL COMMENT '(DC2Type:uuid)', spraywall_problem_id BINARY(16) DEFAULT NULL COMMENT '(DC2Type:uuid)', is_sent TINYINT(1) NOT NULL, is_project TINYINT(1) NOT NULL, rating INT DEFAULT NULL, font_grade VARCHAR(255) DEFAULT NULL, INDEX IDX_39611915A76ED395 (user_id), INDEX IDX_39611915B01CA7DF (spraywall_problem_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+CREATE TABLE log_entry (id BINARY(16) NOT NULL COMMENT '(DC2Type:uuid)', boulder_log_id BINARY(16) DEFAULT NULL COMMENT '(DC2Type:uuid)', date DATETIME NOT NULL, is_send TINYINT(1) NOT NULL, is_attempt TINYINT(1) NOT NULL, INDEX IDX_B5F762DDD195C44 (boulder_log_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
+ALTER TABLE bookmark ADD CONSTRAINT FK_DA62921DA76ED395 FOREIGN KEY (user_id) REFERENCES user (id);
+ALTER TABLE boulder_log ADD CONSTRAINT FK_39611915A76ED395 FOREIGN KEY (user_id) REFERENCES user (id);
+ALTER TABLE boulder_log ADD CONSTRAINT FK_39611915B01CA7DF FOREIGN KEY (spraywall_problem_id) REFERENCES spraywall_problem (id);
+ALTER TABLE log_entry ADD CONSTRAINT FK_B5F762DDD195C44 FOREIGN KEY (boulder_log_id) REFERENCES boulder_log (id);
+ALTER TABLE spraywall_problem ADD created_by_id BINARY(16) NOT NULL COMMENT '(DC2Type:uuid)', ADD font_grade VARCHAR(255) DEFAULT NULL, ADD created_date DATETIME NOT NULL;
+ALTER TABLE spraywall_problem ADD CONSTRAINT FK_D547E14CB03A8386 FOREIGN KEY (created_by_id) REFERENCES user (id);
+CREATE INDEX IDX_D547E14CB03A8386 ON spraywall_problem (created_by_id);

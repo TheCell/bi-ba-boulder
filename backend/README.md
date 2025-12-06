@@ -41,7 +41,7 @@ I use composer on the server to install symfony there
 Get all CLI commands: `symfony console list`   
 
 ## Create
-Binary 16 bit Guids: [https://robobunny.com/cgi-bin/guid](https://robobunny.com/cgi-bin/guid)   
+Manually generate 16 bit binary Guids: [https://robobunny.com/cgi-bin/guid](https://robobunny.com/cgi-bin/guid)   
 `symfony console make:entity _entityname_` // Create a new Entity   
 `symfony console make:migration` // Create a migration   
 `symfony console make:controller BlocsController` // Create a Controller    
