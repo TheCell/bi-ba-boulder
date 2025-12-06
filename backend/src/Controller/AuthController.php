@@ -25,6 +25,7 @@ use Symfony\Component\Security\Http\Event\LogoutEvent;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use App\Security\EmailVerifier;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api', name: '')]
 #[OA\Tag(name: "Auth")]
@@ -207,6 +208,7 @@ final class AuthController extends AbstractController
     }
 
     #[Route('/profile', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     #[OA\Response(
         response: Response::HTTP_OK,
         description: 'Returns the user profile',

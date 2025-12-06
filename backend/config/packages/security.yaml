@@ -17,10 +17,10 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
-            pattern: ^/api
+
+        login:
+            pattern: ^/api/login_check$
             stateless: true
-            jwt: ~
             provider: app_user_provider
             json_login:
                 check_path: /api/login_check
@@ -28,9 +28,21 @@ security:
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
+            
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS  }
+        # - { path: ^/api/profile, roles: IS_AUTHENTICATED_FULLY }
+        # - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        # - { path: ^/api, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api, roles: PUBLIC_ACCESS  } # looks like this is needed to allow access to other endpoints, otherwise 403
         # - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         # - { path: ^/api/login, roles: PUBLIC_ACCESS }
         # - { path: ^/api/admin, roles: ROLE_ADMIN }

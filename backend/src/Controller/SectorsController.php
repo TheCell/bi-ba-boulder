@@ -22,8 +22,6 @@ class SectorsController extends AbstractController
         $this->sectorRepository = $sectorRepository;
     }
 
-
-
     #[Route('', name: 'sectors', methods: ['GET'])]
     #[OA\Response(
         response: Response::HTTP_OK,
