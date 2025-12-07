@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { LoadingImageComponent } from 'src/app/common/loading-image/loading-image.component';
-import { SpraywallService } from '@api/index';
+import { SpraywallsService } from '@api/index';
 import { BoulderLoaderService } from 'src/app/background-loading/boulder-loader.service';
 import { SpraywallEditorRenderer } from 'src/app/renderer/spraywall-editor-renderer/spraywall-editor-renderer';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';
@@ -9,6 +9,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { Subject } from 'rxjs';
+import { Modal } from 'src/app/core/modal/modal/modal';
+import { ModalService } from 'src/app/core/modal/modal.service';
+import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
 
 interface iHoldColorForm { 
     spraywallHoldType: SpraywallHoldType;
@@ -16,14 +19,17 @@ interface iHoldColorForm {
 
 @Component({
   selector: 'app-spraywall-editor',
-  imports: [LoadingImageComponent, SpraywallEditorRenderer, FormsModule, ReactiveFormsModule, NgClass],
+  imports: [LoadingImageComponent, SpraywallEditorRenderer, FormsModule, ReactiveFormsModule, NgClass, Modal],
   templateUrl: './spraywall-editor.html',
   styleUrl: './spraywall-editor.scss',
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class SpraywallEditor implements OnInit {
+  @ViewChild('modal') private modal!: Modal;
+
+  private modalService = inject(ModalService);
   private _fb = inject(NonNullableFormBuilder);
-  private spraywallService = inject(SpraywallService);
+  private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService);
 
   public colorForm = this._fb.group<iHoldColorForm>({
@@ -65,14 +71,10 @@ export class SpraywallEditor implements OnInit {
     const todo = './images/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
     this.loadCustomUv(todo);
   }
-  
-  // public onSelectedProblem(problem: SpraywallProblemDto): void {
-  //   this.selectedProblem = problem;
-  // }
 
-  // public onResetSelection(): void {
-  //   this.selectedProblem = undefined;
-  // }
+  public openSaveModal(): void {
+    this.modalService.open(this.modal.id, SpraywallSaveDialog);
+  }
   
   public enumName(type: SpraywallHoldType): string {
     const enumNames = Object.keys(SpraywallHoldType).filter(key => isNaN(Number(key)));

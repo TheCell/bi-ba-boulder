@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\User;
 use App\DTO\ErrorDto;
 use App\Entity\SpraywallProblem;
+use App\DTO\SpraywallDto;
 use App\DTO\SpraywallProblemDto;
+use App\Entity\Enum\FontGrade;
 use App\Repository\SpraywallRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use App\Repository\SpraywallProblemRepository;
@@ -21,8 +23,8 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/api/spraywall', name: '')]
-#[OA\Tag(name: "Spraywall")]
+#[Route('/api/spraywalls', name: '')]
+#[OA\Tag(name: "Spraywalls")]
 final class SpraywallController extends AbstractController
 {
     private $spraywallProblemRepository;
@@ -34,6 +36,31 @@ final class SpraywallController extends AbstractController
         $this->spraywallProblemRepository = $spraywallProblemRepository;
         $this->spraywallRepository = $spraywallRepository;
         $this->filesystem = new Filesystem();
+    }
+
+    #[Route('', name: 'spraywalls', methods: ['GET'])]
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Returns a spraywall problem',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
+        )
+    )]
+    public function getSpraywalls(): JsonResponse
+    {
+        $spraywalls = $this->spraywallRepository->findAll();
+
+        $spraywallsDto = [];
+        foreach ($spraywalls as $spraywall) {
+            $spraywallsDto[] = new SpraywallDto(
+            $spraywall->getId(),
+            $spraywall->getName(),
+            $spraywall->getDescription()
+          );
+        }
+        
+        return $this->json($spraywallsDto, Response::HTTP_OK);
     }
 
     #[Route('/{id}/problems/{problemId}', name: 'problem', methods: ['GET'])]
@@ -110,10 +137,11 @@ final class SpraywallController extends AbstractController
                   description: 'PNG image as base64 string (format: data:image/png;base64,<base64-data>)'
               ),
               new OA\Property(
-                  property: 'tempPwd',
+                  property: 'fontGrade',
                   type: 'string',
-                  description: 'Temporary password for authentication'
-              ),
+                  description: 'Font grade of the spraywall problem',
+                  nullable: true
+              )
           ],
           required: ['name', 'image', 'tempPwd']
       )
@@ -165,21 +193,7 @@ final class SpraywallController extends AbstractController
             ]
         )
     )]
-    #[OA\Response(
-        response: Response::HTTP_UNAUTHORIZED,
-        description: 'Unauthorized - invalid temporary password',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(
-                    property: 'error',
-                    type: 'string',
-                    description: 'Error message'
-                )
-            ]
-        )
-    )]
-    public function createProblem(Uuid $id, Request $request): JsonResponse
+    public function createProblem(Uuid $id, Request $request, #[CurrentUser] ?User $currentUser): JsonResponse
     {
         $spraywall = $this->spraywallRepository->findOneBy(['id' => $id]);
         if (!$spraywall) {
@@ -214,9 +228,19 @@ final class SpraywallController extends AbstractController
         $spraywallProblem = new SpraywallProblem();
         $spraywallProblem->setName(trim($data['name']));
         $spraywallProblem->setSpraywall($spraywall);
+        $spraywallProblem->setCreatedDate(new \DateTime());
+        $spraywallProblem->setCreatedBy($currentUser);
         
         if (isset($data['description'])) {
             $spraywallProblem->setDescription($data['description']);
+        }
+
+        if (isset($data['fontGrade'])) {
+            $grade = FontGrade::getEnumByName($data['fontGrade']);
+            if ($grade === null) {
+                return $this->json(new ErrorDto('Invalid font grade value. Could not find matching enum for ' . $data['fontGrade'], null), Response::HTTP_BAD_REQUEST);
+            }
+            $spraywallProblem->setFontGrade($grade);
         }
 
         // Save to database first to get the ID

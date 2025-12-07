@@ -33,4 +33,15 @@ enum FontGrade: string
     case NINE_B_PLUS = '9B+';
     case NINE_C = '9C';
     case NINE_C_PLUS = '9C+';
+
+    public static function getEnumByName(string $name): ?FontGrade
+    {
+        foreach (FontGrade::cases() as $case) {
+            if (strcasecmp($case->value, $name) === 0) {
+                return $case;
+            }
+        }
+
+        return null;
+    }
 }

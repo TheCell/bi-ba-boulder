@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { AuthService, PostRegisterRequest } from '@api/index';
 import { ModalService } from '../modal.service';
@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { Icon } from '../../icon/icon';
 import { ToastService } from '../../toast-container/toast.service';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface IRegistrationForm extends PostRegisterRequest { }
 
 @Component({
@@ -23,7 +24,7 @@ export class RegistrationDialogComponent implements IStopClosing, OnDestroy {
   private modalService = inject(ModalService);
   private toastService = inject(ToastService);
   
-  public canCloseWithoutPermission: boolean = true;
+  public canCloseWithoutPermission = true;
   public isLoading = false;
   public registrationForm = this._fb.group<IRegistrationForm>({
     username: '',

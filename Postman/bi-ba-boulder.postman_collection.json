@@ -130,7 +130,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"mymail@test.ch\",\r\n    \"password\": \"my-super-duper-password\"\r\n}",
+							"raw": "{\r\n    \"email\": \"example@test.ch\",\r\n    \"password\": \"example@test.ch\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -225,7 +225,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"mymail@test.ch\",\r\n    \"password\": \"my new fancy pw\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -278,17 +278,49 @@
 			"name": "SpraywallController",
 			"item": [
 				{
-					"name": "spraywall/id/problems (Bimano wall)",
+					"name": "spraywalls",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData.length > 0) {\r",
+									"    pm.collectionVariables.set(\"spraywall-id\", jsonData[0].id);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseurl}}spraywall/1c99b5e4-c854-11f0-9457-71a4df1b7093/problems",
+							"raw": "{{baseurl}}spraywalls",
 							"host": [
-								"{{baseurl}}spraywall"
+								"{{baseurl}}spraywalls"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "spraywall/id/problems (Bimano wall) Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}spraywalls/{{spraywall-id}}/problems",
+							"host": [
+								"{{baseurl}}spraywalls"
 							],
 							"path": [
-								"1c99b5e4-c854-11f0-9457-71a4df1b7093",
+								"{{spraywall-id}}",
 								"problems"
 							]
 						}
@@ -319,7 +351,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"my 3 request route\",\r\n    \"description\": \"it should work with 24 bit\",\r\n    \"image\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAADwElEQVR4AeydMU4cQRBFRz6BMxLfwLcgJiZ0wBU4B1cgcEhM7Fv4BiRk3AB7V2qxjDSaZreq+1fVk4BhZnqqq95/GrQR35Zlee/6frzvW3dS7/b59fjM28v1+99fy/vh2LXXSQ3Wd+ZzJrODAP8Zd3zdPXQs+rzk6ebqeOH7jz/Lz9/LcjgeL/BDhkC/ADIt04glAQSwpBmwFgIEDM2yZQSwpBmwFgIEDM2yZQSwpBmoVmsVARqJokcEKBp8GxsBGomiRwQoGnwbGwEaiaJHBCgafBsbARqJokcEKBb8elwEWBMpdo4AxQJfj4sAayLFzhGgWODrcRFgTaTYOQIUC3w9LgKsiRQ7R4AigW+NiQBbZIpcR4AiQW+NiQBbZIpcR4AiQW+NiQBbZIpcR4AiQW+NiQBbZIpcR4DkQe+NhwB7hJLfR4DkAe+NhwB7hJLfR4DkAe+NhwB7hJLfR4DkAe+NhwB7hJLfR4CkAfeOhQC9pJKuQ4CkwfaOhQC9pJKuQ4CkwfaOhQC9pJKuQ4CkwfaOhQC9pJKuQ4BkwX51HAT4KrFk6xFAINC3l+tpXSDANPQfG8/8RxoI8JFDyd9SCjDzlRrNopQCzHylIkA0AsX7TfkGqJjpuTMjwLnkkjyHAEmCPHcMBDiXXJLnEGAVZLWPkFMEaJDbcZXB1NNqHyGnCNASrga7za10nCIAwesoMEUAnfF1O+n983jpBAhwKUGn50e9JWMK8HjvhL1e2ZgC3D3YJIVIS0wBbOJfFiuRrPqZUKe2ABOAq22JAGqJDO4HAQYDV9sOAdQS6ezHahkCWJEMWgcBggZn1TYCWJEMWgcBggZn1TYCWJEMWgcBggZn1TYCWJEMWgcBggVn3S4CWBMNVg8BggVm3S4CWBMNVg8BggVm3S4CWBMNVg8BggVm3S4CWBMNVg8BggTm1SYCeJENUhcBggTl1SYCeJENUhcBggTl1SYCeJENUhcBggTl1SYCeJENUhcBxIPybg8BvAmL10cA8YC820MAb8Li9RFAPCDv9hDAm7B4fQQQD8i7PQTwJixeHwFEAxrVFgKMIi26DwKIBjOqLQQYRVp0HwQQDWZUWwgwirToPgggGsyothBgFGnRfRBALJjR7SDAaOJi+yGAWCCj20GA0cTF9kMAsUBGt4MAo4mL7YcAYoGMbgcBRhPv2O/2+bVjlc0SBLDheHGV0wJPN1enp66/I4ArXv3iCKCfkWuHCOCKV784Auhn5NohArji1S+OAPoZuXaIAK549YsjwOSMZm//DwAA//+rhugSAAAABklEQVQDAEBwpoEbZfPaAAAAAElFTkSuQmCC\"\r\n}",
+							"raw": "{\r\n    \"name\": \"my route\",\r\n    \"description\": \"it should work with 24 bit\",\r\n    \"fontGrade\": \"6A\",\r\n    \"image\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAADwElEQVR4AeydMU4cQRBFRz6BMxLfwLcgJiZ0wBU4B1cgcEhM7Fv4BiRk3AB7V2qxjDSaZreq+1fVk4BhZnqqq95/GrQR35Zlee/6frzvW3dS7/b59fjM28v1+99fy/vh2LXXSQ3Wd+ZzJrODAP8Zd3zdPXQs+rzk6ebqeOH7jz/Lz9/LcjgeL/BDhkC/ADIt04glAQSwpBmwFgIEDM2yZQSwpBmwFgIEDM2yZQSwpBmoVmsVARqJokcEKBp8GxsBGomiRwQoGnwbGwEaiaJHBCgafBsbARqJokcEKBb8elwEWBMpdo4AxQJfj4sAayLFzhGgWODrcRFgTaTYOQIUC3w9LgKsiRQ7R4AigW+NiQBbZIpcR4AiQW+NiQBbZIpcR4AiQW+NiQBbZIpcR4AiQW+NiQBbZIpcR4DkQe+NhwB7hJLfR4DkAe+NhwB7hJLfR4DkAe+NhwB7hJLfR4DkAe+NhwB7hJLfR4CkAfeOhQC9pJKuQ4CkwfaOhQC9pJKuQ4CkwfaOhQC9pJKuQ4CkwfaOhQC9pJKuQ4BkwX51HAT4KrFk6xFAINC3l+tpXSDANPQfG8/8RxoI8JFDyd9SCjDzlRrNopQCzHylIkA0AsX7TfkGqJjpuTMjwLnkkjyHAEmCPHcMBDiXXJLnEGAVZLWPkFMEaJDbcZXB1NNqHyGnCNASrga7za10nCIAwesoMEUAnfF1O+n983jpBAhwKUGn50e9JWMK8HjvhL1e2ZgC3D3YJIVIS0wBbOJfFiuRrPqZUKe2ABOAq22JAGqJDO4HAQYDV9sOAdQS6ezHahkCWJEMWgcBggZn1TYCWJEMWgcBggZn1TYCWJEMWgcBggZn1TYCWJEMWgcBggVn3S4CWBMNVg8BggVm3S4CWBMNVg8BggVm3S4CWBMNVg8BggVm3S4CWBMNVg8BggTm1SYCeJENUhcBggTl1SYCeJENUhcBggTl1SYCeJENUhcBggTl1SYCeJENUhcBxIPybg8BvAmL10cA8YC820MAb8Li9RFAPCDv9hDAm7B4fQQQD8i7PQTwJixeHwFEAxrVFgKMIi26DwKIBjOqLQQYRVp0HwQQDWZUWwgwirToPgggGsyothBgFGnRfRBALJjR7SDAaOJi+yGAWCCj20GA0cTF9kMAsUBGt4MAo4mL7YcAYoGMbgcBRhPv2O/2+bVjlc0SBLDheHGV0wJPN1enp66/I4ArXv3iCKCfkWuHCOCKV784Auhn5NohArji1S+OAPoZuXaIAK549YsjwOSMZm//DwAA//+rhugSAAAABklEQVQDAEBwpoEbZfPaAAAAAElFTkSuQmCC\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -327,12 +359,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseurl}}spraywall/1c99b5e4-c854-11f0-9457-71a4df1b7093/problem",
+							"raw": "{{baseurl}}spraywalls/{{spraywall-id}}/problem",
 							"host": [
-								"{{baseurl}}spraywall"
+								"{{baseurl}}spraywalls"
 							],
 							"path": [
-								"1c99b5e4-c854-11f0-9457-71a4df1b7093",
+								"{{spraywall-id}}",
 								"problem"
 							]
 						}
@@ -367,9 +399,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseurl}}spraywall/1c99b5e4-c854-11f0-9457-71a4df1b7093/problem/{{current-problem}}",
+							"raw": "{{baseurl}}spraywalls/1c99b5e4-c854-11f0-9457-71a4df1b7093/problem/{{current-problem}}",
 							"host": [
-								"{{baseurl}}spraywall"
+								"{{baseurl}}spraywalls"
 							],
 							"path": [
 								"1c99b5e4-c854-11f0-9457-71a4df1b7093",
@@ -388,6 +420,9 @@
 				{
 					"name": "boulder-bloc daone",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -415,41 +450,69 @@
 			]
 		},
 		{
-			"name": "sectors",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseurl}}sectors",
-					"host": [
-						"{{baseurl}}sectors"
-					]
+			"name": "SectorsController",
+			"item": [
+				{
+					"name": "sectors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData.length > 0) {\r",
+									"    pm.collectionVariables.set(\"sector-id\", jsonData[0].id);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}sectors",
+							"host": [
+								"{{baseurl}}sectors"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "blocs",
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Origin",
-						"value": "http://localhost:4200",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "{{baseurl}}blocs/1",
-					"host": [
-						"{{baseurl}}blocs"
-					],
-					"path": [
-						"1"
-					]
+			"name": "BlocsController",
+			"item": [
+				{
+					"name": "blocs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:4200",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseurl}}blocs/{{sector-id}}",
+							"host": [
+								"{{baseurl}}blocs"
+							],
+							"path": [
+								"{{sector-id}}"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	],
 	"auth": {
@@ -506,6 +569,19 @@
 		{
 			"key": "current-problem",
 			"value": ""
+		},
+		{
+			"key": "spraywall-id",
+			"value": ""
+		},
+		{
+			"key": "sector-id",
+			"value": ""
+		},
+		{
+			"key": "bloc-id",
+			"value": "",
+			"type": "default"
 		}
 	]
 }

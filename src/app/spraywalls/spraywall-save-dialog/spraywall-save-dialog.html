@@ -1,0 +1,35 @@
+<h2>Save Spraywall Problem</h2>
+
+<form [formGroup]="saveForm" (ngSubmit)="onSubmit()"
+    [ngClass]="{'disabled': saveForm.disabled}">
+    <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.name.disabled}">
+        <input id="name" placeholder="" autocomplete="off" type="text" formControlName="name" />
+        <label for="name" class="group-label">name</label>
+    </div>
+
+    <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.description?.disabled}">
+        <input id="description" placeholder="" autocomplete="off" type="text" formControlName="description" />
+        <label for="description" class="group-label">description</label>
+    </div>
+
+    <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.description?.disabled}">
+        <select name="grade" id="grade">
+            <option value="4"></option>
+            <option value="5"></option>
+        </select>
+        <!-- <input id="description" placeholder="" autocomplete="off" type="text" formControlName="description" /> -->
+        <label for="description" class="group-label">Grade</label>
+    </div>
+    
+    <div class="form-group form-action">
+        <button type="submit" class="button"
+            [ngClass]="{'disabled': isLoading || saveForm.invalid || saveForm.disabled }"
+            [disabled]="isLoading || saveForm.invalid || saveForm.disabled">
+            @if (isLoading) {
+                <span class="loading-spinner"><app-icon></app-icon></span>
+            } @else {
+                Save
+            }
+        </button>
+    </div>
+</form>

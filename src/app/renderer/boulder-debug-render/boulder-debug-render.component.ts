@@ -12,7 +12,7 @@ import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import Stats from 'stats.js'
-import { SpraywallService, SpraywallProblemDto } from '@api/index';
+import { SpraywallsService, SpraywallProblemDto } from '@api/index';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { downloadSpraywallProblemImage, getImageDataFromTexture } from '../common/util';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from '../common/spraywall-hold-types';
@@ -34,7 +34,7 @@ interface ITempForm {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
-  private spraywallService = inject(SpraywallService); // na
+  private spraywallsService = inject(SpraywallsService); // na
   private el: ElementRef = inject(ElementRef);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
@@ -222,10 +222,10 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       }
 
       context.putImageData(imgData, 0, 0);
-      this.spraywallService.putCreate('1c99b5e4-c854-11f0-9457-71a4df1b7093', {
-        tempPwd: this.form.controls.tempPsw.value,
+      this.spraywallsService.putCreate('1c99b5e4-c854-11f0-9457-71a4df1b7093', {
         name: 'New Problem',
         description: 'Description of the new problem',
+        fontGrade: 'todo',
         image: canvas.toDataURL('image/png')
       }).subscribe({
         next: (response: SpraywallProblemDto) => {

@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
 
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
-import { SpraywallProblemDto, SpraywallService } from '@api/index';
+import { SpraywallProblemDto, SpraywallsService } from '@api/index';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
@@ -14,7 +14,7 @@ import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-it
   styleUrl: './spraywall.component.scss',
 })
 export class SpraywallComponent implements OnInit {
-  private spraywallService = inject(SpraywallService);
+  private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService)
 
   public currentRawModel?: ArrayBuffer;
@@ -35,7 +35,7 @@ export class SpraywallComponent implements OnInit {
       }
     });
 
-    this.spraywallService.getProblems(this.spraywallId).subscribe({
+    this.spraywallsService.getProblems(this.spraywallId).subscribe({
       next: (problems: SpraywallProblemDto[]) => {
         this.listOfProblems = problems;
       }

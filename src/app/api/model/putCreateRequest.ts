@@ -23,8 +23,8 @@ export interface PutCreateRequest {
      */
     image: string;
     /**
-     * Temporary password for authentication
+     * Font grade of the spraywall problem
      */
-    tempPwd: string;
+    fontGrade?: string | null;
 }
 

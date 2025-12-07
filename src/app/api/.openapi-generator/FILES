@@ -7,7 +7,7 @@ api/auth.service.ts
 api/bloc.service.ts
 api/line.service.ts
 api/sector.service.ts
-api/spraywall.service.ts
+api/spraywalls.service.ts
 api/user.service.ts
 configuration.ts
 encoder.ts

@@ -23,7 +23,6 @@
 
 .legend {
   grid-area: legend;
-  // background-image: linear-gradient(180deg, $black 0%, $dark 20%);
 }
 
 .actions {
@@ -38,15 +37,12 @@
   height: calc(100% - 2em);
   width: 100%;
   overflow-y: auto;
-  padding: 0px 15px 15px 15px; 
 }
 
 .action-button {
-  // cursor: pointer;
   display: inline-block;
   height: calc(100% - 6px);
   border: none;
-  // background-color: $secondary;
 }
 
 .action-button:hover, .action-button:focus {
@@ -59,4 +55,8 @@
 
 .li-item:nth-child(even) {
   background-color: rgba($light, 0.05);
+}
+
+.color-selection {
+  padding: 0px 15px 15px 15px; 
 }
