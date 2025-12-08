@@ -13,9 +13,37 @@
     </div>
 
     <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.description?.disabled}">
-        <select name="grade" id="grade">
-            <option value="4"></option>
-            <option value="5"></option>
+        <select name="grade" id="grade" placeholder="" formControlName="fontGrade">
+            <option [ngValue]="undefined" hidden></option>
+            <option>3</option>
+            <option>4</option>
+            <option>4+</option>
+            <option>5</option>
+            <option>5+</option>
+            <option>6A</option>
+            <option>6A+</option>
+            <option>6B</option>
+            <option>6B+</option>
+            <option>6C</option>
+            <option>6C+</option>
+            <option>7A</option>
+            <option>7A+</option>
+            <option>7B</option>
+            <option>7B+</option>
+            <option>7C</option>
+            <option>7C+</option>
+            <option>8A</option>
+            <option>8A+</option>
+            <option>8B</option>
+            <option>8B+</option>
+            <option>8C</option>
+            <option>8C+</option>
+            <option>9A</option>
+            <option>9A+</option>
+            <option>9B</option>
+            <option>9B+</option>
+            <option>9C</option>
+            <option>9C+</option>
         </select>
         <!-- <input id="description" placeholder="" autocomplete="off" type="text" formControlName="description" /> -->
         <label for="description" class="group-label">Grade</label>

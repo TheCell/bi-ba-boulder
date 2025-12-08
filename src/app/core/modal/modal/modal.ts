@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, input, OnDestroy, OnInit, Type, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, inject, input, OnDestroy, OnInit, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { ModalService } from '../modal.service';
 import { NgClass } from '@angular/common';
+import { iModal } from './modal.interface';
 
 @Component({
   selector: 'app-modal',
@@ -12,6 +13,9 @@ import { NgClass } from '@angular/common';
 export class Modal implements OnInit, OnDestroy {
   @ViewChild('dynamicContent', { read: ViewContainerRef }) public dynamicContent!: ViewContainerRef;
   @ViewChild('noButton') public noButton!: ElementRef<HTMLElement>;
+  
+  private modalService = inject(ModalService);
+  private elementRef = inject(ElementRef);
   public isSmall = input<boolean>(false);
 
   public id: string = 'modal'.appendUniqueId();
@@ -19,11 +23,9 @@ export class Modal implements OnInit, OnDestroy {
   public showAskForPermissionToClose = false;
 
   private element: HTMLElement;
-  private componentRef?: ComponentRef<any>;
+  private componentRef?: ComponentRef<iModal>;
 
-  public constructor(
-    private modalService: ModalService,
-    private elementRef: ElementRef) {
+  public constructor() {
       this.element = this.elementRef.nativeElement;
   }
 
@@ -49,10 +51,11 @@ export class Modal implements OnInit, OnDestroy {
     this.isOpen = true;
   }
 
-  public open<T>(component: Type<T>): void {
+  public open<T extends iModal>(component: Type<T>): iModal {
     this.dynamicContent.clear();
     this.componentRef = this.dynamicContent.createComponent(component);
     this.isOpen = true;
+    return this.componentRef.instance;
   }
 
   public close(): void {

@@ -7,7 +7,11 @@ input, select, textarea {
   width: calc(100% - 10px);
 }
 
-input {
+select {
+  background-color: $dark;
+}
+
+input, select {
   padding: 4px 5px;
 }
 
@@ -95,18 +99,22 @@ input[type="radio"] {
 }
 
 input:not(:placeholder-shown) + .group-label,
-input:focus + .group-label {
+input:focus + .group-label,
+select:not(:placeholder-shown) + .group-label,
+select:focus + .group-label {
   top: 1px;
   font-size: 11px;
   pointer-events: initial;
   left: 0px;
 }
 
-input.ng-invalid.ng-touched + .group-label {
+input.ng-invalid.ng-touched + .group-label,
+select.ng-invalid.ng-touched + .group-label {
   color: $danger;
 }
 
-input:focus + .group-label {
+input:focus + .group-label,
+select:focus + .group-label {
   color: $primary;
 }
 
@@ -165,11 +173,11 @@ input.disabled:hover {
 //   color: $lightDark;
 // }
 
-input:disabled {
+input:disabled, select:disabled {
   color: $gray;
 }
 
-input:disabled {
+input:disabled, select:disabled {
   // background-color: $black;
   background: repeating-linear-gradient(
     -55deg,

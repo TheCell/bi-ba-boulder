@@ -222,7 +222,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       }
 
       context.putImageData(imgData, 0, 0);
-      this.spraywallsService.putCreate('1c99b5e4-c854-11f0-9457-71a4df1b7093', {
+      this.spraywallsService.putCreate('e4b5991c-54c8-f011-9457-71a4df1b7093', {
         name: 'New Problem',
         description: 'Description of the new problem',
         fontGrade: 'todo',

@@ -3,6 +3,7 @@
     @if (currentRawModel) {
         <app-spraywall-editor-renderer
             class="render"
+            #renderer
             [rawModel]="currentRawModel"
             [highlightUv]="currentHighlightUv"
             [highlightColor]="currentHoldColor"

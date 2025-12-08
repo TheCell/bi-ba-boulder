@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Toast } from './toast/toast';
 import { IToast } from './toast/I-toast';
 import { IToastInternal } from './I-toast-internal';
 
@@ -11,9 +10,7 @@ import { IToastInternal } from './I-toast-internal';
 export class ToastService {
   public toasts: IToastInternal[] = [];
 
-  private standardDelay: number = 3000;
-
-  public constructor() { }
+  private standardDelay = 3000;
 
   public show(toast: IToast): void {
     const id = ''.appendUniqueId();

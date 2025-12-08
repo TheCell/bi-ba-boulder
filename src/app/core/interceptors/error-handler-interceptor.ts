@@ -17,19 +17,27 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
           const title = `Error: ${err.status} (${err.statusText})`;
           let message = '';
           if (err.error) {
-            if (typeof err.error.error === 'string') {
-              message = message.concat(`${err.error.error}`);
-            } else if (err.error && typeof err.error.message === 'string') {
-              message = message.concat(`${err.error.message}`);
+            const error = err.error;
+            if (typeof error.error === 'string') {
+              message = message.concat(`${error.error}`);
+            } else if (error && typeof error.message === 'string') {
+              message = message.concat(`${error.message}`);
             } else {
               message = 'An error occurred while processing your request.';
             }
 
-            // needs testing
-            if (err.error.code === 401 && err.error.message === 'Expired JWT Token') {
-              message = 'Logged you out.';
-              localStorage.removeItem('auth_token');
-            }
+            if (error.code === 401)
+            {
+              if (error.message.localeCompare('Expired JWT Token') === 0) {
+                message = 'Logged you out.';
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('auth_token_expiry');
+              }
+              else if (error.message.localeCompare('JWT Token not found') === 0) {
+                message = 'You are not logged in.';
+              }
+
+            }  
           }
 
           toastService.showDanger(title, message);

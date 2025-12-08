@@ -169,6 +169,28 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     // }
   }
   
+  public getRouteImage(): string | undefined {
+    if (this.highlightedHoldsTexture?.isTexture && this.highlightedHoldsTexture.image && this.highlightedHoldsTexture.image.data) {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d')!;
+      const imgData = context.createImageData(this.highlightedHoldsTexture.image.width, this.highlightedHoldsTexture.image.height);
+      canvas.width = this.highlightedHoldsTexture.image.width;
+      canvas.height = this.highlightedHoldsTexture.image.height;
+
+      for (let i = 0; i < this.highlightedHoldsTexture.image.data.length; i += 4) {
+        imgData.data[i] = this.highlightedHoldsTexture.image.data[i];
+        imgData.data[i + 1] = this.highlightedHoldsTexture.image.data[i + 1];
+        imgData.data[i + 2] = this.highlightedHoldsTexture.image.data[i + 2];
+        imgData.data[i + 3] = 255;
+      }
+
+      context.putImageData(imgData, 0, 0);
+      return canvas.toDataURL('image/png');
+    }
+
+    return undefined;
+  }
+  
   // todo
   private setupHighlightDebugTexture(texture: THREE.Texture<HTMLImageElement>) {
     // const loader = new THREE.TextureLoader();

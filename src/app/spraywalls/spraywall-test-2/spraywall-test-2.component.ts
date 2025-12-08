@@ -32,7 +32,7 @@ export class SpraywallTest2Component implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.spraywallsService.getProblems('1c99b5e4-c854-11f0-9457-71a4df1b7093').subscribe({
+    this.spraywallsService.getProblems('e4b5991c-54c8-f011-9457-71a4df1b7093').subscribe({
       next: (spraywallProblems: SpraywallProblemDto[]) => {
         this.spraywallProblems = spraywallProblems;
         this.changeDetectorRef.markForCheck();

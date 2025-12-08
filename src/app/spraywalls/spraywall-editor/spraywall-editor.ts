@@ -12,6 +12,8 @@ import { Subject } from 'rxjs';
 import { Modal } from 'src/app/core/modal/modal/modal';
 import { ModalService } from 'src/app/core/modal/modal.service';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
+import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
+import { ActivatedRoute } from '@angular/router';
 
 interface iHoldColorForm { 
     spraywallHoldType: SpraywallHoldType;
@@ -26,6 +28,7 @@ interface iHoldColorForm {
 })
 export class SpraywallEditor implements OnInit {
   @ViewChild('modal') private modal!: Modal;
+  @ViewChild('renderer') private renderer!: SpraywallEditorRenderer;
 
   private modalService = inject(ModalService);
   private _fb = inject(NonNullableFormBuilder);
@@ -48,6 +51,8 @@ export class SpraywallEditor implements OnInit {
   public currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   
   public constructor() {
+    const router = inject(ActivatedRoute);
+    this.spraywallId = router.snapshot.paramMap.get('id') ?? '';
     this.currentHoldColor = this.holdColorOptions[0].color;
 
     this.colorForm.controls.spraywallHoldType.valueChanges.subscribe({
@@ -73,7 +78,20 @@ export class SpraywallEditor implements OnInit {
   }
 
   public openSaveModal(): void {
-    this.modalService.open(this.modal.id, SpraywallSaveDialog);
+    // console.log(this.renderer.getRouteImage());
+    
+    const component = this.modalService.open(this.modal.id, SpraywallSaveDialog);
+    if (!component) {
+      throw new Error('Modal component not found');
+    }
+
+    const imageData = this.renderer.getRouteImage();
+    if (!imageData) {
+      throw new Error('No image data from renderer');
+    }
+
+    const dialogData: SpraywallSaveData = { imageData: imageData, spraywallId: this.spraywallId };
+    component.initialize!(dialogData);
   }
   
   public enumName(type: SpraywallHoldType): string {
