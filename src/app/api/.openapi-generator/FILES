@@ -20,9 +20,11 @@ model/lineDto.ts
 model/models.ts
 model/postAppAuthLoginRequest.ts
 model/postRegisterRequest.ts
+model/postSearchProblemsRequest.ts
 model/putCreateRequest.ts
 model/sectorDto.ts
 model/spraywallProblemDto.ts
+model/spraywallProblemSearchDto.ts
 model/tokenDto.ts
 model/userDto.ts
 param.ts

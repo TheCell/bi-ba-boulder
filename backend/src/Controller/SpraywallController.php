@@ -7,6 +7,7 @@ use App\DTO\ErrorDto;
 use App\Entity\SpraywallProblem;
 use App\DTO\SpraywallDto;
 use App\DTO\SpraywallProblemDto;
+use App\DTO\SpraywallProblemSearchDto;
 use App\Entity\Enum\FontGrade;
 use App\Repository\SpraywallRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
@@ -81,36 +82,119 @@ final class SpraywallController extends AbstractController
             $spraywallProblem->getId(),
             $spraywallProblem->getName(),
             $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-            $spraywallProblem->getDescription());
+            $spraywallProblem->getFontGrade()->GetName(),
+            $spraywallProblem->getCreatedBy()->getId(),
+            $spraywallProblem->getCreatedBy()->getUsername(),
+            $spraywallProblem->getCreatedDate(),
+            $spraywallProblem->getDescription()
+          );
 
         return $this->json($spraywallProblemDto, Response::HTTP_OK);
     }
 
-    #[Route('/{id}/problems', name: 'problems', methods: ['GET'])]
-    #[OA\Response(
-        response: Response::HTTP_OK,
-        description: 'Returns a list of problems',
+    // #[Route('/{id}/problems', name: 'problems', methods: ['GET'])]
+    // #[OA\Response(
+    //     response: Response::HTTP_OK,
+    //     description: 'Returns a list of problems',
+    //     content: new OA\JsonContent(
+    //         type: 'array',
+    //         items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
+    //     )
+    // )]
+    // public function getProblems(Uuid $id): JsonResponse
+    // {
+    //     $spraywallProblems = $this->spraywallProblemRepository->findBySpraywallId($id);
+
+    //     $exists = $this->filesystem->exists("spraywalls/{$id}");
+        
+    //     $spraywallProblemsDto = [];
+    //     foreach ($spraywallProblems as $spraywallProblem) {
+    //         $spraywallProblemsDto[] = new SpraywallProblemDto(
+    //         $spraywallProblem->getId(),
+    //         $spraywallProblem->getName(),
+    //         $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
+    //         $spraywallProblem->getFontGrade()->GetName(),
+    //         $spraywallProblem->getCreatedBy()->getId(),
+    //         $spraywallProblem->getCreatedBy()->getUsername(),
+    //         $spraywallProblem->getCreatedDate(),
+    //         $spraywallProblem->getDescription()
+    //       );
+    //     }
+    //     return $this->json($spraywallProblemsDto, Response::HTTP_OK);
+    // }
+    
+    #[Route('/{id}/problems', name: 'search_problems', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: false,
         content: new OA\JsonContent(
-            type: 'array',
-            items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'gradeMin', type: 'integer', description: 'min Font grade'),
+                new OA\Property(property: 'gradeMax', type: 'integer', description: 'max Font grade'),
+                new OA\Property(property: 'name', type: 'string', description: 'Problem name'),
+                new OA\Property(property: 'creator', type: 'string', description: 'Creator username or ID'),
+                new OA\Property(property: 'dateOrder', type: 'string', description: 'asc or desc')
+            ]
         )
     )]
-    public function getProblems(Uuid $id): JsonResponse
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Returns paginated spraywall problems',
+        content: new OA\JsonContent(ref: new Model(type: SpraywallProblemSearchDto::class))
+    )]
+    public function searchProblems(Request $request, Uuid $id): JsonResponse
     {
-        $spraywallProblems = $this->spraywallProblemRepository->findBySpraywallId($id);
+        $data = json_decode($request->getContent(), true) ?? [];
+        $gradeMin = $data['gradeMin'] ?? null;
+        $gradeMax = $data['gradeMax'] ?? null;
+        $name = $data['name'] ?? null;
+        $creator = $data['creator'] ?? null;
+        $dateOrder = $data['dateOrder'] ?? 'desc';
+        $page = isset($data['page']) ? max(1, (int)$data['page']) : 1;
+        $pageSize = 30;
 
-        $exists = $this->filesystem->exists("spraywalls/{$id}");
-        
-        $spraywallProblemsDto = [];
-        foreach ($spraywallProblems as $spraywallProblem) {
-            $spraywallProblemsDto[] = new SpraywallProblemDto(
-            $spraywallProblem->getId(),
-            $spraywallProblem->getName(),
-            $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-            $spraywallProblem->getDescription()
-          );
+        $criteria = [];
+        if ($gradeMin) {
+            $criteria['gradeMin'] = $gradeMin;
         }
-        return $this->json($spraywallProblemsDto, Response::HTTP_OK);
+        if ($gradeMax) {
+            $criteria['gradeMax'] = $gradeMax;
+        }
+        if ($name) {
+            $criteria['name'] = $name;
+        }
+        if ($creator) {
+            $criteria['createdBy'] = $creator;
+        }
+        if ($dateOrder) {
+            $criteria['dateOrder'] = $dateOrder;
+        }
+
+        $offset = ($page - 1) * $pageSize;
+        $filterByCriteria = $this->spraywallProblemRepository->filterByCriteria($id, $pageSize, $offset, $criteria);
+        list($problems, $totalCount) = $filterByCriteria;
+
+        $problemsDto = [];
+        foreach ($problems as $problem) {
+            $problemsDto[] = new SpraywallProblemDto(
+                $problem->getId(),
+                $problem->getName(),
+                $this->getSpraywallProblemImage($problem->getSpraywall()->getId(), $problem->getId()),
+                $problem->getFontGrade()->getValue(),
+                $problem->getCreatedBy()->getId(),
+                $problem->getCreatedBy()->getUsername(),
+                $problem->getCreatedDate(),
+                $problem->getDescription()
+            );
+        }
+
+        $problemSearchDto = new SpraywallProblemSearchDto(
+            totalCount: $totalCount,
+            currentPage: $page,
+            problems: $problemsDto
+        );
+
+        return $this->json($problemSearchDto, Response::HTTP_OK);
     }
 
     #[Route('/{id}/problem', name: 'create', methods: ['PUT'])]
@@ -138,12 +222,12 @@ final class SpraywallController extends AbstractController
               ),
               new OA\Property(
                   property: 'fontGrade',
-                  type: 'string',
+                  type: 'integer',
                   description: 'Font grade of the spraywall problem',
                   nullable: true
               )
           ],
-          required: ['name', 'image', 'tempPwd']
+          required: ['name', 'image', 'fontGrade']
       )
     )]
     #[OA\Response(
@@ -195,11 +279,11 @@ final class SpraywallController extends AbstractController
         }
 
         if (isset($data['fontGrade'])) {
-            $grade = FontGrade::getEnumByName($data['fontGrade']);
+            $grade = $data['fontGrade'];
             if ($grade === null) {
                 return $this->json(new ErrorDto('Invalid font grade value. Could not find matching enum for ' . $data['fontGrade'], null), Response::HTTP_BAD_REQUEST);
             }
-            $spraywallProblem->setFontGrade($grade);
+            $spraywallProblem->setFontGrade(FontGrade::tryFrom($grade));
         }
 
         // Save to database first to get the ID
@@ -224,7 +308,7 @@ final class SpraywallController extends AbstractController
         }
 
         // Return the created problem with 201 status
-        return $this->getProblem($id, $spraywallProblem->getId())->setStatusCode(201);
+        return $this->getProblem($id, $spraywallProblem->getId())->setStatusCode(Response::HTTP_CREATED);
     }
 
     #[Route('/{id}/problem/{problemId}', name: 'problem', methods: ['DELETE'])]

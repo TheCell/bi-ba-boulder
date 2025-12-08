@@ -15,35 +15,35 @@
     <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.description?.disabled}">
         <select name="grade" id="grade" placeholder="" formControlName="fontGrade">
             <option [ngValue]="undefined" hidden></option>
-            <option>3</option>
-            <option>4</option>
-            <option>4+</option>
-            <option>5</option>
-            <option>5+</option>
-            <option>6A</option>
-            <option>6A+</option>
-            <option>6B</option>
-            <option>6B+</option>
-            <option>6C</option>
-            <option>6C+</option>
-            <option>7A</option>
-            <option>7A+</option>
-            <option>7B</option>
-            <option>7B+</option>
-            <option>7C</option>
-            <option>7C+</option>
-            <option>8A</option>
-            <option>8A+</option>
-            <option>8B</option>
-            <option>8B+</option>
-            <option>8C</option>
-            <option>8C+</option>
-            <option>9A</option>
-            <option>9A+</option>
-            <option>9B</option>
-            <option>9B+</option>
-            <option>9C</option>
-            <option>9C+</option>
+            <option [ngValue]="7">3</option>
+            <option [ngValue]="10">4</option>
+            <option [ngValue]="11">4+</option>
+            <option [ngValue]="13">5</option>
+            <option [ngValue]="14">5+</option>
+            <option [ngValue]="16">6A</option>
+            <option [ngValue]="17">6A+</option>
+            <option [ngValue]="19">6B</option>
+            <option [ngValue]="20">6B+</option>
+            <option [ngValue]="22">6C</option>
+            <option [ngValue]="23">6C+</option>
+            <option [ngValue]="25">7A</option>
+            <option [ngValue]="26">7A+</option>
+            <option [ngValue]="28">7B</option>
+            <option [ngValue]="29">7B+</option>
+            <option [ngValue]="31">7C</option>
+            <option [ngValue]="32">7C+</option>
+            <option [ngValue]="34">8A</option>
+            <option [ngValue]="35">8A+</option>
+            <option [ngValue]="37">8B</option>
+            <option [ngValue]="38">8B+</option>
+            <option [ngValue]="40">8C</option>
+            <option [ngValue]="41">8C+</option>
+            <option [ngValue]="43">9A</option>
+            <option [ngValue]="44">9A+</option>
+            <option [ngValue]="46">9B</option>
+            <option [ngValue]="47">9B+</option>
+            <option [ngValue]="49">9C</option>
+            <option [ngValue]="50">9C+</option>
         </select>
         <!-- <input id="description" placeholder="" autocomplete="off" type="text" formControlName="description" /> -->
         <label for="description" class="group-label">Grade</label>

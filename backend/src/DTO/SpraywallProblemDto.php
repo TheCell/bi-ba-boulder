@@ -16,7 +16,18 @@ class SpraywallProblemDto
     
     #[Assert\NotBlank]
     public string $image,
+
+    public int $fontGrade,
     
+    #[Assert\NotBlank]
+    public Uuid $createdById,
+
+    #[Assert\NotBlank]
+    public string $createdByName,
+
+    #[Assert\NotBlank]
+    public \DateTime $createdDate,
+
     public ?string $description)
   { }
 }

@@ -25,6 +25,6 @@ export interface PutCreateRequest {
     /**
      * Font grade of the spraywall problem
      */
-    fontGrade?: string | null;
+    fontGrade: number | null;
 }
 

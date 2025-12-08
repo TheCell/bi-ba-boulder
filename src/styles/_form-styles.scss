@@ -118,7 +118,8 @@ select:focus + .group-label {
   color: $primary;
 }
 
-input.ng-invalid.ng-touched {
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched {
   border-bottom: 1px solid $danger;
 }
 

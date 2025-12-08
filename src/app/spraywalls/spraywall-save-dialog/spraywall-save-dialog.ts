@@ -29,7 +29,7 @@ export class SpraywallSaveDialog implements iModal {
   public saveForm = this._fb.group<ISpraywallForm>({
     name: '',
     description: undefined,
-    fontGrade: undefined
+    fontGrade: null
   });
 
   private imageData?: string;
@@ -37,6 +37,7 @@ export class SpraywallSaveDialog implements iModal {
 
   public constructor() {
     this.saveForm.controls.name.addValidators([Validators.required])
+    this.saveForm.controls.fontGrade.addValidators([Validators.required])
   }
 
   public initialize(data: SpraywallSaveData): void {
