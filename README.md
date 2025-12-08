@@ -24,7 +24,7 @@ The next todos:
 [] Offline compatible  
 [] setup cdn   
 [] lines only load after login   
-[] figure out enums for grading   
+[x] figure out enums for grading   
 [] sector overview   
 [] line, boulder, sector search   
 [] hover over line   
@@ -38,12 +38,17 @@ The next todos:
 [] streamline spraywall + rgb texture download not hardcoded   
 [] Refresh token [https://github.com/markitosgv/JWTRefreshTokenBundle](https://github.com/markitosgv/JWTRefreshTokenBundle)   
 [] logout   
-[] rate limiting   
+[-] rate limiting   
 [] upload only while logged in and verified   
 [] Version Number   
 [] resend verify email   
 [x] make http failure cases generic   
 [] user profile page   
+[] feedback form   
+[-] style spraywall list   
+[] filter spraywall list   
+[] reset Create Spraywall after saving   
+[] split production and develop   
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)

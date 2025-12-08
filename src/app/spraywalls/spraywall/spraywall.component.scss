@@ -1,5 +1,11 @@
 @use '../../../styles/variables' as *;
 
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
 .grid {
   display: grid;
   height: 100%;
@@ -37,7 +43,12 @@
 .legend-list {
   height: calc(100% - 2em);
   width: 100%;
+}
+
+.list-content {
   overflow-y: auto;
+  width: 100%;
+  height: calc(100% - 2em);
 }
 
 .action-button {
@@ -59,6 +70,42 @@
 .action-button:active {
   background-color: rgba($primary, 1.0);
 }
+
+.list-header {
+  height: 2em;
+  vertical-align: middle;
+  border-bottom: 1px solid $lightDark;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.list-header > div {
+  padding: 3px 14px;
+  // flex-grow: 4;
+  // display: inline-block;
+}
+
+.flex-name {
+  flex-grow: 4;
+}
+
+.flex-grade {
+  flex-grow: 1;
+}
+
+.flex-description {
+  flex-grow: 4;
+}
+
+.flex-creator {
+  flex-grow: 1;
+}
+
+.flex-created-date {
+  flex-grow: 1;
+}
+
 
 .li-item:nth-child(even) {
   background-color: rgba($light, 0.05);

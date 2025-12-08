@@ -1,7 +1,16 @@
 <li [class.selected]="isSelected()" class="item" role="button" tabindex="0"
     (click)="selectProblem()"
-    (keypress)="selectProblem()">
-    <div [id]="problem().id" tabindex="0">
-        <span>{{ problem().name }}</span>
-    </div>
+    (keypress)="selectProblem()" [id]="problem().id">
+    <!-- <div [id]="problem().id" tabindex="0"> -->
+        <span class="flex-name">{{ problem().name }}</span>
+        <span class="flex-grade">{{ problem().description }}</span>
+        <span class="flex-description">{{ problem().fontGrade | appFontGradePipe }}</span>
+        <span class="flex-creator">{{ problem().createdByName }}</span>
+        <span class="flex-created-date">{{ problem().createdDate | json }}</span>
+    <!-- </div> -->
 </li>
+
+<!-- <td>{{ problem().name }}</td>
+<td>{{ problem().fontGrade | appFontGradePipe }}</td>
+<td>{{ problem().createdByName }}</td>
+<td>{{ problem().description }}</td> -->

@@ -43,7 +43,7 @@ class RateLimiterSubscriber implements EventSubscriberInterface
             if (!$limiter->consume(1)->isAccepted()) {
                 throw new TooManyRequestsHttpException();
             }
-        } else if (strpos($path, '/api/spraywall') !== false && $request->isMethod('PUT')) {
+        } else if (strpos($path, '/api/spraywalls') !== false && $request->isMethod('PUT')) {
             $limiter = $this->spraywallApiLimiter->create($request->getClientIp());
 
             if (!$limiter->consume(1)->isAccepted()) {

@@ -20,6 +20,7 @@
     <div class="actions">
         <button class="button action-button" (click)="openSaveModal()">Save Modal</button>
         <button class="button action-button" (click)="resetSignal.next()">Reset</button>
+        <button class="button action-button action-end" [routerLink]="['/', 'spraywall', spraywallId]">Back to Spraywall</button>
     </div>
     <div class="legend-list">
         <div class="color-selection">

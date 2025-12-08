@@ -22,3 +22,40 @@
 .item:active {
   background-color: rgba($primary, 1.0);
 }
+
+.item {
+  // height: 2em;
+  // vertical-align: middle;
+  // border-bottom: 1px solid $lightDark;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.item>span {
+  flex-shrink: 1;
+  // flex: 1 1 auto;
+}
+
+.flex-name {
+  flex-shrink: 4;
+  flex-grow: 4;
+}
+
+.flex-grade {
+  flex-grow: 1;
+}
+
+.flex-description {
+  // width: min-content;
+  flex-shrink: 4;
+  flex-grow: 4;
+}
+
+.flex-creator {
+  flex-grow: 1;
+}
+
+.flex-created-date {
+  flex-grow: 1;
+}

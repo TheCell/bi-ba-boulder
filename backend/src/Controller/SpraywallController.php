@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 #[Route('/api/spraywalls', name: '')]
 #[OA\Tag(name: "Spraywalls")]
@@ -82,7 +83,7 @@ final class SpraywallController extends AbstractController
             $spraywallProblem->getId(),
             $spraywallProblem->getName(),
             $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-            $spraywallProblem->getFontGrade()->GetName(),
+            $spraywallProblem->getFontGrade()->getValue(),
             $spraywallProblem->getCreatedBy()->getId(),
             $spraywallProblem->getCreatedBy()->getUsername(),
             $spraywallProblem->getCreatedDate(),
@@ -92,37 +93,6 @@ final class SpraywallController extends AbstractController
         return $this->json($spraywallProblemDto, Response::HTTP_OK);
     }
 
-    // #[Route('/{id}/problems', name: 'problems', methods: ['GET'])]
-    // #[OA\Response(
-    //     response: Response::HTTP_OK,
-    //     description: 'Returns a list of problems',
-    //     content: new OA\JsonContent(
-    //         type: 'array',
-    //         items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
-    //     )
-    // )]
-    // public function getProblems(Uuid $id): JsonResponse
-    // {
-    //     $spraywallProblems = $this->spraywallProblemRepository->findBySpraywallId($id);
-
-    //     $exists = $this->filesystem->exists("spraywalls/{$id}");
-        
-    //     $spraywallProblemsDto = [];
-    //     foreach ($spraywallProblems as $spraywallProblem) {
-    //         $spraywallProblemsDto[] = new SpraywallProblemDto(
-    //         $spraywallProblem->getId(),
-    //         $spraywallProblem->getName(),
-    //         $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-    //         $spraywallProblem->getFontGrade()->GetName(),
-    //         $spraywallProblem->getCreatedBy()->getId(),
-    //         $spraywallProblem->getCreatedBy()->getUsername(),
-    //         $spraywallProblem->getCreatedDate(),
-    //         $spraywallProblem->getDescription()
-    //       );
-    //     }
-    //     return $this->json($spraywallProblemsDto, Response::HTTP_OK);
-    // }
-    
     #[Route('/{id}/problems', name: 'search_problems', methods: ['POST'])]
     #[OA\RequestBody(
         required: false,
@@ -237,7 +207,6 @@ final class SpraywallController extends AbstractController
     )]
     public function createProblem(Uuid $id, Request $request, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        // todo: subtract token from rate limiter if validation failed?
         $spraywall = $this->spraywallRepository->findOneBy(['id' => $id]);
         if (!$spraywall) {
             return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);
@@ -252,6 +221,10 @@ final class SpraywallController extends AbstractController
 
         if (!isset($data['image']) || empty($data['image'])) {
            return $this->json(new ErrorDto('Image is required', null), Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!isset($data['fontGrade']) || FontGrade::tryFrom($data['fontGrade']) == null) {
+            return $this->json(new ErrorDto('Font grade is required', null), Response::HTTP_BAD_REQUEST);
         }
 
         // Validate and process base64 image
@@ -313,7 +286,7 @@ final class SpraywallController extends AbstractController
 
     #[Route('/{id}/problem/{problemId}', name: 'problem', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function deleteProblem(Uuid $id, Uuid $problemId): JsonResponse
+    public function deleteProblem(Uuid $id, Uuid $problemId, RateLimiterFactoryInterface $anonymousApiLimiter): JsonResponse
     {
         $spraywallProblem = $this->spraywallProblemRepository->find($problemId);
 

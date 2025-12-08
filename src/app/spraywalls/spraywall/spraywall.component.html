@@ -18,14 +18,45 @@
         <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
     </div>
     <div class="legend-list">
-        @for (problem of listOfProblems; track problem.id) {
-            <app-spraywall-legend-item
-                class="li-item"
-                [problem]="problem"
-                [isSelected]="selectedProblem?.id === problem.id"
-                (selected)="onSelectedProblem($event)">
-            </app-spraywall-legend-item>
-        }
+
+        <div class="list-header">
+            <div class="flex-name">name</div>
+            <div class="flex-description">description</div>
+            <div class="flex-grade">grade</div>
+            <div class="flex-creator">creator</div>
+            <div class="flex-created-date">created Date</div>
+        </div>
+        <div class="list-content">
+            <ul>
+                @for (problem of listOfProblems; track problem.id) {
+                        <app-spraywall-legend-item
+                            class="li-item"
+                            [problem]="problem"
+                            [isSelected]="selectedProblem?.id === problem.id"
+                            (selected)="onSelectedProblem($event)">
+                        </app-spraywall-legend-item>
+                }
+            </ul>
+        </div>
+        <!-- <table>
+            <tr>
+                <th>name</th>
+                <th>grade</th>
+                <th>description</th>
+                <th>creator</th>
+                <th>created Date</th>
+            </tr>
+            @for (problem of listOfProblems; track problem.id) {
+                <tr>
+                    <app-spraywall-legend-item
+                        class="li-item"
+                        [problem]="problem"
+                        [isSelected]="selectedProblem?.id === problem.id"
+                        (selected)="onSelectedProblem($event)">
+                    </app-spraywall-legend-item>
+                </tr>
+            }
+        </table> -->
     </div>
   </section>
 </div>

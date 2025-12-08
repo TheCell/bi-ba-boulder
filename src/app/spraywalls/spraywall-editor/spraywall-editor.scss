@@ -45,6 +45,10 @@
   border: none;
 }
 
+.action-end {
+  float: right;
+}
+
 .action-button:hover, .action-button:focus {
   background-color: rgba($primary, 0.5);
 }
