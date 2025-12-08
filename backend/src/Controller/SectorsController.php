@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 #[Route('/api/sectors', name: '')]
 #[OA\Tag(name: "Sector")]
@@ -31,7 +32,7 @@ class SectorsController extends AbstractController
             items: new OA\Items(ref: new Model(type: SectorDto::class))
         )
     )]
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $sectors = $this->sectorRepository->findAll();
         $sectorDtos = [];

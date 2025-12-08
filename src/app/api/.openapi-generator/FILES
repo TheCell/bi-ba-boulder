@@ -20,7 +20,6 @@ model/lineDto.ts
 model/models.ts
 model/postAppAuthLoginRequest.ts
 model/postRegisterRequest.ts
-model/putCreate400Response.ts
 model/putCreateRequest.ts
 model/sectorDto.ts
 model/spraywallProblemDto.ts

@@ -151,50 +151,9 @@ final class SpraywallController extends AbstractController
         description: 'Returns the created spraywall problem',
         content: new OA\JsonContent(ref: new Model(type: SpraywallProblemDto::class))
     )]
-    #[OA\Response(
-        response: Response::HTTP_BAD_REQUEST,
-        description: 'Bad request - invalid data',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-            new OA\Property(
-                property: 'error',
-                type: 'string',
-                description: 'Error message'
-            )
-          ]
-        )
-    )]
-    #[OA\Response(
-        response: Response::HTTP_NOT_FOUND,
-        description: 'Spraywall not found',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(
-                    property: 'error',
-                    type: 'string',
-                    description: 'Error message'
-                )
-            ]
-        )
-    )]
-    #[OA\Response(
-        response: Response::HTTP_INTERNAL_SERVER_ERROR,
-        description: 'Internal server error',
-        content: new OA\JsonContent(
-            type: 'object',
-            properties: [
-                new OA\Property(
-                    property: 'error',
-                    type: 'string',
-                    description: 'Error message'
-                )
-            ]
-        )
-    )]
     public function createProblem(Uuid $id, Request $request, #[CurrentUser] ?User $currentUser): JsonResponse
     {
+        // todo: subtract token from rate limiter if validation failed?
         $spraywall = $this->spraywallRepository->findOneBy(['id' => $id]);
         if (!$spraywall) {
             return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);

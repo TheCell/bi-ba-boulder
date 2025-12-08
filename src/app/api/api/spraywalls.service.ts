@@ -17,8 +17,6 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
-import { PutCreate400Response } from '../model/putCreate400Response';
-// @ts-ignore
 import { PutCreateRequest } from '../model/putCreateRequest';
 // @ts-ignore
 import { SpraywallProblemDto } from '../model/spraywallProblemDto';
