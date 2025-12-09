@@ -1,12 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { SectorDto } from '../api';
+import { SectorDto } from '@api/index';
 
 @Component({
   selector: 'app-sectors-list',
   imports: [
-    CommonModule,
     RouterLink
   ],
   templateUrl: './sectors-list.component.html',

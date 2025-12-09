@@ -1,3 +1,15 @@
-export * from './default.service';
-import { DefaultService } from './default.service';
-export const APIS = [DefaultService];
+export * from './administration.service';
+import { AdministrationService } from './administration.service';
+export * from './auth.service';
+import { AuthService } from './auth.service';
+export * from './bloc.service';
+import { BlocService } from './bloc.service';
+export * from './line.service';
+import { LineService } from './line.service';
+export * from './sector.service';
+import { SectorService } from './sector.service';
+export * from './spraywalls.service';
+import { SpraywallsService } from './spraywalls.service';
+export * from './user.service';
+import { UserService } from './user.service';
+export const APIS = [AdministrationService, AuthService, BlocService, LineService, SectorService, SpraywallsService, UserService];

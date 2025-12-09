@@ -2,11 +2,13 @@ import { ApplicationConfig, Provider, provideZoneChangeDetection } from '@angula
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { Configuration, ConfigurationParameters } from './api';
 import { environment } from '../environments/environment';
+import { errorHandlerInterceptor } from './core/interceptors/error-handler-interceptor';
+import { loggedInInterceptor } from './core/interceptors/logged-in-interceptor';
 
-function apiConfigFactory (): Configuration {
+function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.apiURL,
     withCredentials: false
@@ -16,7 +18,7 @@ function apiConfigFactory (): Configuration {
 
 const configurationProvider: Provider = {
   provide: Configuration,
-  useFactory: apiConfigFactory,
+  useFactory: apiConfigFactory
 };
 
 export const appConfig: ApplicationConfig = {
@@ -26,7 +28,8 @@ export const appConfig: ApplicationConfig = {
     // provideRouter(routes, withDebugTracing()),
     provideRouter(routes),
     provideHttpClient(
-      withFetch()
-    ),
+      withFetch(),
+      withInterceptors([errorHandlerInterceptor, loggedInInterceptor])
+    )
   ]
 };

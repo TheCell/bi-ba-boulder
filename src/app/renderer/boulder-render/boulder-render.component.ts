@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -12,12 +12,11 @@ import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { ActivatedRoute } from '@angular/router';
-import { SpraywallProblemDto } from '../../api';
+import { SpraywallProblemDto } from '@api/index';
 
 @Component({
   selector: 'app-boulder-render',
   imports: [
-    CommonModule,
     KeyboardShortcutsModule
   ],
   templateUrl: './boulder-render.component.html',
@@ -25,6 +24,8 @@ import { SpraywallProblemDto } from '../../api';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BoulderRenderComponent implements OnInit, AfterViewInit {
+  private el: ElementRef = inject(ElementRef);
+
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
@@ -68,7 +69,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
 
-  public constructor(private el: ElementRef) {
+  public constructor() {
     effect(() => {
       const rawModel = this.rawModel();
       if (rawModel !== this.proccessedRawModel) {
@@ -178,10 +179,10 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
       this.scene.add(gltf.scene);
-      let childCounter = 0;
+      // let childCounter = 0;
       gltf.scene.traverse((child) => {
         child.layers.set(1);
-        childCounter++;
+        // childCounter++;
         const mesh = (child as THREE.Mesh);
         if (mesh.isMesh) {
           this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
@@ -262,7 +263,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
   private setupHighlightTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
-      let object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      const object = (this.currentGltf.scene.children[0] as THREE.Mesh);
       object.material = this.rgbBlockMaterial;
     }
   }

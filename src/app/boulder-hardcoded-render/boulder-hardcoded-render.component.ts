@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import * as THREE from 'three';
@@ -16,15 +16,14 @@ import { BoulderLine } from '../interfaces/boulder-line';
 @Component({
   selector: 'app-boulder-hardcoded-render',
   imports: [
-    CommonModule,
     KeyboardShortcutsModule
-  ],
+],
   templateUrl: './boulder-hardcoded-render.component.html',
   styleUrl: './boulder-hardcoded-render.component.scss'
 })
 export class BoulderHardcodedRenderComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize', ['$event']) public onResize(): void {
+  @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
 
       const canvasSizes = {

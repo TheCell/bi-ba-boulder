@@ -13,6 +13,10 @@ export interface SpraywallProblemDto {
     id: string;
     name: string;
     image: string;
+    fontGrade?: number | null;
+    createdById: string;
+    createdByName: string;
+    createdDate: string;
     description?: string | null;
 }
 

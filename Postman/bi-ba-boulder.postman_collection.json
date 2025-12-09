@@ -1,0 +1,587 @@
+{
+	"info": {
+		"_postman_id": "b902b055-bc8c-4b4a-be44-096639d8052d",
+		"name": "bi-ba-boulder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10883073"
+	},
+	"item": [
+		{
+			"name": "UserController",
+			"item": [
+				{
+					"name": "getSelf",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData.id) {\r",
+									"    pm.collectionVariables.set(\"current-user-id\", jsonData.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}users/me",
+							"host": [
+								"{{baseurl}}users"
+							],
+							"path": [
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getUserById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}users/{{current-user-id}}",
+							"host": [
+								"{{baseurl}}users"
+							],
+							"path": [
+								"{{current-user-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AuthController",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"mymail@test.ch\",\r\n    \"password\": \"my-super-duper-password\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}register",
+							"host": [
+								"{{baseurl}}register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData.token) {\r",
+									"    pm.collectionVariables.set(\"bearer-token\", jsonData.token);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"example@test.ch\",\r\n    \"password\": \"example@test.ch\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}login_check",
+							"host": [
+								"{{baseurl}}login_check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout // not working",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData) {\r",
+									"    pm.collectionVariables.set(\"bearer-token\", \"\");\r",
+									"    pm.collectionVariables.set(\"current-user-id\", \"\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}logout",
+							"host": [
+								"{{baseurl}}logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData.id) {\r",
+									"    pm.collectionVariables.set(\"current-user-id\", jsonData.id);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}profile",
+							"host": [
+								"{{baseurl}}profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "AdministrationController",
+			"item": [
+				{
+					"name": "Admin",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}administration",
+							"host": [
+								"{{baseurl}}administration"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SpraywallController",
+			"item": [
+				{
+					"name": "spraywalls",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData.length > 0) {\r",
+									"    pm.collectionVariables.set(\"spraywall-id\", jsonData[0].id);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}spraywalls",
+							"host": [
+								"{{baseurl}}spraywalls"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "spraywall/id/problems (Bimano wall) Copy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}spraywalls/{{spraywall-id}}/problems",
+							"host": [
+								"{{baseurl}}spraywalls"
+							],
+							"path": [
+								"{{spraywall-id}}",
+								"problems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Problem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData.id) {\r",
+									"    pm.collectionVariables.set(\"current-problem\", jsonData.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"my route\",\r\n    \"description\": \"it should work with 24 bit\",\r\n    \"fontGrade\": \"6A\",\r\n    \"image\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAADwElEQVR4AeydMU4cQRBFRz6BMxLfwLcgJiZ0wBU4B1cgcEhM7Fv4BiRk3AB7V2qxjDSaZreq+1fVk4BhZnqqq95/GrQR35Zlee/6frzvW3dS7/b59fjM28v1+99fy/vh2LXXSQ3Wd+ZzJrODAP8Zd3zdPXQs+rzk6ebqeOH7jz/Lz9/LcjgeL/BDhkC/ADIt04glAQSwpBmwFgIEDM2yZQSwpBmwFgIEDM2yZQSwpBmoVmsVARqJokcEKBp8GxsBGomiRwQoGnwbGwEaiaJHBCgafBsbARqJokcEKBb8elwEWBMpdo4AxQJfj4sAayLFzhGgWODrcRFgTaTYOQIUC3w9LgKsiRQ7R4AigW+NiQBbZIpcR4AiQW+NiQBbZIpcR4AiQW+NiQBbZIpcR4AiQW+NiQBbZIpcR4DkQe+NhwB7hJLfR4DkAe+NhwB7hJLfR4DkAe+NhwB7hJLfR4DkAe+NhwB7hJLfR4CkAfeOhQC9pJKuQ4CkwfaOhQC9pJKuQ4CkwfaOhQC9pJKuQ4CkwfaOhQC9pJKuQ4BkwX51HAT4KrFk6xFAINC3l+tpXSDANPQfG8/8RxoI8JFDyd9SCjDzlRrNopQCzHylIkA0AsX7TfkGqJjpuTMjwLnkkjyHAEmCPHcMBDiXXJLnEGAVZLWPkFMEaJDbcZXB1NNqHyGnCNASrga7za10nCIAwesoMEUAnfF1O+n983jpBAhwKUGn50e9JWMK8HjvhL1e2ZgC3D3YJIVIS0wBbOJfFiuRrPqZUKe2ABOAq22JAGqJDO4HAQYDV9sOAdQS6ezHahkCWJEMWgcBggZn1TYCWJEMWgcBggZn1TYCWJEMWgcBggZn1TYCWJEMWgcBggVn3S4CWBMNVg8BggVm3S4CWBMNVg8BggVm3S4CWBMNVg8BggVm3S4CWBMNVg8BggTm1SYCeJENUhcBggTl1SYCeJENUhcBggTl1SYCeJENUhcBggTl1SYCeJENUhcBxIPybg8BvAmL10cA8YC820MAb8Li9RFAPCDv9hDAm7B4fQQQD8i7PQTwJixeHwFEAxrVFgKMIi26DwKIBjOqLQQYRVp0HwQQDWZUWwgwirToPgggGsyothBgFGnRfRBALJjR7SDAaOJi+yGAWCCj20GA0cTF9kMAsUBGt4MAo4mL7YcAYoGMbgcBRhPv2O/2+bVjlc0SBLDheHGV0wJPN1enp66/I4ArXv3iCKCfkWuHCOCKV784Auhn5NohArji1S+OAPoZuXaIAK549YsjwOSMZm//DwAA//+rhugSAAAABklEQVQDAEBwpoEbZfPaAAAAAElFTkSuQmCC\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}spraywalls/{{spraywall-id}}/problem",
+							"host": [
+								"{{baseurl}}spraywalls"
+							],
+							"path": [
+								"{{spraywall-id}}",
+								"problem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Problem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseurl}}spraywalls/1c99b5e4-c854-11f0-9457-71a4df1b7093/problem/{{current-problem}}",
+							"host": [
+								"{{baseurl}}spraywalls"
+							],
+							"path": [
+								"1c99b5e4-c854-11f0-9457-71a4df1b7093",
+								"problem",
+								"{{current-problem}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Filestorage",
+			"item": [
+				{
+					"name": "boulder-bloc daone",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Referer",
+								"value": "strict-origin-when-cross-origin",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost/boulders/daone/la-plana/HIS_0761_reduced_0.01_tex_0.25.glb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"path": [
+								"boulders",
+								"daone",
+								"la-plana",
+								"HIS_0761_reduced_0.01_tex_0.25.glb"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SectorsController",
+			"item": [
+				{
+					"name": "sectors",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"if (jsonData.length > 0) {\r",
+									"    pm.collectionVariables.set(\"sector-id\", jsonData[0].id);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}sectors",
+							"host": [
+								"{{baseurl}}sectors"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "BlocsController",
+			"item": [
+				{
+					"name": "blocs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:4200",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseurl}}blocs/{{sector-id}}",
+							"host": [
+								"{{baseurl}}blocs"
+							],
+							"path": [
+								"{{sector-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer-token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseurl",
+			"value": "http://localhost/"
+		},
+		{
+			"key": "live-url",
+			"value": ""
+		},
+		{
+			"key": "current-user-id",
+			"value": ""
+		},
+		{
+			"key": "bearer-token",
+			"value": ""
+		},
+		{
+			"key": "current-problem",
+			"value": ""
+		},
+		{
+			"key": "spraywall-id",
+			"value": ""
+		},
+		{
+			"key": "sector-id",
+			"value": ""
+		},
+		{
+			"key": "bloc-id",
+			"value": "",
+			"type": "default"
+		}
+	]
+}

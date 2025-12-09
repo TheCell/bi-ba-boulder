@@ -1,0 +1,46 @@
+<div class="grid">
+  <section class="renderContainer">
+    @if (currentRawModel) {
+        <app-spraywall-editor-renderer
+            class="render"
+            #renderer
+            [rawModel]="currentRawModel"
+            [highlightUv]="currentHighlightUv"
+            [highlightColor]="currentHoldColor"
+            [currentHighlightedHoldsTexturePath]="currentHighlightedHoldsTexturePath"
+            [resetRoute]="resetSignal">
+        </app-spraywall-editor-renderer>
+    } @else {
+        <app-loading-image
+            class="render">
+        </app-loading-image>
+    }
+  </section>
+  <section class="legend">
+    <div class="actions">
+        <button class="button action-button" (click)="openSaveModal()">Save Modal</button>
+        <button class="button action-button" (click)="resetSignal.next()">Reset</button>
+        <button class="button action-button action-end" [routerLink]="['/', 'spraywall', spraywallId]">Back to Spraywall</button>
+    </div>
+    <div class="legend-list">
+        <div class="color-selection">
+            <div class="hold-color-options">
+                <form id="holdColorSelect" [formGroup]="colorForm">
+                    <label for="holdColorSelect" class="form-label">Hold Type</label>
+                    <div class="form-group form-radio">
+                        @for (option of holdColorOptions; track option.type) {
+                            <div class="radio-option">
+                                <input type="radio" [id]="option.type + colorFormId" formControlName="spraywallHoldType" [value]="option.type" />
+                                <label [for]="option.type + colorFormId" class="radio-label" [ngClass]="{ 'selected' : colorForm.controls.spraywallHoldType.value === option.type }">{{ enumName(option.type) }}</label>
+                            </div>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+  </section>
+</div>
+
+<app-modal #modal>
+</app-modal>

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { BoulderHardcodedRenderComponent } from "../boulder-hardcoded-render/boulder-hardcoded-render.component";
@@ -6,9 +6,8 @@ import { BoulderHardcodedRenderComponent } from "../boulder-hardcoded-render/bou
 @Component({
   selector: 'app-boulder-hardcoded',
   imports: [
-    CommonModule,
     BoulderHardcodedRenderComponent
-  ],
+],
   templateUrl: './boulder-hardcoded.component.html',
   styleUrl: './boulder-hardcoded.component.scss'
 })

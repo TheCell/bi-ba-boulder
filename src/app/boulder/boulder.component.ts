@@ -4,7 +4,7 @@ import { BoulderLegendComponent } from '../components/boulder-legend/boulder-leg
 import { BoulderRenderComponent } from '../renderer/boulder-render/boulder-render.component';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
-import { BlocDto } from '../api';
+import { BlocDto } from '@api/index';
 import { BoulderLine } from '../interfaces/boulder-line';
 import { ResolutionLevel } from '../interfaces/resolution-level';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';

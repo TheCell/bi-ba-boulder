@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\DTO\ErrorDto;
 use App\Entity\SpraywallProblem;
+use App\DTO\SpraywallDto;
 use App\DTO\SpraywallProblemDto;
-use App\Entity\Spraywall;
+use App\DTO\SpraywallProblemSearchDto;
+use App\Entity\Enum\FontGrade;
 use App\Repository\SpraywallRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use App\Repository\SpraywallProblemRepository;
@@ -15,9 +19,14 @@ use Symfony\Component\Routing\Attribute\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Path;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
-#[Route('/api', name: '')]
+#[Route('/api/spraywalls', name: '')]
+#[OA\Tag(name: "Spraywalls")]
 final class SpraywallController extends AbstractController
 {
     private $spraywallProblemRepository;
@@ -31,211 +40,220 @@ final class SpraywallController extends AbstractController
         $this->filesystem = new Filesystem();
     }
 
-    // #[Route('/spraywall', name: 'app_spraywall')]
-    // public function index(): JsonResponse
-    // {
-    //     return $this->json([
-    //         'message' => 'Welcome to your new controller!',
-    //         'path' => 'src/Controller/SpraywallController.php',
-    //     ]);
-    // }
-
-    #[Route('/spraywall/{id}/problems/{problemId}', name: 'spraywall_problem_get', methods: ['GET'])]
+    #[Route('', name: 'spraywalls', methods: ['GET'])]
     #[OA\Response(
-      response: 200,
-      description: 'Returns a spraywall problem',
-      content: new OA\MediaType(
-        mediaType: 'application/json',
-        schema: new OA\Schema(ref: new Model(type: SpraywallProblemDto::class))
-      )
+        response: Response::HTTP_OK,
+        description: 'Returns a spraywall problem',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
+        )
+    )]
+    public function getSpraywalls(): JsonResponse
+    {
+        $spraywalls = $this->spraywallRepository->findAll();
+
+        $spraywallsDto = [];
+        foreach ($spraywalls as $spraywall) {
+            $spraywallsDto[] = new SpraywallDto(
+            $spraywall->getId(),
+            $spraywall->getName(),
+            $spraywall->getDescription()
+          );
+        }
+        
+        return $this->json($spraywallsDto, Response::HTTP_OK);
+    }
+
+    #[Route('/{id}/problems/{problemId}', name: 'problem', methods: ['GET'])]
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Returns a spraywall problem',
+        content: new OA\JsonContent(ref: new Model(type: SpraywallProblemDto::class))
     )]
     public function getProblem($id, $problemId): JsonResponse
     {
         $spraywallProblem = $this->spraywallProblemRepository->find($problemId);
 
         if (!$spraywallProblem) {
-            return $this->json(['error' => 'Problem not found'], 404);
+            return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
         }
 
-        // $exists = $this->filesystem->exists("spraywalls/{$id}");
-
         $spraywallProblemDto = new SpraywallProblemDto(
-            $spraywallProblem->getId(),
-            $spraywallProblem->getName(),
-            $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-            $spraywallProblem->getDescription());
+            id: $spraywallProblem->getId(),
+            name: $spraywallProblem->getName(),
+            image: $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
+            fontGrade: $spraywallProblem->getFontGrade()?->getValue(),
+            createdById: $spraywallProblem->getCreatedBy()->getId(),
+            createdByName: $spraywallProblem->getCreatedBy()->getUsername(),
+            createdDate: $spraywallProblem->getCreatedDate()->format('Y-m-d\TH:i:s.v\Z'),
+            description: $spraywallProblem->getDescription()
+          );
 
-        return $this->json($spraywallProblemDto);
+        return $this->json($spraywallProblemDto, Response::HTTP_OK);
     }
 
-    #[Route('/spraywall/{id}/problems', name: 'spraywall_problems', methods: ['GET'])]
-    #[OA\Response(
-      response: 200,
-      description: 'Returns a list of problems',
-      content: new OA\JsonContent(
-        type: 'array',
-        items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
-      )
+    #[Route('/{id}/problems', name: 'search_problems', methods: ['POST'])]
+    #[OA\RequestBody(
+        required: false,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'gradeMin', type: 'integer', description: 'min Font grade'),
+                new OA\Property(property: 'gradeMax', type: 'integer', description: 'max Font grade'),
+                new OA\Property(property: 'name', type: 'string', description: 'Problem name'),
+                new OA\Property(property: 'creator', type: 'string', description: 'Creator username or ID'),
+                new OA\Property(property: 'dateOrder', type: 'string', description: 'asc or desc'),
+                new OA\Property(property: 'page', type: 'integer', description: 'Page number for pagination')
+            ]
+        )
     )]
-    public function getProblems($id): JsonResponse
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Returns paginated spraywall problems',
+        content: new OA\JsonContent(ref: new Model(type: SpraywallProblemSearchDto::class))
+    )]
+    public function searchProblems(Request $request, Uuid $id): JsonResponse
     {
-        $spraywallProblems = $this->spraywallProblemRepository->findBySpraywallId($id);
+        $data = json_decode($request->getContent(), true) ?? [];
+        $gradeMin = $data['gradeMin'] ?? null;
+        $gradeMax = $data['gradeMax'] ?? null;
+        $name = $data['name'] ?? null;
+        $creator = $data['creator'] ?? null;
+        $dateOrder = $data['dateOrder'] ?? 'desc';
+        $page = isset($data['page']) ? max(1, (int)$data['page']) : 1;
+        $pageSize = 30;
 
-        $exists = $this->filesystem->exists("spraywalls/{$id}");
-        
-        $spraywallProblemsDto = array_map(fn($spraywallProblem) => 
-            new SpraywallProblemDto(
-                $spraywallProblem->getId(),
-                $spraywallProblem->getName(),
-                $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-                $spraywallProblem->getDescription()), $spraywallProblems);
+        $criteria = [];
+        if ($gradeMin) {
+            $criteria['gradeMin'] = $gradeMin;
+        }
+        if ($gradeMax) {
+            $criteria['gradeMax'] = $gradeMax;
+        }
+        if ($name) {
+            $criteria['name'] = $name;
+        }
+        if ($creator) {
+            $criteria['createdBy'] = $creator;
+        }
+        if ($dateOrder) {
+            $criteria['dateOrder'] = $dateOrder;
+        }
 
-        return $this->json($spraywallProblemsDto);
+        $offset = ($page - 1) * $pageSize;
+        $filterByCriteria = $this->spraywallProblemRepository->filterByCriteria($id, $pageSize, $offset, $criteria);
+        list($problems, $totalCount) = $filterByCriteria;
+
+        $problemsDto = [];
+        foreach ($problems as $problem) {
+            $problemsDto[] = new SpraywallProblemDto(
+                $problem->getId(),
+                $problem->getName(),
+                $this->getSpraywallProblemImage($problem->getSpraywall()->getId(), $problem->getId()),
+                $problem->getFontGrade()?->getValue(),
+                $problem->getCreatedBy()->getId(),
+                $problem->getCreatedBy()->getUsername(),
+                $problem->getCreatedDate()->format('Y-m-d\TH:i:s.v\Z'),
+                $problem->getDescription()
+            );
+        }
+
+        $problemSearchDto = new SpraywallProblemSearchDto(
+            totalCount: $totalCount,
+            currentPage: $page,
+            problems: $problemsDto
+        );
+
+        return $this->json($problemSearchDto, Response::HTTP_OK);
     }
 
-    #[Route('/spraywall/{id}/problem', name: 'spraywall_problem_create', methods: ['POST'])]
+    #[Route('/{id}/problem', name: 'create', methods: ['PUT'])]
+    #[IsGranted('ROLE_EDITOR')]
     #[OA\RequestBody(
       required: true,
       content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'name',
-            type: 'string',
-            description: 'Name of the spraywall problem'
-          ),
-          new OA\Property(
-            property: 'description',
-            type: 'string',
-            description: 'Description of the spraywall problem',
-            nullable: true
-          ),
-          new OA\Property(
-            property: 'image',
-            type: 'string',
-            description: 'PNG image as base64 string (format: data:image/png;base64,<base64-data>)'
-          ),
-          new OA\Property(
-            property: 'tempPwd',
-            type: 'string',
-            description: 'Temporary password for authentication'
-          ),
-        ],
-        required: ['name', 'image', 'tempPwd']
+          type: 'object',
+          properties: [
+              new OA\Property(
+                  property: 'name',
+                  type: 'string',
+                  description: 'Name of the spraywall problem'
+              ),
+              new OA\Property(
+                  property: 'description',
+                  type: 'string',
+                  description: 'Description of the spraywall problem',
+                  nullable: true
+              ),
+              new OA\Property(
+                  property: 'image',
+                  type: 'string',
+                  description: 'PNG image as base64 string (format: data:image/png;base64,<base64-data>)'
+              ),
+              new OA\Property(
+                  property: 'fontGrade',
+                  type: 'integer',
+                  description: 'Font grade of the spraywall problem',
+                  nullable: true
+              )
+          ],
+          required: ['name', 'image']
       )
     )]
     #[OA\Response(
-      response: 201,
-      description: 'Returns the created spraywall problem',
-      content: new OA\MediaType(
-        mediaType: 'application/json',
-        schema: new OA\Schema(ref: new Model(type: SpraywallProblemDto::class))
-      )
+        response: Response::HTTP_CREATED,
+        description: 'Returns the created spraywall problem',
+        content: new OA\JsonContent(ref: new Model(type: SpraywallProblemDto::class))
     )]
-    #[OA\Response(
-      response: 400,
-      description: 'Bad request - invalid data',
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'error',
-            type: 'string',
-            description: 'Error message'
-          )
-        ]
-      )
-    )]
-    #[OA\Response(
-      response: 404,
-      description: 'Spraywall not found',
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'error',
-            type: 'string',
-            description: 'Error message'
-          )
-        ]
-      )
-    )]
-    #[OA\Response(
-      response: 500,
-      description: 'Internal server error',
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'error',
-            type: 'string',
-            description: 'Error message'
-          )
-        ]
-      )
-    )]
-    #[OA\Response(
-      response: 401,
-      description: 'Unauthorized - invalid temporary password',
-      content: new OA\JsonContent(
-        type: 'object',
-        properties: [
-          new OA\Property(
-            property: 'error',
-            type: 'string',
-            description: 'Error message'
-          )
-        ]
-      )
-    )]
-    public function addProblem($id, Request $request): JsonResponse
+    public function createProblem(Uuid $id, Request $request, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        $testpasscode = $_ENV['TESTINGPASSCODE'];
-        if (!$testpasscode || empty($testpasscode)) {
-            return $this->json(['error' => 'Could not read environment variable'], 500);
-        }
-
-        // Find the spraywall to ensure it exists
-        $spraywall = $this->spraywallRepository->find($id);
+        $spraywall = $this->spraywallRepository->findOneBy(['id' => $id]);
         if (!$spraywall) {
-            return $this->json(['error' => 'Spraywall not found'], 404);
+            return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);
         }
 
         // Get and validate request data
         $data = json_decode($request->getContent(), true);
         
-        if (!isset($data['tempPwd']) || $data['tempPwd'] !== $_ENV['TESTINGPASSCODE']) {
-            return $this->json(['error' => 'Invalid temporary password'], 400);
-        }
-        
         if (!$data || !isset($data['name']) || empty(trim($data['name']))) {
-            return $this->json(['error' => 'Name is required and cannot be empty'], 400);
+            return $this->json(new ErrorDto('Name is required and cannot be empty', null), Response::HTTP_BAD_REQUEST);
         }
 
         if (!isset($data['image']) || empty($data['image'])) {
-            return $this->json(['error' => 'Image is required'], 400);
+           return $this->json(new ErrorDto('Image is required', null), Response::HTTP_BAD_REQUEST);
         }
 
         // Validate and process base64 image
         $imageData = $data['image'];
         if (!preg_match('/^data:image\/png;base64,(.+)$/', $imageData, $matches)) {
-            return $this->json(['error' => 'Image must be a valid base64 PNG string with data:image/png;base64, prefix'], 400);
+            return $this->json(new ErrorDto('Image must be a valid base64 PNG string with data:image/png;base64, prefix', null), Response::HTTP_BAD_REQUEST);
         }
 
         $base64Data = $matches[1];
         $binaryData = base64_decode($base64Data, true);
         
         if ($binaryData === false) {
-            return $this->json(['error' => 'Invalid base64 image data'], 400);
+            return $this->json(new ErrorDto('Invalid base64 image data', null), Response::HTTP_BAD_REQUEST);
         }
 
         // Create new SpraywallProblem
         $spraywallProblem = new SpraywallProblem();
         $spraywallProblem->setName(trim($data['name']));
         $spraywallProblem->setSpraywall($spraywall);
+        $spraywallProblem->setCreatedDate(new \DateTime());
+        $spraywallProblem->setCreatedBy($currentUser);
         
         if (isset($data['description'])) {
             $spraywallProblem->setDescription($data['description']);
+        }
+
+        if (isset($data['fontGrade'])) {
+            $grade = $data['fontGrade'];
+            if ($grade === null) {
+                return $this->json(new ErrorDto('Invalid font grade value. Could not find matching enum for ' . $data['fontGrade'], null), Response::HTTP_BAD_REQUEST);
+            }
+            $spraywallProblem->setFontGrade(FontGrade::tryFrom($grade));
         }
 
         // Save to database first to get the ID
@@ -243,28 +261,59 @@ final class SpraywallController extends AbstractController
 
         // Save image file using the generated problem ID
         try {
-            $spraywallDir = "spraywalls/{$id}";
+            $spraywallDir = 'spraywalls' . DIRECTORY_SEPARATOR . $id;
             if (!$this->filesystem->exists($spraywallDir)) {
                 $this->filesystem->mkdir($spraywallDir);
             }
-            
+
             // Convert 32-bit PNG to 24-bit PNG using ImageMagick
             $processedImageData = $this->convertTo24BitPng($binaryData);
-            
-            $imagePath = "{$spraywallDir}/{$spraywallProblem->getId()}.png";
+
+            $imagePath = $spraywallDir . DIRECTORY_SEPARATOR . $spraywallProblem->getId() . '.png';
             $this->filesystem->dumpFile($imagePath, $processedImageData);
             
         } catch (IOExceptionInterface $exception) {
             $this->spraywallProblemRepository->removeProblem($spraywallProblem);
-            return $this->json(['error' => 'Failed to save image: ' . $exception->getMessage()], 500);
+            return $this->json(new ErrorDto('Failed to save image: ' . $exception->getMessage(), null), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         // Return the created problem with 201 status
-        return $this->getProblem($id, $spraywallProblem->getId())->setStatusCode(201);
+        return $this->getProblem($id, $spraywallProblem->getId())->setStatusCode(Response::HTTP_CREATED);
     }
 
-    private function getSpraywallProblemImage($spraywallId, $spraywallProblemId): string {
-        $contents = $this->filesystem->readFile("spraywalls/{$spraywallId}/{$spraywallProblemId}.png");
+    #[Route('/{id}/problem/{problemId}', name: 'problem', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteProblem(Uuid $id, Uuid $problemId, RateLimiterFactoryInterface $anonymousApiLimiter): JsonResponse
+    {
+        $spraywallProblem = $this->spraywallProblemRepository->find($problemId);
+
+        if (!$spraywallProblem) {
+            return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            // Delete image file
+            $imagePath = 'spraywalls' . DIRECTORY_SEPARATOR . $id . DIRECTORY_SEPARATOR . $problemId . '.png';
+            if ($this->filesystem->exists($imagePath)) {
+                $this->filesystem->remove($imagePath);
+            }
+
+            // Remove problem from database
+            $this->spraywallProblemRepository->removeProblem($spraywallProblem);
+
+        } catch (IOExceptionInterface $exception) {
+            return $this->json(['error' => 'Failed to delete problem: ' . $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $this->spraywallProblemRepository->removeProblem($spraywallProblem);
+        
+        return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+
+    private function getSpraywallProblemImage(Uuid $spraywallId, Uuid $spraywallProblemId): string {
+        $imagePath = 'spraywalls' . DIRECTORY_SEPARATOR . $spraywallId . DIRECTORY_SEPARATOR . $spraywallProblemId . '.png';
+        $contents = $this->filesystem->readFile($imagePath);
         return base64_encode($contents);
     }
 
@@ -287,7 +336,7 @@ final class SpraywallController extends AbstractController
             $newImage = imagecreatetruecolor($width, $height);
             
             if ($newImage === false) {
-                imagedestroy($sourceImage);
+                $sourceImage = null;
                 throw new \RuntimeException('Failed to create new image canvas');
             }
             
@@ -297,8 +346,8 @@ final class SpraywallController extends AbstractController
             $backgroundColor = imagecolorallocate($newImage, 0, 0, 0);
             
             if ($backgroundColor === false) {
-                imagedestroy($sourceImage);
-                imagedestroy($newImage);
+                $sourceImage = null;
+                $newImage = null;
                 throw new \RuntimeException('Failed to allocate background color');
             }
             
@@ -312,8 +361,8 @@ final class SpraywallController extends AbstractController
             $copyResult = imagecopy($newImage, $sourceImage, 0, 0, 0, 0, $width, $height);
             
             if (!$copyResult) {
-                imagedestroy($sourceImage);
-                imagedestroy($newImage);
+                $sourceImage = null;
+                $newImage = null;
                 throw new \RuntimeException('Failed to copy source image to new canvas');
             }
             
@@ -323,8 +372,8 @@ final class SpraywallController extends AbstractController
             
             if (!$pngResult) {
                 ob_end_clean();
-                imagedestroy($sourceImage);
-                imagedestroy($newImage);
+                $sourceImage = null;
+                $newImage = null;
                 throw new \RuntimeException('Failed to generate PNG output');
             }
             
@@ -332,8 +381,8 @@ final class SpraywallController extends AbstractController
             ob_end_clean();
             
             // Clean up memory
-            imagedestroy($sourceImage);
-            imagedestroy($newImage);
+            $sourceImage = null;
+            $newImage = null;
             
             if ($processedImageData === false || empty($processedImageData)) {
                 throw new \RuntimeException('Generated PNG data is empty or invalid');

@@ -1,0 +1,31 @@
+<h2>Registration</h2>
+
+<form [formGroup]="registrationForm" (ngSubmit)="onSubmit()"
+    [ngClass]="{'disabled': registrationForm.disabled}">
+    <div class="form-group form-input" [ngClass]="{'disabled': registrationForm.controls.username.disabled}">
+        <input id="username" placeholder="" autocomplete="off" type="text" formControlName="username" />
+        <label for="username" class="group-label">Username</label>
+    </div>
+
+    <div class="form-group form-input" [ngClass]="{'disabled': registrationForm.controls.email.disabled}">
+        <input id="email" placeholder="" autocomplete="off" type="text" formControlName="email" />
+        <label for="email" class="group-label">Email</label>
+    </div>
+    
+    <div class="form-group form-input" [ngClass]="{'disabled': registrationForm.controls.password.disabled}">
+        <input id="password" placeholder="" autocomplete="off" type="password" formControlName="password" />
+        <label for="password" class="group-label">Password</label>
+    </div>
+    
+    <div class="form-group form-action">
+        <button type="submit" class="button"
+            [ngClass]="{'disabled': isLoading || registrationForm.invalid || registrationForm.disabled }"
+            [disabled]="isLoading || registrationForm.invalid || registrationForm.disabled">
+            @if (isLoading) {
+                <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
+            } @else {
+                Register
+            }
+        </button>
+    </div>
+</form>

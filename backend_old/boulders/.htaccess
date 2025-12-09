@@ -1,8 +1,0 @@
-Header Set Access-Control-Allow-Methods: get,post,put,head
-Header Set Access-Control-Allow-Headers: x-pingother,content-type
-
-<IfModule mod_headers.c>
-    SetEnvIf Origin "http(s)?://(www\.)?(localhost:4200|localhost:8000)$" AccessControlAllowOrigin=$0$1
-    Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
-    Header set Access-Control-Allow-Credentials true
-</IfModule>

@@ -118,7 +118,8 @@ jobs:
         echo "  'APP_SECRET' => '${{ secrets.APP_SECRET }}'," >> .env.local.php
         echo "  'DATABASE_URL' => '${{ secrets.DATABASE_URL }}'," >> .env.local.php
         echo "  'TESTVAR' => '${{ secrets.TESTVAR }}'," >> .env.local.php
-        echo "  'TESTINGPASSCODE' => '${{ secrets.TESTINGPASSCODE }}'," >> .env.local.php
+        echo "  'SENDEREMAIL' => '${{ secrets.SENDEREMAIL }}'," >> .env.local.php
+        echo "  'JWT_PASSPHRASE' => '${{ secrets.JWT_PASSPHRASE }}'," >> .env.local.php
         echo "  'CORS_ALLOW_ORIGIN' => '^https?://(bibaboulder.thecell.eu|boulderapi.thecell.eu|localhost|127\.0\.0\.1)(:[0-9]+)?$'," >> .env.local.php
         echo ");" >> .env.local.php
         echo "?>" >> .env.local.php

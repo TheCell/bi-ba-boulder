@@ -6,15 +6,18 @@ use App\Repository\LineRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: LineRepository::class)]
 class Line
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
+    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    private ?Uuid $id = null;
 
     #[ORM\Column(length: 9, nullable: true)]
     private ?string $color = null;
@@ -33,7 +36,7 @@ class Line
     private ?Bloc $bloc = null;
 
     /**
-     * @var Collection<int, Point>
+     * @var Collection<Uuid, Point>
      */
     #[ORM\OneToMany(targetEntity: Point::class, mappedBy: 'line', orphanRemoval: true)]
     private Collection $points;
@@ -43,7 +46,7 @@ class Line
         $this->points = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }
@@ -109,7 +112,7 @@ class Line
     }
 
     /**
-     * @return Collection<int, Point>
+     * @return Collection<Uuid, Point>
      */
     public function getPoints(): Collection
     {

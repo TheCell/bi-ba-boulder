@@ -1,0 +1,56 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: block;
+}
+
+.item {
+  cursor: pointer;
+  width: 100%;
+  // padding-top: 0.5em;
+  // padding-bottom: 0.5em;
+  padding: 4px 0px;
+}
+
+.item.selected {
+  background-color: rgba($secondary, 1.0);
+}
+
+.item:hover, .item:focus {
+  background-color: rgba($primary, 0.5);
+}
+
+.item:active {
+  background-color: rgba($primary, 1.0);
+}
+
+.item {
+  // height: 2em;
+  // vertical-align: middle;
+  // border-bottom: 1px solid $lightDark;
+  // display: flex;
+  // flex-direction: row;
+  // flex-wrap: nowrap;
+  display: grid;
+  grid-template: 'header header header header header header';
+  grid-template-columns: 30% 40% 10% 10% 10%;
+  white-space: nowrap;
+}
+
+.item-cell {
+  // padding-right: 14px;
+  // padding-left: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 600px) {
+  .item {
+    grid-template: 'header header header';
+    grid-template-columns: 60% 10% 30%;
+  }
+
+  .hidden-on-mobile {
+    display: none;
+  }
+}

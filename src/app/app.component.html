@@ -1,19 +1,28 @@
 <nav>
   <ul>
     <li><a [routerLink]="['home']" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a></li>
-    <li><a [routerLink]="['login']" routerLinkActive="active" ariaCurrentWhenActive="page">Login</a></li>
+    <li><button class="button" (click)="openLoginModal()">Login</button></li>
+    <li><button class="button" (click)="openRegistrationModal()">Register</button></li>
+    <!-- <li><a [routerLink]="['login']" routerLinkActive="active" ariaCurrentWhenActive="page">Login</a></li> -->
     <!-- <li><a [routerLink]="['privacy-policy']" routerLinkActive="active" ariaCurrentWhenActive="page">Privacy Policy</a></li> -->
     <!-- <li><a [routerLink]="['terms']" routerLinkActive="active" ariaCurrentWhenActive="page">Terms</a></li> -->
     <li><a [routerLink]="['sectors']" routerLinkActive="active" ariaCurrentWhenActive="page">Sectors</a></li>
     <!-- <li><a [routerLink]="['canvas-box']" routerLinkActive="active" ariaCurrentWhenActive="page">box</a></li> -->
-    <li><a [routerLink]="['single-boulder-test']" routerLinkActive="active" ariaCurrentWhenActive="page">single-boulder-test</a></li>
-    <li><a [routerLink]="['daone-boulder-test']" routerLinkActive="active" ariaCurrentWhenActive="page">daone-boulder-test</a></li>
-    <li><a [routerLink]="['daone-boulder-test', { number: 2 }]" routerLinkActive="active" ariaCurrentWhenActive="page">daone-boulder-test-2</a></li>
-    <li><a [routerLink]="['spraywall-test']" routerLinkActive="active" ariaCurrentWhenActive="page">spraywall-test</a></li>
+    <!-- <li><a [routerLink]="['single-boulder-test']" routerLinkActive="active" ariaCurrentWhenActive="page">single-boulder-test</a></li> -->
+    <!-- <li><a [routerLink]="['daone-boulder-test']" routerLinkActive="active" ariaCurrentWhenActive="page">daone-boulder-test</a></li>
+    <li><a [routerLink]="['daone-boulder-test', { number: 2 }]" routerLinkActive="active" ariaCurrentWhenActive="page">daone-boulder-test-2</a></li> -->
+    <!-- <li><a [routerLink]="['spraywall-test']" routerLinkActive="active" ariaCurrentWhenActive="page">spraywall-test</a></li> -->
     <li><a [routerLink]="['spraywall-test-2']" routerLinkActive="active" ariaCurrentWhenActive="page">spraywall-test-2</a></li>
+    <li><a [routerLink]="['/', 'spraywall-editor', 'e4b5991c-54c8-f011-9457-71a4df1b7093']" routerLinkActive="active" ariaCurrentWhenActive="page">(temp) spraywall editor</a></li>
   </ul>
 </nav>
 
 <div class="content">
   <router-outlet />
 </div>
+
+<app-toast-container></app-toast-container>
+
+<app-modal #modal 
+  [isSmall]="true">
+</app-modal>

@@ -1,0 +1,22 @@
+<div [id]="id" role="dialog" class="modal" [ngClass]="{ 'isVisible': isOpen }" (click)="close()" (keyup.escape)="close()">
+    <div role="dialog" class="modal-content" [ngClass]="{ 'small-modal': isSmall() }" (click)="$event.stopPropagation()" (keyup)="$event.stopPropagation()">
+        <div class="modal-taskbar">
+            <button aria-label="Close modal" class="button close-button" (click)="close()">&times;</button>
+        </div>
+        @if (showAskForPermissionToClose) {
+            <div class="asking-for-permission">
+                <div class="permission-modal">
+                    <h1>Discard changes?</h1>
+                    <div class="permission-action">
+                        <button class="button primary" #noButton (click)="onPermissionToCloseDenied()">No</button>
+                        <button class="button" (click)="onPermissionToCloseGranted()">Yes</button>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="modal-body" #contentWrapper>
+            <ng-template #dynamicContent></ng-template>
+            <ng-content />
+        </div>
+    </div>
+</div>
