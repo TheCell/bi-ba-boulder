@@ -22,7 +22,7 @@
             [ngClass]="{'disabled': isLoading || registrationForm.invalid || registrationForm.disabled }"
             [disabled]="isLoading || registrationForm.invalid || registrationForm.disabled">
             @if (isLoading) {
-                <span class="loading-spinner"><app-icon></app-icon></span>
+                <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
             } @else {
                 Register
             }

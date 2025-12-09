@@ -103,7 +103,8 @@ final class SpraywallController extends AbstractController
                 new OA\Property(property: 'gradeMax', type: 'integer', description: 'max Font grade'),
                 new OA\Property(property: 'name', type: 'string', description: 'Problem name'),
                 new OA\Property(property: 'creator', type: 'string', description: 'Creator username or ID'),
-                new OA\Property(property: 'dateOrder', type: 'string', description: 'asc or desc')
+                new OA\Property(property: 'dateOrder', type: 'string', description: 'asc or desc'),
+                new OA\Property(property: 'page', type: 'integer', description: 'Page number for pagination')
             ]
         )
     )]

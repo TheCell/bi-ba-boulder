@@ -99,3 +99,15 @@ ul {
 .li-item:nth-child(even) {
   background-color: rgba($light, 0.05);
 }
+
+.filter-icon {
+  display: none; 
+}
+
+.filter-active {
+  display: unset;
+}
+
+.filterable {
+  cursor: pointer;
+}

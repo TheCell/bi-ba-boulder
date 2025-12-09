@@ -1,0 +1,1 @@
+export type IconType = 'none' | 'loading' | 'filter-asc' | 'filter-desc'

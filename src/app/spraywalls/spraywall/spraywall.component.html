@@ -22,41 +22,33 @@
         <div class="list-header">
             <div class="">name</div>
             <div class="hidden-on-mobile">description</div>
-            <div class="">grade</div>
+            <div aria-hidden="true" (click)="onGradeClicked()" class="filterable">grade</div>
             <div class="">creator</div>
-            <div class="hidden-on-mobile">created Date</div>
+            <div aria-hidden="true" (click)="onDateClicked()" class="hidden-on-mobile filterable">created Date 
+                @if (currentFilter.dateOrder) {
+                    @if (currentFilter.dateOrder === 'asc') {
+                        <app-icon [icon]="'filter-asc'"></app-icon>
+                    } @else {
+                        <app-icon [icon]="'filter-desc'"></app-icon>
+                    }
+                }
+            </div>
         </div>
         <div class="list-content">
             <ul>
                 @for (problem of listOfProblems; track problem.id) {
-                        <app-spraywall-legend-item
-                            class="li-item"
-                            [problem]="problem"
-                            [isSelected]="selectedProblem?.id === problem.id"
-                            (selected)="onSelectedProblem($event)">
-                        </app-spraywall-legend-item>
-                }
-            </ul>
-        </div>
-        <!-- <table>
-            <tr>
-                <th>name</th>
-                <th>grade</th>
-                <th>description</th>
-                <th>creator</th>
-                <th>created Date</th>
-            </tr>
-            @for (problem of listOfProblems; track problem.id) {
-                <tr>
                     <app-spraywall-legend-item
                         class="li-item"
                         [problem]="problem"
                         [isSelected]="selectedProblem?.id === problem.id"
                         (selected)="onSelectedProblem($event)">
                     </app-spraywall-legend-item>
-                </tr>
-            }
-        </table> -->
+                }
+            </ul>
+        </div>
     </div>
   </section>
 </div>
+
+<app-modal #fontGradeFilterModal
+ [isSmall]="true"></app-modal>

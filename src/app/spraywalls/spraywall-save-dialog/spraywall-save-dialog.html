@@ -54,7 +54,7 @@
             [ngClass]="{'disabled': isLoading || saveForm.invalid || saveForm.disabled }"
             [disabled]="isLoading || saveForm.invalid || saveForm.disabled">
             @if (isLoading) {
-                <span class="loading-spinner"><app-icon></app-icon></span>
+                <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
             } @else {
                 Save
             }

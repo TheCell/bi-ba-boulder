@@ -4,7 +4,7 @@
     <!-- <div [id]="problem().id" tabindex="0"> -->
         <span class="item-cell">{{ problem().name }}</span>
         <span class="item-cell hidden-on-mobile">{{ problem().description }}</span>
-        <span class="item-cell">{{ problem().fontGrade | appFontGradePipe }}</span>
+        <span class="item-cell">{{ problem().fontGrade ?? undefined | appFontGradePipe }}</span>
         <span class="item-cell">{{ problem().createdByName }}</span>
         <span class="item-cell hidden-on-mobile">{{ problem().createdDate | date:'dd.MM.yyyy' }}</span>
     <!-- </div> -->

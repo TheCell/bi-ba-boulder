@@ -16,7 +16,7 @@
             [ngClass]="{'disabled': isLoading || loginForm.invalid || loginForm.disabled }"
             [disabled]="isLoading || loginForm.invalid || loginForm.disabled">
             @if (isLoading) {
-                <span class="loading-spinner"><app-icon></app-icon></span>
+                <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
             } @else {
                 Login
             }

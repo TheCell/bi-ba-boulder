@@ -30,5 +30,9 @@ export interface PostSearchProblemsRequest {
      * asc or desc
      */
     dateOrder?: string;
+    /**
+     * Page number for pagination
+     */
+    page?: number;
 }
 
