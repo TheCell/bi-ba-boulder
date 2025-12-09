@@ -2,11 +2,11 @@
     (click)="selectProblem()"
     (keypress)="selectProblem()" [id]="problem().id">
     <!-- <div [id]="problem().id" tabindex="0"> -->
-        <span class="flex-name">{{ problem().name }}</span>
-        <span class="flex-grade">{{ problem().description }}</span>
-        <span class="flex-description">{{ problem().fontGrade | appFontGradePipe }}</span>
-        <span class="flex-creator">{{ problem().createdByName }}</span>
-        <span class="flex-created-date">{{ problem().createdDate | json }}</span>
+        <span class="item-cell">{{ problem().name }}</span>
+        <span class="item-cell hidden-on-mobile">{{ problem().description }}</span>
+        <span class="item-cell">{{ problem().fontGrade | appFontGradePipe }}</span>
+        <span class="item-cell">{{ problem().createdByName }}</span>
+        <span class="item-cell hidden-on-mobile">{{ problem().createdDate | date:'dd.MM.yyyy' }}</span>
     <!-- </div> -->
 </li>
 

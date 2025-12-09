@@ -14,7 +14,7 @@
 
     <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.description?.disabled}">
         <select name="grade" id="grade" placeholder="" formControlName="fontGrade">
-            <option [ngValue]="undefined" hidden></option>
+            <option [ngValue]="null">?</option>
             <option [ngValue]="7">3</option>
             <option [ngValue]="10">4</option>
             <option [ngValue]="11">4+</option>

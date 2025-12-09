@@ -26,7 +26,7 @@ class SpraywallProblemDto
     public string $createdByName,
 
     #[Assert\NotBlank]
-    public \DateTime $createdDate,
+    public string $createdDate,
 
     public ?string $description)
   { }

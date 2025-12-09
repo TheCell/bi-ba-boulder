@@ -8,7 +8,7 @@ export class FontGradePipePipe implements PipeTransform {
 
   transform(value: undefined | number): string {
     if (!value) {
-      return '';
+      return '?';
     }
 
     return Object.values(FontGrade)[value];

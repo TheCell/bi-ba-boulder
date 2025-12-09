@@ -36,8 +36,7 @@ export class SpraywallSaveDialog implements iModal {
   private spraywallId = '';
 
   public constructor() {
-    this.saveForm.controls.name.addValidators([Validators.required])
-    this.saveForm.controls.fontGrade.addValidators([Validators.required])
+    this.saveForm.controls.name.addValidators([Validators.required]);
   }
 
   public initialize(data: SpraywallSaveData): void {

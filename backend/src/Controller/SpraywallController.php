@@ -80,14 +80,14 @@ final class SpraywallController extends AbstractController
         }
 
         $spraywallProblemDto = new SpraywallProblemDto(
-            $spraywallProblem->getId(),
-            $spraywallProblem->getName(),
-            $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-            $spraywallProblem->getFontGrade()->getValue(),
-            $spraywallProblem->getCreatedBy()->getId(),
-            $spraywallProblem->getCreatedBy()->getUsername(),
-            $spraywallProblem->getCreatedDate(),
-            $spraywallProblem->getDescription()
+            id: $spraywallProblem->getId(),
+            name: $spraywallProblem->getName(),
+            image: $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
+            fontGrade: $spraywallProblem->getFontGrade()?->getValue(),
+            createdById: $spraywallProblem->getCreatedBy()->getId(),
+            createdByName: $spraywallProblem->getCreatedBy()->getUsername(),
+            createdDate: $spraywallProblem->getCreatedDate()->format('Y-m-d\TH:i:s.v\Z'),
+            description: $spraywallProblem->getDescription()
           );
 
         return $this->json($spraywallProblemDto, Response::HTTP_OK);
@@ -153,7 +153,7 @@ final class SpraywallController extends AbstractController
                 $problem->getFontGrade()?->getValue(),
                 $problem->getCreatedBy()->getId(),
                 $problem->getCreatedBy()->getUsername(),
-                $problem->getCreatedDate(),
+                $problem->getCreatedDate()->format('Y-m-d\TH:i:s.v\Z'),
                 $problem->getDescription()
             );
         }
@@ -221,10 +221,6 @@ final class SpraywallController extends AbstractController
 
         if (!isset($data['image']) || empty($data['image'])) {
            return $this->json(new ErrorDto('Image is required', null), Response::HTTP_BAD_REQUEST);
-        }
-
-        if (!isset($data['fontGrade']) || FontGrade::tryFrom($data['fontGrade']) == null) {
-            return $this->json(new ErrorDto('Font grade is required', null), Response::HTTP_BAD_REQUEST);
         }
 
         // Validate and process base64 image
