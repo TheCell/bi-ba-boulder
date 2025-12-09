@@ -150,7 +150,7 @@ final class SpraywallController extends AbstractController
                 $problem->getId(),
                 $problem->getName(),
                 $this->getSpraywallProblemImage($problem->getSpraywall()->getId(), $problem->getId()),
-                $problem->getFontGrade()->getValue(),
+                $problem->getFontGrade()?->getValue(),
                 $problem->getCreatedBy()->getId(),
                 $problem->getCreatedBy()->getUsername(),
                 $problem->getCreatedDate(),
@@ -197,7 +197,7 @@ final class SpraywallController extends AbstractController
                   nullable: true
               )
           ],
-          required: ['name', 'image', 'fontGrade']
+          required: ['name', 'image']
       )
     )]
     #[OA\Response(

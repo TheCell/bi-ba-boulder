@@ -17,7 +17,7 @@ class SpraywallProblemDto
     #[Assert\NotBlank]
     public string $image,
 
-    public int $fontGrade,
+    public ?int $fontGrade,
     
     #[Assert\NotBlank]
     public Uuid $createdById,
