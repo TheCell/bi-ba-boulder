@@ -35,7 +35,13 @@ class EmailVerifier
         ]);
 
         // todo save mail content to database and send via a mailer worker
-        mail($user->getEmail(), 'Please verify your email', $template, array("Content-Type" => "text/html", "From" => $_ENV["SENDEREMAIL"]));
+        mail(
+            to: $user->getEmail(),
+            subject: 'Please verify your email',
+            message: $template,
+            additional_headers: array(
+                "Content-Type" => "text/html",
+                "From" => $_ENV["SENDEREMAIL"]));
 
         // $context = $email->getContext();
         // $context['signedUrl'] = $signatureComponents->getSignedUrl();
