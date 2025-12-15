@@ -54,10 +54,11 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private scene = new THREE.Scene();
   private loader = new GLTFLoader();
   private camera: THREE.PerspectiveCamera = null!;
-  private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, 2.0);
   private raycaster: THREE.Raycaster = null!;
+  private controls: OrbitControls = null!;
+  private wasClickeForNavigation = false;
 
   private rgbBlockTexture?: THREE.Texture;
   private rgbBlockImageData?: THREE.DataTextureImageData;
@@ -95,9 +96,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
         this.lastClickedHold = undefined;
       }
       
-    })
+    });
 
-    window.addEventListener( 'contextmenu', this.getClickCoordinate.bind(this) );
+    // window.addEventListener('click', this.getClickCoordinate.bind(this) );
 
     // effect(() => {
     //   const selectedId = this.selectedProblemId();
@@ -283,11 +284,10 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   }
   
   private getClickCoordinate(event: Event): void {
-    
-    if (this.scene == undefined || this.scene.children == undefined) {
+    if (this.wasClickeForNavigation || this.scene == undefined || this.scene.children == undefined) {
       return;
     }
-    
+
     const mouseEvent = event as MouseEvent;
     const pointer = new THREE.Vector2();
     const canvasWidth = this.canvas.nativeElement.offsetWidth;
@@ -497,6 +497,12 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     this.scene.add(this.ambientLight);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
+    this.controls.addEventListener('change', this.handleOrbitControlChangeEvent);
+    this.controls.addEventListener('start', this.handleOrbitControlStartEvent);
+    this.controls.addEventListener('end', this.handleOrbitControlEndEvent);
+    
+    canvas.addEventListener('click', this.getClickCoordinate.bind(this) );
+
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
 
@@ -515,5 +521,17 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(this.loop);
+  }
+
+  private handleOrbitControlStartEvent = (_event: THREE.Event<'start', OrbitControls>): void => {
+    this.wasClickeForNavigation = false;
+  }
+
+  private handleOrbitControlChangeEvent = (_event: THREE.Event<'change', OrbitControls>): void => {
+    this.wasClickeForNavigation = true;
+  }
+
+  private handleOrbitControlEndEvent = (_event: THREE.Event<'end', OrbitControls>): void => {
+    // empty for now
   }
 }
