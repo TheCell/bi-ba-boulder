@@ -44,6 +44,7 @@ export class SpraywallEditor implements OnInit {
   public currentHighlightUv?: THREE.Texture<HTMLImageElement>;
   public currentHoldColor: THREE.Color = null!;
   public resetSignal: Subject<void> = new Subject<void>();
+  public undoLastHighlightSignal: Subject<void> = new Subject<void>();
 
   public spraywallId = '';
   // public selectedProblem?: SpraywallProblemDto = undefined;

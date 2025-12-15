@@ -8,7 +8,8 @@
             [highlightUv]="currentHighlightUv"
             [highlightColor]="currentHoldColor"
             [currentHighlightedHoldsTexturePath]="currentHighlightedHoldsTexturePath"
-            [resetRoute]="resetSignal">
+            [resetRoute]="resetSignal"
+            [undoLastHighlight]="undoLastHighlightSignal">
         </app-spraywall-editor-renderer>
     } @else {
         <app-loading-image
@@ -19,6 +20,7 @@
   <section class="legend">
     <div class="actions">
         <button class="button action-button" (click)="openSaveModal()">Save Modal</button>
+        <button class="button action-button" (click)="undoLastHighlightSignal.next()">Undo Last Click</button>
         <button class="button action-button" (click)="resetSignal.next()">Reset</button>
         <button class="button action-button action-end" [routerLink]="['/', 'spraywall', spraywallId]">Back to Spraywall</button>
     </div>

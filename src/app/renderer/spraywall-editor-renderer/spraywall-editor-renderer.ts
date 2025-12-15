@@ -4,7 +4,6 @@ import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { BoulderLine } from '../../interfaces/boulder-line';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { holdColorOptions, TypeAndColor } from '../common/spraywall-hold-types';
@@ -45,12 +44,12 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   public highlightColor: InputSignal<THREE.Color> = input.required<THREE.Color>()
   public currentHighlightedHoldsTexturePath: InputSignal<string> = input.required<string>();
   public resetRoute: InputSignal<Subject<void>> = input.required<Subject<void>>();
+  public undoLastHighlight: InputSignal<Subject<void>> = input.required<Subject<void>>();
 
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public shortcuts: ShortcutInput[] = [];
 
   private proccessedRawModel?: ArrayBuffer;
-  private processedLines: BoulderLine[] = [];
   private scene = new THREE.Scene();
   private loader = new GLTFLoader();
   private camera: THREE.PerspectiveCamera = null!;
@@ -69,6 +68,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   // private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.DataTexture;
   private lastClickedHold?: ColorAndIndex;
+
+  private previousLastClickedHold?: ColorAndIndex;
+  private previousHighlightedHoldsImageData: THREE.TypedArray | null = null;
 
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
@@ -118,12 +120,15 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   public ngOnInit(): void {
     // this.setupHighlightDebugTexture();
     this.resetRoute().subscribe({
-      next: (t) => {
-        console.log(t);
+      next: () => {
         this.newRoute();
-        
       }
-    })
+    });
+    this.undoLastHighlight().subscribe({
+      next: () => {
+        this.undo();
+      }
+    });
     this.newRoute();
   }
   
@@ -192,22 +197,10 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     return undefined;
   }
   
-  // todo
   private setupHighlightDebugTexture(texture: THREE.Texture<HTMLImageElement>) {
-    // const loader = new THREE.TextureLoader();
-    // todo
-    // this texture is unique for every spraywall model. It contains the unique B values for the groupings
-    // loader.load('./images/Bimano_Spraywall_2025_rgb_blocks_128x128.png', (texture) => {
-    //   texture.flipY = false;
-    //   texture.needsUpdate = true;
-    //   texture.minFilter = THREE.NearestFilter;
-    //   texture.magFilter = THREE.NearestFilter;
-    //   this.rgbBlockTexture = texture;
-
-      this.rgbBlockImageData = getImageDataFromTexture(texture);
-      this.rgbBlockMaterial = this.setupCustomShaderMaterial();
-      this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
-    // });
+    this.rgbBlockImageData = getImageDataFromTexture(texture);
+    this.rgbBlockMaterial = this.setupCustomShaderMaterial();
+    this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
   }
   
   private setupHighlightTexture(): void {
@@ -227,19 +220,6 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       this.highlightedHoldsTexture = texture;
     });
   }
-  
-  // private setHighlightedHoldsTextureFromData(base64String: string): void {
-  //   const loader = new THREE.DataTextureLoader();
-  //   loader.load('data:image/png;base64,' + base64String, (texture: THREE.DataTexture) => {
-  //     texture.flipY = false;
-  //     texture.needsUpdate = true;
-  //     texture.minFilter = THREE.NearestFilter;
-  //     texture.magFilter = THREE.NearestFilter;
-  //     this.highlightedHoldsTexture = texture;
-  //   });
-  // }
-
-
   
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
     this.loader.parse(buffer, '', (gltf: GLTF) => {
@@ -370,7 +350,11 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       return;
     }
 
-    console.log(colorAndIndex.b);
+    if (!this.previousHighlightedHoldsImageData) {
+      this.previousHighlightedHoldsImageData = this.highlightedHoldsTexture.image.data.slice();
+    }
+    this.previousHighlightedHoldsImageData.set(this.highlightedHoldsTexture.image.data);
+
     if (this.lastClickedHold?.index === colorAndIndex.index) {
       const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
       let everythingWasHighlighted = true;
@@ -419,6 +403,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
 
     this.highlightedHoldsTexture!.needsUpdate = true;
+    this.previousLastClickedHold = this.lastClickedHold;
     this.lastClickedHold = colorAndIndex;
   }
   
@@ -460,6 +445,14 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
 
     return material;
+  }
+
+  private undo(): void {
+    this.lastClickedHold = this.previousLastClickedHold;
+    if (this.highlightedHoldsTexture && this.highlightedHoldsTexture.image.data && this.previousHighlightedHoldsImageData) {
+      this.highlightedHoldsTexture.image.data.set(this.previousHighlightedHoldsImageData);
+      this.highlightedHoldsTexture.needsUpdate = true;
+    }
   }
 
   ///
