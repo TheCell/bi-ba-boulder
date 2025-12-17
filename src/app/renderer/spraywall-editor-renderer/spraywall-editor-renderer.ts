@@ -329,7 +329,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       throw new Error('Image data is null or undefined.');
     }
 
-    for (let index = 2; index < data.length; index += 4) {
+    // skip the backdrop
+    // todo, don't select ALL holds that are not grouped
+    for (let index = 2; index < data.length - 4; index += 4) {
       const blue = data[index];
       if (blue === group) {
         indices.push(index - 2);
@@ -348,7 +350,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
     const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
     // console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
-    if (!this.highlightedHoldsTexture || this.highlightedHoldsTexture.image.data === null) {
+    if (!this.highlightedHoldsTexture || this.highlightedHoldsTexture.image.data === null || colorAndIndex.r === 255 && colorAndIndex.g === 63) {
       console.error('No highlighted holds texture or data to draw on.');
       return;
     }

@@ -16,7 +16,7 @@ export class Toast implements OnChanges, OnDestroy {
   public toast = input.required<IToastInternal>();
 
   public id: string = ''.appendUniqueId();
-  public showFadeout: boolean = false;
+  public showFadeout = false;
   
   private delay?: number;
   private fadeoutDelayTimer?: number;

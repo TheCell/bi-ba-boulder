@@ -46,9 +46,10 @@ The next todos:
 [] user profile page   
 [] feedback form   
 [-] style spraywall list   
-[] filter spraywall list   
+[-] filter spraywall list   
 [] reset Create Spraywall after saving   
 [] split production and develop   
+[] revert und redo function   
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)

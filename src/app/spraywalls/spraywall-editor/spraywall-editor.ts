@@ -74,7 +74,8 @@ export class SpraywallEditor implements OnInit {
       }
     });
 
-    const todo = './images/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
+    // const todo = './images/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
+    const todo = './api-test/boulder/spraywall2/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
     this.loadCustomUv(todo);
   }
 

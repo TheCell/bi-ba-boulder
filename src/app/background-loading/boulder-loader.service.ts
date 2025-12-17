@@ -125,7 +125,7 @@ export class BoulderLoaderService {
   }
 
   public loadTestSpraywall3(): Observable<ArrayBuffer> {
-    return this.http.get('./api-test/boulder/spraywall2/Bimano_Spraywall_2025_05.glb', { responseType: 'arraybuffer'});
+    return this.http.get('./api-test/boulder/spraywall2/Bimano_Spraywall_2025_UV_shenanigans_03.glb', { responseType: 'arraybuffer'});
   }
 
 }
