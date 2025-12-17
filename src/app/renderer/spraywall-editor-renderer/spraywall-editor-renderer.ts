@@ -303,11 +303,14 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
 
     // Clamp and flip Y (because WebGL textures are usually upside down)
+    
     u = THREE.MathUtils.clamp(u, 0, 1);
     v = THREE.MathUtils.clamp(v, 0, 1);
 
-    const x = Math.floor(u * (width - 1));
-    const y = Math.floor(v * (height - 1));
+    // we have a 1 off error on the right side of the uv map. why
+    const x = Math.min(Math.floor(u * width), width - 1);
+    const y = Math.min(Math.floor(v * height), height - 1);
+
     const index = (y * width + x) * 4;
 
     const r = data[index];
