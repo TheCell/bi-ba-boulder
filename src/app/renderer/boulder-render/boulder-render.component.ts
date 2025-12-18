@@ -53,7 +53,9 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
-  private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, 2.0);
+  private ambientLightIntensity = 2.5;
+  private ambientLightLowIntensity = 1.5;
+  private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
 
   private raycaster: THREE.Raycaster = null!;
   private currentRandomRadius = Math.random() * 360;
@@ -86,10 +88,10 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
       if (boulderProblem) {
         this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
-        this.ambientLight.intensity = 0.7;
+        this.ambientLight.intensity = this.ambientLightLowIntensity;
       } else {
         this.highlightedHoldsTexture = undefined;
-        this.ambientLight.intensity = 2.0;
+        this.ambientLight.intensity = this.ambientLightIntensity;
       }
     });
 

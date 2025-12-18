@@ -54,10 +54,11 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private loader = new GLTFLoader();
   private camera: THREE.PerspectiveCamera = null!;
   private renderer: THREE.WebGLRenderer = null!;
-  private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, 2.0);
   private raycaster: THREE.Raycaster = null!;
   private controls: OrbitControls = null!;
   private wasClickeForNavigation = false;
+  private ambientLightIntensity = 2.5;
+  private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
 
   private rgbBlockTexture?: THREE.Texture;
   private rgbBlockImageData?: THREE.DataTextureImageData;
@@ -99,26 +100,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       }
       
     });
-
-    // window.addEventListener('click', this.getClickCoordinate.bind(this) );
-
-    // effect(() => {
-    //   const selectedId = this.selectedProblemId();
-    //   this.ambientLight.intensity = 2.0;
-
-    //   if (selectedId && selectedId.length > 0) {
-    //     const problem = this.boulderProblems().find((p) => p.id === selectedId);
-
-    //     if (problem) {
-    //       this.setHighlightedHoldsTextureFromData(problem.image);
-    //       this.ambientLight.intensity = 0.7;
-    //     }
-    //   }
-    // });
   }
 
   public ngOnInit(): void {
-    // this.setupHighlightDebugTexture();
     this.resetRoute().subscribe({
       next: () => {
         this.newRoute();
