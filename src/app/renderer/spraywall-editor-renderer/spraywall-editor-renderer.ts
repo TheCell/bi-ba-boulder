@@ -57,8 +57,10 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private raycaster: THREE.Raycaster = null!;
   private controls: OrbitControls = null!;
   private wasClickeForNavigation = false;
-  private ambientLightIntensity = 2.5;
+  private ambientLightIntensity = 2.0;
+  private directionalLightIntensity = 1.0;
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
+  private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
 
   private rgbBlockTexture?: THREE.Texture;
   private rgbBlockImageData?: THREE.DataTextureImageData;
@@ -476,6 +478,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
     this.onResize();
     this.scene.add(this.camera);
+    this.scene.add(this.directionalLight);
     this.scene.add(this.ambientLight);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 

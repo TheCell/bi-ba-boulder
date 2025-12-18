@@ -53,9 +53,11 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
-  private ambientLightIntensity = 2.5;
+  private ambientLightIntensity = 2.0;
   private ambientLightLowIntensity = 1.5;
+  private directionalLightIntensity = 1.0;
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
+  private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
 
   private raycaster: THREE.Raycaster = null!;
   private currentRandomRadius = Math.random() * 360;
@@ -154,6 +156,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
     this.onResize();
     this.scene.add(this.camera);
+    this.scene.add(this.directionalLight);
     this.scene.add(this.ambientLight);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
 
