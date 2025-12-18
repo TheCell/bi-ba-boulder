@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { LoadingImageComponent } from 'src/app/common/loading-image/loading-image.component';
 import { SpraywallsService } from '@api/index';
 import { BoulderLoaderService } from 'src/app/background-loading/boulder-loader.service';
@@ -34,6 +34,7 @@ export class SpraywallEditor implements OnInit {
   private _fb = inject(NonNullableFormBuilder);
   private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService);
+  private changeDetectorRef = inject(ChangeDetectorRef);
 
   public colorForm = this._fb.group<iHoldColorForm>({
     spraywallHoldType: (SpraywallHoldType.hold),
@@ -71,6 +72,7 @@ export class SpraywallEditor implements OnInit {
     this.boulderLoaderService.loadTestSpraywall3().subscribe({
       next: (data: ArrayBuffer) => {
         this.currentRawModel = data;
+        this.changeDetectorRef.markForCheck();
       }
     });
 

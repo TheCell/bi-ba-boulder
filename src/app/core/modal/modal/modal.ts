@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, inject, input, OnDestroy, OnInit, Type, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, inject, input, OnDestroy, OnInit, output, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { ModalService } from '../modal.service';
 import { NgClass } from '@angular/common';
 import { iModal } from './modal.interface';
@@ -17,6 +17,7 @@ export class Modal implements OnInit, OnDestroy {
   private modalService = inject(ModalService);
   private elementRef = inject(ElementRef);
   public isSmall = input<boolean>(false);
+  public closed = output<void>();
 
   public id: string = 'modal'.appendUniqueId();
   public isOpen = false;
@@ -66,7 +67,9 @@ export class Modal implements OnInit, OnDestroy {
       });
       return;
     }
+
     this.closeModal();
+    this.closed.emit();
   }
 
   private closeModal(): void {

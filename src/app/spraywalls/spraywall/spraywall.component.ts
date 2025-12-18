@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
 
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
@@ -17,6 +17,7 @@ import { SpraywallGradeFilter } from './spraywall-grade-filter/spraywall-grade-f
   imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, RouterLink, Icon, Modal],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class SpraywallComponent implements OnInit, OnDestroy {
   @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
@@ -24,6 +25,7 @@ export class SpraywallComponent implements OnInit, OnDestroy {
   private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService)
   private modalService = inject(ModalService);
+  private changeDetectorRef = inject(ChangeDetectorRef);
 
   public currentRawModel?: ArrayBuffer;
   public spraywallId = '';
@@ -42,6 +44,7 @@ export class SpraywallComponent implements OnInit, OnDestroy {
     this.subscription.add(this.reloadSearchSubject.pipe(debounceTime(300), switchMap(() => this.spraywallsService.postSearchProblems(this.spraywallId, this.currentFilter))).subscribe({
       next: (problemSearchResult: SpraywallProblemSearchDto) => {
         this.listOfProblems = problemSearchResult.problems
+        this.changeDetectorRef.markForCheck();
       }
     }));
   }
@@ -50,6 +53,7 @@ export class SpraywallComponent implements OnInit, OnDestroy {
     this.boulderLoaderService.loadTestSpraywall3().subscribe({
       next: (data: ArrayBuffer) => {
         this.currentRawModel = data;
+        this.changeDetectorRef.markForCheck();
       }
     });
 

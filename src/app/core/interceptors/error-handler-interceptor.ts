@@ -2,9 +2,11 @@ import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest, type HttpInte
 import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ToastService } from '../toast-container/toast.service';
+import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 
 export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const toastService = inject(ToastService);
+  const loginTrackerService = inject(LoginTrackerService);
 
   return next(req).pipe((source) => {
     return new Observable<HttpEvent<unknown>>((observer) => {
@@ -30,8 +32,7 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
             {
               if (error.message.localeCompare('Expired JWT Token') === 0) {
                 message = 'Logged you out.';
-                localStorage.removeItem('auth_token');
-                localStorage.removeItem('auth_token_expiry');
+                loginTrackerService.removeLoginInformation();
               }
               else if (error.message.localeCompare('JWT Token not found') === 0) {
                 message = 'You are not logged in.';

@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { Icon } from '../../icon/icon';
 import { ToastService } from '../../toast-container/toast.service';
 import { ModalService } from '../modal.service';
-import { jwtDecoder } from './jwt-decoder';
+import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface IloginForm extends PostAppAuthLoginRequest { }
@@ -21,6 +21,7 @@ interface IloginForm extends PostAppAuthLoginRequest { }
 })
 export class LoginDialogComponent implements iModal, OnDestroy {
   private _fb = inject(NonNullableFormBuilder);
+  private loginTrackerService = inject(LoginTrackerService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
   private modalService = inject(ModalService);
@@ -61,9 +62,7 @@ export class LoginDialogComponent implements iModal, OnDestroy {
 
     this.authService.postAppAuthLogin(loginRequest).subscribe({
       next: (token: TokenDto) => {
-        const decodedToken = jwtDecoder(token.token);
-        localStorage.setItem('auth_token', token.token);
-        localStorage.setItem('auth_token_expiry', '' + decodedToken.exp * 1000);
+        this.loginTrackerService.saveLoginInformation(token);
 
         this.isLoading = false;
         this.loginForm.reset();
