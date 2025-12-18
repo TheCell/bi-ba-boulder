@@ -36,7 +36,7 @@ export class SpraywallEditor implements OnInit {
   private boulderLoaderService = inject(BoulderLoaderService);
 
   public colorForm = this._fb.group<iHoldColorForm>({
-    spraywallHoldType: (SpraywallHoldType.start),
+    spraywallHoldType: (SpraywallHoldType.hold),
   });
   public colorFormId = ''.appendUniqueId();
 
