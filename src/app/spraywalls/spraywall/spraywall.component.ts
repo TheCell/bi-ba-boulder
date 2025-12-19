@@ -65,7 +65,11 @@ export class SpraywallComponent implements OnInit, OnDestroy {
   }
   
   public onSelectedProblem(problem: SpraywallProblemDto): void {
-    this.selectedProblem = problem;
+    if (this.selectedProblem?.id === problem.id) {
+      this.onResetSelection();
+    } else {
+      this.selectedProblem = problem;
+    }
   }
 
   public onResetSelection(): void {
