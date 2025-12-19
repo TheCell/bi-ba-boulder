@@ -80,6 +80,14 @@ export class SpraywallEditor implements OnInit {
     const todo = './api-test/boulder/spraywall2/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
     this.loadCustomUv(todo);
   }
+  
+  public closeModal($event: number) {
+    if ($event > 0) {
+      // don't reset
+    } else {
+      this.resetSignal.next()
+    }
+  }
 
   public openSaveModal(): void {
     // console.log(this.renderer.getRouteImage());

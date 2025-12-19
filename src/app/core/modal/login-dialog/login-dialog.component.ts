@@ -66,7 +66,7 @@ export class LoginDialogComponent implements iModal, OnDestroy {
 
         this.isLoading = false;
         this.loginForm.reset();
-        this.modalService.close();
+        this.modalService.close(0);
         this.toastService.showSuccess('Login Successful', 'You have successfully logged in!');
       },
       error: () => {

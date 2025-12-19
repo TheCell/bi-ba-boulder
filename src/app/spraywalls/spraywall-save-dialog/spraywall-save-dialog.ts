@@ -57,12 +57,12 @@ export class SpraywallSaveDialog implements iModal {
       // password: this.saveForm.controls.password.value,
     };
 
-    console.log(postRegisterRequest);
+    // console.log(postRegisterRequest);
     this.spraywallsService.putCreate(this.spraywallId, postRegisterRequest).subscribe({
       next: () => {
         this.isLoading = false;
         this.saveForm.reset();
-        this.modalService.close();
+        this.modalService.close(0);
         this.toastService.showSuccess('Saved Successfully', 'You have successfully saved the spraywall.');
       },
       error: () => {

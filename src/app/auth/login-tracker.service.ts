@@ -20,8 +20,6 @@ export class LoginTrackerService {
   }
 
   public isLoggedIn(): boolean {
-    console.log('isLoggedIn');
-    
     if (!this.expiration || !this.token) {
       return false;
     }

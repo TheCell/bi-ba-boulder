@@ -1,6 +1,7 @@
 import { Injectable, Type } from '@angular/core';
 import { Modal } from './modal/modal';
 import { iModal } from './modal/modal.interface';
+import { CloseType } from './close-type';
 
 @Injectable({
   providedIn: 'root'
@@ -34,8 +35,8 @@ export class ModalService {
     }
   }
 
-  public close(): void {
-    this.modals.forEach(modal => modal.close());
+  public close(closeType: CloseType): void {
+    this.modals.forEach(modal => modal.close(closeType));
   }
 
 }

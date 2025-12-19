@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
 
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
@@ -11,16 +11,19 @@ import { debounceTime, Subject, Subscription, switchMap } from 'rxjs';
 import { ModalService } from 'src/app/core/modal/modal.service';
 import { Modal } from 'src/app/core/modal/modal/modal';
 import { SpraywallGradeFilter } from './spraywall-grade-filter/spraywall-grade-filter';
+import { SpraywallLegendItemPlaceholder } from './spraywall-legend-item-placeholder/spraywall-legend-item-placeholder';
 
 @Component({
   selector: 'app-spraywall',
-  imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, RouterLink, Icon, Modal],
+  imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, SpraywallLegendItemPlaceholder,
+    RouterLink, Icon, Modal],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
   changeDetection: ChangeDetectionStrategy.Default
 })
-export class SpraywallComponent implements OnInit, OnDestroy {
+export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
+  @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
 
   private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService)
@@ -34,6 +37,11 @@ export class SpraywallComponent implements OnInit, OnDestroy {
   public selectedProblem?: SpraywallProblemDto = undefined;
   public currentFilter: PostSearchProblemsRequest = {};
 
+  public totalCount = 0;
+  private currentMaxPage = 1;
+  // private pageSize = 30;
+  private newEntriesLoading = false;
+  
   private reloadSearchSubject = new Subject<void>();
   private subscription = new Subscription();
 
@@ -43,10 +51,21 @@ export class SpraywallComponent implements OnInit, OnDestroy {
 
     this.subscription.add(this.reloadSearchSubject.pipe(debounceTime(300), switchMap(() => this.spraywallsService.postSearchProblems(this.spraywallId, this.currentFilter))).subscribe({
       next: (problemSearchResult: SpraywallProblemSearchDto) => {
-        this.listOfProblems = problemSearchResult.problems
+        this.newEntriesLoading = false;
+        if (problemSearchResult.currentPage > 0) {
+          this.listOfProblems.push(... problemSearchResult.problems);
+        } else {
+          this.listOfProblems = problemSearchResult.problems;
+        }
+        this.totalCount = problemSearchResult.totalCount;
+
         this.changeDetectorRef.markForCheck();
       }
     }));
+  }
+
+  public ngAfterViewInit(): void {
+    this.scrollList.nativeElement.addEventListener('scroll', this.scrollEventListener);
   }
 
   public ngOnInit() {
@@ -62,6 +81,7 @@ export class SpraywallComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.scrollList.nativeElement.removeEventListener('scroll', this.scrollEventListener);
   }
   
   public onSelectedProblem(problem: SpraywallProblemDto): void {
@@ -86,10 +106,46 @@ export class SpraywallComponent implements OnInit, OnDestroy {
       this.currentFilter.dateOrder = 'asc';
     }
 
+    this.resetFilterAndResultsPosition();
     this.reloadSearchSubject.next();
   }
 
   public onGradeClicked(): void {
+    return; // todo
     this.modalService.open(this.fontGradeFilterModal.id, SpraywallGradeFilter);
+  }
+
+  private scrollEventListener = () => {
+    this.scrollEvent();
+  }
+
+  private scrollEvent(): void {
+    if (this.currentScrollPosition() < 25 && this.listOfProblems.length < this.totalCount) {
+      this.loadNextPage();
+    }
+  }
+
+  private currentScrollPosition(): number {
+    const element = this.scrollList.nativeElement;
+    return Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop);
+  }
+
+  private loadNextPage(): void {
+    if (this.newEntriesLoading) {
+      return;
+    }
+
+    this.newEntriesLoading = true;
+    this.currentMaxPage = this.currentMaxPage + 1;
+    this.currentFilter.page = this.currentMaxPage;
+    this.reloadSearchSubject.next();
+  }
+
+  private resetFilterAndResultsPosition(): void {
+    this.currentMaxPage = 1;
+    this.currentFilter.page = 0;
+    this.totalCount = 0;
+    this.listOfProblems = [];
+    // this.onResetSelection();
   }
 }

@@ -1,0 +1,53 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: block;
+}
+
+.item {
+  width: 100%;
+  padding: 2px 0px;
+}
+
+.item {
+  display: grid;
+  grid-template: 'header';
+  grid-template-columns: 100%;
+  white-space: nowrap;
+}
+
+@keyframes placeHolderShimmer {
+  0%{
+    background-position-x: -800px;
+  }
+  100%{
+    background-position-x: 800px;
+  }
+}
+
+// @media (min-width: 400px) {
+//   .item > span {
+//     animation-duration: 2s;
+//   }
+// }
+
+// @media (max-width: 400px) {
+//   .item > span {
+//     animation-duration: 1s;
+//   }
+// }
+
+.item > span {
+  padding: 2px 0px;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer; // todo fix this at some point
+  animation-timing-function: linear;
+  background: linear-gradient(to right, $dark 8%, $lightDark 18%, $dark 33%);
+}
+
+.item-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

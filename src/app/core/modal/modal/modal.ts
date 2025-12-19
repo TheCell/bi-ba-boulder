@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, inject, i
 import { ModalService } from '../modal.service';
 import { NgClass } from '@angular/common';
 import { iModal } from './modal.interface';
+import { CloseType } from '../close-type';
 
 @Component({
   selector: 'app-modal',
@@ -17,7 +18,7 @@ export class Modal implements OnInit, OnDestroy {
   private modalService = inject(ModalService);
   private elementRef = inject(ElementRef);
   public isSmall = input<boolean>(false);
-  public closed = output<void>();
+  public closed = output<CloseType>();
 
   public id: string = 'modal'.appendUniqueId();
   public isOpen = false;
@@ -27,7 +28,7 @@ export class Modal implements OnInit, OnDestroy {
   private componentRef?: ComponentRef<iModal>;
 
   public constructor() {
-      this.element = this.elementRef.nativeElement;
+    this.element = this.elementRef.nativeElement;
   }
 
   public ngOnDestroy(): void {
@@ -59,7 +60,7 @@ export class Modal implements OnInit, OnDestroy {
     return this.componentRef.instance;
   }
 
-  public close(): void {
+  public close(closeType: CloseType): void {
     if (this.componentRef?.instance.canCloseWithoutPermission === false) {
       this.showAskForPermissionToClose = true;
       setTimeout(() => {
@@ -69,7 +70,7 @@ export class Modal implements OnInit, OnDestroy {
     }
 
     this.closeModal();
-    this.closed.emit();
+    this.closed.emit(closeType);
   }
 
   private closeModal(): void {
