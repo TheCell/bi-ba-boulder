@@ -307,7 +307,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     return { r, g, b, a, index };
   }
 
-  private getIndicesForGroup(imageData: THREE.DataTextureImageData, group: number): number[] {
+  private getIndicesForGroup(imageData: THREE.DataTextureImageData, colorAndIndex: ColorAndIndex): number[] {
     const indices: number[] = [];
     const { data } = imageData;
 
@@ -316,11 +316,17 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
 
     // skip the backdrop
-    // todo, don't select ALL holds that are not grouped
-    for (let index = 2; index < data.length - 4; index += 4) {
-      const blue = data[index];
-      if (blue === group) {
-        indices.push(index - 2);
+    const blueColorGroup = colorAndIndex.b;
+    if (blueColorGroup === 0) {
+      indices.push(colorAndIndex.index);
+      return indices
+    }
+    
+    const blueColorOffset = 2;
+    for (let blueColorIndex = blueColorOffset; blueColorIndex < data.length - 4; blueColorIndex += 4) {
+      const blueValue = data[blueColorIndex];
+      if (blueValue === blueColorGroup) {
+        indices.push(blueColorIndex - blueColorOffset);
       }
     }
 
@@ -347,7 +353,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     this.previousHighlightedHoldsImageData.set(this.highlightedHoldsTexture.image.data);
 
     if (this.lastClickedHold?.index === colorAndIndex.index) {
-      const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex.b);
+      const group = this.getIndicesForGroup(this.rgbBlockImageData, colorAndIndex);
       let everythingWasHighlighted = true;
       let nothingWasHighlighted = true;
 
