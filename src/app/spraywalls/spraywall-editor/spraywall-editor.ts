@@ -55,7 +55,7 @@ export class SpraywallEditor implements OnInit {
   public constructor() {
     const router = inject(ActivatedRoute);
     this.spraywallId = router.snapshot.paramMap.get('id') ?? '';
-    this.currentHoldColor = this.holdColorOptions[0].color;
+    this.currentHoldColor = this.holdColorOptions[this.colorForm.controls.spraywallHoldType.value - 1].color;
 
     this.colorForm.controls.spraywallHoldType.valueChanges.subscribe({
       next: (value) => {

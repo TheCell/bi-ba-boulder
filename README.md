@@ -17,7 +17,8 @@ The next todos:
 
 [x] Figure a route dto out   
 [x] login (needs frontend)   
-[-] verify email mail (needs redirect to success page)   
+[-] verify email (needs redirect to success page)   
+[] resend verify email
 [x] 3D scan -> object with LOD process   
 [x] Load LOD levels   
 [] bloc caching   
@@ -41,15 +42,14 @@ The next todos:
 [-] rate limiting   
 [] upload only while logged in and verified   
 [] Version Number   
-[] resend verify email   
 [x] make http failure cases generic   
 [] user profile page   
 [] feedback form   
-[-] style spraywall list   
+[x] style spraywall list   
 [-] filter spraywall list   
-[] reset Create Spraywall after saving   
+[x] reset Create Spraywall after saving   
 [] split production and develop   
-[] revert und redo function   
+[-] revert und redo function   
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)
