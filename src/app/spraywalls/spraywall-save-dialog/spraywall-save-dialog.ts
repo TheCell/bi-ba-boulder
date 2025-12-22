@@ -43,6 +43,8 @@ export class SpraywallSaveDialog implements iModal, OnDestroy {
     this.subscription.add(this.saveForm.valueChanges.subscribe(() => {
       if (this.saveForm.dirty) {
         this.canCloseWithoutPermission = false;
+      } else {
+        this.canCloseWithoutPermission = true;
       }
     }));
   }
@@ -60,17 +62,14 @@ export class SpraywallSaveDialog implements iModal, OnDestroy {
 
   public onSubmit(): void {
     this.isLoading = true;
-    this.canCloseWithoutPermission = true;
     this.saveForm.disable();
     const postRegisterRequest: PutCreateRequest = {
       name: this.saveForm.controls.name.value!,
       description: this.saveForm.controls.description?.value,
       image: this.imageData!,
       fontGrade: this.saveForm.controls.fontGrade?.value,
-      // password: this.saveForm.controls.password.value,
     };
 
-    // console.log(postRegisterRequest);
     this.spraywallsService.putCreate(this.spraywallId, postRegisterRequest).subscribe({
       next: () => {
         this.isLoading = false;
