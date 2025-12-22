@@ -46,8 +46,3 @@ textarea {
   border-right: 1px solid $lightDark;
   border-left: 1px solid $lightDark;
 }
-
-input:focus, select:focus, textarea:focus {
-  border-color: $primary;
-  transition: border-color 0.25s cubic-bezier(0, 0, 0.1, 1.0);
-}
