@@ -65,7 +65,7 @@ export class RegistrationDialogComponent implements iModal, OnDestroy {
       next: () => {
         this.isLoading = false;
         this.registrationForm.reset();
-        this.modalService.close(0);
+        this.modalService.close({ closeType: 0 });
         this.toastService.showSuccess('Registration Successful', 'You have successfully registered. Please check your email to verify your account.');
       },
       error: () => {

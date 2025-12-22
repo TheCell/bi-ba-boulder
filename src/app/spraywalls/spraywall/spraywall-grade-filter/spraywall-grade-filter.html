@@ -1,1 +1,93 @@
-<p>spraywall-grade-filter works!</p>,
+<form [formGroup]="filterForm" (ngSubmit)="onSubmit()"
+    [ngClass]="{'disabled': filterForm.disabled}">
+    <!-- <div class="form-group form-input">
+        <input type="checkbox" />
+        <label for="description" class="group-label">Include Ungraded</label>
+    </div> -->
+
+    <div class="form-group form-input">
+        <select name="grade" id="grade" placeholder="" formControlName="gradeMin">
+            <option [ngValue]="undefined">all</option>
+            <option [ngValue]="7">3</option>
+            <option [ngValue]="10">4</option>
+            <option [ngValue]="11">4+</option>
+            <option [ngValue]="13">5</option>
+            <option [ngValue]="14">5+</option>
+            <option [ngValue]="16">6A</option>
+            <option [ngValue]="17">6A+</option>
+            <option [ngValue]="19">6B</option>
+            <option [ngValue]="20">6B+</option>
+            <option [ngValue]="22">6C</option>
+            <option [ngValue]="23">6C+</option>
+            <option [ngValue]="25">7A</option>
+            <option [ngValue]="26">7A+</option>
+            <option [ngValue]="28">7B</option>
+            <option [ngValue]="29">7B+</option>
+            <option [ngValue]="31">7C</option>
+            <option [ngValue]="32">7C+</option>
+            <option [ngValue]="34">8A</option>
+            <option [ngValue]="35">8A+</option>
+            <option [ngValue]="37">8B</option>
+            <option [ngValue]="38">8B+</option>
+            <option [ngValue]="40">8C</option>
+            <option [ngValue]="41">8C+</option>
+            <option [ngValue]="43">9A</option>
+            <option [ngValue]="44">9A+</option>
+            <option [ngValue]="46">9B</option>
+            <option [ngValue]="47">9B+</option>
+            <option [ngValue]="49">9C</option>
+            <option [ngValue]="50">9C+</option>
+        </select>
+        <!-- <input id="description" placeholder="" autocomplete="off" type="text" formControlName="description" /> -->
+        <label for="description" class="group-label">Minimum Grade</label>
+    </div>
+
+    <div class="form-group form-input">
+        <select name="grade" id="grade" placeholder="" formControlName="gradeMax">
+            <option [ngValue]="undefined">all</option>
+            <option [ngValue]="7">3</option>
+            <option [ngValue]="10">4</option>
+            <option [ngValue]="11">4+</option>
+            <option [ngValue]="13">5</option>
+            <option [ngValue]="14">5+</option>
+            <option [ngValue]="16">6A</option>
+            <option [ngValue]="17">6A+</option>
+            <option [ngValue]="19">6B</option>
+            <option [ngValue]="20">6B+</option>
+            <option [ngValue]="22">6C</option>
+            <option [ngValue]="23">6C+</option>
+            <option [ngValue]="25">7A</option>
+            <option [ngValue]="26">7A+</option>
+            <option [ngValue]="28">7B</option>
+            <option [ngValue]="29">7B+</option>
+            <option [ngValue]="31">7C</option>
+            <option [ngValue]="32">7C+</option>
+            <option [ngValue]="34">8A</option>
+            <option [ngValue]="35">8A+</option>
+            <option [ngValue]="37">8B</option>
+            <option [ngValue]="38">8B+</option>
+            <option [ngValue]="40">8C</option>
+            <option [ngValue]="41">8C+</option>
+            <option [ngValue]="43">9A</option>
+            <option [ngValue]="44">9A+</option>
+            <option [ngValue]="46">9B</option>
+            <option [ngValue]="47">9B+</option>
+            <option [ngValue]="49">9C</option>
+            <option [ngValue]="50">9C+</option>
+        </select>
+        <!-- <input id="description" placeholder="" autocomplete="off" type="text" formControlName="description" /> -->
+        <label for="description" class="group-label">Maximum Grade</label>
+    </div>
+    
+    <div class="form-group form-action">
+        <button type="button" class="button"
+            [ngClass]="{'disabled': filterForm.disabled }"
+            [disabled]="filterForm.disabled"
+            (click)="onResetFilter()">Reset Filter</button>
+        <button type="submit" class="button"
+            [ngClass]="{'disabled': filterForm.invalid || filterForm.disabled }"
+            [disabled]="filterForm.invalid || filterForm.disabled">
+            Set Filter
+        </button>
+    </div>
+</form>

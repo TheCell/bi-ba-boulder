@@ -102,6 +102,11 @@ input[type="radio"] {
   grid-row: 1;
 }
 
+input:focus, select:focus, textarea:focus {
+  border-color: $primary;
+  transition: border-color 0.25s cubic-bezier(0, 0, 0.1, 1.0);
+}
+
 input:not(:placeholder-shown) + .group-label,
 input:focus + .group-label,
 select:not(:placeholder-shown) + .group-label,
@@ -112,14 +117,14 @@ select:focus + .group-label {
   left: 0px;
 }
 
-input.ng-invalid.ng-touched + .group-label,
-select.ng-invalid.ng-touched + .group-label {
-  color: $danger;
-}
-
 input:focus + .group-label,
 select:focus + .group-label {
   color: $primary;
+}
+
+input.ng-invalid.ng-touched + .group-label,
+select.ng-invalid.ng-touched + .group-label {
+  color: $danger;
 }
 
 input.ng-invalid.ng-touched,

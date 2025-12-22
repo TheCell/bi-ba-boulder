@@ -22,7 +22,11 @@
         <div class="list-header">
             <div class="">name</div>
             <div class="hidden-on-mobile">description</div>
-            <div aria-hidden="true" (click)="onGradeClicked()" class="filterable">grade</div>
+            <div aria-hidden="true" (click)="onGradeClicked()" class="filterable">grade
+                @if (currentFilter.gradeMax || currentFilter.gradeMin) {
+                    <app-icon [icon]="'filter'"></app-icon>
+                }
+            </div>
             <div class="">creator</div>
             <div aria-hidden="true" (click)="onDateClicked()" class="hidden-on-mobile filterable">created Date 
                 @if (currentFilter.dateOrder) {
@@ -56,4 +60,6 @@
 </div>
 
 <app-modal #fontGradeFilterModal
- [isSmall]="true"></app-modal>
+ [isSmall]="true"
+ (closed)="onFontGradeModalClosed($event)">
+</app-modal>

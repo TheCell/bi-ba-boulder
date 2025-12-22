@@ -12,6 +12,9 @@ import { ModalService } from 'src/app/core/modal/modal.service';
 import { Modal } from 'src/app/core/modal/modal/modal';
 import { SpraywallGradeFilter } from './spraywall-grade-filter/spraywall-grade-filter';
 import { SpraywallLegendItemPlaceholder } from './spraywall-legend-item-placeholder/spraywall-legend-item-placeholder';
+import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
+import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter/spraywall-grade-filter-dialog-close-data';
+import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter/spraywall-grade-filter-dialog-data';
 
 @Component({
   selector: 'app-spraywall',
@@ -106,13 +109,30 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       this.currentFilter.dateOrder = 'asc';
     }
 
-    this.resetFilterAndResultsPosition();
+    this.resetFilterPageAndResultsPosition();
     this.reloadSearchSubject.next();
   }
 
   public onGradeClicked(): void {
-    return; // todo
-    this.modalService.open(this.fontGradeFilterModal.id, SpraywallGradeFilter);
+    const modal = this.modalService.open(this.fontGradeFilterModal.id, SpraywallGradeFilter);
+    if (modal && modal.initialize) {
+      const data: SpraywallGradeFilterDialogData = {
+        maxGrade: this.currentFilter.gradeMax,
+        minGrade: this.currentFilter.gradeMin
+      }
+      modal.initialize(data);
+    }
+  }
+
+  public onFontGradeModalClosed(closeModalEvent: CloseModalEvent): void {
+    if (closeModalEvent.closeType === 0) {
+      const data = closeModalEvent.data as SpraywallGradeFilterDialogCloseData;
+      this.currentFilter.gradeMax = data.maxGrade;
+      this.currentFilter.gradeMin = data.minGrade;
+  
+      this.resetFilterPageAndResultsPosition();
+      this.reloadSearchSubject.next();
+    }
   }
 
   private scrollEventListener = () => {
@@ -141,7 +161,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     this.reloadSearchSubject.next();
   }
 
-  private resetFilterAndResultsPosition(): void {
+  private resetFilterPageAndResultsPosition(): void {
     this.currentMaxPage = 1;
     this.currentFilter.page = 0;
     this.totalCount = 0;

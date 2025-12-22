@@ -1,7 +1,7 @@
-<div [id]="id" role="dialog" class="modal" [ngClass]="{ 'isVisible': isOpen }" (click)="close(1)" (keyup.escape)="close(1)">
+<div [id]="id" role="dialog" class="modal" [ngClass]="{ 'isVisible': isOpen }" (click)="close({ closeType: 1 })" (keyup.escape)="close({ closeType: 1 })">
     <div role="dialog" class="modal-content" [ngClass]="{ 'small-modal': isSmall() }" (click)="$event.stopPropagation()" (keyup)="$event.stopPropagation()">
         <div class="modal-taskbar">
-            <button aria-label="Close modal" class="button close-button" (click)="close(1)">&times;</button>
+            <button aria-label="Close modal" class="button close-button" (click)="close({ closeType: 1 })">&times;</button>
         </div>
         @if (showAskForPermissionToClose) {
             <div class="asking-for-permission">

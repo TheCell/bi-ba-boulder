@@ -1,23 +1,117 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { iModal } from 'src/app/core/modal/modal/modal.interface';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog-data';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { GreaterThanValidator } from 'src/app/core/validators/greater-than-validator';
+import { ModalService } from 'src/app/core/modal/modal.service';
+import { Subscription } from 'rxjs';
+import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog-close-data';
+
+interface ISpraywallFilterForm {
+  gradeMin: number | undefined;
+  gradeMax: number | undefined;
+}
 
 @Component({
   selector: 'app-spraywall-grade-filter',
-  imports: [],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './spraywall-grade-filter.html',
   styleUrl: './spraywall-grade-filter.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpraywallGradeFilter implements iModal {
+export class SpraywallGradeFilter implements iModal, OnDestroy {
+  private _fb = inject(FormBuilder);
+  private modalService = inject(ModalService);
   public canCloseWithoutPermission = true;
 
+  public filterForm = this._fb.nonNullable.group<ISpraywallFilterForm>({
+    gradeMin: (undefined),
+    gradeMax: (undefined)
+  }, {
+    validators: [GreaterThanValidator("gradeMax", "gradeMin")]
+  });
+
+  private initializeData?: SpraywallGradeFilterDialogData;
+  private subscription: Subscription = new Subscription();
+
+  public constructor() {
+    this.subscription.add(this.filterForm.valueChanges.subscribe({
+      next: () => {
+        if (this.filterForm.dirty) {
+          this.canCloseWithoutPermission = true;
+
+          if (this.initializeData) {
+            if (this.filterForm.controls.gradeMax?.value !== this.initializeData.maxGrade) {
+              this.canCloseWithoutPermission = false;
+            }
+            if (this.filterForm.controls.gradeMin?.value !== this.initializeData.minGrade) {
+              this.canCloseWithoutPermission = false;
+            }
+          } else {
+            this.canCloseWithoutPermission = false;
+          }
+        }
+      }
+    }));
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   public initialize(data: SpraywallGradeFilterDialogData): void {
-    console.log(data);
+    this.initializeData = data;
+    this.filterForm.patchValue({
+      gradeMax: data.maxGrade,
+      gradeMin: data.minGrade
+    }, { emitEvent: false });
   }
 
-  public onClose(): void {
-    console.log('onClose');
+  public onResetFilter(): void {
+    this.filterForm.markAsDirty();
+    this.filterForm.patchValue({
+      gradeMax: undefined,
+      gradeMin: undefined
+    });
   }
 
+  // public onClose(): void {
+  //   console.log('onClose');
+  // }
+
+  public onSubmit(): void {
+    // this.isLoading = true;
+    // this.filterForm.disable();
+    // const postRegisterRequest: PutCreateRequest = {
+      //   name: this.filterForm.controls.name.value!,
+      //   description: this.filterForm.controls.description?.value,
+      //   image: this.imageData!,
+      //   fontGrade: this.filterForm.controls.fontGrade?.value,
+      //   // password: this.filterForm.controls.password.value,
+      // };
+      
+      // // console.log(postRegisterRequest);
+      // this.spraywallsService.putCreate(this.spraywallId, postRegisterRequest).subscribe({
+        //   next: () => {
+          //     this.isLoading = false;
+          //     this.filterForm.reset();
+          //     this.modalService.close(0);
+          //     this.toastService.showSuccess('Saved Successfully', 'You have successfully saved the spraywall.');
+          //   },
+          //   error: () => {
+            //     this.isLoading = false;
+            //     this.filterForm.enable();
+            //   }
+            // });
+    if (this.filterForm.valid) {
+      this.canCloseWithoutPermission = true;
+      const data: SpraywallGradeFilterDialogCloseData = {
+        maxGrade: this.filterForm.controls.gradeMax?.value ?? undefined,
+        minGrade: this.filterForm.controls.gradeMin?.value ?? undefined
+      };
+
+      this.modalService.close({ closeType: 0, data: data });
+    }
+  }
 }
