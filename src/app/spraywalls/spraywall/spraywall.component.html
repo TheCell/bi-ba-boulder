@@ -56,4 +56,6 @@
 </div>
 
 <app-modal #fontGradeFilterModal
- [isSmall]="true"></app-modal>
+ [isSmall]="true"
+ (closed)="onFontGradeModalClosed($event)">
+</app-modal>

@@ -14,6 +14,7 @@ import { ModalService } from 'src/app/core/modal/modal.service';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
 import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 
 interface iHoldColorForm { 
     spraywallHoldType: SpraywallHoldType;
@@ -81,8 +82,8 @@ export class SpraywallEditor implements OnInit {
     this.loadCustomUv(todo);
   }
   
-  public closeModal($event: number) {
-    if ($event > 0) {
+  public closeModal(closeModalEvent: CloseModalEvent) {
+    if (closeModalEvent.closeType > 0) {
       // don't reset
     } else {
       this.resetSignal.next()
