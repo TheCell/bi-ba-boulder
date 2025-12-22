@@ -45,6 +45,7 @@ class SpraywallProblemRepository extends ServiceEntityRepository
 
     public function filterByCriteria(Uuid $spraywallId, int $pageSize, int $offset, array $criteria): array
     {
+        // todo filter for nullable grade
         $qb = $this->createQueryBuilder('s');
 
         $qb->andWhere('s.spraywall = :spraywallId')
