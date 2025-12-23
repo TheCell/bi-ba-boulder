@@ -50,6 +50,11 @@ The next todos:
 [x] reset Create Spraywall after saving   
 [] split production and develop   
 [-] revert und redo function   
+[] don't rerender when not in active use   
+[] fix crashes on mobile   
+[] feedback form   
+[] predefined camera positions and reference character position   
+[] check spraywall upload for 1 start 1 top hold   
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)
