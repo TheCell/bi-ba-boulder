@@ -13,6 +13,7 @@ select {
 
 input, select {
   padding: 4px 5px;
+  margin-bottom: 4px;
 }
 
 input[type="radio"] {
@@ -21,10 +22,15 @@ input[type="radio"] {
   cursor: pointer;
 }
 
+input[type="color"] {
+  block-size: 32px;
+  width: 70px;
+}
+
 .form-group {
   padding-top: 20px;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .form-radio {
@@ -179,16 +185,11 @@ input.disabled:hover {
   background-color: $gray;
 }
 
-// .form-group.disabled .group-label {
-//   color: $lightDark;
-// }
-
 input:disabled, select:disabled {
   color: $gray;
 }
 
 input:disabled, select:disabled {
-  // background-color: $black;
   background: repeating-linear-gradient(
     -55deg,
     $dark,
@@ -196,4 +197,22 @@ input:disabled, select:disabled {
     $lightDark 5px,
     $lightDark 10px
   );
+}
+
+.button~.button {
+  margin-left: 3px;
+}
+
+.action-button {
+  display: inline-block;
+  height: calc(100% - 6px);
+  border: none;
+}
+
+.action-button:hover, .action-button:focus {
+  background-color: rgba($primary, 0.5);
+}
+
+.action-button:active {
+  background-color: rgba($primary, 1.0);
 }

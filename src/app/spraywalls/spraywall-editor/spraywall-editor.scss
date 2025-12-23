@@ -39,22 +39,8 @@
   overflow-y: auto;
 }
 
-.action-button {
-  display: inline-block;
-  height: calc(100% - 6px);
-  border: none;
-}
-
 .action-end {
   float: right;
-}
-
-.action-button:hover, .action-button:focus {
-  background-color: rgba($primary, 0.5);
-}
-
-.action-button:active {
-  background-color: rgba($primary, 1.0);
 }
 
 .li-item:nth-child(even) {

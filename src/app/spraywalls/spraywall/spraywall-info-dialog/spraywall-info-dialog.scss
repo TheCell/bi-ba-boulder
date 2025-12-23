@@ -1,3 +1,9 @@
+@use '../../../../styles/variables' as *;
+
 :host {
   display: block;
+}
+
+input:disabled {
+  background: unset;
 }

@@ -1,1 +1,31 @@
-<p>spraywall-info-dialog works!</p>,
+<div class="form-group form-input">
+    <input id="start" disabled type="color" [value]="'#' + holdColorOptions[0].color.getHexString()" />
+    <label for="start" class="group-label">Start</label>
+    <div>Your hands go on this hold to start the route.</div>
+</div>
+<div class="form-group form-input">
+    <input id="top" disabled type="color" [value]="'#' + holdColorOptions[1].color.getHexString()" />
+    <label for="top" class="group-label">Top</label>
+    <div>Both hands on top with a controlled stance finishes the route.</div>
+</div>
+<div class="form-group form-input">
+    <input id="hold" disabled type="color" [value]="'#' + holdColorOptions[2].color.getHexString()" />
+    <label for="hold" class="group-label">Hold</label>
+    <div>These holds can be used with hands and feet.</div>
+</div>
+<div class="form-group form-input">
+    <input id="foot" disabled type="color" [value]="'#' + holdColorOptions[3].color.getHexString()" />
+    <label for="foot" class="group-label">Foot</label>
+    <div>To be used only with your feet.</div>
+</div>
+<div class="form-group form-input">
+    <input id="custom" disabled type="color" [value]="'#' + holdColorOptions[4].color.getHexString()" />
+    <label for="custom" class="group-label">Custom</label>
+    <div>These holds will have a special function explained in the description.</div>
+</div>
+
+<div class="form-group form-action">
+    <button type="button" class="button" (click)="onClose()">
+        Close
+    </button>
+</div>

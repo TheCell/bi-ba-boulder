@@ -15,6 +15,7 @@ import { SpraywallLegendItemPlaceholder } from './spraywall-legend-item-placehol
 import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-close-data';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-data';
+import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dialog';
 
 @Component({
   selector: 'app-spraywall',
@@ -25,6 +26,7 @@ import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog/
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('infoModal') private infoModal!: Modal;
   @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
   @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
 
@@ -133,6 +135,10 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resetFilterPageAndResultsPosition();
       this.reloadSearchSubject.next();
     }
+  }
+
+  public onInfoClicked(): void {
+    this.modalService.open(this.infoModal.id, SpraywallInfoDialog);
   }
 
   private scrollEventListener = () => {
