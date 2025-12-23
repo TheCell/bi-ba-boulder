@@ -57,6 +57,9 @@ export class Modal implements OnInit, OnDestroy {
     this.dynamicContent.clear();
     this.componentRef = this.dynamicContent.createComponent(component);
     this.isOpen = true;
+    this.componentRef.instance.closeModal.subscribe((closeModalEvent: CloseModalEvent) => {
+      this.close(closeModalEvent);
+    });
     return this.componentRef.instance;
   }
 

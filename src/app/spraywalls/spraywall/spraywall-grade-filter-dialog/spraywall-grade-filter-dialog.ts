@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
 import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog-data';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GreaterThanValidator } from 'src/app/core/validators/greater-than-validator';
-import { ModalService } from 'src/app/core/modal/modal.service';
 import { Subscription } from 'rxjs';
 import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog-close-data';
+import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 
 interface ISpraywallFilterForm {
   gradeMin: number | undefined;
@@ -22,7 +22,9 @@ interface ISpraywallFilterForm {
 })
 export class SpraywallGradeFilterDialog implements IModal, OnDestroy {
   private _fb = inject(FormBuilder);
-  private modalService = inject(ModalService);
+  
+  public closeModal = output<CloseModalEvent>();
+
   public canCloseWithoutPermission = true;
 
   public filterForm = this._fb.nonNullable.group<ISpraywallFilterForm>({
@@ -111,7 +113,7 @@ export class SpraywallGradeFilterDialog implements IModal, OnDestroy {
         minGrade: this.filterForm.controls.gradeMin?.value ?? undefined
       };
 
-      this.modalService.close({ closeType: 0, data: data });
+      this.closeModal.emit({ closeType: 0, data: data });
     }
   }
 }

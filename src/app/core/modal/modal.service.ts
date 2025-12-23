@@ -35,7 +35,7 @@ export class ModalService {
     }
   }
 
-  public close(closeModalEvent: CloseModalEvent): void {
+  public closeAll(closeModalEvent: CloseModalEvent): void {
     this.modals.forEach(modal => modal.close(closeModalEvent));
   }
 

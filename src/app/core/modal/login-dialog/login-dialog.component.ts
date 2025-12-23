@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { AuthService, PostAppAuthLoginRequest, TokenDto } from '@api/index';
 import { IModal } from '../modal/modal.interface';
 import { Subscription } from 'rxjs';
 import { Icon } from '../../icon/icon';
 import { ToastService } from '../../toast-container/toast.service';
-import { ModalService } from '../modal.service';
 import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
+import { CloseModalEvent } from '../modal/close-modal-event';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface IloginForm extends PostAppAuthLoginRequest { }
@@ -24,7 +24,8 @@ export class LoginDialogComponent implements IModal, OnDestroy {
   private loginTrackerService = inject(LoginTrackerService);
   private authService = inject(AuthService);
   private toastService = inject(ToastService);
-  private modalService = inject(ModalService);
+  
+  public closeModal = output<CloseModalEvent>();
 
   public canCloseWithoutPermission = true;
   public isLoading = false;
@@ -66,7 +67,7 @@ export class LoginDialogComponent implements IModal, OnDestroy {
 
         this.isLoading = false;
         this.loginForm.reset();
-        this.modalService.close({ closeType: 0 });
+        this.closeModal.emit({ closeType: 0 });
         this.toastService.showSuccess('Login Successful', 'You have successfully logged in!');
       },
       error: () => {

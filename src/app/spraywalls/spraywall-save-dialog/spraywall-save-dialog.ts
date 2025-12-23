@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PutCreateRequest, SpraywallsService } from '@api/index';
 import { Icon } from 'src/app/core/icon/icon';
-import { ModalService } from 'src/app/core/modal/modal.service';
 import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { ToastService } from 'src/app/core/toast-container/toast.service';
 import { SpraywallSaveData } from './spraywall-save-data.interface';
 import { Subscription } from 'rxjs';
+import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface ISpraywallForm extends Omit<PutCreateRequest, "image"> { }
@@ -22,8 +22,9 @@ interface ISpraywallForm extends Omit<PutCreateRequest, "image"> { }
 export class SpraywallSaveDialog implements IModal, OnDestroy {
   private _fb = inject(FormBuilder);
   private spraywallsService = inject(SpraywallsService);
-  private modalService = inject(ModalService);
   private toastService = inject(ToastService);
+  
+  public closeModal = output<CloseModalEvent>();
   
   public canCloseWithoutPermission = true;
   public isLoading = false;
@@ -74,7 +75,7 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
       next: () => {
         this.isLoading = false;
         this.saveForm.reset();
-        this.modalService.close({ closeType: 0 });
+        this.closeModal.emit({ closeType: 0 });
         this.toastService.showSuccess('Saved Successfully', 'You have successfully saved the spraywall.');
       },
       error: () => {
@@ -83,19 +84,5 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
         this.canCloseWithoutPermission = false;
       }
     });
-    
-    // this.spraywallsService.putCreate()
-    // this.authService.postRegister(postRegisterRequest).subscribe({
-    //   next: () => {
-    //     this.isLoading = false;
-    //     this.saveForm.reset();
-    //     this.modalService.close();
-    //     this.toastService.showSuccess('Registration Successful', 'You have successfully registered. Please check your email to verify your account.');
-    //   },
-    //   error: () => {
-    //     this.isLoading = false;
-    //     this.saveForm.enable();
-    //   }
-    // });
   }
 }

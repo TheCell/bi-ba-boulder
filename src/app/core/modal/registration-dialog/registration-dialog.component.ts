@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { AuthService, PostRegisterRequest } from '@api/index';
-import { ModalService } from '../modal.service';
 import { IModal } from '../modal/modal.interface';
 import { Subscription } from 'rxjs';
 import { Icon } from '../../icon/icon';
 import { ToastService } from '../../toast-container/toast.service';
+import { CloseModalEvent } from '../modal/close-modal-event';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface IRegistrationForm extends PostRegisterRequest { }
@@ -21,8 +21,9 @@ interface IRegistrationForm extends PostRegisterRequest { }
 export class RegistrationDialogComponent implements IModal, OnDestroy {
   private _fb = inject(NonNullableFormBuilder);
   private authService = inject(AuthService);
-  private modalService = inject(ModalService);
   private toastService = inject(ToastService);
+
+  public closeModal = output<CloseModalEvent>();
   
   public canCloseWithoutPermission = true;
   public isLoading = false;
@@ -65,7 +66,7 @@ export class RegistrationDialogComponent implements IModal, OnDestroy {
       next: () => {
         this.isLoading = false;
         this.registrationForm.reset();
-        this.modalService.close({ closeType: 0 });
+        this.closeModal.emit({ closeType: 0 });
         this.toastService.showSuccess('Registration Successful', 'You have successfully registered. Please check your email to verify your account.');
       },
       error: () => {

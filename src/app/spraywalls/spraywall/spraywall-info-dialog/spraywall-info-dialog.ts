@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ModalService } from 'src/app/core/modal/modal.service';
+import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';
 
@@ -11,11 +11,12 @@ import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/rende
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpraywallInfoDialog implements IModal {
+  public closeModal = output<CloseModalEvent>();
+
   public canCloseWithoutPermission = true;
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public colorFormId = ''.appendUniqueId();
 
-  private modalService = inject(ModalService);
 
   public enumName(type: SpraywallHoldType): string {
     const enumNames = Object.keys(SpraywallHoldType).filter(key => isNaN(Number(key)));
@@ -23,6 +24,6 @@ export class SpraywallInfoDialog implements IModal {
   }
 
   public onClose(): void {
-    this.modalService.close({ closeType: 0 });
+    this.closeModal.emit({ closeType: 0 });
   }
 }
