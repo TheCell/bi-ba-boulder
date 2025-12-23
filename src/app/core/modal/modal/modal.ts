@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, inject, input, OnDestroy, OnInit, output, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { ModalService } from '../modal.service';
 import { NgClass } from '@angular/common';
-import { iModal } from './modal.interface';
+import { IModal } from './modal.interface';
 import { CloseModalEvent } from './close-modal-event';
 
 @Component({
@@ -25,7 +25,7 @@ export class Modal implements OnInit, OnDestroy {
   public showAskForPermissionToClose = false;
 
   private element: HTMLElement;
-  private componentRef?: ComponentRef<iModal>;
+  private componentRef?: ComponentRef<IModal>;
 
   public constructor() {
     this.element = this.elementRef.nativeElement;
@@ -53,7 +53,7 @@ export class Modal implements OnInit, OnDestroy {
     this.isOpen = true;
   }
 
-  public open<T extends iModal>(component: Type<T>): iModal {
+  public open<T extends IModal>(component: Type<T>): IModal {
     this.dynamicContent.clear();
     this.componentRef = this.dynamicContent.createComponent(component);
     this.isOpen = true;

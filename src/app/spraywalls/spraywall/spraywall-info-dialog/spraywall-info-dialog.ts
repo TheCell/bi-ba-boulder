@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ModalService } from 'src/app/core/modal/modal.service';
-import { iModal } from 'src/app/core/modal/modal/modal.interface';
+import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';
 
 @Component({
@@ -10,7 +10,7 @@ import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/rende
   styleUrl: './spraywall-info-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpraywallInfoDialog implements iModal {
+export class SpraywallInfoDialog implements IModal {
   public canCloseWithoutPermission = true;
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public colorFormId = ''.appendUniqueId();

@@ -4,7 +4,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { PutCreateRequest, SpraywallsService } from '@api/index';
 import { Icon } from 'src/app/core/icon/icon';
 import { ModalService } from 'src/app/core/modal/modal.service';
-import { iModal } from 'src/app/core/modal/modal/modal.interface';
+import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { ToastService } from 'src/app/core/toast-container/toast.service';
 import { SpraywallSaveData } from './spraywall-save-data.interface';
 import { Subscription } from 'rxjs';
@@ -19,7 +19,7 @@ interface ISpraywallForm extends Omit<PutCreateRequest, "image"> { }
   styleUrl: './spraywall-save-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpraywallSaveDialog implements iModal, OnDestroy {
+export class SpraywallSaveDialog implements IModal, OnDestroy {
   private _fb = inject(FormBuilder);
   private spraywallsService = inject(SpraywallsService);
   private modalService = inject(ModalService);

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
-import { iModal } from 'src/app/core/modal/modal/modal.interface';
+import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog-data';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,7 +20,7 @@ interface ISpraywallFilterForm {
   styleUrl: './spraywall-grade-filter-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpraywallGradeFilterDialog implements iModal, OnDestroy {
+export class SpraywallGradeFilterDialog implements IModal, OnDestroy {
   private _fb = inject(FormBuilder);
   private modalService = inject(ModalService);
   public canCloseWithoutPermission = true;
