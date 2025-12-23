@@ -34,6 +34,7 @@
                     <div class="form-group form-radio">
                         @for (option of holdColorOptions; track option.type) {
                             <div class="radio-option">
+                                <!-- [style]="'background-color: #' + option.color.getHexString()"> -->
                                 <input type="radio" [id]="option.type + colorFormId" formControlName="spraywallHoldType" [value]="option.type" />
                                 <label [for]="option.type + colorFormId" class="radio-label" [ngClass]="{ 'selected' : colorForm.controls.spraywallHoldType.value === option.type }">{{ enumName(option.type) }}</label>
                             </div>

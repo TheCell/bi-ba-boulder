@@ -10,11 +10,12 @@ import { Icon } from 'src/app/core/icon/icon';
 import { debounceTime, Subject, Subscription, switchMap } from 'rxjs';
 import { ModalService } from 'src/app/core/modal/modal.service';
 import { Modal } from 'src/app/core/modal/modal/modal';
-import { SpraywallGradeFilter } from './spraywall-grade-filter/spraywall-grade-filter';
+import { SpraywallGradeFilterDialog } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog';
 import { SpraywallLegendItemPlaceholder } from './spraywall-legend-item-placeholder/spraywall-legend-item-placeholder';
 import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
-import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter/spraywall-grade-filter-dialog-close-data';
-import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter/spraywall-grade-filter-dialog-data';
+import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-close-data';
+import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-data';
+import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dialog';
 
 @Component({
   selector: 'app-spraywall',
@@ -25,6 +26,7 @@ import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter/spraywa
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('infoModal') private infoModal!: Modal;
   @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
   @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
 
@@ -114,7 +116,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onGradeClicked(): void {
-    const modal = this.modalService.open(this.fontGradeFilterModal.id, SpraywallGradeFilter);
+    const modal = this.modalService.open(this.fontGradeFilterModal.id, SpraywallGradeFilterDialog);
     if (modal && modal.initialize) {
       const data: SpraywallGradeFilterDialogData = {
         maxGrade: this.currentFilter.gradeMax,
@@ -133,6 +135,10 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resetFilterPageAndResultsPosition();
       this.reloadSearchSubject.next();
     }
+  }
+
+  public onInfoClicked(): void {
+    this.modalService.open(this.infoModal.id, SpraywallInfoDialog);
   }
 
   private scrollEventListener = () => {

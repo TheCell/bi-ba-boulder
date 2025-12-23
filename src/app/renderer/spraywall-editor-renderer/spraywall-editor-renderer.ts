@@ -369,9 +369,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
           nothingWasHighlighted = false;
         }
 
-        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] = this.highlightColor().r;
-        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = this.highlightColor().g;
-        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = this.highlightColor().b;
+        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] = this.highlightColor().r * 255;
+        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] = this.highlightColor().g * 255;
+        this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = this.highlightColor().b * 255;
       }
 
       if (everythingWasHighlighted) {
@@ -389,14 +389,14 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
           this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] = 0;
         }
 
-        this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor().r;
-        this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor().g;
-        this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor().b;
+        this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor().r * 255;
+        this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor().g * 255;
+        this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor().b * 255;
       }
     } else {
-      this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor().r;
-      this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor().g;
-      this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor().b;
+      this.highlightedHoldsTexture!.image.data[colorAndIndex.index] = this.highlightColor().r * 255;
+      this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 1] = this.highlightColor().g * 255;
+      this.highlightedHoldsTexture!.image.data[colorAndIndex.index + 2] = this.highlightColor().b * 255;
     }
 
     this.highlightedHoldsTexture!.needsUpdate = true;

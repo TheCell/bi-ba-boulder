@@ -14,13 +14,13 @@ interface ISpraywallFilterForm {
 }
 
 @Component({
-  selector: 'app-spraywall-grade-filter',
+  selector: 'app-spraywall-grade-filter-dialog',
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  templateUrl: './spraywall-grade-filter.html',
-  styleUrl: './spraywall-grade-filter.scss',
+  templateUrl: './spraywall-grade-filter-dialog.html',
+  styleUrl: './spraywall-grade-filter-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpraywallGradeFilter implements iModal, OnDestroy {
+export class SpraywallGradeFilterDialog implements iModal, OnDestroy {
   private _fb = inject(FormBuilder);
   private modalService = inject(ModalService);
   public canCloseWithoutPermission = true;

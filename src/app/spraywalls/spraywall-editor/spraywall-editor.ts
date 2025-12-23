@@ -60,7 +60,6 @@ export class SpraywallEditor implements OnInit {
 
     this.colorForm.controls.spraywallHoldType.valueChanges.subscribe({
       next: (value) => {
-        console.log(value);
         this.currentHoldColor = holdColorOptions[value - 1].color;
       }
     });
