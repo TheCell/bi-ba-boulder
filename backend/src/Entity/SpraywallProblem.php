@@ -97,7 +97,7 @@ class SpraywallProblem
         return $this->FontGrade;
     }
 
-    public function setFontGrade(FontGrade $FontGrade): static
+    public function setFontGrade(?FontGrade $FontGrade): static
     {
         $this->FontGrade = $FontGrade;
 

@@ -97,6 +97,12 @@ class SpraywallProblemRepository extends ServiceEntityRepository
         $entityManager->flush();
     }
 
+    public function updateProblem(): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->flush();
+    }
+
     public function removeProblem(SpraywallProblem $spraywallProblem): void
     {
         $entityManager = $this->getEntityManager();

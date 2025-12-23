@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { LoadingImageComponent } from 'src/app/common/loading-image/loading-image.component';
-import { SpraywallsService } from '@api/index';
+import { SpraywallProblemDto, SpraywallsService } from '@api/index';
 import { BoulderLoaderService } from 'src/app/background-loading/boulder-loader.service';
 import { SpraywallEditorRenderer } from 'src/app/renderer/spraywall-editor-renderer/spraywall-editor-renderer';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';
@@ -47,15 +47,18 @@ export class SpraywallEditor implements OnInit {
   public currentHoldColor: THREE.Color = null!;
   public resetSignal: Subject<void> = new Subject<void>();
   public undoLastHighlightSignal: Subject<void> = new Subject<void>();
-
   public spraywallId = '';
-  // public selectedProblem?: SpraywallProblemDto = undefined;
+  public problemId? = '';
+  public spraywallProblemForEdit?: SpraywallProblemDto;
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   
   public constructor() {
     const router = inject(ActivatedRoute);
-    this.spraywallId = router.snapshot.paramMap.get('id') ?? '';
+    this.spraywallId = router.snapshot.paramMap.get('spraywallId') ?? '';
+    this.problemId = router.snapshot.paramMap.get('problemId') ?? undefined;
+    this.spraywallProblemForEdit = router.snapshot.data['spraywallProblem'];
+
     this.currentHoldColor = this.holdColorOptions[this.colorForm.controls.spraywallHoldType.value - 1].color;
 
     this.colorForm.controls.spraywallHoldType.valueChanges.subscribe({
@@ -63,8 +66,6 @@ export class SpraywallEditor implements OnInit {
         this.currentHoldColor = holdColorOptions[value - 1].color;
       }
     });
-
-    // this.colorForm.controls.spraywallHoldType.setValue(this.currentHoldColor);
   }
 
   public ngOnInit() {
