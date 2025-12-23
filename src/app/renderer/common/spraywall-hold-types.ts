@@ -16,7 +16,7 @@ export interface TypeAndColor {
 }
 
 export const holdColorOptions: TypeAndColor[] = [
-  { type: SpraywallHoldType.start, color: new THREE.Color(104, 216, 164) },
+  { type: SpraywallHoldType.start, color: new THREE.Color(104, 236, 105) },
   { type: SpraywallHoldType.top, color: new THREE.Color(213, 94, 0) },
   { type: SpraywallHoldType.hold, color: new THREE.Color(86, 180, 233) },
   { type: SpraywallHoldType.foot, color: new THREE.Color(240, 228, 66) },
