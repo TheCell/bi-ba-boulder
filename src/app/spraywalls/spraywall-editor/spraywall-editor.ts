@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { LoadingImageComponent } from 'src/app/common/loading-image/loading-image.component';
-import { SpraywallsService } from '@api/index';
+import { SpraywallProblemDto, SpraywallsService } from '@api/index';
 import { BoulderLoaderService } from 'src/app/background-loading/boulder-loader.service';
 import { SpraywallEditorRenderer } from 'src/app/renderer/spraywall-editor-renderer/spraywall-editor-renderer';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';
@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { Modal } from 'src/app/core/modal/modal/modal';
 import { ModalService } from 'src/app/core/modal/modal.service';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
@@ -27,7 +27,7 @@ interface iHoldColorForm {
   styleUrl: './spraywall-editor.scss',
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class SpraywallEditor implements OnInit {
+export class SpraywallEditor implements OnInit, OnDestroy {
   @ViewChild('modal') private modal!: Modal;
   @ViewChild('renderer') private renderer!: SpraywallEditorRenderer;
 
@@ -47,15 +47,20 @@ export class SpraywallEditor implements OnInit {
   public currentHoldColor: THREE.Color = null!;
   public resetSignal: Subject<void> = new Subject<void>();
   public undoLastHighlightSignal: Subject<void> = new Subject<void>();
-
   public spraywallId = '';
-  // public selectedProblem?: SpraywallProblemDto = undefined;
+  public problemId? = '';
+  public spraywallProblemForEdit?: SpraywallProblemDto;
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   
+  private subscription = new Subscription();
+
   public constructor() {
     const router = inject(ActivatedRoute);
-    this.spraywallId = router.snapshot.paramMap.get('id') ?? '';
+    this.spraywallId = router.snapshot.paramMap.get('spraywallId') ?? '';
+    this.problemId = router.snapshot.paramMap.get('problemId') ?? undefined;
+    this.spraywallProblemForEdit = router.snapshot.data['spraywallProblem'];
+
     this.currentHoldColor = this.holdColorOptions[this.colorForm.controls.spraywallHoldType.value - 1].color;
 
     this.colorForm.controls.spraywallHoldType.valueChanges.subscribe({
@@ -64,7 +69,16 @@ export class SpraywallEditor implements OnInit {
       }
     });
 
-    // this.colorForm.controls.spraywallHoldType.setValue(this.currentHoldColor);
+    this.subscription.add(this.resetSignal.subscribe({
+      next: () => {
+        this.problemId = undefined;
+        this.spraywallProblemForEdit = undefined;
+      }
+    }));
+  }
+
+  public ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   public ngOnInit() {
@@ -85,7 +99,7 @@ export class SpraywallEditor implements OnInit {
     if (closeModalEvent.closeType > 0) {
       // don't reset
     } else {
-      this.resetSignal.next()
+      this.resetSignal.next();
     }
   }
 
@@ -102,7 +116,17 @@ export class SpraywallEditor implements OnInit {
       throw new Error('No image data from renderer');
     }
 
-    const dialogData: SpraywallSaveData = { imageData: imageData, spraywallId: this.spraywallId };
+    const dialogData: SpraywallSaveData = {
+      imageData: imageData,
+      spraywallId: this.spraywallId,
+      name: ''
+    };
+    if (this.spraywallProblemForEdit) {
+      dialogData.existingId = this.spraywallProblemForEdit.id;
+      dialogData.name = this.spraywallProblemForEdit.name;
+      dialogData.description = this.spraywallProblemForEdit.description;
+      dialogData.fontGrade = this.spraywallProblemForEdit.fontGrade;
+    }
     component.initialize!(dialogData);
   }
   
@@ -123,11 +147,15 @@ export class SpraywallEditor implements OnInit {
   private loadCustomUv(uvPath: string): void {
     const loader = new THREE.TextureLoader();
     loader.load(uvPath, (texture: THREE.Texture<HTMLImageElement>) => {
-      texture.flipY = false;
-      texture.needsUpdate = true;
-      texture.minFilter = THREE.NearestFilter;
-      texture.magFilter = THREE.NearestFilter;
-      this.currentHighlightUv = texture;
+      this.setCustomUvTexture(texture);
     });
+  }
+
+  private setCustomUvTexture(texture: THREE.Texture<HTMLImageElement>): void {
+    texture.flipY = false;
+    texture.needsUpdate = true;
+    texture.minFilter = THREE.NearestFilter;
+    texture.magFilter = THREE.NearestFilter;
+    this.currentHighlightUv = texture;
   }
 }

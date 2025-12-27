@@ -7,6 +7,7 @@ export * from './postRegisterRequest';
 export * from './postSearchProblemsRequest';
 export * from './putCreateRequest';
 export * from './sectorDto';
+export * from './spraywallDto';
 export * from './spraywallProblemDto';
 export * from './spraywallProblemSearchDto';
 export * from './tokenDto';

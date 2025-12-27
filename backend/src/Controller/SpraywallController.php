@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\User;
 use App\DTO\ErrorDto;
 use App\Entity\SpraywallProblem;
+use App\ImageModification\compressAndConvertTo24BitPng;
 use App\DTO\SpraywallDto;
 use App\DTO\SpraywallProblemDto;
 use App\DTO\SpraywallProblemSearchDto;
 use App\Entity\Enum\FontGrade;
+use App\ImageModification\ImageModification;
+use App\Mapper\Mapper;
 use App\Repository\SpraywallRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use App\Repository\SpraywallProblemRepository;
@@ -46,7 +49,7 @@ final class SpraywallController extends AbstractController
         description: 'Returns a spraywall problem',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: SpraywallProblemDto::class))
+            items: new OA\Items(ref: new Model(type: SpraywallDto::class))
         )
     )]
     public function getSpraywalls(): JsonResponse
@@ -63,34 +66,6 @@ final class SpraywallController extends AbstractController
         }
         
         return $this->json($spraywallsDto, Response::HTTP_OK);
-    }
-
-    #[Route('/{id}/problems/{problemId}', name: 'problem', methods: ['GET'])]
-    #[OA\Response(
-        response: Response::HTTP_OK,
-        description: 'Returns a spraywall problem',
-        content: new OA\JsonContent(ref: new Model(type: SpraywallProblemDto::class))
-    )]
-    public function getProblem($id, $problemId): JsonResponse
-    {
-        $spraywallProblem = $this->spraywallProblemRepository->find($problemId);
-
-        if (!$spraywallProblem) {
-            return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
-        }
-
-        $spraywallProblemDto = new SpraywallProblemDto(
-            id: $spraywallProblem->getId(),
-            name: $spraywallProblem->getName(),
-            image: $this->getSpraywallProblemImage($id, $spraywallProblem->getId()),
-            fontGrade: $spraywallProblem->getFontGrade()?->getValue(),
-            createdById: $spraywallProblem->getCreatedBy()->getId(),
-            createdByName: $spraywallProblem->getCreatedBy()->getUsername(),
-            createdDate: $spraywallProblem->getCreatedDate()->format('Y-m-d\TH:i:s.v\Z'),
-            description: $spraywallProblem->getDescription()
-          );
-
-        return $this->json($spraywallProblemDto, Response::HTTP_OK);
     }
 
     #[Route('/{id}/problems', name: 'search_problems', methods: ['POST'])]
@@ -113,7 +88,7 @@ final class SpraywallController extends AbstractController
         description: 'Returns paginated spraywall problems',
         content: new OA\JsonContent(ref: new Model(type: SpraywallProblemSearchDto::class))
     )]
-    public function searchProblems(Request $request, Uuid $id): JsonResponse
+    public function searchProblems(Request $request, Uuid $id, #[CurrentUser] ?User $currentUser): JsonResponse
     {
         $data = json_decode($request->getContent(), true) ?? [];
         $gradeMin = $data['gradeMin'] ?? null;
@@ -147,16 +122,7 @@ final class SpraywallController extends AbstractController
 
         $problemsDto = [];
         foreach ($problems as $problem) {
-            $problemsDto[] = new SpraywallProblemDto(
-                $problem->getId(),
-                $problem->getName(),
-                $this->getSpraywallProblemImage($problem->getSpraywall()->getId(), $problem->getId()),
-                $problem->getFontGrade()?->getValue(),
-                $problem->getCreatedBy()->getId(),
-                $problem->getCreatedBy()->getUsername(),
-                $problem->getCreatedDate()->format('Y-m-d\TH:i:s.v\Z'),
-                $problem->getDescription()
-            );
+            $problemsDto[] = Mapper::getProblem($problem, $currentUser, $this->filesystem);
         }
 
         $problemSearchDto = new SpraywallProblemSearchDto(
@@ -267,7 +233,7 @@ final class SpraywallController extends AbstractController
             }
 
             // Convert 32-bit PNG to 24-bit PNG using ImageMagick
-            $processedImageData = $this->convertTo24BitPng($binaryData);
+            $processedImageData = ImageModification::compressAndConvertTo24BitPng($binaryData);
 
             $imagePath = $spraywallDir . DIRECTORY_SEPARATOR . $spraywallProblem->getId() . '.png';
             $this->filesystem->dumpFile($imagePath, $processedImageData);
@@ -278,7 +244,14 @@ final class SpraywallController extends AbstractController
         }
 
         // Return the created problem with 201 status
-        return $this->getProblem($id, $spraywallProblem->getId())->setStatusCode(Response::HTTP_CREATED);
+        
+        $spraywallProblem = $this->spraywallProblemRepository->find($id);
+            if (!$spraywallProblem) {
+            return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $problem = Mapper::getProblem($spraywallProblem, $currentUser, $this->filesystem);
+        return $this->json($problem, Response::HTTP_CREATED);
     }
 
     #[Route('/{id}/problem/{problemId}', name: 'problem', methods: ['DELETE'])]
@@ -311,88 +284,6 @@ final class SpraywallController extends AbstractController
     }
 
 
-    private function getSpraywallProblemImage(Uuid $spraywallId, Uuid $spraywallProblemId): string {
-        $imagePath = 'spraywalls' . DIRECTORY_SEPARATOR . $spraywallId . DIRECTORY_SEPARATOR . $spraywallProblemId . '.png';
-        $contents = $this->filesystem->readFile($imagePath);
-        return base64_encode($contents);
-    }
 
-    private function convertTo24BitPng(string $binaryData): string {
-        if (!extension_loaded('gd')) {
-            throw new \RuntimeException('GD extension is not available. Please install php-gd.');
-        }
-
-        try {
-            $sourceImage = imagecreatefromstring($binaryData);
-            
-            if ($sourceImage === false) {
-                throw new \InvalidArgumentException('Invalid image data - could not create image from string');
-            }
-            
-            $width = 128;
-            $height = 128;
-            
-            // Create a new 24-bit image (without alpha channel)
-            $newImage = imagecreatetruecolor($width, $height);
-            
-            if ($newImage === false) {
-                $sourceImage = null;
-                throw new \RuntimeException('Failed to create new image canvas');
-            }
-            
-            // Disable alpha blending for the destination image
-            imagealphablending($newImage, false);
-            
-            $backgroundColor = imagecolorallocate($newImage, 0, 0, 0);
-            
-            if ($backgroundColor === false) {
-                $sourceImage = null;
-                $newImage = null;
-                throw new \RuntimeException('Failed to allocate background color');
-            }
-            
-            imagefill($newImage, 0, 0, $backgroundColor);
-            
-            // Enable alpha blending for copying the source image
-            imagealphablending($newImage, true);
-            
-            // Copy the source image onto the new image
-            // This will flatten any transparency against the background color
-            $copyResult = imagecopy($newImage, $sourceImage, 0, 0, 0, 0, $width, $height);
-            
-            if (!$copyResult) {
-                $sourceImage = null;
-                $newImage = null;
-                throw new \RuntimeException('Failed to copy source image to new canvas');
-            }
-            
-            // Capture the PNG output using imagepng
-            ob_start();
-            $pngResult = imagepng($newImage, null, 9); // 9 = maximum compression level
-            
-            if (!$pngResult) {
-                ob_end_clean();
-                $sourceImage = null;
-                $newImage = null;
-                throw new \RuntimeException('Failed to generate PNG output');
-            }
-            
-            $processedImageData = ob_get_contents();
-            ob_end_clean();
-            
-            // Clean up memory
-            $sourceImage = null;
-            $newImage = null;
-            
-            if ($processedImageData === false || empty($processedImageData)) {
-                throw new \RuntimeException('Generated PNG data is empty or invalid');
-            }
-            
-            return $processedImageData;
-            
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Failed to process image with GD: ' . $e->getMessage());
-        }
-    }
-
+    
 }

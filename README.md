@@ -40,7 +40,7 @@ The next todos:
 [] Refresh token [https://github.com/markitosgv/JWTRefreshTokenBundle](https://github.com/markitosgv/JWTRefreshTokenBundle)   
 [] logout   
 [-] rate limiting   
-[] upload only while logged in and verified   
+[-] upload only while logged in and verified (controller blocks, frontend still shows)   
 [] Version Number   
 [x] make http failure cases generic   
 [] user profile page   
@@ -55,6 +55,7 @@ The next todos:
 [] feedback form   
 [] predefined camera positions and reference character position   
 [] check spraywall upload for 1 start 1 top hold   
+[] make colors grayscale and changeable in shader   
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)

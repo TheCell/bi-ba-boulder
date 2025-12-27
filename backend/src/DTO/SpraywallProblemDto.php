@@ -28,6 +28,8 @@ class SpraywallProblemDto
     #[Assert\NotBlank]
     public string $createdDate,
 
-    public ?string $description)
+    public ?string $description,
+    
+    public bool $canEdit)
   { }
 }

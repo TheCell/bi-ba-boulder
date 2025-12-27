@@ -14,6 +14,7 @@ import { SpraywallComponent } from './spraywalls/spraywall/spraywall.component';
 import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './legal/terms.component/terms.component';
 import { SpraywallEditor } from './spraywalls/spraywall-editor/spraywall-editor';
+import { spraywallProblemResolver } from './core/resolvers/spraywall-problem.resolver';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -57,8 +58,11 @@ export const routes: Routes = [
     component: SpraywallComponent
   },
   {
-    path: 'spraywall-editor/:id',
-    component: SpraywallEditor
+    path: 'spraywall-editor/:spraywallId/:problemId',
+    component: SpraywallEditor,
+    resolve: {
+      'spraywallProblem': spraywallProblemResolver
+    }
   },
   {
     path: 'spraywall-test',

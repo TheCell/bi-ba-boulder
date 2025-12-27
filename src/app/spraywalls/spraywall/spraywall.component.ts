@@ -3,7 +3,7 @@ import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-re
 
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { PostSearchProblemsRequest, SpraywallProblemDto, SpraywallProblemSearchDto, SpraywallsService } from '@api/index';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
 import { Icon } from 'src/app/core/icon/icon';
@@ -29,11 +29,12 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('infoModal') private infoModal!: Modal;
   @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
   @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
-
+  
   private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService)
   private modalService = inject(ModalService);
   private changeDetectorRef = inject(ChangeDetectorRef);
+  private router = inject(Router);
 
   public currentRawModel?: ArrayBuffer;
   public spraywallId = '';
@@ -139,6 +140,13 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public onInfoClicked(): void {
     this.modalService.open(this.infoModal.id, SpraywallInfoDialog);
+  }
+
+  public onEditProblem(): void {
+    console.log('todo');
+    if (this.selectedProblem) {
+      this.router.navigate(['/', 'spraywall-editor', this.spraywallId, this.selectedProblem.id]);
+    }
   }
 
   private scrollEventListener = () => {

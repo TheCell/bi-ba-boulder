@@ -8,8 +8,9 @@ import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { holdColorOptions, TypeAndColor } from '../common/spraywall-hold-types';
 import { ColorAndIndex } from '../common/spraywall-color-and-index';
-import { getImageDataFromTexture } from '../common/util';
+import { getImageDataFromTexture, htmlImageElementTextureToDataTexture } from '../common/util';
 import { Subject } from 'rxjs';
+import { SpraywallProblemDto } from '@api/index';
 
 @Component({
   selector: 'app-spraywall-editor-renderer',
@@ -45,6 +46,8 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   public currentHighlightedHoldsTexturePath: InputSignal<string> = input.required<string>();
   public resetRoute: InputSignal<Subject<void>> = input.required<Subject<void>>();
   public undoLastHighlight: InputSignal<Subject<void>> = input.required<Subject<void>>();
+  // public canUndo: EventEmitter<boolean> = new ReplaySubject<boolean>(1); // todo
+  public boulderProblem: InputSignal<SpraywallProblemDto | undefined> = input<SpraywallProblemDto>(); // this overrides the standard initialization
 
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public shortcuts: ShortcutInput[] = [];
@@ -70,6 +73,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private useRgbTexture = 0.0;
   // private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.DataTexture;
+  private standardHighlightedHoldsTexture?: THREE.DataTexture;
   private lastClickedHold?: ColorAndIndex;
 
   private previousLastClickedHold?: ColorAndIndex;
@@ -100,7 +104,15 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       if (this.highlightColor()) {
         this.lastClickedHold = undefined;
       }
-      
+    });
+    
+    effect(() => {
+      // todo: Check if highlightUv and this can have a timing problem
+      const boulderProblem = this.boulderProblem();
+
+      if (boulderProblem) {
+        this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
+      }
     });
   }
 
@@ -147,7 +159,6 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
     texture.needsUpdate = true;
     this.highlightedHoldsTexture = texture;
-    // this.drawingNewHighlight = true;
   }
 
   // todo listen to input signal
@@ -204,6 +215,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
       this.highlightedHoldsTexture = texture;
+      this.standardHighlightedHoldsTexture = texture;
     });
   }
   
@@ -524,5 +536,25 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
   private handleOrbitControlEndEvent = (_event: THREE.Event<'end', OrbitControls>): void => {
     // empty for now
+  }
+  
+  private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
+    const image = new Image(width, height);
+    const texture = new THREE.Texture(image);
+    image.onload = () => {
+      texture.flipY = false;
+      texture.needsUpdate = true;
+      texture.minFilter = THREE.NearestFilter;
+      texture.magFilter = THREE.NearestFilter;
+      this.highlightedHoldsTexture = htmlImageElementTextureToDataTexture(texture);
+    }
+    image.onabort = (ev) => {
+      console.error('Failed to load highlighted holds texture from base64 data.', ev);
+    }
+    image.onerror = (ev) => {
+      console.error('Failed to load highlighted holds texture from base64 data.', ev);
+    }
+
+    image.src = 'data:image/png;base64,' + base64String;
   }
 }

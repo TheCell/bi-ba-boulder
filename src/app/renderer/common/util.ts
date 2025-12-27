@@ -51,3 +51,21 @@ export function dumpObject(obj: THREE.Group<THREE.Object3DEventMap>, lines: stri
   });
   return lines;
 }
+
+export function htmlImageElementTextureToDataTexture(texture: THREE.Texture<HTMLImageElement>): THREE.DataTexture {
+  const image = texture.image;
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext('2d')!;
+  ctx.drawImage(image, 0, 0);
+  const imageData = ctx.getImageData(0, 0, image.width, image.height);
+  const dataTexture = new THREE.DataTexture(
+    imageData.data,
+    image.width,
+    image.height,
+    THREE.RGBAFormat
+  );
+  dataTexture.needsUpdate = true;
+  return dataTexture;
+}
