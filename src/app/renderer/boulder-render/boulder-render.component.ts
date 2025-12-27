@@ -68,7 +68,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
-  private highlightedHoldsTexture?: THREE.Texture;
+  private highlightedHoldsTexture?: THREE.Texture<HTMLImageElement>;
 
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
