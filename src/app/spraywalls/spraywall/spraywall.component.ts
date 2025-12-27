@@ -16,6 +16,8 @@ import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-close-data';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-data';
 import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dialog';
+import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
+import { ToastService } from 'src/app/core/toast-container/toast.service';
 
 @Component({
   selector: 'app-spraywall',
@@ -30,11 +32,13 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
   @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
   
+  public loginTrackerService = inject(LoginTrackerService);
   private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService)
   private modalService = inject(ModalService);
   private changeDetectorRef = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   public currentRawModel?: ArrayBuffer;
   public spraywallId = '';
@@ -114,6 +118,10 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.resetFilterPageAndResultsPosition();
     this.reloadSearchSubject.next();
+  }
+
+  public hintAtNotLoggedIn(): void {
+    this.toastService.showWarning('Not logged in', 'You must be logged in to add new Routes');
   }
 
   public onGradeClicked(): void {
