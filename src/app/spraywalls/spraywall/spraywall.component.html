@@ -17,9 +17,17 @@
         <button class="button action-button" (click)="onResetSelection()">Reset</button>
         <button class="button action-button" (click)="onInfoClicked()">Info</button>
         @if (selectedProblem?.canEdit) {
-            <button class="button action-button" (click)="onEditProblem()">Edit</button>
+            @if (loginTrackerService.isLoggedIn()) {
+                <button class="button action-button" (click)="onEditProblem()">Edit</button>
+            } @else {
+                <button class="button action-button" (click)="hintAtNotLoggedIn()">Edit</button>
+            }
         }
-        <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
+        @if (loginTrackerService.isLoggedIn()) {
+            <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
+        } @else {
+            <button class="button action-button action-end" (click)="hintAtNotLoggedIn()">Create new route</button>
+        }
     </div>
     <div class="legend-list">
 
