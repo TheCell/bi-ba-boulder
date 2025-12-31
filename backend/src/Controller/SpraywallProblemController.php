@@ -175,4 +175,48 @@ final class SpraywallProblemController extends AbstractController
         $problem = Mapper::getProblem($spraywallProblem, $currentUser, $this->filesystem);
         return $this->json($problem, Response::HTTP_OK);
     }
+    
+    #[Route('/{id}', name: 'delete_spraywall_problem', methods: ['DELETE'])]
+    #[OA\Response(
+        response: Response::HTTP_OK,
+        description: 'Deletes a spraywall problem',
+        content: new OA\JsonContent()
+    )]
+    public function deleteProblem(Uuid $id, #[CurrentUser] ?User $currentUser): JsonResponse
+    {
+        $spraywallProblem = $this->spraywallProblemRepository->findById($id);
+        if (!$spraywallProblem) {
+            return $this->json(['error' => 'Spraywallproblem not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($currentUser === null || $currentUser->getId() === null) {
+            return $this->json(new ErrorDto('Unauthorized', $currentUser), Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($currentUser->getId() === $spraywallProblem->getCreatedBy()?->getId() && !in_array('ROLE_EDITOR', $currentUser->getRoles())
+            && !in_array('ROLE_ADMIN', $currentUser->getRoles())
+            ) {
+            return $this->json(new ErrorDto('Not your Creation', null), Response::HTTP_UNAUTHORIZED);
+        }
+
+        $spraywallId = $spraywallProblem->getSpraywall()?->getId();
+        if ($spraywallId === null) {
+            return $this->json(new ErrorDto('Spraywall not found for the problem', null), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $this->spraywallProblemRepository->removeProblem($spraywallProblem);
+
+        // Delete image file
+        try {
+            $spraywallDir = 'spraywalls' . DIRECTORY_SEPARATOR . $spraywallId;
+            $imagePath = $spraywallDir . DIRECTORY_SEPARATOR . $spraywallProblem->getId() . '.png';
+            if ($this->filesystem->exists($imagePath)) {
+                $this->filesystem->remove($imagePath);
+            }
+        } catch (IOExceptionInterface $exception) {
+            return $this->json(new ErrorDto('Failed to delete image: ' . $exception->getMessage(), null), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return $this->json(['message' => 'Problem deleted successfully'], Response::HTTP_OK);
+    }
 }

@@ -33,6 +33,21 @@ class SpraywallProblemRepository extends ServiceEntityRepository
         ;
     }
 
+    
+    /**
+    * @return SpraywallProblem Returns an array of Spraywall objects
+    */
+    public function findById($value): ?SpraywallProblem
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.id = :val')
+            ->setParameter('val', $value->toBinary(), ParameterType::BINARY)
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     // public function problemCount(Uuid $spraywallId): int
     // {
     //     $qb = $this->createQueryBuilder('s')

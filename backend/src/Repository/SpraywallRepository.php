@@ -18,21 +18,34 @@ class SpraywallRepository extends ServiceEntityRepository
         parent::__construct($registry, Spraywall::class);
     }
 
-    //    /**
-    //     * @return Spraywall[] Returns an array of Spraywall objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+    * @return Spraywall Returns an array of Spraywall objects
+    */
+    public function findById($value): ?Spraywall
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.id = :val')
+            ->setParameter('val', $value->toBinary(), ParameterType::BINARY)
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 
+    // /**
+    // * @return SpraywallProblem[] Returns an array of SpraywallProblem objects
+    // */
+    // public function findBySpraywallId(Uuid $value): array
+    // {
+    //     return $this->createQueryBuilder('s')
+    //         ->andWhere('s.spraywall = :val')
+    //         ->setParameter('val', $value->toBinary(), ParameterType::BINARY)
+    //         ->orderBy('s.id', 'ASC')
+    //         ->setMaxResults(10)
+    //         ->getQuery()
+    //         ->getResult()
+    //     ;
+    // }
     //    public function findOneBySomeField($value): ?Spraywall
     //    {
     //        return $this->createQueryBuilder('s')

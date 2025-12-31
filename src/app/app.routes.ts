@@ -65,6 +65,10 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'spraywall-editor/:spraywallId',
+    component: SpraywallEditor
+  },
+  {
     path: 'spraywall-test',
     component: SpraywallTestComponent
   },

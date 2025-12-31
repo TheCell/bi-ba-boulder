@@ -21,7 +21,8 @@ final class Mapper
             createdByName: $spraywallProblem->getCreatedBy()->getUsername(),
             createdDate: $spraywallProblem->getCreatedDate()->format('Y-m-d\TH:i:s.v\Z'),
             description: $spraywallProblem->getDescription(),
-            canEdit: $currentUser !== null && $currentUser->getId() === $spraywallProblem->getCreatedBy()->getId()
+            canEdit: $currentUser !== null && $currentUser->getId() === $spraywallProblem->getCreatedBy()->getId(),
+            canDelete: $currentUser !== null && ($currentUser->getId() === $spraywallProblem->getCreatedBy()->getId() || in_array('ROLE_ADMIN', $currentUser->getRoles()))
         );
     }
 }

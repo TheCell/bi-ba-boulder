@@ -23,6 +23,9 @@
                 <button class="button action-button" (click)="hintAtNotLoggedIn()">Edit</button>
             }
         }
+        @if (selectedProblem?.canDelete) {
+            <button class="button action-button" (click)="onDeleteProblem()">Delete</button>
+        }
         @if (loginTrackerService.isLoggedIn()) {
             <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
         } @else {
