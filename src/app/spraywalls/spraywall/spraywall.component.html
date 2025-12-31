@@ -18,13 +18,13 @@
         <button class="button action-button" (click)="onInfoClicked()">Info</button>
         @if (selectedProblem?.canEdit) {
             @if (loginTrackerService.isLoggedIn()) {
-                <button class="button action-button" (click)="onEditProblem()">Edit</button>
+                <button class="button action-button warning" (click)="onEditProblem()">Edit</button>
             } @else {
-                <button class="button action-button" (click)="hintAtNotLoggedIn()">Edit</button>
+                <button class="button action-button warning" (click)="hintAtNotLoggedIn()">Edit</button>
             }
         }
         @if (selectedProblem?.canDelete) {
-            <button class="button action-button" (click)="onDeleteProblem()">Delete</button>
+            <button class="button action-button danger" (click)="onDeleteProblem()">Delete</button>
         }
         @if (loginTrackerService.isLoggedIn()) {
             <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
@@ -80,4 +80,9 @@
 <app-modal #fontGradeFilterModal
   [isSmall]="true"
   (closed)="onFontGradeModalClosed($event)">
+</app-modal>
+
+<app-modal #confirmDelete
+  [isSmall]="true"
+  (closed)="onDeleteProblemConfirmed($event)">
 </app-modal>

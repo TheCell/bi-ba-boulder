@@ -161,10 +161,12 @@ select.ng-invalid.ng-touched {
 
 .button.warning {
   background-color: color-mix(in srgb, $dark 0%, $warning 100%);
+  color: $dark;
 }
 
 .button.danger {
   background-color: color-mix(in srgb, $dark 0%, $danger 100%);
+  color: $dark;
 }
 
 .button.disabled {
@@ -211,6 +213,7 @@ input:disabled, select:disabled {
 
 .action-button:hover, .action-button:focus {
   background-color: rgba($primary, 0.5);
+  color: $light;
 }
 
 .action-button:active {

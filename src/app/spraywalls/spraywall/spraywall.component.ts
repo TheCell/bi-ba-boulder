@@ -18,6 +18,8 @@ import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog/
 import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dialog';
 import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 import { ToastService } from 'src/app/core/toast-container/toast.service';
+import { ConfirmDeleteDialog } from './confirm-delete-dialog/confirm-delete-dialog';
+import { ConfirmDeleteDialogData } from './confirm-delete-dialog/confirm-delete-dialog-data';
 
 @Component({
   selector: 'app-spraywall',
@@ -30,6 +32,7 @@ import { ToastService } from 'src/app/core/toast-container/toast.service';
 export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('infoModal') private infoModal!: Modal;
   @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
+  @ViewChild('confirmDelete') private confirmDeleteModal!: Modal;
   @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
   
   public loginTrackerService = inject(LoginTrackerService);
@@ -159,14 +162,28 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public onDeleteProblem(): void {
     if (this.selectedProblem) {
-      this.spraywallProblemsService.deleteDeleteSpraywallProblem(this.selectedProblem.id).subscribe({
-        next: () => {
-          this.toastService.showSuccess('Success', 'Problem successfully deleted');
-          this.onResetSelection();
-          this.resetFilterPageAndResultsPosition();
-          this.reloadSearchSubject.next();
-        }
-      });
+      const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteDialog);
+      if (modal && modal.initialize) {
+      const data: ConfirmDeleteDialogData = {
+        spraywallProblem: this.selectedProblem
+      }
+      modal.initialize(data);
+      }
+    }
+  }
+
+  public onDeleteProblemConfirmed(closeModalEvent: CloseModalEvent): void {
+    if (closeModalEvent.closeType === 0) {
+      if (this.selectedProblem) {
+        this.spraywallProblemsService.deleteDeleteSpraywallProblem(this.selectedProblem.id).subscribe({
+          next: () => {
+            this.toastService.showSuccess('Success', 'Problem successfully deleted');
+            this.onResetSelection();
+            this.resetFilterPageAndResultsPosition();
+            this.reloadSearchSubject.next();
+          }
+        });
+      }
     }
   }
 

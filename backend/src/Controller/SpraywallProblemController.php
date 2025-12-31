@@ -209,7 +209,7 @@ final class SpraywallProblemController extends AbstractController
         // Delete image file
         try {
             $spraywallDir = 'spraywalls' . DIRECTORY_SEPARATOR . $spraywallId;
-            $imagePath = $spraywallDir . DIRECTORY_SEPARATOR . $spraywallProblem->getId() . '.png';
+            $imagePath = $spraywallDir . DIRECTORY_SEPARATOR . $id . '.png';
             if ($this->filesystem->exists($imagePath)) {
                 $this->filesystem->remove($imagePath);
             }
