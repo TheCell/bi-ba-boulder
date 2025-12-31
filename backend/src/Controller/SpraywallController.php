@@ -174,7 +174,7 @@ final class SpraywallController extends AbstractController
     )]
     public function createProblem(Uuid $id, Request $request, #[CurrentUser] ?User $currentUser): JsonResponse
     {
-        $spraywall = $this->spraywallRepository->findOneBy(['id' => $id]);
+        $spraywall = $this->spraywallRepository->findById($id);
         if (!$spraywall) {
             return $this->json(['error' => 'Spraywall not found'], Response::HTTP_NOT_FOUND);
         }
@@ -244,8 +244,8 @@ final class SpraywallController extends AbstractController
         }
 
         // Return the created problem with 201 status
-        
-        $spraywallProblem = $this->spraywallProblemRepository->find($id);
+
+        $spraywallProblem = $this->spraywallProblemRepository->findById($spraywallProblem->getId());
             if (!$spraywallProblem) {
             return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
         }
@@ -258,7 +258,7 @@ final class SpraywallController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function deleteProblem(Uuid $id, Uuid $problemId, RateLimiterFactoryInterface $anonymousApiLimiter): JsonResponse
     {
-        $spraywallProblem = $this->spraywallProblemRepository->find($problemId);
+        $spraywallProblem = $this->spraywallProblemRepository->findById($problemId);
 
         if (!$spraywallProblem) {
             return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);

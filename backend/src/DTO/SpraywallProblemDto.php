@@ -30,6 +30,8 @@ class SpraywallProblemDto
 
     public ?string $description,
     
-    public bool $canEdit)
+    public bool $canEdit,
+    
+    public bool $canDelete)
   { }
 }

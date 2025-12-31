@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, E
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
 
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
-import { PostSearchProblemsRequest, SpraywallProblemDto, SpraywallProblemSearchDto, SpraywallsService } from '@api/index';
+import { PostSearchProblemsRequest, SpraywallProblemDto, SpraywallProblemSearchDto, SpraywallProblemsService, SpraywallsService } from '@api/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
@@ -34,6 +34,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   
   public loginTrackerService = inject(LoginTrackerService);
   private spraywallsService = inject(SpraywallsService);
+  private spraywallProblemsService = inject(SpraywallProblemsService);
   private boulderLoaderService = inject(BoulderLoaderService)
   private modalService = inject(ModalService);
   private changeDetectorRef = inject(ChangeDetectorRef);
@@ -151,9 +152,21 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onEditProblem(): void {
-    console.log('todo');
     if (this.selectedProblem) {
       this.router.navigate(['/', 'spraywall-editor', this.spraywallId, this.selectedProblem.id]);
+    }
+  }
+
+  public onDeleteProblem(): void {
+    if (this.selectedProblem) {
+      this.spraywallProblemsService.deleteDeleteSpraywallProblem(this.selectedProblem.id).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Success', 'Problem successfully deleted');
+          this.onResetSelection();
+          this.resetFilterPageAndResultsPosition();
+          this.reloadSearchSubject.next();
+        }
+      });
     }
   }
 

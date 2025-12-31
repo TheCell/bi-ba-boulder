@@ -19,5 +19,6 @@ export interface SpraywallProblemDto {
     createdDate: string;
     description?: string | null;
     canEdit: boolean;
+    canDelete: boolean;
 }
 

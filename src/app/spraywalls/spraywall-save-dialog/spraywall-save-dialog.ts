@@ -63,7 +63,7 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
     this.spraywallId = data.spraywallId;
     this.problemId = data.existingId ?? '';
     this.saveForm.controls.name.setValue(data.name);
-    this.saveForm.controls.fontGrade?.setValue(data.fontGrade);
+    this.saveForm.controls.fontGrade?.setValue(data.fontGrade === undefined ? null : data.fontGrade);
     this.saveForm.controls.description?.setValue(data.description);
   }
 
