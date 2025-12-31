@@ -254,36 +254,4 @@ final class SpraywallController extends AbstractController
         return $this->json($problem, Response::HTTP_CREATED);
     }
 
-    #[Route('/{id}/problem/{problemId}', name: 'problem', methods: ['DELETE'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function deleteProblem(Uuid $id, Uuid $problemId, RateLimiterFactoryInterface $anonymousApiLimiter): JsonResponse
-    {
-        $spraywallProblem = $this->spraywallProblemRepository->findById($problemId);
-
-        if (!$spraywallProblem) {
-            return $this->json(['error' => 'Problem not found'], Response::HTTP_NOT_FOUND);
-        }
-
-        try {
-            // Delete image file
-            $imagePath = 'spraywalls' . DIRECTORY_SEPARATOR . $id . DIRECTORY_SEPARATOR . $problemId . '.png';
-            if ($this->filesystem->exists($imagePath)) {
-                $this->filesystem->remove($imagePath);
-            }
-
-            // Remove problem from database
-            $this->spraywallProblemRepository->removeProblem($spraywallProblem);
-
-        } catch (IOExceptionInterface $exception) {
-            return $this->json(['error' => 'Failed to delete problem: ' . $exception->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        $this->spraywallProblemRepository->removeProblem($spraywallProblem);
-        
-        return $this->json(null, Response::HTTP_NO_CONTENT);
-    }
-
-
-
-    
 }
