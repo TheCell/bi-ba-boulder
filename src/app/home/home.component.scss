@@ -4,10 +4,18 @@
   display: block;
 }
 
+h1 {
+  text-align: center;
+  height: 35px;
+  margin: 0;
+  color: $warning;
+  padding: 20px 0px;
+}
+
 .tile-container {
   display: flex;
   align-content: center;
-  height: 80vh;
+  height: calc(80vh - 35px);
   gap: 10px;
   padding: 10px;
 }
@@ -24,6 +32,12 @@
   border: 1px solid $primary;
   border-radius: 5px;
   cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .big-tile {
+    width: 100%;
+  }
 }
 
 .tile-content {
