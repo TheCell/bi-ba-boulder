@@ -55,6 +55,8 @@ The next todos:
 [] predefined camera positions and reference character position   
 [] check spraywall upload for 1 start 1 top hold   
 [] make colors grayscale and changeable in shader   
+[] high dpi logo   
+[] rock as loading animation    
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)
