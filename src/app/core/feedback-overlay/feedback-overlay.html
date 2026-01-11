@@ -1,0 +1,38 @@
+<div class="wrapper">
+    <button class="button warning feedback-small" [ngClass]="{ 'feedback-small-closed': isFormOpen }" (click)="openFeedback()">?</button>
+
+    <div class="form-div" [ngClass]="{ 'openForm': isFormOpen }">
+        <form [formGroup]="feedbackForm" (ngSubmit)="onSubmit()">
+            <h1>Feedback</h1>
+            <div class="form-group">
+                <span>
+                    If you have feedback or want to contact the author. This is your field.
+                </span>
+            </div>
+    
+            <div class="form-group form-input">
+                <input [id]="'email' + uniqueId" placeholder="" autocomplete="off" type="text" formControlName="email" />
+                <label [for]="'email' + uniqueId" class="group-label">Email</label>
+            </div>
+    
+            <div class="form-group">
+                <textarea name="feedback-form" [id]="'feedback-form' + uniqueId" formControlName="feedback" rows="10"></textarea>
+                <label [for]="'feedback-form' + uniqueId" class="group-label">Feedback</label>
+            </div>
+            <div class="actions">
+                <button type="submit" class="button"
+                    [ngClass]="{'disabled': isLoading || feedbackForm.invalid || feedbackForm.disabled }"
+                    [disabled]="isLoading || feedbackForm.invalid || feedbackForm.disabled">
+                    @if (isLoading) {
+                        <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
+                    } @else {
+                        Send Feedback
+                    }
+                </button>
+                <button class="button" (click)="closeFeedback()">
+                    Close
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

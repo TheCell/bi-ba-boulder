@@ -1,0 +1,70 @@
+@use '../../../styles/variables' as *;
+
+:host {
+  display: block;
+}
+
+.wrapper {
+  position: absolute;
+  bottom: 50px;
+  right: 50px;
+}
+
+.feedback-small {
+  // background-color: $warning;
+  padding: 20px;
+  border-radius: 5px;
+  font-size: 2em;
+  transition-property: padding, background-color;
+  transition-duration: 0.25s;
+}
+
+.feedback-small-closed {
+  background-color: $dark;
+  padding: 0;
+  overflow: hidden;
+  height: 0px;
+  width: 0px;
+}
+
+.form-div {
+  // display: none;
+  background-color: $warning;
+  width: 0px;
+  height: 0px;
+  transition-property: width, height, background-color;
+  transition-duration: 0.25s;
+  overflow: hidden;
+  height: 0px;
+  width: 0px;
+}
+
+.openForm {
+  // display: block;
+  background-color: $dark;
+  width: 500px;
+  height: 450px;
+  border-radius: 5px;
+  padding: 10px;
+  border: 1px solid $warning;
+}
+
+.actions {
+  float: right;
+  bottom: 0px;
+}
+
+.form-input {
+  max-width: 300px;
+}
+
+@media (max-width: 600px) {
+  .wrapper {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .openForm {
+    width: calc(100% - 20px);
+  }
+}
