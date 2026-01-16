@@ -15,4 +15,13 @@ final class MailTemplates
 
         return $template;
     }
+
+    public function getFeedbackTemplate(string $userMail, string $feedback): string
+    {
+        $template = file_get_contents(self::TEMPLATEDIRECTORY . DIRECTORY_SEPARATOR . 'feedback.html');
+        $template = str_replace('{{ userMail }}', $userMail, $template);
+        $template = str_replace('{{ feedback }}', $feedback, $template);
+
+        return $template;
+    }
 }

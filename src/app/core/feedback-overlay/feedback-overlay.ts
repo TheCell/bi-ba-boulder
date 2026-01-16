@@ -3,6 +3,8 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Icon } from '../icon/icon';
 import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
+import { ToastService } from '../toast-container/toast.service';
+import { FeedbacksService, PostSendFeedbackRequest } from '@api/index';
 
 // interface IFeedbackForm extends PostAppAuthLoginRequest { }
 interface IFeedbackForm {
@@ -19,7 +21,9 @@ interface IFeedbackForm {
 })
 export class FeedbackOverlay implements OnInit {
   private _fb = inject(NonNullableFormBuilder);
-  private loginTrackerService = inject(LoginTrackerService);
+  public loginTrackerService = inject(LoginTrackerService);
+  private feedbacksService = inject(FeedbacksService);
+  private toastService = inject(ToastService);
   public isFormOpen = false;
   public isLoading = false;
   public uniqueId = ''.appendUniqueId();
@@ -32,7 +36,7 @@ export class FeedbackOverlay implements OnInit {
   // private feedbackForm = viewChild<ElementRef>('feedbackForm');
 
   public constructor() {
-    this.feedbackForm.controls.email.addValidators([Validators.required, Validators.email]);
+    // this.feedbackForm.controls.email.addValidators([Validators.required, Validators.email]);
     this.feedbackForm.controls.feedback.addValidators([Validators.required, Validators.minLength(10)]);
   }
 
@@ -46,6 +50,10 @@ export class FeedbackOverlay implements OnInit {
     // console.log(this.feedbackForm());
     if (this.loginTrackerService.isLoggedIn()) {
       this.feedbackForm.controls.email.setValue('' + this.loginTrackerService.getUserMail());
+      this.feedbackForm.enable();
+      this.feedbackForm.controls.email.disable();
+    } else {
+      this.feedbackForm.disable();
     }
 
     this.isFormOpen = true;
@@ -54,16 +62,28 @@ export class FeedbackOverlay implements OnInit {
   public closeFeedback(): void {
     this.isFormOpen = false;
   }
-
-  public sendFeedback(): void {
-    console.log('todo');
-  }
   
   public onSubmit(): void {
-    console.log('todo');
-    
     this.isLoading = true;
     this.feedbackForm.disable();
+
+    const feedbackRequest: PostSendFeedbackRequest = {
+      feedback: this.feedbackForm.controls.feedback.value
+    };
+
+    this.feedbacksService.postSendFeedback(feedbackRequest).subscribe({
+      next: () => {
+        this.feedbackForm.reset();
+        this.feedbackForm.enable();
+        this.toastService.showSuccess('Login Successful', 'You have successfully logged in!');
+        this.isLoading = false;
+        this.closeFeedback();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.feedbackForm.enable();
+      }
+    });
     // const loginRequest: PostAppAuthLoginRequest = {
     //   email: this.loginForm.controls.email.value,
     //   password: this.loginForm.controls.password.value,

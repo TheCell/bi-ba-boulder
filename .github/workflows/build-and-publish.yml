@@ -119,6 +119,7 @@ jobs:
         echo "  'DATABASE_URL' => '${{ secrets.DATABASE_URL }}'," >> .env.local.php
         echo "  'TESTVAR' => '${{ secrets.TESTVAR }}'," >> .env.local.php
         echo "  'SENDEREMAIL' => '${{ secrets.SENDEREMAIL }}'," >> .env.local.php
+        echo "  'ADMINMAIL' => '${{ secrets.ADMINMAIL }}'," >> .env.local.php
         echo "  'JWT_SECRET_KEY' => '%kernel.project_dir%/config/jwt/private.pem'," >> .env.local.php
         echo "  'JWT_PUBLIC_KEY' => '%kernel.project_dir%/config/jwt/public.pem'," >> .env.local.php
         echo "  'JWT_PASSPHRASE' => '${{ secrets.JWT_PASSPHRASE }}'," >> .env.local.php

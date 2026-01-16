@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { IToast } from './toast/I-toast';
 import { IToastInternal } from './I-toast-internal';
 
@@ -8,6 +8,7 @@ import { IToastInternal } from './I-toast-internal';
   providedIn: 'root'
 })
 export class ToastService {
+  public arrayUpdated: EventEmitter<void> = new EventEmitter<void>();
   public toasts: IToastInternal[] = [];
 
   private standardDelay = 3000;
@@ -15,6 +16,7 @@ export class ToastService {
   public show(toast: IToast): void {
     const id = ''.appendUniqueId();
     this.toasts.push({ ...toast, id: id });
+    this.arrayUpdated.next();
   }
 
   public showInfo(title: string, message: string, delay?: number): void {

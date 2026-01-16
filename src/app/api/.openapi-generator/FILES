@@ -6,6 +6,7 @@ api/administration.service.ts
 api/api.ts
 api/auth.service.ts
 api/bloc.service.ts
+api/feedbacks.service.ts
 api/line.service.ts
 api/sector.service.ts
 api/spraywallProblems.service.ts
@@ -23,6 +24,7 @@ model/models.ts
 model/postAppAuthLoginRequest.ts
 model/postRegisterRequest.ts
 model/postSearchProblemsRequest.ts
+model/postSendFeedbackRequest.ts
 model/putCreateRequest.ts
 model/sectorDto.ts
 model/spraywallDto.ts

@@ -40,11 +40,11 @@ The next todos:
 [] Refresh token [https://github.com/markitosgv/JWTRefreshTokenBundle](https://github.com/markitosgv/JWTRefreshTokenBundle)   
 [] logout   
 [-] rate limiting   
-[-] upload only while logged in and verified (controller blocks, frontend still shows)   
+[x] upload only while logged in and verified (controller blocks, frontend still shows)   
 [] Version Number   
 [x] make http failure cases generic   
 [] user profile page   
-[] feedback form   
+[x] feedback form   
 [x] style spraywall list   
 [-] filter spraywall list   
 [x] reset Create Spraywall after saving   
