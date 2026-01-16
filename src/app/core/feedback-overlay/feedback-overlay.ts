@@ -6,7 +6,6 @@ import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 import { ToastService } from '../toast-container/toast.service';
 import { FeedbacksService, PostSendFeedbackRequest } from '@api/index';
 
-// interface IFeedbackForm extends PostAppAuthLoginRequest { }
 interface IFeedbackForm {
   email: string,
   feedback: string
@@ -33,10 +32,7 @@ export class FeedbackOverlay implements OnInit {
     feedback: (''),
   });
   
-  // private feedbackForm = viewChild<ElementRef>('feedbackForm');
-
   public constructor() {
-    // this.feedbackForm.controls.email.addValidators([Validators.required, Validators.email]);
     this.feedbackForm.controls.feedback.addValidators([Validators.required, Validators.minLength(10)]);
   }
 
@@ -46,8 +42,6 @@ export class FeedbackOverlay implements OnInit {
   }
 
   public openFeedback(): void {
-    // console.log('click');
-    // console.log(this.feedbackForm());
     if (this.loginTrackerService.isLoggedIn()) {
       this.feedbackForm.controls.email.setValue('' + this.loginTrackerService.getUserMail());
       this.feedbackForm.enable();
@@ -75,7 +69,7 @@ export class FeedbackOverlay implements OnInit {
       next: () => {
         this.feedbackForm.reset();
         this.feedbackForm.enable();
-        this.toastService.showSuccess('Login Successful', 'You have successfully logged in!');
+        this.toastService.showSuccess('Feedback Sent Successful', 'Your feedback has been sent. A copy was sent to your address.');
         this.isLoading = false;
         this.closeFeedback();
       },
@@ -84,24 +78,5 @@ export class FeedbackOverlay implements OnInit {
         this.feedbackForm.enable();
       }
     });
-    // const loginRequest: PostAppAuthLoginRequest = {
-    //   email: this.loginForm.controls.email.value,
-    //   password: this.loginForm.controls.password.value,
-    // };
-
-    // this.authService.postAppAuthLogin(loginRequest).subscribe({
-    //   next: (token: TokenDto) => {
-    //     this.loginTrackerService.saveLoginInformation(token);
-
-    //     this.isLoading = false;
-    //     this.loginForm.reset();
-    //     this.closeModal.emit({ closeType: 0 });
-    //     this.toastService.showSuccess('Login Successful', 'You have successfully logged in!');
-    //   },
-    //   error: () => {
-    //     this.isLoading = false;
-    //     this.loginForm.enable();
-    //   }
-    // });
   }
 }

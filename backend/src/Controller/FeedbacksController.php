@@ -29,7 +29,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
-#[Route('/api', name: '')]
+#[Route('/api/feedbacks', name: '')]
 #[OA\Tag(name: "Feedbacks")]
 final class FeedbacksController extends AbstractController
 {
