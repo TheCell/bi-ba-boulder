@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Verify your Email Address</title>
+	<title>Feedback from {{ userMail }}</title>
 	<style>
 		html {
 		    background-color: #1f1f1f;
@@ -17,8 +17,7 @@
 	</style>
 </head>
 <body>
-	You registered an Account at <a href="bibaboulder.org">bibaboulder.org</a><br />
-	Verify your Email Address.<br />
-	Follow this url to finalize your registration: <a href="{{ signedUrl }}">Click here to verify Email</a>
+	The Feedback:<br />
+	{{ feedback }}
 </body>
 </html>

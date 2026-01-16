@@ -16,6 +16,11 @@ input, select {
   margin-bottom: 4px;
 }
 
+textarea {
+  padding: 4px 5px;
+  margin-bottom: 4px;
+}
+
 input[type="radio"] {
   border: none;
   padding: 0;
@@ -116,7 +121,9 @@ input:focus, select:focus, textarea:focus {
 input:not(:placeholder-shown) + .group-label,
 input:focus + .group-label,
 select:not(:placeholder-shown) + .group-label,
-select:focus + .group-label {
+select:focus + .group-label,
+textarea:not(:placeholder-shown) + .group-label,
+textarea:focus + .group-label {
   top: 1px;
   font-size: 11px;
   pointer-events: initial;
@@ -129,13 +136,18 @@ select:focus + .group-label {
 }
 
 input.ng-invalid.ng-touched + .group-label,
-select.ng-invalid.ng-touched + .group-label {
+select.ng-invalid.ng-touched + .group-label,
+textarea.ng-invalid.ng-touched + .group-label {
   color: $danger;
 }
 
 input.ng-invalid.ng-touched,
 select.ng-invalid.ng-touched {
   border-bottom: 1px solid $danger;
+}
+
+textarea.ng-invalid.ng-touched {
+  border: 1px solid $danger;
 }
 
 .form-action {
@@ -187,11 +199,11 @@ input.disabled:hover {
   background-color: $gray;
 }
 
-input:disabled, select:disabled {
+input:disabled, select:disabled, textarea:disabled {
   color: $gray;
 }
 
-input:disabled, select:disabled {
+input:disabled, select:disabled, textarea:disabled {
   background: repeating-linear-gradient(
     -55deg,
     $dark,

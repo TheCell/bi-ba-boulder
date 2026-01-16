@@ -28,6 +28,14 @@ export class LoginTrackerService {
     return this.expiration.valueOf() > now.valueOf();
   }
 
+  public getUserMail(): string | undefined {
+    if (this.token) {
+      return jwtDecoder(this.token).email;
+    }
+
+    return undefined;
+  }
+
   public saveLoginInformation(token: TokenDto): void {
     const decodedToken = jwtDecoder(token.token);
     localStorage.setItem('auth_token', token.token);

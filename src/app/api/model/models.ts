@@ -5,6 +5,7 @@ export * from './lineDto';
 export * from './postAppAuthLoginRequest';
 export * from './postRegisterRequest';
 export * from './postSearchProblemsRequest';
+export * from './postSendFeedbackRequest';
 export * from './putCreateRequest';
 export * from './sectorDto';
 export * from './spraywallDto';
