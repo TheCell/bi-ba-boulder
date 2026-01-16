@@ -95,6 +95,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
         this.highlightedHoldsTexture = undefined;
         this.ambientLight.intensity = this.ambientLightIntensity;
       }
+      this.loop();
     });
 
     const activatedRoute = inject(ActivatedRoute);
@@ -159,6 +160,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     this.scene.add(this.directionalLight);
     this.scene.add(this.ambientLight);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.addEventListener('change', this.loop)
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
@@ -167,6 +169,9 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   }
 
   private loop = () => {
+    if (!this.renderer) {
+      return;
+    }
 
     if (this.rgbBlockMaterial) {
       const shader = this.rgbBlockMaterial.userData['shader'];
@@ -178,7 +183,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     }
 
     this.renderer.render(this.scene, this.camera);
-    window.requestAnimationFrame(this.loop);
+    // window.requestAnimationFrame(this.loop);
   }
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
@@ -210,6 +215,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       }
       this.currentGltf = gltf;
       this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
+      this.loop();
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
@@ -256,6 +262,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
       this.highlightedHoldsTexture = texture;
+      this.loop();
     }
     image.onabort = (ev) => {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
