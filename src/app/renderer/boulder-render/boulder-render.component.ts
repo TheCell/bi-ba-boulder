@@ -38,6 +38,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       this.renderer.setSize(canvasSizes.width, canvasSizes.height);
       this.camera.aspect = canvasSizes.width / canvasSizes.height;
       this.camera.updateProjectionMatrix();
+      this.loop();
     }
   }
 
