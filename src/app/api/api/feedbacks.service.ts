@@ -144,7 +144,7 @@ export class FeedbacksService {
             }
         }
 
-        let localVarPath = `/api/send_feedback`;
+        let localVarPath = `/api/feedbacks/send_feedback`;
         return this.httpClient.request<any>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
