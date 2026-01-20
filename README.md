@@ -38,7 +38,7 @@ The next todos:
 [x] build highlight texture optimizer   
 [] streamline spraywall + rgb texture download not hardcoded   
 [] Refresh token [https://github.com/markitosgv/JWTRefreshTokenBundle](https://github.com/markitosgv/JWTRefreshTokenBundle)   
-[] logout   
+[-] logout   
 [-] rate limiting   
 [x] upload only while logged in and verified (controller blocks, frontend still shows)   
 [] Version Number   
@@ -50,8 +50,8 @@ The next todos:
 [x] reset Create Spraywall after saving   
 [] split production and develop   
 [-] revert und redo function   
-[] don't rerender when not in active use   
-[] fix crashes on mobile   
+[x] don't rerender when not in active use   
+[?] fix crashes on mobile   
 [] predefined camera positions and reference character position   
 [] check spraywall upload for 1 start 1 top hold   
 [] make colors grayscale and changeable in shader   
