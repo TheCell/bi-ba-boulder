@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "identityapp1": {
-      "connectionInfo": "App registration: Bibaboulder, Tenant: Default Directory (simonhischierhotmail.onmicrosoft.com - Microsoft Entra ID)",
-      "type": "identityapp.default"
-    }
-  }
-}
