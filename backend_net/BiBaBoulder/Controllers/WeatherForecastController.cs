@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BiBaBoulder.Controllers;
+namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -13,7 +13,7 @@ public class WeatherForecastController : ControllerBase
     [
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     ];
-
+#pragma warning disable CA5394
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
@@ -25,4 +25,5 @@ public class WeatherForecastController : ControllerBase
         })
         .ToArray();
     }
+#pragma warning restore CA5394
 }

@@ -1,7 +1,6 @@
-
 using System;
 
-namespace Model.Model;
+namespace Thecell.Bibaboulder.Model.Model;
 
 public class Spraywall
 {

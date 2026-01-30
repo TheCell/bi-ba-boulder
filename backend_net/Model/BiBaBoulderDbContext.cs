@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Model.Model;
+using Thecell.Bibaboulder.Model.Model;
 
-namespace BiBaBoulder.Model
+namespace Thecell.Bibaboulder.Model
 {
     public class BiBaBoulderDbContext : DbContext
       {

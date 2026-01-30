@@ -1,6 +1,6 @@
 using System;
 
-namespace BiBaBoulder;
+namespace Thecell.Bibaboulder.BiBaBoulder;
 
 public class WeatherForecast
 {
