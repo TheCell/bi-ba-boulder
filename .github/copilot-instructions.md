@@ -48,6 +48,11 @@ symfony console doctrine:migrations:migrate        # Apply migration
 symfony console doctrine:migrations:status         # Check status
 ``
 
+**.NET**
+``bash
+dotnet build backend_net/Bibaboulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release    # Ensure build succeeds
+``
+
 **EF Core (.NET)**:
 ``bash
 cd backend_net/Migrations
