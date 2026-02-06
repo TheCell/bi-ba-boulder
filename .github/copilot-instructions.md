@@ -72,7 +72,7 @@ GitHub Actions workflow: `.github/workflows/build-and-publish.yml` handles FTP d
 ### Backend Migration Status
 - **Active**: Symfony backend (`backend/`) serving all endpoints
 - **In Progress**: .NET backend (`backend_net/`) - porting to CQRS with Command/Query handlers
-- Both share same MSSQL database during transition
+- .NET is using MSSQL, rebuilding the DB and porting the data from MSSQL once with EF Core migrations.
 
 ### 3D Rendering Pipeline
 ``
@@ -113,11 +113,7 @@ src/app/
 - **Always standalone**: No `NgModule`, use `imports` array in `@Component`
 - **Naming**: Feature-based folders (`spraywalls/spraywall/spraywall.component.ts`)
 - **Services**: Use `inject()` function for DI (not constructor injection)
-``typescript
-//  Preferred pattern
-public loginService = inject(LoginTrackerService);
-private http = inject(HttpClient);
-``
+
 
 **Forms**: Strictly typed Reactive Forms only:
 ``typescript

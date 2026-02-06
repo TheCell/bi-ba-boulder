@@ -5,7 +5,7 @@ namespace Thecell.Bibaboulder.Model;
 
 public class BiBaBoulderDbContext : DbContext
 {
-    public BiBaBoulderDbContext(DbContextOptions<BiBaBoulderDbContext> options): base(options)
+    public BiBaBoulderDbContext(DbContextOptions<BiBaBoulderDbContext> options) : base(options)
     { }
 
     public DbSet<Spraywall> Spraywalls { get; set; }

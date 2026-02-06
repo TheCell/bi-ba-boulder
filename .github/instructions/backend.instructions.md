@@ -1,0 +1,1 @@
+- Use UUIDs for entity IDs to ensure global uniqueness.
