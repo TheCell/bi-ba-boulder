@@ -2,6 +2,10 @@
   <Folder Name="/Solution Items/">
     <File Path="readme.md" />
   </Folder>
+  <Folder Name="/Testing/">
+    <Project Path="../TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj" Id="f0e6667e-cb1a-4bbd-93fa-7a7673719da0" />
+    <Project Path="../TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj" Id="738a19d0-76a0-4c96-a9b6-99220e723625" />
+  </Folder>
   <Project Path="../Migrations/Thecell.Bibaboulder.Migrations.csproj" />
   <Project Path="../Model/Thecell.Bibaboulder.Model.csproj" Id="f39b9c09-200b-4c90-b2de-85b041197bce" />
   <Project Path="../Thecell.Bibaboulder.Common/Thecell.Bibaboulder.Common.csproj" Id="84e8d09a-d68b-4596-b308-1157be0cf21e" />
