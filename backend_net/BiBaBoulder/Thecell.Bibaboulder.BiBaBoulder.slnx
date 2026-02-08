@@ -4,5 +4,8 @@
   </Folder>
   <Project Path="../Migrations/Thecell.Bibaboulder.Migrations.csproj" />
   <Project Path="../Model/Thecell.Bibaboulder.Model.csproj" Id="f39b9c09-200b-4c90-b2de-85b041197bce" />
+  <Project Path="../Thecell.Bibaboulder.Common/Thecell.Bibaboulder.Common.csproj" Id="84e8d09a-d68b-4596-b308-1157be0cf21e" />
+  <Project Path="../Thecell.Bibaboulder.Outdoor/Thecell.Bibaboulder.Outdoor.csproj" Id="47a05ae4-f4bc-4273-bba3-cc0c8d21d001" />
+  <Project Path="../Thecell.Bibaboulder.Spraywall/Thecell.Bibaboulder.Spraywall.csproj" Id="e3ccc291-ce21-482f-9c47-bf9b74817d9d" />
   <Project Path="Thecell.Bibaboulder.BiBaBoulder.csproj" />
 </Solution>

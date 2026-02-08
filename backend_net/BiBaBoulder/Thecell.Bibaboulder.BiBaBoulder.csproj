@@ -38,6 +38,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model\Thecell.Bibaboulder.Model.csproj" />
+    <ProjectReference Include="..\Thecell.Bibaboulder.Common\Thecell.Bibaboulder.Common.csproj" />
+    <ProjectReference Include="..\Thecell.Bibaboulder.Outdoor\Thecell.Bibaboulder.Outdoor.csproj" />
+    <ProjectReference Include="..\Thecell.Bibaboulder.Spraywall\Thecell.Bibaboulder.Spraywall.csproj" />
   </ItemGroup>
 
 </Project>

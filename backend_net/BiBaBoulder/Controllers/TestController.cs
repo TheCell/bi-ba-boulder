@@ -1,24 +1,29 @@
-﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Common.Queries;
+using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Spraywall.Testing;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class TestController : ControllerBase
 {
-    private readonly BiBaBoulderDbContext _dbContext;
+    private readonly IQueryHandler<GetTestingQuery, TestDto> _getTestingQueryHandler;
 
-    public TestController(BiBaBoulderDbContext dbContext)
+    public TestController(
+        IQueryHandler<GetTestingQuery, TestDto> getTestingQueryHandler)
     {
-        _dbContext = dbContext;
+        _getTestingQueryHandler = getTestingQueryHandler;
     }
 
-    [HttpGet("test")]
-    public IActionResult GetTest()
+    [HttpGet]
+    public async Task<TestDto> GetTest()
     {
-        var count = _dbContext.Spraywalls.Count();
-        return Ok(new { SpraywallCount = count });
+        return await _getTestingQueryHandler.HandleAsync(new GetTestingQuery());
     }
+
+    //[HttpGet("{id}")]
+
 }

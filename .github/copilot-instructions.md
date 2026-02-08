@@ -107,6 +107,8 @@ src/app/
 
 ## Code Conventions
 
+- Don't comment code - write clean, self-explanatory code instead. Use comments only for explaining "why", not "what" or "how".
+
 ### Frontend (Angular + Three.js)
 
 **Components**:

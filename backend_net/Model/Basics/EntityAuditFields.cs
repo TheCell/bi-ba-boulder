@@ -2,11 +2,11 @@ using System;
 
 namespace Thecell.Bibaboulder.Model.Basics;
 
-public abstract class AuditableEntity
+public abstract class EntityAuditFields
 {
-    public required DateTime CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public required Guid CreatedUserId { get; set; }
+    public Guid CreatedUserId { get; set; }
 
     public DateTime? UpdatedDate { get; set; }
 

@@ -3,7 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Thecell.Bibaboulder.BiBaBoulder.Extensions;
+using Thecell.Bibaboulder.BiBaBoulder.Middleware;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Outdoor.Handler;
+using Thecell.Bibaboulder.Spraywall.Testing;
 
 namespace Thecell.Bibaboulder.BiBaBoulder;
 
@@ -20,12 +24,14 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
-        builder.Services.AddControllers();
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();
         builder.Services.AddDbContext<BiBaBoulderDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("BiBaBoulderDatabase")));
+        builder.Services.AddScoped<IBiBaBoulderDbContext>(provider => provider.GetRequiredService<BiBaBoulderDbContext>());
+
+        builder.Services.AddControllers();
+        builder.Services.AddCqrsHandlers([typeof(Program).Assembly, typeof(GetTestingQueryHandler).Assembly]);
+        builder.Services.AddCqrsHandlers([typeof(Program).Assembly, typeof(GetSectorQueryHandler).Assembly]);
 
         var app = builder.Build();
 
@@ -38,6 +44,7 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         app.MapControllers();
 
