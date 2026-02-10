@@ -4,6 +4,7 @@
   </Folder>
   <Folder Name="/Testing/">
     <Project Path="../TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj" Id="f0e6667e-cb1a-4bbd-93fa-7a7673719da0" />
+    <Project Path="../TheCell.Bibaboulder.Sharedtests/TheCell.Bibaboulder.Sharedtests.csproj" Id="1ec86170-22a5-4e54-9b69-d27c59213daa" />
     <Project Path="../TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj" Id="738a19d0-76a0-4c96-a9b6-99220e723625" />
   </Folder>
   <Project Path="../Migrations/Thecell.Bibaboulder.Migrations.csproj" />

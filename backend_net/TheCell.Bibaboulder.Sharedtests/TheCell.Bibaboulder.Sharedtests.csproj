@@ -10,7 +10,6 @@
     <AnalysisLevel>latest</AnalysisLevel>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-
   <!-- Workaround for https://github.com/dotnet/roslyn/issues/41640 -->
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -20,30 +19,22 @@
   <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="35.6.5" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="3.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BiBaBoulder\Thecell.Bibaboulder.BiBaBoulder.csproj" />
     <ProjectReference Include="..\Model\Thecell.Bibaboulder.Model.csproj" />
-    <ProjectReference Include="..\Thecell.Bibaboulder.Common\Thecell.Bibaboulder.Common.csproj" />
-    <ProjectReference Include="..\Thecell.Bibaboulder.Outdoor\Thecell.Bibaboulder.Outdoor.csproj" />
-    <ProjectReference Include="..\TheCell.Bibaboulder.Sharedtests\TheCell.Bibaboulder.Sharedtests.csproj" />
-    <ProjectReference Include="..\Thecell.Bibaboulder.Spraywall\Thecell.Bibaboulder.Spraywall.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
-
+  
 </Project>
