@@ -9,7 +9,7 @@
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest</AnalysisLevel>
     <IsTestProject>true</IsTestProject>
-    <OutputType>Library</OutputType>
+    <StartupObject>TheCell.Bibaboulder.Sharedtests.EntryPoint</StartupObject>
   </PropertyGroup>
   <!-- Workaround for https://github.com/dotnet/roslyn/issues/41640 -->
   <PropertyGroup>
