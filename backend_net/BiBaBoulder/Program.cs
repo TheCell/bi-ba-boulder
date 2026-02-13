@@ -28,7 +28,7 @@ public class Program
         builder.Services.AddScoped<IBiBaBoulderDbContext>(provider => provider.GetRequiredService<BiBaBoulderDbContext>());
 
         builder.Services.AddControllers();
-        builder.Services.RegisterCqrsAssemblies();
+        builder.Services.RegisterCqrsAndControllerAssemblies();
 
         var app = builder.Build();
 

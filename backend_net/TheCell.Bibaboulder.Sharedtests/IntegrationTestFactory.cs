@@ -66,7 +66,7 @@ public class IntegrationTestFactory : WebApplicationFactory<EntryPoint>
                     options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve property names as defined in C# classes
                 });
 
-            services.RegisterCqrsAssemblies();
+            services.RegisterCqrsAndControllerAssemblies();
 
             var serviceProvider = services.BuildServiceProvider();
             var dbContext = serviceProvider.GetService<IBiBaBoulderDbContext>();

@@ -10,8 +10,9 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Extensions;
 
 public static class RegisterHandlersExtensions
 {
-    public static void RegisterCqrsAssemblies(this IServiceCollection services)
+    public static void RegisterCqrsAndControllerAssemblies(this IServiceCollection services)
     {
+        services.AddControllers().AddApplicationPart(typeof(Controllers.SectorsController).Assembly);
         services.AddCqrsHandlers([typeof(Program).Assembly, typeof(GetTestingQueryHandler).Assembly]);
         services.AddCqrsHandlers([typeof(Program).Assembly, typeof(GetSectorQueryHandler).Assembly]);
     }
