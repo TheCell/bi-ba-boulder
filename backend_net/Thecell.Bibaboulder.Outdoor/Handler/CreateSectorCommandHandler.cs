@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model;
@@ -18,6 +19,7 @@ public class CreateSectorCommandHandler : ICommandHandler<CreateSectorCommand>
     {
         var testing = new Sector
         {
+            Id = Guid.CreateVersion7(),
             Name = command.Name,
             Description = command.Description
         };
