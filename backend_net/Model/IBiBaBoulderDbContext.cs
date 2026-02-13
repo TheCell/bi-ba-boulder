@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Model;
 
@@ -10,6 +11,8 @@ namespace Thecell.Bibaboulder.Model;
 
 public interface IBiBaBoulderDbContext : IDisposable
 {
+    DatabaseFacade Database { get; }
+
     DbSet<User> Users { get; set; }
     DbSet<Spraywall> Spraywalls { get; set; }
     DbSet<SpraywallProblem> SpraywallProblems { get; set; }

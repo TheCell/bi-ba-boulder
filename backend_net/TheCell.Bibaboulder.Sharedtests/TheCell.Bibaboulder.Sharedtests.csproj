@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BiBaBoulder\Thecell.Bibaboulder.BiBaBoulder.csproj" />
     <ProjectReference Include="..\Model\Thecell.Bibaboulder.Model.csproj" />
   </ItemGroup>
   
