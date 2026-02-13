@@ -6,8 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Thecell.Bibaboulder.BiBaBoulder.Extensions;
 using Thecell.Bibaboulder.BiBaBoulder.Middleware;
 using Thecell.Bibaboulder.Model;
-using Thecell.Bibaboulder.Outdoor.Handler;
-using Thecell.Bibaboulder.Spraywall.Testing;
 
 namespace Thecell.Bibaboulder.BiBaBoulder;
 

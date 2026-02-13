@@ -69,10 +69,10 @@ public class SectorsControllerTest : BaseTest
         return sector;
     }
 
-    private async Task<HttpResponseMessage> PutRequestAsync(Guid id, object request)
-    {
-        return await Client().PutAsJsonAsync($"{_baseUrl}/{id}", request);
-    }
+    //private async Task<HttpResponseMessage> PutRequestAsync(Guid id, object request)
+    //{
+    //    return await Client().PutAsJsonAsync($"{_baseUrl}/{id}", request);
+    //}
 
     protected async Task<HttpResponseMessage> GetRequestAsync(string route, string query = "")
     {

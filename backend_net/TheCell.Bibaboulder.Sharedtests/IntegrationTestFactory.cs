@@ -13,6 +13,7 @@ using Thecell.Bibaboulder.Model;
 
 namespace TheCell.Bibaboulder.Sharedtests;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1506: Avoid excessive class coupling", Justification = "This is the Testfactory, we expect excessive class coupings")]
 public class IntegrationTestFactory : WebApplicationFactory<EntryPoint>
 {
     private readonly DbConnection _connection;
