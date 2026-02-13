@@ -50,7 +50,7 @@ public class SectorsControllerTest : BaseTest
     {
         var sector = await PrepareData();
 
-        var response = await GetRequestAsync($"{sector.Id}");
+        var response = await GetRequestAsync($"/{sector.Id}");
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<SectorDto>(cancellationToken: TestContext.Current.CancellationToken);

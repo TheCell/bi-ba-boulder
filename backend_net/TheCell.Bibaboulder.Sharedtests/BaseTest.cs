@@ -33,6 +33,9 @@ public class BaseTest : IDisposable, IAsyncLifetime
 
         var serviceScope = _factory.Services.CreateScope();
         BiBaBoulderDbContext = serviceScope.ServiceProvider.GetRequiredService<BiBaBoulderDbContext>();
+
+        // Ensure database schema is created
+        BiBaBoulderDbContext.Database.EnsureCreated();
     }
 
     public async ValueTask InitializeAsync()
@@ -43,13 +46,14 @@ public class BaseTest : IDisposable, IAsyncLifetime
     public virtual void Dispose()
     {
         _client.Dispose();
+        BiBaBoulderDbContext.Dispose();
         GC.SuppressFinalize(this);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _factory.DisposeAsync();
-        BiBaBoulderDbContext.Dispose();
+        // Do NOT dispose the factory - it's a shared fixture managed by xUnit
+        await ValueTask.CompletedTask;
         GC.SuppressFinalize(this);
     }
 
