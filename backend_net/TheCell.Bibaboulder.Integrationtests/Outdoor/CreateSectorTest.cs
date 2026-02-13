@@ -36,7 +36,7 @@ public class SectorsControllerTest : BaseTest
             Description = "Integration test sector"
         };
 
-        var response = await PostRequestAsync(_baseUrl, command);
+        var response = await PostRequestAsync("", command);
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<SectorDto>(cancellationToken: TestContext.Current.CancellationToken);
