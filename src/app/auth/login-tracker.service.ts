@@ -1,58 +1,80 @@
-import { Injectable } from '@angular/core';
-import { TokenDto } from '@api/index';
-import { jwtDecoder } from './jwt-decoder';
+import { Injectable, inject } from '@angular/core';
+import { Subject } from 'rxjs';
+import { BffAuthService, BffUserClaim } from './bff-auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoginTrackerService {
-  private token?: string;
-  private expiration?: Date;
+  private bffAuthService = inject(BffAuthService);
+  private claims: BffUserClaim[] = [];
+  private authenticated = false;
 
-  public constructor() {
-    const token = localStorage.getItem('auth_token');
-    const expirationString = localStorage.getItem('auth_token_expiry');
-    if (token && expirationString) {
-      this.token = token;
-      const expirationValueOf = parseInt(expirationString);
-      this.expiration = new Date(expirationValueOf);
-    }
+  /** Emits whenever the authentication state changes. */
+  public authStateChanged$ = new Subject<boolean>();
+
+  /**
+   * Fetches the current session state from the BFF.
+   * Call this on app startup to initialize the login state.
+   */
+  public checkSession(): void {
+    this.bffAuthService.getUser().subscribe({
+      next: (claims) => {
+        this.claims = claims;
+        this.authenticated = true;
+        this.authStateChanged$.next(true);
+      },
+      error: () => {
+        this.claims = [];
+        this.authenticated = false;
+        this.authStateChanged$.next(false);
+      },
+    });
   }
 
   public isLoggedIn(): boolean {
-    if (!this.expiration || !this.token) {
-      return false;
-    }
-
-    const now = new Date();
-    return this.expiration.valueOf() > now.valueOf();
+    return this.authenticated;
   }
 
   public getUserMail(): string | undefined {
-    if (this.token) {
-      return jwtDecoder(this.token).email;
-    }
-
-    return undefined;
+    return this.getClaimValue('email');
   }
 
-  public saveLoginInformation(token: TokenDto): void {
-    const decodedToken = jwtDecoder(token.token);
-    localStorage.setItem('auth_token', token.token);
-    localStorage.setItem('auth_token_expiry', '' + decodedToken.exp * 1000);
-    this.token = token.token;
-    this.expiration = new Date(decodedToken.exp * 1000);
+  public getUserName(): string | undefined {
+    return this.getClaimValue('name') ?? this.getClaimValue('preferred_username') ?? this.getUserMail();
   }
 
-  public removeLoginInformation(): void {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('auth_token_expiry');
-    this.token = undefined;
-    this.expiration = undefined;
+  /**
+   * Initiates the OIDC login flow via browser navigation.
+   * @param returnUrl URL to redirect back to after successful login. Defaults to current path.
+   */
+  public login(returnUrl?: string): void {
+    const url = this.bffAuthService.getLoginUrl(returnUrl ?? window.location.pathname);
+    window.location.href = url;
   }
 
-  public getToken(): string | null {
-    return localStorage.getItem('auth_token');
+  /**
+   * Signs out of the BFF session and OIDC provider.
+   */
+  public logout(): void {
+    this.bffAuthService.logout().subscribe({
+      next: () => {
+        this.claims = [];
+        this.authenticated = false;
+        this.authStateChanged$.next(false);
+        window.location.href = '/';
+      },
+      error: () => {
+        // Even on error, clear local state
+        this.claims = [];
+        this.authenticated = false;
+        this.authStateChanged$.next(false);
+      },
+    });
   }
 
+  private getClaimValue(type: string): string | undefined {
+    const claim = this.claims.find((c) => c.type === type);
+    return claim?.value;
+  }
 }

@@ -1,25 +1,10 @@
 <h2>Login</h2>
 
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <div class="form-group form-input">
-        <input id="email" placeholder="" autocomplete="off" type="text" formControlName="email" />
-        <label for="email" class="group-label">Email</label>
-    </div>
-    
-    <div class="form-group form-input">
-        <input id="password" placeholder="" autocomplete="off" type="password" formControlName="password" />
-        <label for="password" class="group-label">Password</label>
-    </div>
-    
+<div class="login-content">
+    <p>Sign in with your account to continue.</p>
     <div class="form-group form-action">
-        <button type="submit" class="button"
-            [ngClass]="{'disabled': isLoading || loginForm.invalid || loginForm.disabled }"
-            [disabled]="isLoading || loginForm.invalid || loginForm.disabled">
-            @if (isLoading) {
-                <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
-            } @else {
-                Login
-            }
+        <button type="button" class="button" (click)="onLogin()">
+            Sign in with OIDC
         </button>
     </div>
-</form>
+</div>

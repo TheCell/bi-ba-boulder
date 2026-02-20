@@ -1,26 +1,14 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest, type HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
-import { environment } from 'src/environments/environment';
 
+/**
+ * In the BFF pattern, authentication is handled via HttpOnly cookies that the browser
+ * sends automatically. This interceptor is retained as a no-op placeholder in case
+ * request-level auth logic is needed in the future.
+ *
+ * The CSRF header is handled by the csrfInterceptor.
+ * Cookies are sent automatically when withCredentials is true (configured in app.config.ts).
+ */
 export const loggedInInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
-  const loginTrackerService = inject(LoginTrackerService);
-  
-  if (req.url.startsWith(environment.apiURL)) {
-    
-    const expiration = Number.parseInt(localStorage.getItem('auth_token_expiry') ?? '');
-    if (isNaN(expiration) || expiration < Date.now()) {
-      loginTrackerService.removeLoginInformation();
-      return next(req);
-    }
-
-    const token = loginTrackerService.getToken();
-    if (token) {
-      const newReq = req.clone({ headers: req.headers.set('Authorization', `Bearer ${token}`) });
-      return next(newReq);
-    }
-  }
-  
   return next(req);
 };
