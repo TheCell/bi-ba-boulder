@@ -41,6 +41,19 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.RegisterCqrsAndControllerAssemblies();
 
+        var frontendOrigin = builder.Configuration["FrontendOrigin"]?.TrimEnd('/')
+            ?? throw new InvalidOperationException("FrontendOrigin is not configured in appsettings.");
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins(frontendOrigin)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
+
         // Authentication: Cookie (default) + OpenID Connect (challenge)
         builder.Services.AddAuthentication(options =>
         {
@@ -165,6 +178,7 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseMiddleware<AntiforgeryMiddleware>();

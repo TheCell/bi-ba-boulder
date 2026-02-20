@@ -1,9 +1,11 @@
+using System;
 using System.Linq;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 
@@ -16,23 +18,34 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 [Route("[controller]")]
 public class BffController : ControllerBase
 {
+    private readonly string _frontendOrigin;
+
+    public BffController(IConfiguration configuration)
+    {
+        _frontendOrigin = configuration["FrontendOrigin"]?.TrimEnd('/')
+            ?? throw new InvalidOperationException("FrontendOrigin is not configured in appsettings.");
+    }
+
     /// <summary>
     /// Initiates the OIDC Authorization Code + PKCE flow by redirecting to the Identity Provider.
     /// The Angular app should navigate to this URL (not call it via AJAX).
     /// </summary>
-    /// <param name="returnUrl">URL to redirect back to after successful login. Defaults to "/".</param>
+    /// <param name="returnUrl">Path to redirect back to after successful login. Defaults to "/".</param>
     [HttpGet("login")]
     [AllowAnonymous]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1054: URI parameters should not be strings", Justification = "We accept this exception")]
     public IActionResult Login(string? returnUrl = "/")
     {
-        // Prevent open redirect attacks by only allowing local return URLs
-        if (!Url.IsLocalUrl(returnUrl))
+        // Only allow path-only return URLs to prevent open redirect attacks
+        if (string.IsNullOrEmpty(returnUrl) || !Uri.IsWellFormedUriString(returnUrl, UriKind.Relative) || returnUrl.StartsWith("//", StringComparison.Ordinal))
         {
             returnUrl = "/";
         }
 
-        return Challenge(new AuthenticationProperties { RedirectUri = returnUrl });
+        // Build the absolute redirect URI using the configured frontend origin
+        var redirectUri = $"{_frontendOrigin}{returnUrl}";
+
+        return Challenge(new AuthenticationProperties { RedirectUri = redirectUri });
     }
 
     /// <summary>
@@ -42,7 +55,7 @@ public class BffController : ControllerBase
     /// </summary>
     [HttpGet("user")]
     [Authorize]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(" Naming", "CA1721: Property names should not match get methods", Justification = "This is a special case for the BFF pattern")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1721: Property names should not match get methods", Justification = "This is a special case for the BFF pattern")]
     public IActionResult GetUser()
     {
         var claims = User.Claims.Select(c => new { c.Type, c.Value });
@@ -57,7 +70,7 @@ public class BffController : ControllerBase
     public IActionResult Logout()
     {
         return SignOut(
-            new AuthenticationProperties { RedirectUri = "/" },
+            new AuthenticationProperties { RedirectUri = $"{_frontendOrigin}/" },
             CookieAuthenticationDefaults.AuthenticationScheme,
             OpenIdConnectDefaults.AuthenticationScheme);
     }
