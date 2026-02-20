@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -8,9 +11,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Thecell.Bibaboulder.BiBaBoulder.Authorization;
 using Thecell.Bibaboulder.BiBaBoulder.Extensions;
 using Thecell.Bibaboulder.BiBaBoulder.Middleware;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Model;
 
 namespace Thecell.Bibaboulder.BiBaBoulder;
 
@@ -92,9 +97,60 @@ public class Program
             options.Scope.Add("profile");
             options.Scope.Add("email");
 
-            // Map the IdP's role claim to ClaimTypes so [Authorize(Roles=...)] works.
-            // Adjust "roles" to match your IdP's role claim name (e.g. "realm_access" for Keycloak).
-            options.TokenValidationParameters.RoleClaimType = "roles";
+            // Google doesn't provide role claims, so we use ClaimTypes.Role
+            // and enrich it from the database in OnTokenValidated below.
+            options.TokenValidationParameters.RoleClaimType = ClaimTypes.Role;
+
+            options.Events = new OpenIdConnectEvents
+            {
+                OnTokenValidated = async ctx =>
+                {
+                    var sub = ctx.Principal?.FindFirstValue("sub");
+                    var email = ctx.Principal?.FindFirstValue("email");
+                    var name = ctx.Principal?.FindFirstValue("name")
+                               ?? ctx.Principal?.FindFirstValue("preferred_username")
+                               ?? email;
+
+                    if (string.IsNullOrEmpty(sub))
+                    {
+                        return;
+                    }
+
+                    // Look up or create the local user record
+                    var dbContext = ctx.HttpContext.RequestServices
+                        .GetRequiredService<IBiBaBoulderDbContext>();
+                    var user = await dbContext.Users
+                        .FirstOrDefaultAsync(
+                            u => u.OidcSubject == sub,
+                            ctx.HttpContext.RequestAborted);
+
+                    if (user is null)
+                    {
+                        user = new User
+                        {
+                            Id = Guid.NewGuid(),
+                            OidcSubject = sub,
+                            Email = email ?? "",
+                            Username = name ?? "",
+                            Roles = AuthorizationRoles.User, // default role for new users
+                            IsVerified = true,
+                        };
+                        dbContext.Users.Add(user);
+                        await dbContext.SaveChangesAsync(ctx.HttpContext.RequestAborted);
+                    }
+
+                    // Add the DB role(s) as claims so [Authorize(Roles=...)] works
+                    if (ctx.Principal?.Identity is ClaimsIdentity identity)
+                    {
+                        var roles = user.Roles.Split(',',
+                            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                        foreach (var role in roles)
+                        {
+                            identity.AddClaim(new Claim(ClaimTypes.Role, role));
+                        }
+                    }
+                },
+            };
         });
 
         builder.Services.AddAuthorization();

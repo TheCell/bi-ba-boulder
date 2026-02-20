@@ -13,7 +13,7 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 /// The frontend never handles tokens directly; all auth state is managed server-side via cookies.
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class BffController : ControllerBase
 {
     /// <summary>

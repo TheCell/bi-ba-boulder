@@ -59,7 +59,6 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role.Trim()));
-                claims.Add(new Claim("roles", role.Trim())); // Match the IdP claim name
             }
         }
 
