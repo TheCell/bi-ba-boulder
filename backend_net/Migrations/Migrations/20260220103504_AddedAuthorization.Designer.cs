@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Thecell.Bibaboulder.Model;
 
@@ -11,9 +12,11 @@ using Thecell.Bibaboulder.Model;
 namespace BiBaBoulder.Migrations
 {
     [DbContext(typeof(BiBaBoulderDbContext))]
-    partial class BiBaBoulderDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260220103504_AddedAuthorization")]
+    partial class AddedAuthorization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

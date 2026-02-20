@@ -21,6 +21,31 @@ public class BaseTest : IDisposable, IAsyncLifetime
         return _client;
     }
 
+    /// <summary>
+    /// Creates an HttpClient configured to simulate an authenticated user.
+    /// The client includes X-CSRF header and TestAuthHandler headers.
+    /// </summary>
+    /// <param name="userId">The user's ID (defaults to a fixed GUID)</param>
+    /// <param name="role">The user's role (defaults to "user")</param>
+    /// <param name="username">The username (defaults to "testuser")</param>
+    protected HttpClient AuthenticatedClient(
+        string? userId = null,
+        string role = "user",
+        string username = "testuser")
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        client.DefaultRequestHeaders.Add("X-CSRF", "1");
+        client.DefaultRequestHeaders.Add(TestAuthHandler.UserIdHeader, userId ?? "00000000-0000-0000-0000-000000000001");
+        client.DefaultRequestHeaders.Add(TestAuthHandler.RoleHeader, role);
+        client.DefaultRequestHeaders.Add(TestAuthHandler.UsernameHeader, username);
+
+        return client;
+    }
+
     protected IBiBaBoulderDbContext BiBaBoulderDbContext { get; }
 
     protected BaseTest(IntegrationTestFactory factory)
@@ -30,6 +55,7 @@ public class BaseTest : IDisposable, IAsyncLifetime
         {
             AllowAutoRedirect = false
         });
+        _client.DefaultRequestHeaders.Add("X-CSRF", "1");
 
         var serviceScope = _factory.Services.CreateScope();
         BiBaBoulderDbContext = serviceScope.ServiceProvider.GetRequiredService<BiBaBoulderDbContext>();

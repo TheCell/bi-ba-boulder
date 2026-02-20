@@ -31,6 +31,12 @@ public class ExceptionHandlingMiddleware
     {
         switch (ex)
         {
+            case AuthenticationException authenticationException:
+                await HandleAuthenticationException(context, authenticationException);
+                break;
+            case AccessDeniedException accessDeniedException:
+                await HandleAccessDeniedException(context, accessDeniedException);
+                break;
             case DbUpdateConcurrencyException dbUpdateConcurrencyException:
                 await HandleDbUpdateConcurrencyException(context, dbUpdateConcurrencyException);
                 break;
@@ -47,19 +53,35 @@ public class ExceptionHandlingMiddleware
     {
         context.Response.StatusCode = 409;
         context.Response.ContentType = "application/json";
-        return context.Response.WriteAsync($"{{\"message\": \"concurrency Exception {dbUpdateConcurrencyException.Entries}\" \"}}");
+        return context.Response.WriteAsJsonAsync(new { message = $"Concurrency Exception: {dbUpdateConcurrencyException.Entries}" });
+    }
+
+    private Task HandleAuthenticationException(HttpContext context, AuthenticationException authenticationException)
+    {
+        context.Response.StatusCode = 401;
+        context.Response.ContentType = "application/json";
+        return context.Response.WriteAsJsonAsync(new { message = authenticationException.Message });
+    }
+
+    private Task HandleAccessDeniedException(HttpContext context, AccessDeniedException accessDeniedException)
+    {
+        context.Response.StatusCode = 403;
+        context.Response.ContentType = "application/json";
+        return context.Response.WriteAsJsonAsync(new { message = accessDeniedException.Message });
     }
 
     private Task HandleNotFoundException(HttpContext context, NotFoundException notFoundException)
     {
         context.Response.StatusCode = 404;
-        return context.Response.WriteAsync($"{{\"message\": \"{notFoundException.Message}\"}}");
+        context.Response.ContentType = "application/json";
+        return context.Response.WriteAsJsonAsync(new { message = notFoundException.Message });
     }
 
     private Task HandleSystemException(HttpContext context, Exception ex)
     {
         context.Response.StatusCode = 500;
-        return context.Response.WriteAsync($"{{\"message\": \"{ex.Message}\"}}");
+        context.Response.ContentType = "application/json";
+        return context.Response.WriteAsJsonAsync(new { message = ex.Message });
     }
 
 }

@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Bogus;
+using Thecell.Bibaboulder.BiBaBoulder.Authorization;
 using Thecell.Bibaboulder.Model.Dto;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Outdoor.Handler;
@@ -19,11 +20,25 @@ public class SectorsControllerTest : BaseTest
 {
     private readonly string _baseUrl = "/api/Sectors";
     private readonly Faker _bogus;
-    // TODO anonymous and logged in test
 
     public SectorsControllerTest(IntegrationTestFactory factory) : base(factory)
     {
         _bogus = new Faker("de_CH");
+    }
+
+    [Fact]
+    public async Task CreateSector_Anonymous_Unauthorized()
+    {
+        var command = new CreateSectorCommand
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Sector",
+            Description = "Integration test sector"
+        };
+
+        var response = await PostRequestAsync("", command, authenticated: false);
+
+        Assert.Equal(401, (int)response.StatusCode);
     }
 
     [Fact]
@@ -36,7 +51,7 @@ public class SectorsControllerTest : BaseTest
             Description = "Integration test sector"
         };
 
-        var response = await PostRequestAsync("", command);
+        var response = await PostRequestAsync("", command, authenticated: true);
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<SectorDto>(cancellationToken: TestContext.Current.CancellationToken);
@@ -48,11 +63,29 @@ public class SectorsControllerTest : BaseTest
     }
 
     [Fact]
+    public async Task GetSectors_Anonymous_Ok()
+    {
+        var sectors = await PrepareData();
+
+        var response = await GetRequestAsync("", authenticated: false);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<SectorDto>>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        foreach (var sectorFromDb in sectors)
+        {
+            var sector = result.Single(s => s.Id == sectorFromDb.Id);
+            SectorAssertion.Assert(sector, sectorFromDb);
+        }
+    }
+
+    [Fact]
     public async Task GetSectors_Ok()
     {
         var sectors = await PrepareData();
 
-        var response = await GetRequestAsync("");
+        var response = await GetRequestAsync("", authenticated: true);
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<List<SectorDto>>(cancellationToken: TestContext.Current.CancellationToken);
@@ -70,7 +103,7 @@ public class SectorsControllerTest : BaseTest
     {
         var sectors = await PrepareData();
 
-        var response = await GetRequestAsync($"/{sectors[0].Id}");
+        var response = await GetRequestAsync($"/{sectors[0].Id}", authenticated: true);
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<SectorDto>(cancellationToken: TestContext.Current.CancellationToken);
@@ -99,13 +132,15 @@ public class SectorsControllerTest : BaseTest
     //    return await Client().PutAsJsonAsync($"{_baseUrl}/{id}", request);
     //}
 
-    protected async Task<HttpResponseMessage> GetRequestAsync(string route, string query = "")
+    protected async Task<HttpResponseMessage> GetRequestAsync(string route, string query = "", bool authenticated = false)
     {
-        return await Client().GetAsync($"{_baseUrl}{route}{query}");
+        var client = authenticated ? AuthenticatedClient(role: AuthorizationRoles.User) : Client();
+        return await client.GetAsync($"{_baseUrl}{route}{query}");
     }
 
-    protected async Task<HttpResponseMessage> PostRequestAsync(string route, object request)
+    protected async Task<HttpResponseMessage> PostRequestAsync(string route, object request, bool authenticated = false)
     {
-        return await Client().PostAsync($"{_baseUrl}{route}", GetJsonHttpBody(request));
+        var client = authenticated ? AuthenticatedClient(role: AuthorizationRoles.Admin) : Client();
+        return await client.PostAsync($"{_baseUrl}{route}", GetJsonHttpBody(request));
     }
 }

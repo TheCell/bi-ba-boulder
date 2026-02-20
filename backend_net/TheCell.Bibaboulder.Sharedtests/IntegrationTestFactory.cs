@@ -1,5 +1,6 @@
 using System.Data.Common;
 using System.Linq;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -68,12 +69,18 @@ public class IntegrationTestFactory : WebApplicationFactory<EntryPoint>
 
             services.RegisterCqrsAndControllerAssemblies();
 
+            // Replace real auth with TestAuthHandler for integration tests
+            services.AddAuthentication(TestAuthHandler.SchemeName)
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                    TestAuthHandler.SchemeName, options => { });
+
             var serviceProvider = services.BuildServiceProvider();
             var dbContext = serviceProvider.GetService<IBiBaBoulderDbContext>();
             dbContext!.Database.EnsureCreated();
         }).Configure((app) =>
         {
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseEndpoints(endpoints =>

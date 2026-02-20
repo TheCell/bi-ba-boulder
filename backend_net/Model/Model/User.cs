@@ -16,7 +16,12 @@ public class User : VersionedEntity
     [MaxLength(255)]
     public required string Username { get; set; }
 
-    public required string PasswordHash { get; set; }
+    /// <summary>
+    /// The 'sub' claim from the external OIDC Identity Provider.
+    /// Used to link the external identity to this local user record.
+    /// </summary>
+    [MaxLength(255)]
+    public required string OidcSubject { get; set; }
 
     public required string Roles { get; set; } // JSON or comma-separated
 

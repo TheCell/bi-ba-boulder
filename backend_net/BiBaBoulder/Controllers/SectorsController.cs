@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Thecell.Bibaboulder.BiBaBoulder.Authorization;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model.Dto;
@@ -9,6 +11,7 @@ using Thecell.Bibaboulder.Outdoor.Handler;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class SectorsController : ControllerBase
@@ -28,12 +31,14 @@ public class SectorsController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ICollection<SectorDto>> GetSectors()
     {
         return await _getSectorsQueryHandler.HandleAsync(new GetSectorsQuery());
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<SectorDto> GetSector(Guid id)
     {
         var query = new GetSectorQuery { Id = id };
@@ -41,6 +46,7 @@ public class SectorsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = AuthorizationRoles.Admin)]
     public async Task<SectorDto> CreateSector(CreateSectorCommand command)
     {
         await _createSectorCommandHandler.HandleAsync(command);
