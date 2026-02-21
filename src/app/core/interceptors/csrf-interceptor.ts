@@ -15,6 +15,7 @@ export const csrfInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   if (req.url.startsWith(environment.apiURL)) {
     const csrfReq = req.clone({
       headers: req.headers.set('X-CSRF', '1'),
+      withCredentials: true,
     });
     return next(csrfReq);
   }
