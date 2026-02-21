@@ -11,11 +11,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Thecell.Bibaboulder.BiBaBoulder.Authorization;
 using Thecell.Bibaboulder.BiBaBoulder.Extensions;
 using Thecell.Bibaboulder.BiBaBoulder.Middleware;
+using Thecell.Bibaboulder.BiBaBoulder.Services;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.BiBaBoulder;
 
@@ -39,6 +41,8 @@ public class Program
         builder.Services.AddScoped<IBiBaBoulderDbContext>(provider => provider.GetRequiredService<BiBaBoulderDbContext>());
 
         builder.Services.AddControllers();
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.RegisterCqrsAndControllerAssemblies();
 
         var frontendOrigin = builder.Configuration["FrontendOrigin"]?.TrimEnd('/')

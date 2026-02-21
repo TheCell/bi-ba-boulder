@@ -1,4 +1,4 @@
-namespace Thecell.Bibaboulder.BiBaBoulder.Authorization;
+namespace Thecell.Bibaboulder.Model.Authorization;
 
 public static class AuthorizationRoles
 {
