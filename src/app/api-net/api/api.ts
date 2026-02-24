@@ -1,0 +1,13 @@
+export * from './bff.service';
+import { BffService } from './bff.service';
+export * from './bff.serviceInterface';
+export * from './sectors.service';
+import { SectorsService } from './sectors.service';
+export * from './sectors.serviceInterface';
+export * from './test.service';
+import { TestService } from './test.service';
+export * from './test.serviceInterface';
+export * from './weatherForecast.service';
+import { WeatherForecastService } from './weatherForecast.service';
+export * from './weatherForecast.serviceInterface';
+export const APIS = [BffService, SectorsService, TestService, WeatherForecastService];
