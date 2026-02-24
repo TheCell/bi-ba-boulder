@@ -36,7 +36,24 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                document.Info.Title = "BiBaBoulder API";
+                document.Info.Version = "v1";
+                return Task.CompletedTask;
+            });
+            options.AddOperationTransformer((operation, context, cancellationToken) =>
+            {
+                var routeValues = context.Description.ActionDescriptor.RouteValues;
+                if (routeValues.TryGetValue("action", out var action) && !string.IsNullOrEmpty(action))
+                {
+                    operation.OperationId = char.ToLowerInvariant(action[0]) + action[1..];
+                }
+                return Task.CompletedTask;
+            });
+        });
         builder.Services.AddDbContext<BiBaBoulderDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("BiBaBoulderDatabase")));
         builder.Services.AddScoped<IBiBaBoulderDbContext>(provider => provider.GetRequiredService<BiBaBoulderDbContext>());
 
@@ -179,8 +196,10 @@ public class Program
         {
             app.MapOpenApi();
         }
-
-        app.UseHttpsRedirection();
+        else
+        {
+            app.UseHttpsRedirection();
+        }
 
         app.UseCors();
         app.UseAuthentication();
