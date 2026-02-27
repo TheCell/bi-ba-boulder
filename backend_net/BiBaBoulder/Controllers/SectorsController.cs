@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Thecell.Bibaboulder.BiBaBoulder.Extensions;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Common.Queries;
-using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Dto;
 using Thecell.Bibaboulder.Outdoor.Handler;
@@ -21,15 +19,12 @@ public class SectorsController : ControllerBase
     private readonly IQueryHandler<GetSectorQuery, SectorDto> _getSectorQueryHandler;
     private readonly IQueryHandler<GetSectorsQuery, ICollection<SectorDto>> _getSectorsQueryHandler;
     private readonly ICommandHandler<CreateSectorCommand> _createSectorCommandHandler;
-    private readonly IBiBaBoulderDbContext _dbContext;
 
     public SectorsController(
-        IBiBaBoulderDbContext dbContext,
         IQueryHandler<GetSectorQuery, SectorDto> getSectorQueryHandler,
         IQueryHandler<GetSectorsQuery, ICollection<SectorDto>> getSectorsQueryHandler,
         ICommandHandler<CreateSectorCommand> createSectorCommandHandler)
     {
-        _dbContext = dbContext;
         _getSectorQueryHandler = getSectorQueryHandler;
         _getSectorsQueryHandler = getSectorsQueryHandler;
         _createSectorCommandHandler = createSectorCommandHandler;

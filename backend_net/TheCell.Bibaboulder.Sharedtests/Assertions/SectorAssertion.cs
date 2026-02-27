@@ -11,6 +11,7 @@ public static class SectorAssertion
     public static void Assert(SectorDto actual, Sector expected)
     {
         Xunit.Assert.Equal(expected.Id, actual.Id);
+        expected.Id.AssertV7();
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Description, actual.Description);
     }

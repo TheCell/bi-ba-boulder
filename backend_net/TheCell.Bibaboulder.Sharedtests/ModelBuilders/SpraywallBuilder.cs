@@ -4,22 +4,22 @@ using Thecell.Bibaboulder.Model.Model;
 
 namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
-public class SectorBuilder : BuilderBase<Sector>
+public class SpraywallBuilder : BuilderBase<Spraywall>
 {
-    public SectorBuilder() : base()
+    public SpraywallBuilder() : base()
     {
         var bogus = new Faker("de_CH");
-        _instance.Id = Guid.NewGuid();
+        _instance.Id = Guid.CreateVersion7();
         _instance.Name = bogus.Lorem.Slug();
     }
 
-    public SectorBuilder SetName(string value)
+    public SpraywallBuilder SetName(string value)
     {
         _instance.Name = value;
         return this;
     }
 
-    public SectorBuilder SetDescription(string? value)
+    public SpraywallBuilder SetDescription(string? value)
     {
         _instance.Description = value;
         return this;

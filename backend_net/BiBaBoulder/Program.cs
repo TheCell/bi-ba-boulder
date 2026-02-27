@@ -169,7 +169,7 @@ public class Program
                             OidcSubject = sub,
                             Email = email ?? "",
                             Username = name ?? "",
-                            Roles = AuthorizationRoles.User, // default role for new users
+                            Roles = $"{AuthorizationRoles.User},{AuthorizationRoles.Editor}", // OIDC users are auto-verified, grant editor access
                             IsVerified = true,
                         };
                         dbContext.Users.Add(user);
