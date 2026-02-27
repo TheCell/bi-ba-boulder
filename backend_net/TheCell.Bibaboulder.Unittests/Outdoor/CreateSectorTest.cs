@@ -1,6 +1,10 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Services;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 
@@ -9,10 +13,14 @@ namespace TheCell.Bibaboulder.Unittests.Outdoor;
 public class CreateSectorTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
+    private readonly Mock<ICurrentUserService> _currentUserServiceMock;
 
     public CreateSectorTest()
     {
         _dbContext = new DbContextMock().Build();
+        _currentUserServiceMock = new Mock<ICurrentUserService>();
+        _currentUserServiceMock.Setup(s => s.GetCurrentUserAsync())
+            .ReturnsAsync(new User { Id = Guid.CreateVersion7(), OidcSubject = "test", Username = "TestUser", Email = "test@test.com", Roles = "user" });
     }
 
     [Fact]
@@ -52,6 +60,6 @@ public class CreateSectorTest
 
     private CreateSectorCommandHandler CreateHandler()
     {
-        return new CreateSectorCommandHandler(_dbContext);
+        return new CreateSectorCommandHandler(_dbContext, _currentUserServiceMock.Object);
     }
 }
