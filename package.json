@@ -12,6 +12,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "generate:api": "openapi-generator-cli generate -i http://localhost:8000/api/doc.json -g typescript-angular -o src/app/api",
+    "pregenerate:api-net": "node -e \"require('fs').rmSync('src/app/api-net', {recursive:true,force:true})\"",
     "generate:api-net": "openapi-generator-cli generate -c openapi-generator-net.yaml -o src/app/api-net"
   },
   "private": true,

@@ -18,6 +18,7 @@ using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
+using Microsoft.OpenApi;
 
 namespace Thecell.Bibaboulder.BiBaBoulder;
 
@@ -40,8 +41,10 @@ public class Program
         {
             options.AddDocumentTransformer((document, context, cancellationToken) =>
             {
+                var config = context.ApplicationServices.GetRequiredService<IConfiguration>();
                 document.Info.Title = "BiBaBoulder API";
                 document.Info.Version = "v1";
+                document.Servers = [new OpenApiServer { Url = config["ApiUrl"] ?? "http://localhost:5088" }];
                 return Task.CompletedTask;
             });
             options.AddOperationTransformer((operation, context, cancellationToken) =>

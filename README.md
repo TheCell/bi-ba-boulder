@@ -86,3 +86,16 @@ The .htaccess won't be copied you have to do that on your own.
 # Postman
 I've added a Postman collection to test some endpoints.   
 For emails I use Papercut [https://www.papercut-smtp.com/](https://www.papercut-smtp.com/)
+
+# Generate the API
+1. start the backend to generate the new `openapi-generator-net.yaml`
+```bash
+cd C:\dev\git\bi-ba-boulder\backend_net\BiBaBoulder
+dotnet run
+```
+2. Check the OpenApi here: `http://localhost:5088/openapi/v1.json`
+3. run the generate npm package
+```bash
+cd C:\dev\git\bi-ba-boulder
+npm run generate:api-net
+```

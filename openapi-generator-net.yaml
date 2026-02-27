@@ -1,5 +1,5 @@
 generatorName: typescript-angular
-inputSpec: http://localhost:5088/openapi/v1.json
+inputSpec: backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.json
 additionalProperties:
   ngVersion: 21
   providedIn: root
