@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Thecell.Bibaboulder.Model.Basics;
@@ -11,8 +12,15 @@ namespace Thecell.Bibaboulder.Model;
 
 public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
 {
+    private readonly IHttpContextAccessor? _httpContextAccessor;
+
     public BiBaBoulderDbContext(DbContextOptions<BiBaBoulderDbContext> options) : base(options)
     { }
+
+    public BiBaBoulderDbContext(DbContextOptions<BiBaBoulderDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
 
     public DbSet<User> Users { get; set; }
     public DbSet<Spraywall> Spraywalls { get; set; }
@@ -117,19 +125,28 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
         }
     }
 
+    private Guid GetCurrentUserId()
+    {
+        var claim = _httpContextAccessor?.HttpContext?.User?.FindFirst("db_user_id");
+        return claim is not null && Guid.TryParse(claim.Value, out var id) ? id : Guid.Empty;
+    }
+
     private void SetAuditableFields()
     {
         var currentDate = DateTime.UtcNow;
+        var currentUserId = GetCurrentUserId();
 
         foreach (var entry in ChangeTracker.Entries<EntityAuditFields>())
         {
             if (entry.State == EntityState.Added)
             {
                 entry.Property(nameof(EntityAuditFields.CreatedDate)).CurrentValue = currentDate;
+                entry.Property(nameof(EntityAuditFields.CreatedUserId)).CurrentValue = currentUserId;
             }
             else if (entry.State == EntityState.Modified)
             {
                 entry.Property(nameof(EntityAuditFields.UpdatedDate)).CurrentValue = currentDate;
+                entry.Property(nameof(EntityAuditFields.UpdatedUserId)).CurrentValue = currentUserId;
             }
         }
     }

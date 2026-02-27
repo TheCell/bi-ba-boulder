@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Thecell.Bibaboulder.BiBaBoulder.Extensions;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
 
@@ -27,6 +28,13 @@ public class CurrentUserService : ICurrentUserService
         }
 
         return await claimsPrincipal.GetCurrentUserAsync(_dbContext);
+    }
+
+    public async Task<User> GetCurrentUserOrThrowAsync()
+    {
+        var user = await GetCurrentUserAsync()
+            .ThrowIfNullAsync();
+        return user;
     }
 
     public string? GetCurrentUserOidcSubject()

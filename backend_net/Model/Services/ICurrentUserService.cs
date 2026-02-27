@@ -6,5 +6,6 @@ namespace Thecell.Bibaboulder.Model.Services;
 public interface ICurrentUserService
 {
     Task<User?> GetCurrentUserAsync();
+    Task<User> GetCurrentUserOrThrowAsync();
     string? GetCurrentUserOidcSubject();
 }
