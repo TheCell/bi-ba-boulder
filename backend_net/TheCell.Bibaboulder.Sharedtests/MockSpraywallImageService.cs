@@ -5,7 +5,7 @@ using Thecell.Bibaboulder.Model.Services;
 
 namespace TheCell.Bibaboulder.Sharedtests;
 
-public class InMemorySpraywallImageService : ISpraywallImageService
+public class MockSpraywallImageService : ISpraywallImageService
 {
     private readonly ConcurrentDictionary<string, byte[]> _images = new();
 

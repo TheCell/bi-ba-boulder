@@ -14,43 +14,19 @@ using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
 namespace TheCell.Bibaboulder.Unittests.Spraywall;
 
-public class SpraywallsControllerTest
+public class SearchSpraywallProblemsTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
     private readonly CurrentUserServiceMock _currentUserService;
-    private readonly InMemorySpraywallImageService _imageService;
+    private readonly MockSpraywallImageService _imageService;
     private readonly Faker _bogus;
 
-    public SpraywallsControllerTest()
+    public SearchSpraywallProblemsTest()
     {
         _dbContext = new DbContextMock().Build();
         _currentUserService = new CurrentUserServiceMock();
-        _imageService = new InMemorySpraywallImageService();
+        _imageService = new MockSpraywallImageService();
         _bogus = new Faker("de_CH");
-    }
-
-    [Fact]
-    public async Task GetSpraywalls_EmptyResult_Ok()
-    {
-        var handler = new GetSpraywallsQueryHandler(_dbContext);
-        var result = await handler.HandleAsync(new GetSpraywallsQuery());
-
-        Assert.Empty(result);
-    }
-
-    [Fact]
-    public async Task GetSpraywalls_Ok()
-    {
-        var spraywall1 = new SpraywallBuilder().SetName("Wall A").Build();
-        var spraywall2 = new SpraywallBuilder().SetName("Wall B").Build();
-        await _dbContext.InsertEntitiesAsync([spraywall1, spraywall2]);
-
-        var handler = new GetSpraywallsQueryHandler(_dbContext);
-        var result = await handler.HandleAsync(new GetSpraywallsQuery());
-
-        Assert.Equal(2, result.Count);
-        SpraywallAssertion.Assert(spraywall1, result.Single(s => s.Id == spraywall1.Id));
-        SpraywallAssertion.Assert(spraywall2, result.Single(s => s.Id == spraywall2.Id));
     }
 
     [Fact]
@@ -161,7 +137,7 @@ public class SpraywallsControllerTest
     }
 
     [Fact]
-    public async Task Search_FilterByGrade_FiltersCorrectly()
+    public async Task SearchSpraywallProblems_FilterByGrade_FiltersCorrectly()
     {
         var (spraywall, users, _) = await PrepareProblems();
 

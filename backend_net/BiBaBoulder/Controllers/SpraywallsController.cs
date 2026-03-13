@@ -7,7 +7,6 @@ using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Model.Services;
 using Thecell.Bibaboulder.Spraywall.Handler;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
@@ -21,20 +20,17 @@ public class SpraywallsController : ControllerBase
     private readonly IQueryHandler<SearchSpraywallProblemsQuery, SpraywallProblemListDto> _searchProblemsQueryHandler;
     private readonly ICommandHandler<CreateSpraywallProblemCommand> _createProblemCommandHandler;
     private readonly IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> _getSpraywallProblemQueryHandler;
-    private readonly ICurrentUserService _currentUserService;
 
     public SpraywallsController(
         IQueryHandler<GetSpraywallsQuery, ICollection<SpraywallDto>> getSpraywallsQueryHandler,
         IQueryHandler<SearchSpraywallProblemsQuery, SpraywallProblemListDto> searchProblemsQueryHandler,
         ICommandHandler<CreateSpraywallProblemCommand> createProblemCommandHandler,
-        IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> getSpraywallProblemQueryHandler,
-        ICurrentUserService currentUserService)
+        IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> getSpraywallProblemQueryHandler)
     {
         _getSpraywallsQueryHandler = getSpraywallsQueryHandler;
         _searchProblemsQueryHandler = searchProblemsQueryHandler;
         _createProblemCommandHandler = createProblemCommandHandler;
         _getSpraywallProblemQueryHandler = getSpraywallProblemQueryHandler;
-        _currentUserService = currentUserService;
     }
 
     [HttpGet]
@@ -64,20 +60,15 @@ public class SpraywallsController : ControllerBase
 
     [HttpPut("{id}/problem")]
     [Authorize(Roles = AuthorizationRoles.Editor)]
-    public async Task<SpraywallProblemDto> CreateProblem(Guid id, [FromBody] CreateSpraywallProblemCommand command)
+    public async Task<SpraywallProblemDto> CreateSpraywallProblem(Guid id, [FromBody] CreateSpraywallProblemCommand command)
     {
         command.SpraywallId = id;
         await _createProblemCommandHandler.HandleAsync(command);
 
-        var currentUser = await _currentUserService.GetCurrentUserAsync();
-        var isAdmin = currentUser is not null && currentUser.Roles.Contains(AuthorizationRoles.Admin);
-
         return await _getSpraywallProblemQueryHandler.HandleAsync(
             new GetSpraywallProblemQuery
             {
-                Id = command.Id,
-                CurrentUserId = currentUser?.Id,
-                CurrentUserIsAdmin = isAdmin
+                Id = command.Id
             });
     }
 }

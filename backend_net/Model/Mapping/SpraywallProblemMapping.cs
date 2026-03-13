@@ -16,7 +16,7 @@ public static class SpraywallProblemMapping
             Name = problem.Name,
             Image = imageBase64,
             FontGrade = problem.FontGrade.HasValue ? (int)problem.FontGrade.Value : null,
-            CreatedById = problem.CreatedUserId,
+            CreatedById = problem.CreatorId,
             CreatedByName = createdByName,
             CreatedDate = problem.CreatedDate.ToString("o"),
             Description = problem.Description,

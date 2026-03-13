@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
 
@@ -23,7 +24,7 @@ public class CurrentUserServiceMock : ICurrentUserService
     {
         if (_currentUser is null)
         {
-            throw new System.InvalidOperationException("No current user configured in mock.");
+            throw new NotFoundException("No current user configured in mock.");
         }
 
         return Task.FromResult(_currentUser);
