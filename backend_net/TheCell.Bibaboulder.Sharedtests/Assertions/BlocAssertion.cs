@@ -6,7 +6,7 @@ namespace TheCell.Bibaboulder.Sharedtests.Assertions;
 
 public static class BlocAssertion
 {
-    public static void Assert(BlocDto actual, Bloc expected)
+    public static void Assert(Bloc expected, BlocDto actual)
     {
         Xunit.Assert.Equal(expected.Id, actual.Id);
         expected.Id.AssertV7();
