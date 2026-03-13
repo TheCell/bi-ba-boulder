@@ -59,14 +59,12 @@ public class BaseTest : IDisposable, IAsyncLifetime
 
         var serviceScope = _factory.Services.CreateScope();
         BiBaBoulderDbContext = serviceScope.ServiceProvider.GetRequiredService<BiBaBoulderDbContext>();
-
-        // Ensure database schema is created
-        BiBaBoulderDbContext.Database.EnsureCreated();
     }
 
     public async ValueTask InitializeAsync()
     {
-        await ValueTask.CompletedTask;
+        await BiBaBoulderDbContext.Database.EnsureDeletedAsync();
+        await BiBaBoulderDbContext.Database.EnsureCreatedAsync();
     }
 
     public virtual void Dispose()

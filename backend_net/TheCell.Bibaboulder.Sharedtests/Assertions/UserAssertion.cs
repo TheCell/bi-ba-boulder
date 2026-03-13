@@ -6,11 +6,12 @@ namespace TheCell.Bibaboulder.Sharedtests.Assertions;
 
 public static class UserAssertion
 {
-    public static void Assert(UserDto actual, User expected)
+    public static void Assert(User expected, UserDto actual)
     {
         Xunit.Assert.Equal(expected.Id, actual.Id);
         expected.Id.AssertV7();
         Xunit.Assert.Equal(expected.Email, actual.Email);
         Xunit.Assert.NotNull(actual.Roles);
+        Xunit.Assert.Equal(expected.Roles.Split(','), actual.Roles);
     }
 }
