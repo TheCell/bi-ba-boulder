@@ -7,11 +7,13 @@ namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
 public class SpraywallProblemBuilder : BuilderBase<SpraywallProblem>
 {
-    public SpraywallProblemBuilder() : base()
+    public SpraywallProblemBuilder(User creator, Spraywall spraywall) : base()
     {
         var bogus = new Faker("de_CH");
         _instance.Id = Guid.CreateVersion7();
         _instance.Name = bogus.Lorem.Slug();
+        SetCreator(creator);
+        SetSpraywall(spraywall);
     }
 
     public SpraywallProblemBuilder SetName(string value)
@@ -32,15 +34,17 @@ public class SpraywallProblemBuilder : BuilderBase<SpraywallProblem>
         return this;
     }
 
-    public SpraywallProblemBuilder SetSpraywallId(Guid value)
+    public SpraywallProblemBuilder SetSpraywall(Spraywall value)
     {
-        _instance.SpraywallId = value;
+        _instance.Spraywall = value;
+        _instance.SpraywallId = value.Id;
         return this;
     }
 
-    public SpraywallProblemBuilder SetCreatedUserId(Guid value)
+    public SpraywallProblemBuilder SetCreator(User value)
     {
-        _instance.CreatedUserId = value;
+        _instance.Creator = value;
+        _instance.CreatorId = value.Id;
         return this;
     }
 }

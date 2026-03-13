@@ -24,5 +24,10 @@ public class SpraywallProblem : VersionedEntity
 
     public Spraywall Spraywall { get; set; } = null!;
 
+    [ForeignKey(nameof(Creator))]
+    public required Guid CreatorId { get; set; }
+
+    public User Creator { get; set; } = null!;
+
     public ICollection<BoulderLog> BoulderLogs { get; set; } = [];
 }

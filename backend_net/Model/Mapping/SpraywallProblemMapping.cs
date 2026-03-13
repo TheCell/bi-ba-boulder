@@ -18,7 +18,7 @@ public static class SpraywallProblemMapping
             FontGrade = problem.FontGrade.HasValue ? (int)problem.FontGrade.Value : null,
             CreatedById = problem.CreatedUserId,
             CreatedByName = createdByName,
-            CreatedDate = problem.CreatedDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            CreatedDate = problem.CreatedDate.ToString("o"),
             Description = problem.Description,
             Metadata = new SpraywallProblemMetadataDto
             {

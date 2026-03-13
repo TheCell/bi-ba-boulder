@@ -15,6 +15,10 @@ public static class UserExtensions
         {
             roles.Add(UserRole.Admin);
         }
+        if (user.Roles.Contains(AuthorizationRoles.Editor))
+        {
+            roles.Add(UserRole.Editor);
+        }
         if (user.Roles.Contains(AuthorizationRoles.User))
         {
             roles.Add(UserRole.User);
