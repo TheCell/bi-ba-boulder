@@ -9,7 +9,7 @@ public class SectorBuilder : BuilderBase<Sector>
     public SectorBuilder() : base()
     {
         var bogus = new Faker("de_CH");
-        _instance.Id = Guid.NewGuid();
+        _instance.Id = Guid.CreateVersion7();
         _instance.Name = bogus.Lorem.Slug();
     }
 

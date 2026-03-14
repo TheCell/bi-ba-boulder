@@ -22,14 +22,14 @@ public class CreateSectorCommandHandler : ICommandHandler<CreateSectorCommand>
 
     public async Task HandleAsync(CreateSectorCommand command)
     {
-        var currentUser = await _currentUserService.GetCurrentUserAsync();
+        var currentUser = await _currentUserService.GetCurrentUserOrThrowAsync();
 
         var testing = new Sector
         {
             Id = Guid.CreateVersion7(),
             Name = command.Name,
             Description = command.Description,
-            CreatedUserId = currentUser!.Id
+            CreatedUserId = currentUser.Id
         };
 
         await _dbContext.InsertEntityAsync(testing);

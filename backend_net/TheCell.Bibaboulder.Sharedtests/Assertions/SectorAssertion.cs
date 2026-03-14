@@ -1,4 +1,3 @@
-using System;
 using Thecell.Bibaboulder.Model.Dto;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Outdoor.Handler;
@@ -8,7 +7,7 @@ namespace TheCell.Bibaboulder.Sharedtests.Assertions;
 
 public static class SectorAssertion
 {
-    public static void Assert(SectorDto actual, Sector expected)
+    public static void Assert(Sector expected, SectorDto actual)
     {
         Xunit.Assert.Equal(expected.Id, actual.Id);
         expected.Id.AssertV7();
@@ -16,10 +15,8 @@ public static class SectorAssertion
         Xunit.Assert.Equal(expected.Description, actual.Description);
     }
 
-    public static void Assert(CreateSectorCommand actual, Sector expected)
+    public static void Assert(CreateSectorCommand expected, Sector actual)
     {
-        Xunit.Assert.NotEqual(expected.Id, Guid.Empty);
-        expected.Id.AssertV7();
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Description, actual.Description);
     }

@@ -20,7 +20,6 @@ public class CreateSpraywallProblemTest
     private readonly IBiBaBoulderDbContext _dbContext;
     private readonly CurrentUserServiceMock _currentUserServiceMock;
     private readonly Mock<ISpraywallImageService> _imageServiceMock;
-    private readonly UserBuilder _testUser;
 
     private const string ImageData = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
     private const string ValidBase64Png = $"data:image/png;base64,{ImageData}";
@@ -31,7 +30,6 @@ public class CreateSpraywallProblemTest
         _imageServiceMock = new Mock<ISpraywallImageService>();
         _imageServiceMock.Setup(imageServiceMock => imageServiceMock.SaveImageAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<byte[]>()))
             .Returns(Task.CompletedTask);
-        _testUser = new UserBuilder();
         _dbContext = new DbContextMock().Build();
     }
 
@@ -40,8 +38,9 @@ public class CreateSpraywallProblemTest
     {
         var spraywall = new SpraywallBuilder().Build();
         await _dbContext.InsertEntityAsync(spraywall);
-        _testUser.SetRoles(AuthorizationRoles.Editor);
-        var user = _testUser.Build();
+        var user = new UserBuilder()
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
         await _dbContext.InsertEntityAsync(user);
 
         var guid = Guid.NewGuid();
@@ -68,7 +67,8 @@ public class CreateSpraywallProblemTest
     {
         var spraywall = new SpraywallBuilder().Build();
         await _dbContext.InsertEntityAsync(spraywall);
-        var user = _testUser.Build();
+        var user = new UserBuilder()
+            .Build();
         await _dbContext.InsertEntityAsync(user);
 
         var guid = Guid.NewGuid();
@@ -96,8 +96,9 @@ public class CreateSpraywallProblemTest
     {
         var spraywall = new SpraywallBuilder().Build();
         await _dbContext.InsertEntityAsync(spraywall);
-        _testUser.SetRoles(AuthorizationRoles.Editor);
-        var user = _testUser.Build();
+        var user = new UserBuilder()
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
         await _dbContext.InsertEntityAsync(user);
 
         var guid = Guid.NewGuid();
@@ -125,8 +126,9 @@ public class CreateSpraywallProblemTest
     {
         var spraywall = new SpraywallBuilder().Build();
         await _dbContext.InsertEntityAsync(spraywall);
-        _testUser.SetRoles(AuthorizationRoles.Editor);
-        var user = _testUser.Build();
+        var user = new UserBuilder()
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
         await _dbContext.InsertEntityAsync(user);
 
         var guid = Guid.NewGuid();
@@ -152,8 +154,9 @@ public class CreateSpraywallProblemTest
     [Fact]
     public async Task CreateSpraywallProblem_InvalidSpraywall_NotFoundException()
     {
-        _testUser.SetRoles(AuthorizationRoles.Editor);
-        var user = _testUser.Build();
+        var user = new UserBuilder()
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
         await _dbContext.InsertEntityAsync(user);
 
         var guid = Guid.NewGuid();
@@ -182,8 +185,9 @@ public class CreateSpraywallProblemTest
         var spraywall = new SpraywallBuilder().Build();
         await _dbContext.InsertEntityAsync(spraywall);
 
-        _testUser.SetRoles(AuthorizationRoles.Editor);
-        var user = _testUser.Build();
+        var user = new UserBuilder()
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
         await _dbContext.InsertEntityAsync(user);
 
         var guid = Guid.NewGuid();
@@ -215,7 +219,8 @@ public class CreateSpraywallProblemTest
     {
         var spraywall = new SpraywallBuilder().Build();
         await _dbContext.InsertEntityAsync(spraywall);
-        var user = _testUser.Build();
+        var user = new UserBuilder()
+            .Build();
         await _dbContext.InsertEntityAsync(user);
 
         var command = new CreateSpraywallProblemCommand
