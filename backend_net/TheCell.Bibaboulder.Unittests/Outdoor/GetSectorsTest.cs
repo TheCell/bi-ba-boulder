@@ -5,7 +5,6 @@ using Bogus;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Outdoor.Handler;
-using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -14,13 +13,11 @@ namespace TheCell.Bibaboulder.Unittests.Outdoor;
 public class GetSectorsTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
-    private readonly CurrentUserServiceMock _currentUserServiceMock;
     private readonly Faker _bogus;
 
     public GetSectorsTest()
     {
         _dbContext = new DbContextMock().Build();
-        _currentUserServiceMock = new CurrentUserServiceMock();
         _bogus = new Faker("de_CH");
     }
 
