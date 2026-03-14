@@ -50,6 +50,7 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
             new(ClaimTypes.NameIdentifier, userId),
             new(ClaimTypes.Name, username),
             new("sub", userId),
+            new("db_user_id", userId),
         };
 
         // Add role claims if present

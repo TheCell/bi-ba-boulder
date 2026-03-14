@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Thecell.Bibaboulder.Model;
 using System.Text.Json;
 using Xunit;
+using Thecell.Bibaboulder.Model.Services;
 
 namespace TheCell.Bibaboulder.Sharedtests;
 
@@ -15,6 +16,8 @@ public class BaseTest : IDisposable, IAsyncLifetime
     private readonly IntegrationTestFactory _factory;
 
     private readonly HttpClient _client;
+
+    protected readonly MockSpraywallImageService SpraywallImageService;
 
     protected HttpClient Client()
     {
@@ -59,6 +62,7 @@ public class BaseTest : IDisposable, IAsyncLifetime
 
         var serviceScope = _factory.Services.CreateScope();
         BiBaBoulderDbContext = serviceScope.ServiceProvider.GetRequiredService<BiBaBoulderDbContext>();
+        SpraywallImageService = (MockSpraywallImageService)serviceScope.ServiceProvider.GetRequiredService<ISpraywallImageService>();
     }
 
     public async ValueTask InitializeAsync()

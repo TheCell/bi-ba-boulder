@@ -63,6 +63,8 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+        builder.Services.AddScoped<ISpraywallImageService, SpraywallImageService>();
+        builder.Services.AddScoped<IEmailService, NoOpEmailService>();
         builder.Services.RegisterCqrsAndControllerAssemblies();
 
         var frontendOrigin = builder.Configuration["FrontendOrigin"]?.TrimEnd('/')
@@ -176,9 +178,12 @@ public class Program
                         await dbContext.SaveChangesAsync(ctx.HttpContext.RequestAborted);
                     }
 
-                    // Add the DB role(s) as claims so [Authorize(Roles=...)] works
+                    // Add the DB user ID and role(s) as claims so [Authorize(Roles=...)] works
+                    // and the DbContext can stamp audit fields without a DB round-trip.
                     if (ctx.Principal?.Identity is ClaimsIdentity identity)
                     {
+                        identity.AddClaim(new Claim("db_user_id", user.Id.ToString()));
+
                         var roles = user.Roles.Split(',',
                             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                         foreach (var role in roles)

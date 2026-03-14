@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Outdoor.Handler;
+using Thecell.Bibaboulder.Spraywall.Handler;
 using Thecell.Bibaboulder.Spraywall.Testing;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Extensions;
@@ -13,8 +14,12 @@ public static class RegisterHandlersExtensions
     public static void RegisterCqrsAndControllerAssemblies(this IServiceCollection services)
     {
         services.AddControllers().AddApplicationPart(typeof(Controllers.SectorsController).Assembly);
-        services.AddCqrsHandlers([typeof(Program).Assembly, typeof(GetTestingQueryHandler).Assembly]);
-        services.AddCqrsHandlers([typeof(Program).Assembly, typeof(GetSectorQueryHandler).Assembly]);
+        services.AddCqrsHandlers([
+            typeof(Program).Assembly,
+            typeof(GetTestingQueryHandler).Assembly,
+            typeof(GetSectorQueryHandler).Assembly,
+            typeof(GetSpraywallsQueryHandler).Assembly
+        ]);
     }
 
     public static IServiceCollection AddCqrsHandlers(this IServiceCollection services, Assembly[] assemblies)

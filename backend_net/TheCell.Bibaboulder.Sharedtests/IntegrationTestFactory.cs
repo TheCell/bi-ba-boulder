@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Thecell.Bibaboulder.BiBaBoulder.Extensions;
 using Thecell.Bibaboulder.BiBaBoulder.Middleware;
+using Thecell.Bibaboulder.BiBaBoulder.Services;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Services;
 
 namespace TheCell.Bibaboulder.Sharedtests;
 
@@ -69,6 +71,9 @@ public class IntegrationTestFactory : WebApplicationFactory<EntryPoint>
 
             services.RegisterCqrsAndControllerAssemblies();
 
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddSingleton<ISpraywallImageService, MockSpraywallImageService>();
             // Replace real auth with TestAuthHandler for integration tests
             services.AddAuthentication(TestAuthHandler.SchemeName)
                 .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(

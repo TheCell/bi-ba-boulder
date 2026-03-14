@@ -26,13 +26,13 @@ public class SpraywallImageService : ISpraywallImageService
         await File.WriteAllBytesAsync(filePath, imageData);
     }
 
-    public async Task<string> GetImageAsBase64Async(Guid spraywallId, Guid problemId)
+    public async Task<string?> GetImageAsBase64Async(Guid spraywallId, Guid problemId)
     {
         var filePath = Path.Combine(_basePath, spraywallId.ToString(), $"{problemId}.png");
 
         if (!File.Exists(filePath))
         {
-            return string.Empty;
+            return null;
         }
 
         var bytes = await File.ReadAllBytesAsync(filePath);
