@@ -16,14 +16,14 @@ public class MockSpraywallImageService : ISpraywallImageService
         return Task.CompletedTask;
     }
 
-    public Task<string> GetImageAsBase64Async(Guid spraywallId, Guid problemId)
+    public Task<string?> GetImageAsBase64Async(Guid spraywallId, Guid problemId)
     {
         var key = GetKey(spraywallId, problemId);
         if (_images.TryGetValue(key, out var imageBytes))
         {
-            return Task.FromResult($"data:image/png;base64,{Convert.ToBase64String(imageBytes)}");
+            return Task.FromResult<string?>($"data:image/png;base64,{Convert.ToBase64String(imageBytes)}");
         }
-        return Task.FromResult(string.Empty);
+        return Task.FromResult<string?>(null);
     }
 
     public Task DeleteImageAsync(Guid spraywallId, Guid problemId)

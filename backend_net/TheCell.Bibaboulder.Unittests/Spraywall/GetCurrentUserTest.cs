@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Spraywall.Handler;
+using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -11,10 +12,11 @@ namespace TheCell.Bibaboulder.Unittests.Spraywall;
 public class GetCurrentUserTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
-
+    private readonly CurrentUserServiceMock _currentUserServiceMock;
     public GetCurrentUserTest()
     {
         _dbContext = new DbContextMock().Build();
+        _currentUserServiceMock = new CurrentUserServiceMock();
     }
 
     [Fact]
@@ -23,8 +25,9 @@ public class GetCurrentUserTest
         var user = new UserBuilder().Build();
         await _dbContext.InsertEntityAsync(user);
 
-        var handler = new GetCurrentUserQueryHandler(_dbContext);
-        var result = await handler.HandleAsync(new GetCurrentUserQuery { CurrentUserId = user.Id });
+        _currentUserServiceMock.WithUser(user);
+        var handler = new GetCurrentUserQueryHandler(_currentUserServiceMock);
+        var result = await handler.HandleAsync(new GetCurrentUserQuery { });
 
         UserAssertion.Assert(user, result);
     }
@@ -32,11 +35,11 @@ public class GetCurrentUserTest
     [Fact]
     public async Task GetCurrentUser_NotFoundException()
     {
-        var handler = new GetCurrentUserQueryHandler(_dbContext);
+        var handler = new GetCurrentUserQueryHandler(_currentUserServiceMock);
 
         var guid = Guid.CreateVersion7();
         var ex = await Assert.ThrowsAsync<NotFoundException>(async () =>
-            await handler.HandleAsync(new GetCurrentUserQuery { CurrentUserId = guid }));
-        Assert.Equal(ex.Message, $"User not found. (Id: {guid})");
+            await handler.HandleAsync(new GetCurrentUserQuery { }));
+        Assert.Equal("No current user configured in mock.", ex.Message);
     }
 }
