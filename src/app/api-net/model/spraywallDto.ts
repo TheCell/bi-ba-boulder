@@ -9,6 +9,9 @@
  */
 
 
-export interface WeatherForecastTemperatureC { 
+export interface SpraywallDto { 
+    id: string;
+    name: string;
+    description?: string | null;
 }
 

@@ -11,21 +11,29 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { WeatherForecast } from '../model/models';
+import { BlocDto } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 
-export interface WeatherForecastServiceInterface {
+export interface BlocsServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
 
     /**
      * 
      * 
+     * @param id 
      */
-    get(extraHttpRequestParams?: any): Observable<Array<WeatherForecast>>;
+    getBloc(id: string, extraHttpRequestParams?: any): Observable<BlocDto>;
+
+    /**
+     * 
+     * 
+     * @param sectorId 
+     */
+    getBlocsBySectorId(sectorId: string, extraHttpRequestParams?: any): Observable<Array<BlocDto>>;
 
 }
