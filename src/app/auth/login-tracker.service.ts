@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { BffAuthService, BffUserClaim } from './bff-auth.service';
+import { HttpContext } from '@angular/common/http';
+import { SKIP_ERROR_HANDLER } from '../core/interceptors/error-handler-interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,7 @@ export class LoginTrackerService {
    * Call this on app startup to initialize the login state.
    */
   public checkSession(): void {
-    this.bffAuthService.getUser().subscribe({
+    this.bffAuthService.getUser(new HttpContext().set(SKIP_ERROR_HANDLER, true)).subscribe({
       next: (claims) => {
         this.claims = claims;
         this.authenticated = true;

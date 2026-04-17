@@ -54,10 +54,15 @@ public class BffController : ControllerBase
     /// Returns 401 if the user is not authenticated.
     /// </summary>
     [HttpGet("user")]
-    [Authorize]
+    [AllowAnonymous]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1721: Property names should not match get methods", Justification = "This is a special case for the BFF pattern")]
     public IActionResult GetUser()
     {
+        if (User.Identity?.IsAuthenticated != true)
+        {
+            return Unauthorized();
+        }
+
         var claims = User.Claims.Select(c => new { c.Type, c.Value });
         return Ok(claims);
     }

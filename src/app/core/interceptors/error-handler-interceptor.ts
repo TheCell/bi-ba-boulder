@@ -1,10 +1,16 @@
-import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest, type HttpInterceptorFn } from '@angular/common/http';
+import { HttpContextToken, HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest, type HttpInterceptorFn } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ToastService } from '../toast-container/toast.service';
 import { inject } from '@angular/core';
 
+export const SKIP_ERROR_HANDLER = new HttpContextToken<boolean>(() => false);
+
 export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   const toastService = inject(ToastService);
+
+  if (req.context.get(SKIP_ERROR_HANDLER)) {
+    return next(req);
+  }
 
   return next(req).pipe((source) => {
     return new Observable<HttpEvent<unknown>>((observer) => {
