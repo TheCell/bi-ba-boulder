@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -51,35 +52,35 @@ public class ExceptionHandlingMiddleware
 
     private Task HandleDbUpdateConcurrencyException(HttpContext context, DbUpdateConcurrencyException dbUpdateConcurrencyException)
     {
-        context.Response.StatusCode = 409;
+        context.Response.StatusCode = (int)HttpStatusCode.Conflict;
         context.Response.ContentType = "application/json";
         return context.Response.WriteAsJsonAsync(new { message = $"Concurrency Exception: {dbUpdateConcurrencyException.Entries}" });
     }
 
     private Task HandleAuthenticationException(HttpContext context, AuthenticationException authenticationException)
     {
-        context.Response.StatusCode = 401;
+        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
         context.Response.ContentType = "application/json";
         return context.Response.WriteAsJsonAsync(new { message = authenticationException.Message });
     }
 
     private Task HandleAccessDeniedException(HttpContext context, AccessDeniedException accessDeniedException)
     {
-        context.Response.StatusCode = 403;
+        context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
         context.Response.ContentType = "application/json";
         return context.Response.WriteAsJsonAsync(new { message = accessDeniedException.Message });
     }
 
     private Task HandleNotFoundException(HttpContext context, NotFoundException notFoundException)
     {
-        context.Response.StatusCode = 404;
+        context.Response.StatusCode = (int)HttpStatusCode.NotFound;
         context.Response.ContentType = "application/json";
         return context.Response.WriteAsJsonAsync(new { message = notFoundException.Message });
     }
 
     private Task HandleSystemException(HttpContext context, Exception ex)
     {
-        context.Response.StatusCode = 500;
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         context.Response.ContentType = "application/json";
         return context.Response.WriteAsJsonAsync(new { message = ex.Message });
     }

@@ -48,6 +48,18 @@ public static class RegisterHandlersExtensions
             }
         }
 
+        var commandHandlerWithExtraTranType = typeof(ICommandHandlerWithExtraTransaction<>);
+        foreach (var type in assemblies.SelectMany(a => a.GetTypes()))
+        {
+            var interfaces = type.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == commandHandlerWithExtraTranType);
+
+            foreach (var handlerInterface in interfaces)
+            {
+                services.AddScoped(handlerInterface, type);
+            }
+        }
+
         return services;
     }
 }

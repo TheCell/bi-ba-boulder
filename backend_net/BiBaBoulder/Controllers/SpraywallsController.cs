@@ -18,19 +18,19 @@ public class SpraywallsController : ControllerBase
 {
     private readonly IQueryHandler<GetSpraywallsQuery, ICollection<SpraywallDto>> _getSpraywallsQueryHandler;
     private readonly IQueryHandler<SearchSpraywallProblemsQuery, SpraywallProblemListDto> _searchProblemsQueryHandler;
-    private readonly ICommandHandler<CreateSpraywallProblemCommand> _createProblemCommandHandler;
     private readonly IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> _getSpraywallProblemQueryHandler;
+    private readonly ICommandHandlerWithExtraTransaction<CreateSpraywallProblemCommand> _createProblemCommandHandler;
 
     public SpraywallsController(
         IQueryHandler<GetSpraywallsQuery, ICollection<SpraywallDto>> getSpraywallsQueryHandler,
         IQueryHandler<SearchSpraywallProblemsQuery, SpraywallProblemListDto> searchProblemsQueryHandler,
-        ICommandHandler<CreateSpraywallProblemCommand> createProblemCommandHandler,
-        IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> getSpraywallProblemQueryHandler)
+        IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> getSpraywallProblemQueryHandler,
+        ICommandHandlerWithExtraTransaction<CreateSpraywallProblemCommand> createProblemCommandHandler)
     {
         _getSpraywallsQueryHandler = getSpraywallsQueryHandler;
         _searchProblemsQueryHandler = searchProblemsQueryHandler;
-        _createProblemCommandHandler = createProblemCommandHandler;
         _getSpraywallProblemQueryHandler = getSpraywallProblemQueryHandler;
+        _createProblemCommandHandler = createProblemCommandHandler;
     }
 
     [HttpGet]

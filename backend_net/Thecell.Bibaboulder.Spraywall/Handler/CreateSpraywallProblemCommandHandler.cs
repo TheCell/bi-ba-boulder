@@ -11,7 +11,7 @@ using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.Spraywall.Handler;
 
-public partial class CreateSpraywallProblemCommandHandler : ICommandHandler<CreateSpraywallProblemCommand>
+public partial class CreateSpraywallProblemCommandHandler : ICommandHandlerWithExtraTransaction<CreateSpraywallProblemCommand>
 {
     private readonly IBiBaBoulderDbContext _dbContext;
     private readonly ICurrentUserService _currentUserService;

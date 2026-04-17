@@ -4,11 +4,11 @@ using Thecell.Bibaboulder.Common.Commands;
 
 namespace Thecell.Bibaboulder.Common.Decorators;
 
-public class TransactionScopeDecorator<TCommand> : ICommandHandler<TCommand>
+public class TransactionScopeDecorator<TCommand> : ICommandHandlerWithExtraTransaction<TCommand>
 {
-    private readonly ICommandHandler<TCommand> _decorated;
+    private readonly ICommandHandlerWithExtraTransaction<TCommand> _decorated;
 
-    public TransactionScopeDecorator(ICommandHandler<TCommand> decorated)
+    public TransactionScopeDecorator(ICommandHandlerWithExtraTransaction<TCommand> decorated)
     {
         _decorated = decorated;
     }

@@ -17,12 +17,12 @@ public class SpraywallProblemsController : ControllerBase
 {
     private readonly IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> _getSpraywallProblemQueryHandler;
     private readonly ICommandHandler<UpdateSpraywallProblemCommand> _updateProblemCommandHandler;
-    private readonly ICommandHandler<DeleteSpraywallProblemCommand> _deleteProblemCommandHandler;
+    private readonly ICommandHandlerWithExtraTransaction<DeleteSpraywallProblemCommand> _deleteProblemCommandHandler;
 
     public SpraywallProblemsController(
         IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> getSpraywallProblemQueryHandler,
         ICommandHandler<UpdateSpraywallProblemCommand> updateProblemCommandHandler,
-        ICommandHandler<DeleteSpraywallProblemCommand> deleteProblemCommandHandler)
+        ICommandHandlerWithExtraTransaction<DeleteSpraywallProblemCommand> deleteProblemCommandHandler)
     {
         _getSpraywallProblemQueryHandler = getSpraywallProblemQueryHandler;
         _updateProblemCommandHandler = updateProblemCommandHandler;

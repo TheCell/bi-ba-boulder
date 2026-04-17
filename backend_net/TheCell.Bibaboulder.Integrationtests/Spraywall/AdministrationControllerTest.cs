@@ -18,7 +18,7 @@ public class AdministrationControllerTest : BaseTest
     public async Task Index_Anonymous_Unauthorized()
     {
         var response = await Client().GetAsync(_baseUrl, TestContext.Current.CancellationToken);
-        response.EnsureSuccessStatusCode();
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public class AdministrationControllerTest : BaseTest
         var client = AuthenticatedClient(role: AuthorizationRoles.User);
 
         var response = await client.GetAsync(_baseUrl, TestContext.Current.CancellationToken);
-        response.EnsureSuccessStatusCode();
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     [Fact]

@@ -74,6 +74,8 @@ public class IntegrationTestFactory : WebApplicationFactory<EntryPoint>
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddSingleton<ISpraywallImageService, MockSpraywallImageService>();
+            services.AddSingleton<IEmailService, InMemoryEmailService>();
+
             // Replace real auth with TestAuthHandler for integration tests
             services.AddAuthentication(TestAuthHandler.SchemeName)
                 .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(

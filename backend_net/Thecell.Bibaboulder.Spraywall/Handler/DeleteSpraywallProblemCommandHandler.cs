@@ -10,7 +10,7 @@ using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.Spraywall.Handler;
 
-public class DeleteSpraywallProblemCommandHandler : ICommandHandler<DeleteSpraywallProblemCommand>
+public class DeleteSpraywallProblemCommandHandler : ICommandHandlerWithExtraTransaction<DeleteSpraywallProblemCommand>
 {
     private readonly IBiBaBoulderDbContext _dbContext;
     private readonly ICurrentUserService _currentUserService;
