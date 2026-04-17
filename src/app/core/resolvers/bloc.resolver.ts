@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import type { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot } from '@angular/router';
-import { BlocDto, BlocService } from '@api/index';
+import { BlocDto, BlocService } from '@api-net/index';
 
 export const blocsOfSectorResolver: ResolveFn<BlocDto[]> = (route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
     const sectorId = route.paramMap.get('sectorId');

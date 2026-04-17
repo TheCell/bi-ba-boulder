@@ -12,7 +12,7 @@ import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import Stats from 'stats.js'
-import { SpraywallsService, SpraywallProblemDto } from '@api/index';
+import { SpraywallsService, SpraywallProblemDto } from '@api-net/index';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { downloadSpraywallProblemImage, getImageDataFromTexture } from '../common/util';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from '../common/spraywall-hold-types';
@@ -222,7 +222,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       }
 
       context.putImageData(imgData, 0, 0);
-      this.spraywallsService.putCreate('e4b5991c-54c8-f011-9457-71a4df1b7093', {
+      this.spraywallsService.createSpraywallProblem('e4b5991c-54c8-f011-9457-71a4df1b7093', {
         name: 'New Problem',
         description: 'Description of the new problem',
         fontGrade: -1,

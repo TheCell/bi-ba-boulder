@@ -88,12 +88,14 @@ I've added a Postman collection to test some endpoints.
 For emails I use Papercut [https://www.papercut-smtp.com/](https://www.papercut-smtp.com/)
 
 # Generate the API
-1. start the backend to generate the new `openapi-generator-net.yaml`
+We could generate the API on the fly by changing the input line in `openapi-generator-net.yaml` to `inputSpec: http://localhost:5088/openapi/v1.json` but I prefer the written json spec to see changes whenever I start the backend.
+
+1. start the backend to generate the new `backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.json`
 ```bash
 cd C:\dev\git\bi-ba-boulder\backend_net\BiBaBoulder
 dotnet run
 ```
-2. Check the OpenApi here: `http://localhost:5088/openapi/v1.json`
+2. Check the OpenApi here during runtime: `http://localhost:5088/openapi/v1.json`
 3. run the generate npm package
 ```bash
 cd C:\dev\git\bi-ba-boulder

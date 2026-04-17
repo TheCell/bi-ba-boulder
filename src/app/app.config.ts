@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { Configuration, ConfigurationParameters } from './api';
+import { Configuration, ConfigurationParameters } from './api-net';
 import { environment } from '../environments/environment';
 import { errorHandlerInterceptor } from './core/interceptors/error-handler-interceptor';
 import { csrfInterceptor } from './core/interceptors/csrf-interceptor';

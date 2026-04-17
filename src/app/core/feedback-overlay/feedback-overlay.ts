@@ -4,7 +4,7 @@ import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } 
 import { Icon } from '../icon/icon';
 import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 import { ToastService } from '../toast-container/toast.service';
-import { FeedbacksService, PostSendFeedbackRequest } from '@api/index';
+import { FeedbacksService, PostSendFeedbackRequest } from '@api-net/index';
 
 interface IFeedbackForm {
   email: string,

@@ -8,3 +8,4 @@ additionalProperties:
   useSingleRequestParameter: false
   enumPropertyNaming: original
   fileNaming: camelCase
+  arrayBracketNotation: true

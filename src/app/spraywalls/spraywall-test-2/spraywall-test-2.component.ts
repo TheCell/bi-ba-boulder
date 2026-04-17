@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit }
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { BoulderLine } from '../../interfaces/boulder-line';
 import { BoulderDebugRenderComponent } from '../../renderer/boulder-debug-render/boulder-debug-render.component';
-import { SpraywallProblemDto, SpraywallProblemSearchDto, SpraywallsService } from '@api/index';
+import { SpraywallProblemDto, SpraywallProblemListDto, SpraywallsService } from '@api-net/index';
 
 @Component({
   selector: 'app-spraywall-test-2',
@@ -32,8 +32,8 @@ export class SpraywallTest2Component implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.spraywallsService.postSearchProblems('e4b5991c-54c8-f011-9457-71a4df1b7093').subscribe({
-      next: (problemSearchResult: SpraywallProblemSearchDto) => {
+    this.spraywallsService.searchSpraywallProblems('e4b5991c-54c8-f011-9457-71a4df1b7093').subscribe({
+      next: (problemSearchResult: SpraywallProblemListDto) => {
         this.spraywallProblems = problemSearchResult.problems;
         this.changeDetectorRef.markForCheck();
       }

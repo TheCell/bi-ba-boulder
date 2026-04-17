@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, output } from '@angular/core';
 import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { ConfirmDeleteDialogData } from './confirm-delete-dialog-data';
-import { SpraywallProblemDto } from '@api/index';
+import { SpraywallProblemDto } from '@api-net/index';
 import { FontGradePipePipe } from 'src/app/core/pipes/font-grade-pipe-pipe';
 
 @Component({

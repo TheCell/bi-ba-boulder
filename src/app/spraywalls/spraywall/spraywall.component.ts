@@ -1,8 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
-
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
-import { PostSearchProblemsRequest, SpraywallProblemDto, SpraywallProblemSearchDto, SpraywallProblemsService, SpraywallsService } from '@api/index';
+import { SearchProblemsRequest, SpraywallProblemDto, SpraywallProblemListDto, SpraywallProblemsService, SpraywallsService } from '@api-net/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
@@ -49,7 +48,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public listOfProblems: SpraywallProblemDto[] = [];
   public selectedProblem?: SpraywallProblemDto = undefined;
-  public currentFilter: PostSearchProblemsRequest = {};
+  public currentFilter: SearchProblemsRequest = {};
 
   public totalCount = 0;
   private currentMaxPage = 1;
@@ -63,8 +62,8 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     const route = inject(ActivatedRoute);
     this.spraywallId = route.snapshot.params['id'];
 
-    this.subscription.add(this.reloadSearchSubject.pipe(debounceTime(300), switchMap(() => this.spraywallsService.postSearchProblems(this.spraywallId, this.currentFilter))).subscribe({
-      next: (problemSearchResult: SpraywallProblemSearchDto) => {
+    this.subscription.add(this.reloadSearchSubject.pipe(debounceTime(300), switchMap(() => this.spraywallsService.searchSpraywallProblems(this.spraywallId, this.currentFilter))).subscribe({
+      next: (problemSearchResult: SpraywallProblemListDto) => {
         this.newEntriesLoading = false;
         if (problemSearchResult.currentPage > 0) {
           this.listOfProblems.push(... problemSearchResult.problems);
@@ -175,7 +174,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   public onDeleteProblemConfirmed(closeModalEvent: CloseModalEvent): void {
     if (closeModalEvent.closeType === 0) {
       if (this.selectedProblem) {
-        this.spraywallProblemsService.deleteDeleteSpraywallProblem(this.selectedProblem.id).subscribe({
+        this.spraywallProblemsService.deleteProblem(this.selectedProblem.id).subscribe({
           next: () => {
             this.toastService.showSuccess('Success', 'Problem successfully deleted');
             this.onResetSelection();

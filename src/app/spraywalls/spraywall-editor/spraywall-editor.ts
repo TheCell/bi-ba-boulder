@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { LoadingImageComponent } from 'src/app/common/loading-image/loading-image.component';
-import { SpraywallProblemDto, SpraywallsService } from '@api/index';
+import { SpraywallProblemDto, SpraywallsService } from '@api-net/index';
 import { BoulderLoaderService } from 'src/app/background-loading/boulder-loader.service';
 import { SpraywallEditorRenderer } from 'src/app/renderer/spraywall-editor-renderer/spraywall-editor-renderer';
 import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';

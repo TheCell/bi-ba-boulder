@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
-import { AuthService, PostRegisterRequest } from '@api/index';
+import { AuthService, PostRegisterRequest } from '@api-net/index';
 import { IModal } from '../modal/modal.interface';
 import { Subscription } from 'rxjs';
 import { Icon } from '../../icon/icon';

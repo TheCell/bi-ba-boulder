@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PutCreateRequest, SpraywallProblemsService, SpraywallsService } from '@api/index';
+import { CreateSpraywallProblemCommand, SpraywallProblemsService, SpraywallsService, UpdateSpraywallProblemCommand } from '@api-net/index';
 import { Icon } from 'src/app/core/icon/icon';
 import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { ToastService } from 'src/app/core/toast-container/toast.service';
@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ISpraywallForm extends Omit<PutCreateRequest, "image"> { }
+interface ISpraywallForm extends Omit<UpdateSpraywallProblemCommand, "image"> { }
 
 @Component({
   selector: 'app-spraywall-save-dialog',
@@ -72,13 +72,13 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
     this.saveForm.disable();
 
     if (this.problemId) {
-      const update: PutCreateRequest = {
+      const update: UpdateSpraywallProblemCommand = {
         name: this.saveForm.controls.name.value!,
         description: this.saveForm.controls.description?.value,
         image: this.imageData!,
         fontGrade: this.saveForm.controls.fontGrade?.value
       }
-      this.spraywallProblemsService.postUpdateSpraywallProblem(this.problemId, update).subscribe({
+      this.spraywallProblemsService.updateProblem(this.problemId, update).subscribe({
         next: () => {
           this.isLoading = false;
           this.saveForm.reset();
@@ -92,14 +92,14 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
         }
       });
     } else {
-      const postRegisterRequest: PutCreateRequest = {
+      const postRegisterRequest: CreateSpraywallProblemCommand = {
         name: this.saveForm.controls.name.value!,
         description: this.saveForm.controls.description?.value,
         image: this.imageData!,
         fontGrade: this.saveForm.controls.fontGrade?.value,
       };
   
-      this.spraywallsService.putCreate(this.spraywallId, postRegisterRequest).subscribe({
+      this.spraywallsService.createSpraywallProblem(this.spraywallId, postRegisterRequest).subscribe({
         next: () => {
           this.isLoading = false;
           this.saveForm.reset();

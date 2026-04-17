@@ -1,7 +1,7 @@
 
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { BlocDto } from '@api/index';
+import { BlocDto } from '@api-net/index';
 
 @Component({
   selector: 'app-sector',
