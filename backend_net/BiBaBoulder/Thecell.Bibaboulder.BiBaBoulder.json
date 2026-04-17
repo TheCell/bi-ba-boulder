@@ -10,6 +10,19 @@
     }
   ],
   "paths": {
+    "/api/Administration": {
+      "get": {
+        "tags": [
+          "Administration"
+        ],
+        "operationId": "index",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/Bff/login": {
       "get": {
         "tags": [
@@ -59,6 +72,180 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Blocs/by-sector/{sectorId}": {
+      "get": {
+        "tags": [
+          "Blocs"
+        ],
+        "operationId": "getBlocsBySectorId",
+        "parameters": [
+          {
+            "name": "sectorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlocDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlocDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlocDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Blocs/{id}": {
+      "get": {
+        "tags": [
+          "Blocs"
+        ],
+        "operationId": "getBloc",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Feedbacks/send": {
+      "post": {
+        "tags": [
+          "Feedbacks"
+        ],
+        "operationId": "sendFeedback",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendFeedbackCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendFeedbackCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendFeedbackCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Lines/by-bloc/{blocId}": {
+      "get": {
+        "tags": [
+          "Lines"
+        ],
+        "operationId": "getLinesByBlocId",
+        "parameters": [
+          {
+            "name": "blocId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LineDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LineDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LineDto"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -191,6 +378,292 @@
         }
       }
     },
+    "/api/SpraywallProblems/{id}": {
+      "get": {
+        "tags": [
+          "SpraywallProblems"
+        ],
+        "operationId": "getProblem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SpraywallProblems"
+        ],
+        "operationId": "updateProblem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSpraywallProblemCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSpraywallProblemCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSpraywallProblemCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SpraywallProblems"
+        ],
+        "operationId": "deleteProblem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Spraywalls": {
+      "get": {
+        "tags": [
+          "Spraywalls"
+        ],
+        "operationId": "getSpraywalls",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpraywallDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpraywallDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpraywallDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Spraywalls/{id}/problems": {
+      "post": {
+        "tags": [
+          "Spraywalls"
+        ],
+        "operationId": "searchSpraywallProblems",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SearchProblemsRequest"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SearchProblemsRequest"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SearchProblemsRequest"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemListDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemListDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemListDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Spraywalls/{id}/problem": {
+      "put": {
+        "tags": [
+          "Spraywalls"
+        ],
+        "operationId": "createSpraywallProblem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSpraywallProblemCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSpraywallProblemCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSpraywallProblemCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpraywallProblemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Test": {
       "get": {
         "tags": [
@@ -221,38 +694,70 @@
         }
       }
     },
-    "/WeatherForecast": {
+    "/api/Users/me": {
       "get": {
         "tags": [
-          "WeatherForecast"
+          "Users"
         ],
-        "operationId": "get",
+        "operationId": "getSelf",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
+                  "$ref": "#/components/schemas/UserDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
+                  "$ref": "#/components/schemas/UserDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/WeatherForecast"
-                  }
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
                 }
               }
             }
@@ -263,6 +768,46 @@
   },
   "components": {
     "schemas": {
+      "BlocDto": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocLowRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocMedRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocHighRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "CreateSectorCommand": {
         "required": [
           "name"
@@ -277,6 +822,120 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "CreateSpraywallProblemCommand": {
+        "required": [
+          "name",
+          "image"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "image": {
+            "type": "string"
+          },
+          "fontGrade": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "LineDto": {
+        "required": [
+          "id",
+          "identifier"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "color": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SearchProblemsRequest": {
+        "type": "object",
+        "properties": {
+          "gradeMin": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "gradeMax": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "creator": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dateOrder": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "page": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
           }
         }
       },
@@ -302,6 +961,138 @@
           }
         }
       },
+      "SendFeedbackCommand": {
+        "required": [
+          "feedback"
+        ],
+        "type": "object",
+        "properties": {
+          "feedback": {
+            "type": "string"
+          }
+        }
+      },
+      "SpraywallDto": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SpraywallProblemDto": {
+        "required": [
+          "id",
+          "name",
+          "image",
+          "createdById",
+          "createdByName",
+          "createdDate",
+          "metadata"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "fontGrade": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "createdById": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdByName": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/SpraywallProblemMetadataDto"
+          }
+        }
+      },
+      "SpraywallProblemListDto": {
+        "required": [
+          "totalCount",
+          "currentPage",
+          "problems"
+        ],
+        "type": "object",
+        "properties": {
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "problems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpraywallProblemDto"
+            }
+          }
+        }
+      },
+      "SpraywallProblemMetadataDto": {
+        "required": [
+          "canEdit",
+          "canDelete"
+        ],
+        "type": "object",
+        "properties": {
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
+          }
+        }
+      },
       "TestDto": {
         "required": [
           "id",
@@ -323,34 +1114,64 @@
           }
         }
       },
-      "WeatherForecast": {
+      "UpdateSpraywallProblemCommand": {
+        "required": [
+          "name",
+          "image"
+        ],
         "type": "object",
         "properties": {
-          "date": {
-            "type": "string",
-            "format": "date"
+          "name": {
+            "type": "string"
           },
-          "temperatureC": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "temperatureF": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "summary": {
+          "description": {
             "type": [
               "null",
               "string"
             ]
+          },
+          "image": {
+            "type": "string"
+          },
+          "fontGrade": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "version": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "UserDto": {
+        "required": [
+          "id",
+          "email",
+          "roles"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
@@ -358,16 +1179,34 @@
   },
   "tags": [
     {
+      "name": "Administration"
+    },
+    {
       "name": "Bff"
+    },
+    {
+      "name": "Blocs"
+    },
+    {
+      "name": "Feedbacks"
+    },
+    {
+      "name": "Lines"
     },
     {
       "name": "Sectors"
     },
     {
+      "name": "SpraywallProblems"
+    },
+    {
+      "name": "Spraywalls"
+    },
+    {
       "name": "Test"
     },
     {
-      "name": "WeatherForecast"
+      "name": "Users"
     }
   ]
 }

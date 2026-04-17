@@ -39,7 +39,7 @@ public class GetLinesByBlocIdTest
     }
 
     [Fact]
-    public async Task GetLinesByBlocId_NoLines()
+    public async Task GetLinesByBlocId_NoLines_ReturnsEmpty()
     {
         var handler = new GetLinesByBlocIdQueryHandler(_dbContext);
         var result = await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = Guid.CreateVersion7() });
