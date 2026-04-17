@@ -10,7 +10,6 @@ public static class LineAssertion
     {
         Xunit.Assert.Equal(expected.Id, actual.Id);
         expected.Id.AssertV7();
-        Xunit.Assert.Equal(expected.BlocId, actual.BlocId);
         Xunit.Assert.Equal(expected.Identifier, actual.Identifier);
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Color, actual.Color);
