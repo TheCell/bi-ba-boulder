@@ -61,6 +61,8 @@ public class Program
         builder.Services.AddScoped<IBiBaBoulderDbContext>(provider => provider.GetRequiredService<BiBaBoulderDbContext>());
 
         builder.Services.AddControllers();
+        builder.Services.ConfigureHttpJsonOptions(options =>
+            options.SerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.Strict);
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.AddScoped<ISpraywallImageService, SpraywallImageService>();

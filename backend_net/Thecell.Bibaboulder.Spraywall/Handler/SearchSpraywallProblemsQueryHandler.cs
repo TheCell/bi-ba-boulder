@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -41,12 +42,12 @@ public class SearchSpraywallProblemsQueryHandler : IQueryHandler<SearchSpraywall
 
         if (query.GradeMin.HasValue)
         {
-            dbQuery = dbQuery.Where(p => p.FontGrade.HasValue && (int)p.FontGrade.Value >= query.GradeMin.Value);
+            dbQuery = dbQuery.Where(p => p.FontGrade.HasValue && p.FontGrade.Value >= query.GradeMin.Value);
         }
 
         if (query.GradeMax.HasValue)
         {
-            dbQuery = dbQuery.Where(p => p.FontGrade.HasValue && (int)p.FontGrade.Value <= query.GradeMax.Value);
+            dbQuery = dbQuery.Where(p => p.FontGrade.HasValue && p.FontGrade.Value <= query.GradeMax.Value);
         }
 
         if (!string.IsNullOrEmpty(query.Name))
@@ -83,6 +84,10 @@ public class SearchSpraywallProblemsQueryHandler : IQueryHandler<SearchSpraywall
         {
             var creatorName = creators.GetValueOrDefault(problem.CreatorId, "Unknown");
             var image = await _imageService.GetImageAsBase64Async(problem.SpraywallId, problem.Id);
+            if (image == null)
+            {
+                throw new IOException($"Failed to load image for problem {problem.Id}");
+            }
             var spraywallProblemDto = problem.MapToSpraywallProblemDto(creatorName, image);
             spraywallProblemDto.Metadata.CanEdit = currentUser != null && currentUser.Id == problem.CreatorId;
             spraywallProblemDto.Metadata.CanDelete = currentUser != null && (currentUser.Id == problem.CreatorId || isAdmin);

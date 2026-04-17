@@ -4,7 +4,7 @@ import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } 
 import { Icon } from '../icon/icon';
 import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 import { ToastService } from '../toast-container/toast.service';
-import { FeedbacksService, PostSendFeedbackRequest } from '@api-net/index';
+import { FeedbacksService, SendFeedbackCommand } from '@api-net/index';
 
 interface IFeedbackForm {
   email: string,
@@ -61,11 +61,11 @@ export class FeedbackOverlay implements OnInit {
     this.isLoading = true;
     this.feedbackForm.disable();
 
-    const feedbackRequest: PostSendFeedbackRequest = {
+    const feedbackRequest: SendFeedbackCommand = {
       feedback: this.feedbackForm.controls.feedback.value
     };
 
-    this.feedbacksService.postSendFeedback(feedbackRequest).subscribe({
+    this.feedbacksService.sendFeedback(feedbackRequest).subscribe({
       next: () => {
         this.feedbackForm.reset();
         this.feedbackForm.enable();

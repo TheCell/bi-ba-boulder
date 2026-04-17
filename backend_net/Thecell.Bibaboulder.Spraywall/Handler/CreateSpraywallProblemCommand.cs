@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 using Thecell.Bibaboulder.Common.Commands;
+using Thecell.Bibaboulder.Model.Enums;
 
 namespace Thecell.Bibaboulder.Spraywall.Handler;
 
@@ -11,5 +12,5 @@ public class CreateSpraywallProblemCommand : CreateCommand
     public required string Name { get; set; }
     public string? Description { get; set; }
     public required string Image { get; set; }
-    public int? FontGrade { get; set; }
+    public FontGrade? FontGrade { get; set; }
 }

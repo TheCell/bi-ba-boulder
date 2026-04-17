@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
@@ -137,6 +138,33 @@ public class SearchSpraywallProblemsTest
     }
 
     [Fact]
+    public async Task SearchSpraywallProblems_MissingImage_ThrowsIOException()
+    {
+        var creator = new UserBuilder().SetUsername("creator").Build();
+        await _dbContext.InsertEntityAsync(creator);
+
+        var spraywall = new SpraywallBuilder().SetName("Wall").Build();
+        await _dbContext.InsertEntityAsync(spraywall);
+
+        var problem = new SpraywallProblemBuilder(creator, spraywall)
+            .SetName("Problem A")
+            .SetDescription(_bogus.Lorem.Paragraph())
+            .SetFontGrade(FontGrade.Three)
+            .Build();
+        await _dbContext.InsertEntityAsync(problem);
+
+        var handler = new SearchSpraywallProblemsQueryHandler(_dbContext, _currentUserService, _imageService);
+
+        var exception = await Assert.ThrowsAsync<IOException>(() => handler.HandleAsync(new SearchSpraywallProblemsQuery
+        {
+            SpraywallId = spraywall.Id,
+            Page = 1
+        }));
+
+        Assert.Contains(problem.Id.ToString(), exception.Message);
+    }
+
+    [Fact]
     public async Task SearchSpraywallProblems_FilterByGrade_FiltersCorrectly()
     {
         var (spraywall, users, _) = await PrepareProblems();
@@ -145,9 +173,9 @@ public class SearchSpraywallProblemsTest
         var result = await handler.HandleAsync(new SearchSpraywallProblemsQuery
         {
             SpraywallId = spraywall.Id,
-            GradeMin = (int)FontGrade.TwoMinus,
+            GradeMin = FontGrade.TwoMinus,
             Creator = users.First().Username,
-            GradeMax = (int)FontGrade.Four,
+            GradeMax = FontGrade.Four,
             DateOrder = "asc",
             Page = 1
         });

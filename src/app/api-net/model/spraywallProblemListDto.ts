@@ -7,13 +7,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { SpraywallProblemListDtoTotalCount } from './spraywallProblemListDtoTotalCount';
 import { SpraywallProblemDto } from './spraywallProblemDto';
 
 
 export interface SpraywallProblemListDto { 
-    totalCount: SpraywallProblemListDtoTotalCount;
-    currentPage: SpraywallProblemListDtoTotalCount;
+    totalCount: number;
+    currentPage: number;
     problems: Array<SpraywallProblemDto>;
 }
 

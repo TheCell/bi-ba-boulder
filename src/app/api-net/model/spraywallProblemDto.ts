@@ -8,14 +8,13 @@
  * Do not edit the class manually.
  */
 import { SpraywallProblemMetadataDto } from './spraywallProblemMetadataDto';
-import { CreateSpraywallProblemCommandFontGrade } from './createSpraywallProblemCommandFontGrade';
 
 
 export interface SpraywallProblemDto { 
     id: string;
     name: string;
     image: string;
-    fontGrade?: CreateSpraywallProblemCommandFontGrade | null;
+    fontGrade?: number;
     createdById: string;
     createdByName: string;
     createdDate: string;

@@ -845,15 +845,19 @@
             "type": "string"
           },
           "fontGrade": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
+            ]
           }
         }
+      },
+      "FontGrade": {
+        "type": "integer"
       },
       "LineDto": {
         "required": [
@@ -893,22 +897,24 @@
         "type": "object",
         "properties": {
           "gradeMin": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
+            ]
           },
           "gradeMax": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
+            ]
           },
           "name": {
             "type": [
@@ -929,11 +935,9 @@
             ]
           },
           "page": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
-              "integer",
-              "string"
+              "integer"
             ],
             "format": "int32"
           }
@@ -1017,13 +1021,14 @@
             "type": "string"
           },
           "fontGrade": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
+            ]
           },
           "createdById": {
             "type": "string",
@@ -1055,19 +1060,11 @@
         "type": "object",
         "properties": {
           "totalCount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "currentPage": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "problems": {
@@ -1105,11 +1102,7 @@
             "format": "uuid"
           },
           "spraywallCount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int64"
           }
         }
@@ -1134,20 +1127,17 @@
             "type": "string"
           },
           "fontGrade": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
+            ]
           },
           "version": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int64"
           }
         }

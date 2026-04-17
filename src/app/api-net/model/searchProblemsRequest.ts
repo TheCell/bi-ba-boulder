@@ -7,15 +7,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { CreateSpraywallProblemCommandFontGrade } from './createSpraywallProblemCommandFontGrade';
 
 
 export interface SearchProblemsRequest { 
-    gradeMin?: CreateSpraywallProblemCommandFontGrade | null;
-    gradeMax?: CreateSpraywallProblemCommandFontGrade | null;
+    gradeMin?: number;
+    gradeMax?: number;
     name?: string | null;
     creator?: string | null;
     dateOrder?: string | null;
-    page?: CreateSpraywallProblemCommandFontGrade | null;
+    page?: number | null;
 }
 

@@ -21,6 +21,6 @@ public static class SpraywallAssertion
         expected.Id.AssertV7();
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Description, actual.Description);
-        Xunit.Assert.Equal(expected.FontGrade, (int?)actual.FontGrade);
+        Xunit.Assert.Equal(expected.FontGrade, actual.FontGrade);
     }
 }

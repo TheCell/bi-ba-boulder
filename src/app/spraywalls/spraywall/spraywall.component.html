@@ -16,14 +16,14 @@
     <div class="actions">
         <button class="button action-button" (click)="onResetSelection()">Reset</button>
         <button class="button action-button" (click)="onInfoClicked()">Info</button>
-        @if (selectedProblem?.canEdit) {
+        @if (selectedProblem?.metadata?.canEdit) {
             @if (loginTrackerService.isLoggedIn()) {
                 <button class="button action-button warning" (click)="onEditProblem()">Edit</button>
             } @else {
                 <button class="button action-button warning" (click)="hintAtNotLoggedIn()">Edit</button>
             }
         }
-        @if (selectedProblem?.canDelete) {
+        @if (selectedProblem?.metadata?.canDelete) {
             <button class="button action-button danger" (click)="onDeleteProblem()">Delete</button>
         }
         @if (loginTrackerService.isLoggedIn()) {

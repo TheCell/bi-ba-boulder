@@ -1,15 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
-import { AuthService, PostRegisterRequest } from '@api-net/index';
 import { IModal } from '../modal/modal.interface';
 import { Subscription } from 'rxjs';
 import { Icon } from '../../icon/icon';
 import { ToastService } from '../../toast-container/toast.service';
 import { CloseModalEvent } from '../modal/close-modal-event';
+import { BffAuthService } from 'src/app/auth/bff-auth.service';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface IRegistrationForm extends PostRegisterRequest { }
+// interface IRegistrationForm extends PostRegisterRequest { }
+interface IRegistrationForm {
+  username: string;
+  email: string;
+  password: string;
+}
 
 @Component({
   selector: 'app-registration-dialog',
@@ -20,7 +25,7 @@ interface IRegistrationForm extends PostRegisterRequest { }
 })
 export class RegistrationDialogComponent implements IModal, OnDestroy {
   private _fb = inject(NonNullableFormBuilder);
-  private authService = inject(AuthService);
+  private authService = inject(BffAuthService);
   private toastService = inject(ToastService);
 
   public closeModal = output<CloseModalEvent>();
@@ -56,23 +61,24 @@ export class RegistrationDialogComponent implements IModal, OnDestroy {
   public onSubmit(): void {
     this.isLoading = true;
     this.registrationForm.disable();
-    const postRegisterRequest: PostRegisterRequest = {
-      email: this.registrationForm.controls.email.value,
-      username: this.registrationForm.controls.username.value,
-      password: this.registrationForm.controls.password.value,
-    };
+    console.error('registration is not supported at the moment');
+    // const postRegisterRequest: PostRegisterRequest = {
+    //   email: this.registrationForm.controls.email.value,
+    //   username: this.registrationForm.controls.username.value,
+    //   password: this.registrationForm.controls.password.value,
+    // };
 
-    this.authService.postRegister(postRegisterRequest).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.registrationForm.reset();
-        this.closeModal.emit({ closeType: 0 });
-        this.toastService.showSuccess('Registration Successful', 'You have successfully registered. Please check your email to verify your account.');
-      },
-      error: () => {
-        this.isLoading = false;
-        this.registrationForm.enable();
-      }
-    });
+    // this.authService.postRegister(postRegisterRequest).subscribe({
+    //   next: () => {
+    //     this.isLoading = false;
+    //     this.registrationForm.reset();
+    //     this.closeModal.emit({ closeType: 0 });
+    //     this.toastService.showSuccess('Registration Successful', 'You have successfully registered. Please check your email to verify your account.');
+    //   },
+    //   error: () => {
+    //     this.isLoading = false;
+    //     this.registrationForm.enable();
+    //   }
+    // });
   }
 }

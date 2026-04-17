@@ -60,7 +60,7 @@ public class UpdateSpraywallProblemTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Sentence(),
             Image = ValidUpdateBase64Png,
-            FontGrade = (int)_bogus.Random.Enum<FontGrade>(),
+            FontGrade = _bogus.Random.Enum<FontGrade>(),
             Version = problem.Version
         };
 
@@ -105,7 +105,7 @@ public class UpdateSpraywallProblemTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Sentence(),
             Image = ValidUpdateBase64Png,
-            FontGrade = (int)_bogus.Random.Enum<FontGrade>(),
+            FontGrade = _bogus.Random.Enum<FontGrade>(),
             Version = problem.Version
         };
 
@@ -150,7 +150,7 @@ public class UpdateSpraywallProblemTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Sentence(),
             Image = ValidUpdateBase64Png,
-            FontGrade = (int)_bogus.Random.Enum<FontGrade>(),
+            FontGrade = _bogus.Random.Enum<FontGrade>(),
             Version = problem.Version
         };
 
@@ -188,7 +188,7 @@ public class UpdateSpraywallProblemTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Sentence(),
             Image = ValidUpdateBase64Png,
-            FontGrade = (int)_bogus.Random.Enum<FontGrade>(),
+            FontGrade = _bogus.Random.Enum<FontGrade>(),
             Version = problem.Version
         };
 
@@ -227,7 +227,7 @@ public class UpdateSpraywallProblemTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Sentence(),
             Image = "",
-            FontGrade = (int)_bogus.Random.Enum<FontGrade>(),
+            FontGrade = _bogus.Random.Enum<FontGrade>(),
             Version = problem.Version
         };
 
@@ -266,7 +266,7 @@ public class UpdateSpraywallProblemTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Sentence(),
             Image = UpdateImageData,
-            FontGrade = (int)_bogus.Random.Enum<FontGrade>(),
+            FontGrade = _bogus.Random.Enum<FontGrade>(),
             Version = problem.Version
         };
 
@@ -305,7 +305,7 @@ public class UpdateSpraywallProblemTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Sentence(),
             Image = ValidUpdateBase64Png,
-            FontGrade = (int)_bogus.Random.Enum<FontGrade>(),
+            FontGrade = _bogus.Random.Enum<FontGrade>(),
             Version = problem.Version
         };
 

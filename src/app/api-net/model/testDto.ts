@@ -7,11 +7,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { TestDtoSpraywallCount } from './testDtoSpraywallCount';
 
 
 export interface TestDto { 
     id: string;
-    spraywallCount: TestDtoSpraywallCount;
+    spraywallCount: number;
 }
 

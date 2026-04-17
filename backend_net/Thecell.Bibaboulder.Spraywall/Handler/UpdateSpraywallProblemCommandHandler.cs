@@ -50,7 +50,7 @@ public partial class UpdateSpraywallProblemCommandHandler : ICommandHandler<Upda
 
         problem.Name = command.Name.Trim();
         problem.Description = command.Description;
-        problem.FontGrade = command.FontGrade.HasValue ? (FontGrade)command.FontGrade.Value : null;
+        problem.FontGrade = command.FontGrade;
 
         await _dbContext.UpdateEntityAsync(problem, command.Version);
         await _imageService.SaveImageAsync(problem.SpraywallId, problem.Id, imageBytes);

@@ -1,7 +1,6 @@
 export * from './blocDto';
 export * from './createSectorCommand';
 export * from './createSpraywallProblemCommand';
-export * from './createSpraywallProblemCommandFontGrade';
 export * from './lineDto';
 export * from './searchProblemsRequest';
 export * from './sectorDto';
@@ -9,9 +8,7 @@ export * from './sendFeedbackCommand';
 export * from './spraywallDto';
 export * from './spraywallProblemDto';
 export * from './spraywallProblemListDto';
-export * from './spraywallProblemListDtoTotalCount';
 export * from './spraywallProblemMetadataDto';
 export * from './testDto';
-export * from './testDtoSpraywallCount';
 export * from './updateSpraywallProblemCommand';
 export * from './userDto';

@@ -7,13 +7,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { CreateSpraywallProblemCommandFontGrade } from './createSpraywallProblemCommandFontGrade';
 
 
 export interface CreateSpraywallProblemCommand { 
     name: string;
     description?: string | null;
     image: string;
-    fontGrade?: CreateSpraywallProblemCommandFontGrade | null;
+    fontGrade?: number;
 }
 

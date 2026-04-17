@@ -52,7 +52,7 @@ public partial class CreateSpraywallProblemCommandHandler : ICommandHandlerWithE
             Id = Guid.CreateVersion7(),
             Name = command.Name.Trim(),
             Description = command.Description,
-            FontGrade = command.FontGrade.HasValue ? (FontGrade)command.FontGrade.Value : null,
+            FontGrade = command.FontGrade,
             CreatorId = editor.Id,
             SpraywallId = command.SpraywallId,
         };

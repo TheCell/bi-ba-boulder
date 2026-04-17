@@ -30,7 +30,6 @@ index.ts
 model/blocDto.ts
 model/createSectorCommand.ts
 model/createSpraywallProblemCommand.ts
-model/createSpraywallProblemCommandFontGrade.ts
 model/lineDto.ts
 model/models.ts
 model/searchProblemsRequest.ts
@@ -39,10 +38,8 @@ model/sendFeedbackCommand.ts
 model/spraywallDto.ts
 model/spraywallProblemDto.ts
 model/spraywallProblemListDto.ts
-model/spraywallProblemListDtoTotalCount.ts
 model/spraywallProblemMetadataDto.ts
 model/testDto.ts
-model/testDtoSpraywallCount.ts
 model/updateSpraywallProblemCommand.ts
 model/userDto.ts
 param.ts

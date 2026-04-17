@@ -1,5 +1,4 @@
 using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Spraywall.Handler;
 using TheCell.Bibaboulder.Sharedtests.Extensions;
@@ -14,7 +13,7 @@ public static class SpraywallProblemAssertion
         expected.Id.AssertV7();
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Description, actual.Description);
-        Xunit.Assert.Equal((int?)expected.FontGrade, actual.FontGrade);
+        Xunit.Assert.Equal(expected.FontGrade, actual.FontGrade);
         Xunit.Assert.Equal(expected.CreatorId, actual.CreatedById);
         Xunit.Assert.Equal(expected.CreatedDate.ToString("u"), actual.CreatedDate);
     }
@@ -23,7 +22,7 @@ public static class SpraywallProblemAssertion
     {
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Description, actual.Description);
-        Xunit.Assert.Equal((FontGrade?)expected.FontGrade, actual.FontGrade);
+        Xunit.Assert.Equal(expected.FontGrade, actual.FontGrade);
         Xunit.Assert.Equal(expected.Version + 1, actual.Version);
     }
 

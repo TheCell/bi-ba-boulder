@@ -91,7 +91,7 @@ public class SpraywallsControllerTest : BaseTest
             Name = "New Problem",
             Description = "Created via integration test",
             Image = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-            FontGrade = 3
+            FontGrade = FontGrade.TwoMinus
         };
 
         var beforeSend = DateTime.UtcNow;
