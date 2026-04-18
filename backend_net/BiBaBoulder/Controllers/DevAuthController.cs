@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Model;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
@@ -62,7 +63,7 @@ public class DevAuthController : ControllerBase
                 OidcSubject = oidcSub,
                 Email = email,
                 Username = email.Split('@')[0],
-                Roles = "User,Editor", // Grant full access for dev
+                Roles = AuthorizationRoles.User + AuthorizationRoles.Editor,
                 IsVerified = true,
             };
             _dbContext.Users.Add(user);
