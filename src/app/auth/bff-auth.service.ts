@@ -19,14 +19,14 @@ export class BffAuthService {
    * Returns 401 if the user is not authenticated.
    */
   public getUser(context?: HttpContext): Observable<BffUserClaim[]> {
-    return this.http.get<BffUserClaim[]>(`${environment.apiURL}/bff/user`, { context });
+    return this.http.get<BffUserClaim[]>(`${environment.apiURL}/bff/user`, { context, withCredentials: true });
   }
 
   /**
    * Signs out of the local cookie session and the OIDC Identity Provider.
    */
   public logout(): Observable<void> {
-    return this.http.post<void>(`${environment.apiURL}/bff/logout`, null);
+    return this.http.post<void>(`${environment.apiURL}/bff/logout`, null, { withCredentials: true });
   }
 
   /**

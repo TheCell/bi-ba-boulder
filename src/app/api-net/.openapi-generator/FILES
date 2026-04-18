@@ -9,6 +9,8 @@ api/bff.service.ts
 api/bff.serviceInterface.ts
 api/blocs.service.ts
 api/blocs.serviceInterface.ts
+api/devAuth.service.ts
+api/devAuth.serviceInterface.ts
 api/feedbacks.service.ts
 api/feedbacks.serviceInterface.ts
 api/lines.service.ts

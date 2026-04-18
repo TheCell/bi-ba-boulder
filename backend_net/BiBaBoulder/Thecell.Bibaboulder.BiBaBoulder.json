@@ -167,6 +167,45 @@
         }
       }
     },
+    "/DevAuth/login": {
+      "post": {
+        "tags": [
+          "DevAuth"
+        ],
+        "summary": "Mock login endpoint for development. Creates/uses a test user and signs in with cookies.",
+        "operationId": "devLogin",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Email of the test user. Defaults to \"dev@test.local\".",
+            "schema": {
+              "type": "string",
+              "default": "dev@test.local"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/DevAuth/logout": {
+      "post": {
+        "tags": [
+          "DevAuth"
+        ],
+        "summary": "Clear the development session.",
+        "operationId": "devLogout",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Feedbacks/send": {
       "post": {
         "tags": [
@@ -1176,6 +1215,9 @@
     },
     {
       "name": "Blocs"
+    },
+    {
+      "name": "DevAuth"
     },
     {
       "name": "Feedbacks"

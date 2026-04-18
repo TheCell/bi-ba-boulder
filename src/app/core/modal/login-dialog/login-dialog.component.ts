@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, output } from '@angular/cor
 import { IModal } from '../modal/modal.interface';
 import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 import { CloseModalEvent } from '../modal/close-modal-event';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login-dialog',
@@ -15,8 +16,14 @@ export class LoginDialogComponent implements IModal {
 
   public closeModal = output<CloseModalEvent>();
   public canCloseWithoutPermission = true;
+  public isDevelopment = !environment.production;
 
   public onLogin(): void {
     this.loginTrackerService.login();
+  }
+
+  public onDevLogin(): void {
+    this.loginTrackerService.devLogin();
+    this.closeModal.emit({ closeType: 0 });
   }
 }

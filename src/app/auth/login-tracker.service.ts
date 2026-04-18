@@ -3,12 +3,14 @@ import { Subject } from 'rxjs';
 import { BffAuthService, BffUserClaim } from './bff-auth.service';
 import { HttpContext } from '@angular/common/http';
 import { SKIP_ERROR_HANDLER } from '../core/interceptors/error-handler-interceptor';
+import { DevAuthService } from '@api-net/index';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginTrackerService {
   private bffAuthService = inject(BffAuthService);
+  private devAuthService = inject(DevAuthService);
   private claims: BffUserClaim[] = [];
   private authenticated = false;
 
@@ -53,6 +55,21 @@ export class LoginTrackerService {
   public login(returnUrl?: string): void {
     const url = this.bffAuthService.getLoginUrl(returnUrl ?? window.location.pathname);
     window.location.href = url;
+  }
+
+  /**
+   * Development-only login that bypasses OIDC.
+   * @param email Email of the test user. Defaults to "dev@test.local".
+   */
+  public devLogin(email = 'dev@test.local'): void {
+    this.devAuthService.devLogin(email).subscribe({
+      next: () => {
+        this.checkSession();
+      },
+      error: (err) => {
+        console.error('Dev login failed:', err);
+      },
+    });
   }
 
   /**

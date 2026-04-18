@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -71,12 +72,22 @@ public class BffController : ControllerBase
     /// Signs out of the local cookie session and the OIDC Identity Provider.
     /// </summary>
     [HttpPost("logout")]
-    [Authorize]
-    public IActionResult Logout()
+    [AllowAnonymous]
+    public async Task<IActionResult> Logout()
     {
-        return SignOut(
-            new AuthenticationProperties { RedirectUri = $"{_frontendOrigin}/" },
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            OpenIdConnectDefaults.AuthenticationScheme);
+        // Only sign out from OIDC if the user actually used OIDC to login
+        // (Dev login only creates a cookie session, not an OIDC session)
+        var authResult = await HttpContext.AuthenticateAsync(OpenIdConnectDefaults.AuthenticationScheme);
+
+        if (authResult.Succeeded)
+        {
+            // User logged in via OIDC - sign out from both
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
+        // Always sign out from the cookie session
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        return Ok(new { message = "Logged out successfully" });
     }
 }

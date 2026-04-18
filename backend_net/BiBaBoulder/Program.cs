@@ -91,8 +91,20 @@ public class Program
         .AddCookie(options =>
         {
             options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.SameSite = SameSiteMode.Lax; // Lax required for OIDC redirect back from IdP
+            
+            if (builder.Environment.IsDevelopment())
+            {
+                // Development: Allow HTTP cookies with Lax SameSite for localhost
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+            }
+            else
+            {
+                // Production: Require HTTPS with strict settings
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.Lax;
+            }
+            
             options.Cookie.Name = "BiBaBoulder.Auth";
 
             // Return 401 for API/BFF calls instead of redirecting to the IdP login page
