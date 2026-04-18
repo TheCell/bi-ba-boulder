@@ -13,7 +13,7 @@ public class FeedbacksControllerTest : BaseTest
     private readonly string _baseUrl = "/api/Feedbacks";
     private readonly Faker _bogus;
 
-    protected FeedbacksControllerTest(IntegrationTestFactory factory) : base(factory)
+    public FeedbacksControllerTest(IntegrationTestFactory factory) : base(factory)
     {
         _bogus = new Faker("de_CH");
     }
