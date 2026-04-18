@@ -271,7 +271,8 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     image.onerror = (ev) => {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
     }
-    image.src = 'data:image/png;base64,' + base64String;
+
+    image.src = base64String;
   }
 
   private setupHighlightTexture(): void {

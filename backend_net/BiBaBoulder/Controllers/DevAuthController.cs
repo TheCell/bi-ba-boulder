@@ -77,8 +77,8 @@ public class DevAuthController : ControllerBase
             new Claim("email", user.Email),
             new Claim("name", user.Username),
             new Claim("db_user_id", user.Id.ToString()),
-            new Claim(ClaimTypes.Role, "User"),
-            new Claim(ClaimTypes.Role, "Editor"),
+            new Claim(ClaimTypes.Role, AuthorizationRoles.User),
+            new Claim(ClaimTypes.Role, AuthorizationRoles.Editor),
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
