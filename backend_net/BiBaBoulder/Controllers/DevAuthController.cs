@@ -43,6 +43,13 @@ public class DevAuthController : ControllerBase
             return NotFound(); // Hide this endpoint in production
         }
 
+        // Extra security: Only allow localhost requests
+        if (!HttpContext.Request.Host.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase) &&
+            !HttpContext.Request.Host.Host.Equals("127.0.0.1", StringComparison.Ordinal))
+        {
+            return NotFound();
+        }
+
         // Find or create a dev user
         var oidcSub = $"dev-{email}";
         var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.OidcSubject == oidcSub);
@@ -96,6 +103,13 @@ public class DevAuthController : ControllerBase
     public async Task<IActionResult> DevLogout()
     {
         if (!_environment.IsDevelopment())
+        {
+            return NotFound();
+        }
+
+        // Extra security: Only allow localhost requests
+        if (!HttpContext.Request.Host.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase) &&
+            !HttpContext.Request.Host.Host.Equals("127.0.0.1", StringComparison.Ordinal))
         {
             return NotFound();
         }
