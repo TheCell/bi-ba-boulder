@@ -73,6 +73,7 @@ public class IntegrationTestFactory : WebApplicationFactory<EntryPoint>
 
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddSingleton<IFileStorageClient, MockFileStorageClient>();
             services.AddSingleton<ISpraywallImageService, MockSpraywallImageService>();
             services.AddSingleton<IEmailService, InMemoryEmailService>();
 

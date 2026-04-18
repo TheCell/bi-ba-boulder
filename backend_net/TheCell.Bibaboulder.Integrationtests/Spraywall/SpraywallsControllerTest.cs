@@ -154,6 +154,12 @@ public class SpraywallsControllerTest : BaseTest
         }
         await BiBaBoulderDbContext.InsertEntitiesAsync(problems);
 
+        foreach (var problem in problems)
+        {
+            var mockImageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+            await SpraywallImageService.SaveImageAsync(spraywall.Id, problem.Id, mockImageData);
+        }
+
         return (spraywall, user, problems);
     }
 }

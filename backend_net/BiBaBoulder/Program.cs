@@ -65,6 +65,7 @@ public class Program
             options.SerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.Strict);
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+        builder.Services.AddSingleton<IFileStorageClient, LocalFileStorageClient>();
         builder.Services.AddScoped<ISpraywallImageService, SpraywallImageService>();
         builder.Services.AddScoped<IEmailService, NoOpEmailService>();
         builder.Services.RegisterCqrsAndControllerAssemblies();

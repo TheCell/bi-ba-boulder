@@ -48,6 +48,7 @@ public class SearchSpraywallProblemsTest
     public async Task SearchSpraywallProblems_Ok()
     {
         var (spraywall, creators, spraywallProblems) = await PrepareProblems();
+        AddMockImages(spraywall.Id, spraywallProblems);
 
         var handler = new SearchSpraywallProblemsQueryHandler(_dbContext, _currentUserService, _imageService);
         var result = await handler.HandleAsync(new SearchSpraywallProblemsQuery
@@ -82,6 +83,7 @@ public class SearchSpraywallProblemsTest
             .SetFontGrade(FontGrade.Three)
             .Build();
         await _dbContext.InsertEntityAsync(problem);
+        AddMockImage(spraywall.Id, problem.Id);
 
         _currentUserService.WithUser(creator);
         var handler = new SearchSpraywallProblemsQueryHandler(_dbContext, _currentUserService, _imageService);
@@ -117,6 +119,7 @@ public class SearchSpraywallProblemsTest
             .SetDescription(_bogus.Lorem.Paragraph())
             .SetFontGrade(FontGrade.Three)
             .Build();
+        AddMockImage(spraywall.Id, problem.Id);
         await _dbContext.InsertEntityAsync(problem);
 
         _currentUserService.WithUser(adminUser);
@@ -167,7 +170,8 @@ public class SearchSpraywallProblemsTest
     [Fact]
     public async Task SearchSpraywallProblems_FilterByGrade_FiltersCorrectly()
     {
-        var (spraywall, users, _) = await PrepareProblems();
+        var (spraywall, users, spraywallProblems) = await PrepareProblems();
+        AddMockImages(spraywall.Id, spraywallProblems);
 
         var handler = new SearchSpraywallProblemsQueryHandler(_dbContext, _currentUserService, _imageService);
         var result = await handler.HandleAsync(new SearchSpraywallProblemsQuery
@@ -230,5 +234,19 @@ public class SearchSpraywallProblemsTest
         await _dbContext.InsertEntitiesAsync(problems);
 
         return (spraywall, [user1, user2], problems);
+    }
+
+    private void AddMockImage(Guid spraywallId, Guid problemId)
+    {
+        var mockImageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+        _imageService.SaveImageAsync(spraywallId, problemId, mockImageData).Wait();
+    }
+
+    private void AddMockImages(Guid spraywallId, List<SpraywallProblem> problems)
+    {
+        foreach (var problem in problems)
+        {
+            AddMockImage(spraywallId, problem.Id);
+        }
     }
 }

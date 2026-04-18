@@ -1,53 +1,46 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Services;
 
 public class SpraywallImageService : ISpraywallImageService
 {
-    private readonly string _basePath;
+    private readonly IFileStorageClient _fileStorageClient;
 
-    public SpraywallImageService(IConfiguration configuration)
+    public SpraywallImageService(IFileStorageClient fileStorageClient)
     {
-        _basePath = configuration["SpraywallImageBasePath"] ?? "spraywalls";
+        _fileStorageClient = fileStorageClient;
     }
 
     public async Task SaveImageAsync(Guid spraywallId, Guid problemId, byte[] imageData)
     {
-        var directory = Path.Combine(_basePath, spraywallId.ToString());
-        Directory.CreateDirectory(directory);
-
         // todo compress image
-
-        var filePath = Path.Combine(directory, $"{problemId}.png");
-        await File.WriteAllBytesAsync(filePath, imageData);
+        var path = GetImagePath(spraywallId, problemId);
+        await _fileStorageClient.WriteAsync(path, imageData);
     }
 
     public async Task<string?> GetImageAsBase64Async(Guid spraywallId, Guid problemId)
     {
-        var filePath = Path.Combine(_basePath, spraywallId.ToString(), $"{problemId}.png");
+        var path = GetImagePath(spraywallId, problemId);
+        var bytes = await _fileStorageClient.ReadAsync(path);
 
-        if (!File.Exists(filePath))
+        if (bytes is null)
         {
             return null;
         }
 
-        var bytes = await File.ReadAllBytesAsync(filePath);
         return $"data:image/png;base64,{Convert.ToBase64String(bytes)}";
     }
 
-    public Task DeleteImageAsync(Guid spraywallId, Guid problemId)
+    public async Task DeleteImageAsync(Guid spraywallId, Guid problemId)
     {
-        var filePath = Path.Combine(_basePath, spraywallId.ToString(), $"{problemId}.png");
+        var path = GetImagePath(spraywallId, problemId);
+        await _fileStorageClient.DeleteAsync(path);
+    }
 
-        if (File.Exists(filePath))
-        {
-            File.Delete(filePath);
-        }
-
-        return Task.CompletedTask;
+    private static string GetImagePath(Guid spraywallId, Guid problemId)
+    {
+        return $"spraywalls/{spraywallId}/{problemId}.png";
     }
 }
