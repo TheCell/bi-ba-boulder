@@ -44,7 +44,7 @@ public class DatabaseEmailService : IEmailService
             SentAt = DateTime.UtcNow
         };
 
-        await dbContext.InsertEntityAsync(mail);
+        await dbContext.InsertEntityAndSaveChangesAsync(mail);
         await dbContext.SaveChangesAsync();
     }
 }

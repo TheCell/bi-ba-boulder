@@ -21,14 +21,14 @@ public class GetLinesByBlocIdTest
     public async Task GetLinesByBlocId_ReturnsMatchingLines()
     {
         var sector = new SectorBuilder().SetName("Sector").Build();
-        await _dbContext.InsertEntityAsync(sector);
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var bloc = new BlocBuilder().SetName("Bloc").SetSectorId(sector.Id).Build();
-        await _dbContext.InsertEntityAsync(bloc);
+        await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var line1 = new LineBuilder().SetIdentifier("L-001").SetBlocId(bloc.Id).Build();
         var line2 = new LineBuilder().SetIdentifier("L-002").SetBlocId(bloc.Id).Build();
-        await _dbContext.InsertEntitiesAsync([line1, line2]);
+        await _dbContext.InsertEntitiesAndSaveChangesAsync([line1, line2]);
 
         var handler = new GetLinesByBlocIdQueryHandler(_dbContext);
         var result = await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = bloc.Id });

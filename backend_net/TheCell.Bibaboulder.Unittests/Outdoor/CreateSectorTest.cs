@@ -30,7 +30,7 @@ public class CreateSectorTest
         var user = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var command = new CreateSectorCommand
         {
@@ -51,7 +51,7 @@ public class CreateSectorTest
         var user = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var command = new CreateSectorCommand
         {

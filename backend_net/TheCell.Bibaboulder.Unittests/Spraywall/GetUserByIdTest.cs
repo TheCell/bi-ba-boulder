@@ -21,7 +21,7 @@ public class GetUserByIdTest
     public async Task GetUserById_Ok()
     {
         var user = new UserBuilder().SetEmail("admin@test.com").Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var handler = new GetUserByIdQueryHandler(_dbContext);
         var result = await handler.HandleAsync(new GetUserByIdQuery { Id = user.Id });

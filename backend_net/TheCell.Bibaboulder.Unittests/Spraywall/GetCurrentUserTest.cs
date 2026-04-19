@@ -23,7 +23,7 @@ public class GetCurrentUserTest
     public async Task GetCurrentUser_Ok()
     {
         var user = new UserBuilder().Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         _currentUserServiceMock.WithUser(user);
         var handler = new GetCurrentUserQueryHandler(_currentUserServiceMock);

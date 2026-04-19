@@ -39,7 +39,7 @@ public class GetSectorTest
             .SetName("Test Sector")
             .SetDescription("Test Description")
             .Build();
-        await _dbContext.InsertEntityAsync(sector);
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var query = new GetSectorQuery
         {

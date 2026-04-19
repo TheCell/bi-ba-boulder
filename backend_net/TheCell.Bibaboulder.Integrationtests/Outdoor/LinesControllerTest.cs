@@ -60,13 +60,13 @@ public class LinesControllerTest : BaseTest
         var sector = new SectorBuilder()
             .SetName(_bogus.Lorem.Slug())
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(sector);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var bloc = new BlocBuilder()
             .SetName(_bogus.Lorem.Slug())
             .SetSectorId(sector.Id)
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(bloc);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var lines = new List<Line>();
         for (var i = 0; i < 3; i++)
@@ -78,7 +78,7 @@ public class LinesControllerTest : BaseTest
                 .SetBlocId(bloc.Id)
                 .Build());
         }
-        await BiBaBoulderDbContext.InsertEntitiesAsync(lines);
+        await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(lines);
 
         return (bloc, lines);
     }

@@ -49,15 +49,15 @@ public class GetSpraywallProblemTest
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Test Problem")
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserServiceMock.WithUser(editor);
         _spraywallImageServiceMock.Reset();
@@ -76,15 +76,15 @@ public class GetSpraywallProblemTest
         var editor = new UserBuilder()
             .SetUsername("creator")
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Test Problem")
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserServiceMock.WithUser(editor);
         var handler = new GetSpraywallProblemQueryHandler(_dbContext, _currentUserServiceMock, _spraywallImageServiceMock.Object);
@@ -109,15 +109,15 @@ public class GetSpraywallProblemTest
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Test Problem")
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserServiceMock.WithUser(editor);
         var handler = new GetSpraywallProblemQueryHandler(_dbContext, _currentUserServiceMock, _spraywallImageServiceMock.Object);
@@ -142,21 +142,21 @@ public class GetSpraywallProblemTest
             .SetUsername("editor")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var admin = new UserBuilder()
             .SetUsername("admin")
             .SetRoles(AuthorizationRoles.Admin)
             .Build();
-        await _dbContext.InsertEntityAsync(admin);
+        await _dbContext.InsertEntityAndSaveChangesAsync(admin);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Test Problem")
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserServiceMock.WithUser(admin);
         var handler = new GetSpraywallProblemQueryHandler(_dbContext, _currentUserServiceMock, _spraywallImageServiceMock.Object);

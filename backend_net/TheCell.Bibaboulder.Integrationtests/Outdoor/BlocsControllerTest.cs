@@ -71,7 +71,7 @@ public class BlocsControllerTest : BaseTest
             .SetName(_bogus.Lorem.Slug())
             .SetDescription(_bogus.Lorem.Sentence())
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(sector);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var blocs = new List<Bloc>();
         for (var i = 0; i < 3; i++)
@@ -82,7 +82,7 @@ public class BlocsControllerTest : BaseTest
                 .SetSectorId(sector.Id)
                 .Build());
         }
-        await BiBaBoulderDbContext.InsertEntitiesAsync(blocs);
+        await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(blocs);
 
         return (sector, blocs);
     }

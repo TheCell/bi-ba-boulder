@@ -41,34 +41,34 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
         // customize the model here if needed
     }
 
-    public async Task InsertEntityAsync(VersionedEntity entity)
+    public async Task InsertEntityAndSaveChangesAsync(VersionedEntity entity)
     {
         entity.Version = 1;
-        await InsertEntityAsync((EntityAuditFields)entity);
+        await InsertEntityAndSaveChangesAsync((EntityAuditFields)entity);
     }
 
-    public async Task InsertEntityAsync(EntityAuditFields entity)
+    public async Task InsertEntityAndSaveChangesAsync(EntityAuditFields entity)
     {
         await AddAsync(entity);
         await SaveChangesAsync();
     }
 
-    public async Task InsertEntitiesAsync(IEnumerable<VersionedEntity> entities)
+    public async Task InsertEntitiesAndSaveChangesAsync(IEnumerable<VersionedEntity> entities)
     {
         foreach (var entity in entities)
         {
             entity.Version = 1;
         }
-        await InsertEntitiesAsync((IEnumerable<EntityAuditFields>)entities);
+        await InsertEntitiesAndSaveChangesAsync((IEnumerable<EntityAuditFields>)entities);
     }
 
-    public async Task InsertEntitiesAsync(IEnumerable<EntityAuditFields> entities)
+    public async Task InsertEntitiesAndSaveChangesAsync(IEnumerable<EntityAuditFields> entities)
     {
         await AddRangeAsync(entities);
         await SaveChangesAsync();
     }
 
-    public async Task UpdateEntityAsync(VersionedEntity entityFromDb, long version)
+    public async Task UpdateEntityAndSaveChangesAsync(VersionedEntity entityFromDb, long version)
     {
         var entry = Entry(entityFromDb);
         ValidateEntryIsNotDetached(entry);
@@ -79,7 +79,7 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
         await SaveChangesAsync();
     }
 
-    public virtual async Task RemoveEntityAsync(VersionedEntity entityFromDb, long version)
+    public virtual async Task RemoveEntityAndSaveChangesAsync(VersionedEntity entityFromDb, long version)
     {
         var entry = Entry(entityFromDb);
         ValidateEntryIsNotDetached(entry);
@@ -91,7 +91,7 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
         await SaveChangesAsync();
     }
 
-    public virtual async Task RemoveEntityAndSaveAsync(EntityAuditFields entityFromDb)
+    public virtual async Task RemoveEntityAndSaveChangesAsync(EntityAuditFields entityFromDb)
     {
         var entry = Entry(entityFromDb);
         ValidateEntryIsNotDetached(entry);

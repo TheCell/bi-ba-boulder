@@ -30,7 +30,7 @@ public class GetSpraywallsTest
     {
         var spraywall1 = new SpraywallBuilder().SetName("Wall A").Build();
         var spraywall2 = new SpraywallBuilder().SetName("Wall B").Build();
-        await _dbContext.InsertEntitiesAsync([spraywall1, spraywall2]);
+        await _dbContext.InsertEntitiesAndSaveChangesAsync([spraywall1, spraywall2]);
 
         var handler = new GetSpraywallsQueryHandler(_dbContext);
         var result = await handler.HandleAsync(new GetSpraywallsQuery());

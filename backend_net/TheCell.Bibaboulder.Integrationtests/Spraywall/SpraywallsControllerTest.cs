@@ -123,7 +123,7 @@ public class SpraywallsControllerTest : BaseTest
                 .SetDescription(_bogus.Lorem.Sentence())
                 .Build());
         }
-        await BiBaBoulderDbContext.InsertEntitiesAsync(spraywalls);
+        await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(spraywalls);
         return spraywalls;
     }
 
@@ -134,13 +134,13 @@ public class SpraywallsControllerTest : BaseTest
             .SetEmail(_bogus.Internet.Email())
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(user);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
         var spraywall = new SpraywallBuilder()
             .SetName(_bogus.Lorem.Slug())
             .SetDescription(_bogus.Lorem.Sentence())
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(spraywall);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problems = new List<SpraywallProblem>();
         for (var i = 0; i < 15; i++)
@@ -152,7 +152,7 @@ public class SpraywallsControllerTest : BaseTest
                 .Build();
             problems.Add(spraywallProblem);
         }
-        await BiBaBoulderDbContext.InsertEntitiesAsync(problems);
+        await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(problems);
 
         foreach (var problem in problems)
         {

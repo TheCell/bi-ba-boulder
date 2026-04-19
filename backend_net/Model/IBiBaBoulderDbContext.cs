@@ -25,19 +25,19 @@ public interface IBiBaBoulderDbContext : IDisposable
     DbSet<Point> Points { get; set; }
     DbSet<Mail> Mails { get; set; }
 
-    Task InsertEntityAsync(VersionedEntity entity);
+    Task InsertEntityAndSaveChangesAsync(VersionedEntity entity);
 
-    Task InsertEntityAsync(EntityAuditFields entity);
+    Task InsertEntityAndSaveChangesAsync(EntityAuditFields entity);
 
-    Task InsertEntitiesAsync(IEnumerable<VersionedEntity> entities);
+    Task InsertEntitiesAndSaveChangesAsync(IEnumerable<VersionedEntity> entities);
 
-    Task InsertEntitiesAsync(IEnumerable<EntityAuditFields> entities);
+    Task InsertEntitiesAndSaveChangesAsync(IEnumerable<EntityAuditFields> entities);
 
-    Task UpdateEntityAsync(VersionedEntity entityFromDb, long version);
+    Task UpdateEntityAndSaveChangesAsync(VersionedEntity entityFromDb, long version);
 
-    Task RemoveEntityAsync(VersionedEntity entityFromDb, long version);
+    Task RemoveEntityAndSaveChangesAsync(VersionedEntity entityFromDb, long version);
 
-    Task RemoveEntityAndSaveAsync(EntityAuditFields entityFromDb);
+    Task RemoveEntityAndSaveChangesAsync(EntityAuditFields entityFromDb);
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

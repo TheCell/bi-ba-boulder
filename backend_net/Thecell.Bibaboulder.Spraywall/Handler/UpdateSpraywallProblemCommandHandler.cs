@@ -52,7 +52,7 @@ public partial class UpdateSpraywallProblemCommandHandler : ICommandHandler<Upda
         problem.Description = command.Description;
         problem.FontGrade = command.FontGrade;
 
-        await _dbContext.UpdateEntityAsync(problem, command.Version);
+        await _dbContext.UpdateEntityAndSaveChangesAsync(problem, command.Version);
         await _imageService.SaveImageAsync(problem.SpraywallId, problem.Id, imageBytes);
     }
 

@@ -55,7 +55,7 @@ public class SectorsControllerTest : BaseTest
             .SetEmail(_bogus.Internet.Email())
             .SetRoles(AuthorizationRoles.Admin)
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(user);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
         var command = new CreateSectorCommand
         {
@@ -132,7 +132,7 @@ public class SectorsControllerTest : BaseTest
                 .SetDescription(_bogus.Lorem.Sentence())
                 .Build());
         }
-        await BiBaBoulderDbContext.InsertEntitiesAsync(sectors);
+        await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(sectors);
         return sectors;
     }
 

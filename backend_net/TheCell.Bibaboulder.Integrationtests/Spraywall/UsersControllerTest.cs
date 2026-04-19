@@ -68,7 +68,7 @@ public class UsersControllerTest : BaseTest
             .SetUsername("admin")
             .SetRoles(AuthorizationRoles.Admin)
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(adminUser);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(adminUser);
 
         var client = AuthenticatedClient(
             userId: adminUser.OidcSubject,
@@ -105,7 +105,7 @@ public class UsersControllerTest : BaseTest
             .SetUsername(_bogus.Internet.UserName())
             .SetEmail(_bogus.Internet.Email())
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(user);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
         return user;
     }
 }

@@ -38,7 +38,7 @@ public class FeedbacksControllerTest : BaseTest
     public async Task SendFeedback_Authenticated_Ok()
     {
         var user = new UserBuilder().Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(user);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
         var client = AuthenticatedClient(
             userId: user.OidcSubject,

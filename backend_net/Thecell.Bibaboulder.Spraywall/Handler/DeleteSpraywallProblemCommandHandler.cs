@@ -47,7 +47,7 @@ public class DeleteSpraywallProblemCommandHandler : ICommandHandlerWithExtraTran
         }
 
         var spraywallId = problem.SpraywallId;
-        await _dbContext.RemoveEntityAsync(problem, problem.Version);
+        await _dbContext.RemoveEntityAndSaveChangesAsync(problem, problem.Version);
         await _imageService.DeleteImageAsync(spraywallId, command.Id);
     }
 }

@@ -37,11 +37,11 @@ public class CreateSpraywallProblemTest
     public async Task CreateSpraywallProblem_NoUser_NotFoundException()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
         var user = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var guid = Guid.NewGuid();
         var command = new CreateSpraywallProblemCommand
@@ -66,10 +66,10 @@ public class CreateSpraywallProblemTest
     public async Task CreateSpraywallProblem_NotEditor_UnauthorizedAccessException()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
         var user = new UserBuilder()
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var guid = Guid.NewGuid();
         var command = new CreateSpraywallProblemCommand
@@ -95,11 +95,11 @@ public class CreateSpraywallProblemTest
     public async Task CreateSpraywallProblem_MissingImage_ArgumentException()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
         var user = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var guid = Guid.NewGuid();
         var command = new CreateSpraywallProblemCommand
@@ -125,11 +125,11 @@ public class CreateSpraywallProblemTest
     public async Task CreateSpraywallProblem_NotBase64Image_ArgumentException()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
         var user = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var guid = Guid.NewGuid();
         var command = new CreateSpraywallProblemCommand
@@ -157,7 +157,7 @@ public class CreateSpraywallProblemTest
         var user = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var guid = Guid.NewGuid();
         var command = new CreateSpraywallProblemCommand
@@ -183,12 +183,12 @@ public class CreateSpraywallProblemTest
     public async Task CreateSpraywallProblem_Ok()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var user = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var guid = Guid.NewGuid();
         var command = new CreateSpraywallProblemCommand
@@ -218,10 +218,10 @@ public class CreateSpraywallProblemTest
     public async Task CreateSpraywallProblem_InvalidImage_ThrowsArgumentException()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
         var user = new UserBuilder()
             .Build();
-        await _dbContext.InsertEntityAsync(user);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
         var command = new CreateSpraywallProblemCommand
         {

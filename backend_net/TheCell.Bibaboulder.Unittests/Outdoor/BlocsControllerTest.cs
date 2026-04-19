@@ -31,10 +31,10 @@ public class BlocsControllerTest
     public async Task GetBloc_Ok()
     {
         var sector = new SectorBuilder().SetName("Sector").Build();
-        await _dbContext.InsertEntityAsync(sector);
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var bloc = new BlocBuilder().SetName("TestBloc").SetSectorId(sector.Id).Build();
-        await _dbContext.InsertEntityAsync(bloc);
+        await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var handler = new GetBlocQueryHandler(_dbContext);
         var result = await handler.HandleAsync(new GetBlocQuery { Id = bloc.Id });
@@ -46,7 +46,7 @@ public class BlocsControllerTest
     public async Task GetBlocsBySector_NoBlocs_Ok()
     {
         var sector = new SectorBuilder().SetName("Sector").Build();
-        await _dbContext.InsertEntityAsync(sector);
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var handler = new GetBlocsBySectorIdQueryHandler(_dbContext);
         var result = await handler.HandleAsync(new GetBlocsBySectorIdQuery { SectorId = sector.Id });
@@ -58,11 +58,11 @@ public class BlocsControllerTest
     public async Task GetBlocsBySector_Ok()
     {
         var sector = new SectorBuilder().SetName("Sector").Build();
-        await _dbContext.InsertEntityAsync(sector);
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var bloc1 = new BlocBuilder().SetName("TestBloc 1").SetSectorId(sector.Id).Build();
         var bloc2 = new BlocBuilder().SetName("TestBloc 2").SetSectorId(sector.Id).Build();
-        await _dbContext.InsertEntitiesAsync([bloc1, bloc2]);
+        await _dbContext.InsertEntitiesAndSaveChangesAsync([bloc1, bloc2]);
 
         var handler = new GetBlocsBySectorIdQueryHandler(_dbContext);
         var result = await handler.HandleAsync(new GetBlocsBySectorIdQuery { SectorId = sector.Id });

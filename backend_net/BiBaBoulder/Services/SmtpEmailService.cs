@@ -49,7 +49,7 @@ public class SmtpEmailService : IEmailService
             Body = htmlBody,
             SentAt = DateTime.UtcNow
         };
-        await _dbContext.InsertEntityAsync(mail);
+        await _dbContext.InsertEntityAndSaveChangesAsync(mail);
 
         try
         {
@@ -73,7 +73,7 @@ public class SmtpEmailService : IEmailService
         }
         catch (Exception)
         {
-            await _dbContext.RemoveEntityAndSaveAsync(mail);
+            await _dbContext.RemoveEntityAndSaveChangesAsync(mail);
             throw;
         }
     }

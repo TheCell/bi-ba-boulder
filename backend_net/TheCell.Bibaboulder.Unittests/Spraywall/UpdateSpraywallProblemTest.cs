@@ -39,17 +39,17 @@ public class UpdateSpraywallProblemTest
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Original Name")
             .SetDescription("Original Description")
             .SetFontGrade(FontGrade.EightB)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         await _spraywallImageServiceMock.SaveImageAsync(problem.SpraywallId, problem.Id, Convert.FromBase64String(ImageData));
 
@@ -79,23 +79,23 @@ public class UpdateSpraywallProblemTest
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var otherUser = new UserBuilder()
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(otherUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(otherUser);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Original Name")
             .SetDescription("Original Description")
             .SetFontGrade(FontGrade.EightB)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         await _spraywallImageServiceMock.SaveImageAsync(problem.SpraywallId, problem.Id, Convert.FromBase64String(ImageData));
 
@@ -124,23 +124,23 @@ public class UpdateSpraywallProblemTest
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var otherUser = new UserBuilder()
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Admin)
             .Build();
-        await _dbContext.InsertEntityAsync(otherUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(otherUser);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Original Name")
             .SetDescription("Original Description")
             .SetFontGrade(FontGrade.EightB)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         await _spraywallImageServiceMock.SaveImageAsync(problem.SpraywallId, problem.Id, Convert.FromBase64String(ImageData));
 
@@ -168,17 +168,17 @@ public class UpdateSpraywallProblemTest
         var editor = new UserBuilder()
             .SetUsername("creator")
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Original Name")
             .SetDescription("Original Description")
             .SetFontGrade(FontGrade.EightB)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         await _spraywallImageServiceMock.SaveImageAsync(problem.SpraywallId, problem.Id, Convert.FromBase64String(ImageData));
 
@@ -207,17 +207,17 @@ public class UpdateSpraywallProblemTest
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Original Name")
             .SetDescription("Original Description")
             .SetFontGrade(FontGrade.EightB)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         await _spraywallImageServiceMock.SaveImageAsync(problem.SpraywallId, problem.Id, Convert.FromBase64String(ImageData));
 
@@ -246,17 +246,17 @@ public class UpdateSpraywallProblemTest
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Original Name")
             .SetDescription("Original Description")
             .SetFontGrade(FontGrade.EightB)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         await _spraywallImageServiceMock.SaveImageAsync(problem.SpraywallId, problem.Id, Convert.FromBase64String(ImageData));
 
@@ -285,17 +285,17 @@ public class UpdateSpraywallProblemTest
             .SetUsername("creator")
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(editor);
+        await _dbContext.InsertEntityAndSaveChangesAsync(editor);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(editor, spraywall)
             .SetName("Original Name")
             .SetDescription("Original Description")
             .SetFontGrade(FontGrade.EightB)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         await _spraywallImageServiceMock.SaveImageAsync(problem.SpraywallId, problem.Id, Convert.FromBase64String(ImageData));
 

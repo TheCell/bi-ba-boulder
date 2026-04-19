@@ -32,7 +32,7 @@ public class CreateSectorCommandHandler : ICommandHandler<CreateSectorCommand>
             CreatedUserId = currentUser.Id
         };
 
-        await _dbContext.InsertEntityAsync(testing);
+        await _dbContext.InsertEntityAndSaveChangesAsync(testing);
         command.Id = testing.Id;
     }
 }

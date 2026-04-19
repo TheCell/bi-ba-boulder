@@ -57,7 +57,7 @@ public partial class CreateSpraywallProblemCommandHandler : ICommandHandlerWithE
             SpraywallId = command.SpraywallId,
         };
 
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
         await _imageService.SaveImageAsync(command.SpraywallId, problem.Id, imageBytes);
 
         command.Id = problem.Id;

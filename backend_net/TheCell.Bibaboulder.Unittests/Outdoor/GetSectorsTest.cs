@@ -50,7 +50,7 @@ public class GetSectorsTest
                 .SetDescription(_bogus.Lorem.Sentence())
                 .Build();
             sectors.Add(sector);
-            await _dbContext.InsertEntityAsync(sector);
+            await _dbContext.InsertEntityAndSaveChangesAsync(sector);
         }
         return sectors;
     }

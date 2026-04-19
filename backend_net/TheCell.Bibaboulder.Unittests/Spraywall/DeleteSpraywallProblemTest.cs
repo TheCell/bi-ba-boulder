@@ -33,7 +33,7 @@ public class DeleteSpraywallProblemTest
         var creatorUser = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .SetEmail("creator@test.com").Build();
-        await _dbContext.InsertEntityAsync(creatorUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(creatorUser);
 
         _currentUserServiceMock.WithUser(creatorUser);
         var handler = new DeleteSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
@@ -46,16 +46,16 @@ public class DeleteSpraywallProblemTest
     public async Task DeleteSpraywall_NoEditRights_AccessDenied()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var creatorUser = new UserBuilder()
             .SetEmail("creator@test.com").Build();
-        await _dbContext.InsertEntityAsync(creatorUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(creatorUser);
 
         var problem = new SpraywallProblemBuilder(creatorUser, spraywall)
             .SetName("Try to delete me")
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserServiceMock.WithUser(creatorUser);
         var handler = new DeleteSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
@@ -71,22 +71,22 @@ public class DeleteSpraywallProblemTest
     public async Task DeleteSpraywall_ByOtherEditor_AccessDeniedException()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var creatorUser = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .SetEmail("creator@test.com").Build();
-        await _dbContext.InsertEntityAsync(creatorUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(creatorUser);
 
         var otherUser = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .SetEmail("other@test.com").Build();
-        await _dbContext.InsertEntityAsync(otherUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(otherUser);
 
         var problem = new SpraywallProblemBuilder(creatorUser, spraywall)
             .SetName("To Delete")
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserServiceMock.WithUser(otherUser);
         var handler = new DeleteSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
@@ -102,17 +102,17 @@ public class DeleteSpraywallProblemTest
     public async Task DeleteSpraywall_ByCreator_Ok()
     {
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var creatorUser = new UserBuilder()
             .SetRoles(AuthorizationRoles.Editor)
             .SetEmail("creator@test.com").Build();
-        await _dbContext.InsertEntityAsync(creatorUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(creatorUser);
 
         var problem = new SpraywallProblemBuilder(creatorUser, spraywall)
             .SetName("To Delete")
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserServiceMock.WithUser(creatorUser);
         var handler = new DeleteSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
@@ -130,20 +130,20 @@ public class DeleteSpraywallProblemTest
         var adminUser = new UserBuilder()
             .SetRoles(AuthorizationRoles.Admin)
             .Build();
-        await _dbContext.InsertEntityAsync(adminUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(adminUser);
 
         var creatorUser = new UserBuilder()
             .SetRoles(AuthorizationRoles.Admin)
             .SetEmail("creator@test.com").Build();
-        await _dbContext.InsertEntityAsync(creatorUser);
+        await _dbContext.InsertEntityAndSaveChangesAsync(creatorUser);
 
         var spraywall = new SpraywallBuilder().Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(creatorUser, spraywall)
             .SetName("Others Problem")
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserServiceMock.WithUser(adminUser);
         var handler = new DeleteSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);

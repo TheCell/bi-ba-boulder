@@ -137,15 +137,15 @@ public class SpraywallProblemsControllerTest : BaseTest
     private async Task<(User User, SpraywallProblem Problem)> PrepareData()
     {
         var user = new UserBuilder().SetUsername(_bogus.Internet.UserName()).SetRoles(AuthorizationRoles.Editor).Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(user);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
         var spraywall = new SpraywallBuilder().Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(spraywall);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(user, spraywall)
             .SetCreator(user)
             .Build();
-        await BiBaBoulderDbContext.InsertEntityAsync(problem);
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(problem);
 
         await SpraywallImageService.SaveImageAsync(problem.SpraywallId, problem.Id, Convert.FromBase64String(ImageData));
 

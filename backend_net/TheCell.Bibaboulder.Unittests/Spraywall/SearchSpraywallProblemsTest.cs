@@ -72,17 +72,17 @@ public class SearchSpraywallProblemsTest
     public async Task SearchSpraywallProblems_AsCreator_Ok()
     {
         var creator = new UserBuilder().SetUsername("creator").Build();
-        await _dbContext.InsertEntityAsync(creator);
+        await _dbContext.InsertEntityAndSaveChangesAsync(creator);
 
         var spraywall = new SpraywallBuilder().SetName("Wall").Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(creator, spraywall)
             .SetName("Problem A")
             .SetDescription(_bogus.Lorem.Paragraph())
             .SetFontGrade(FontGrade.Three)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
         AddMockImage(spraywall.Id, problem.Id);
 
         _currentUserService.WithUser(creator);
@@ -109,10 +109,10 @@ public class SearchSpraywallProblemsTest
         var adminUser = new UserBuilder().SetRoles(AuthorizationRoles.Admin).Build();
 
         var creator = new UserBuilder().SetUsername("creator").Build();
-        await _dbContext.InsertEntityAsync(creator);
+        await _dbContext.InsertEntityAndSaveChangesAsync(creator);
 
         var spraywall = new SpraywallBuilder().SetName("Spraywall").Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(creator, spraywall)
             .SetName("Problem A")
@@ -120,7 +120,7 @@ public class SearchSpraywallProblemsTest
             .SetFontGrade(FontGrade.Three)
             .Build();
         AddMockImage(spraywall.Id, problem.Id);
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         _currentUserService.WithUser(adminUser);
         var handler = new SearchSpraywallProblemsQueryHandler(_dbContext, _currentUserService, _imageService);
@@ -144,17 +144,17 @@ public class SearchSpraywallProblemsTest
     public async Task SearchSpraywallProblems_MissingImage_ThrowsIOException()
     {
         var creator = new UserBuilder().SetUsername("creator").Build();
-        await _dbContext.InsertEntityAsync(creator);
+        await _dbContext.InsertEntityAndSaveChangesAsync(creator);
 
         var spraywall = new SpraywallBuilder().SetName("Wall").Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problem = new SpraywallProblemBuilder(creator, spraywall)
             .SetName("Problem A")
             .SetDescription(_bogus.Lorem.Paragraph())
             .SetFontGrade(FontGrade.Three)
             .Build();
-        await _dbContext.InsertEntityAsync(problem);
+        await _dbContext.InsertEntityAndSaveChangesAsync(problem);
 
         var handler = new SearchSpraywallProblemsQueryHandler(_dbContext, _currentUserService, _imageService);
 
@@ -206,20 +206,20 @@ public class SearchSpraywallProblemsTest
             .SetEmail(_bogus.Internet.Email())
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user1);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user1);
 
         var user2 = new UserBuilder()
             .SetUsername(_bogus.Internet.UserName())
             .SetEmail(_bogus.Internet.Email())
             .SetRoles(AuthorizationRoles.Editor)
             .Build();
-        await _dbContext.InsertEntityAsync(user2);
+        await _dbContext.InsertEntityAndSaveChangesAsync(user2);
 
         var spraywall = new SpraywallBuilder()
             .SetName(_bogus.Lorem.Slug())
             .SetDescription(_bogus.Lorem.Sentence())
             .Build();
-        await _dbContext.InsertEntityAsync(spraywall);
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var problems = new List<SpraywallProblem>();
         for (var i = 0; i < 45; i++)
@@ -231,7 +231,7 @@ public class SearchSpraywallProblemsTest
                 .Build();
             problems.Add(spraywallProblem);
         }
-        await _dbContext.InsertEntitiesAsync(problems);
+        await _dbContext.InsertEntitiesAndSaveChangesAsync(problems);
 
         return (spraywall, [user1, user2], problems);
     }
