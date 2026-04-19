@@ -67,7 +67,8 @@ public class Program
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
         builder.Services.AddSingleton<IFileStorageClient, LocalFileStorageClient>();
         builder.Services.AddScoped<ISpraywallImageService, SpraywallImageService>();
-        builder.Services.AddScoped<IEmailService, NoOpEmailService>();
+        builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+        builder.Services.AddScoped<IEmailService, SmtpEmailService>();
         builder.Services.RegisterCqrsAndControllerAssemblies();
 
         var frontendOrigin = builder.Configuration["FrontendOrigin"]?.TrimEnd('/')

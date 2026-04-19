@@ -32,6 +32,7 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
     public DbSet<Bloc> Blocs { get; set; }
     public DbSet<Line> Lines { get; set; }
     public DbSet<Point> Points { get; set; }
+    public DbSet<Mail> Mails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -84,6 +85,16 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
         ValidateEntryIsNotDetached(entry);
 
         entry.Property(nameof(VersionedEntity.Version)).OriginalValue = version;
+
+        Remove(entityFromDb);
+
+        await SaveChangesAsync();
+    }
+
+    public virtual async Task RemoveEntityAndSaveAsync(EntityAuditFields entityFromDb)
+    {
+        var entry = Entry(entityFromDb);
+        ValidateEntryIsNotDetached(entry);
 
         Remove(entityFromDb);
 

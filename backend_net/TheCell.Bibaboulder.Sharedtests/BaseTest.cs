@@ -18,6 +18,7 @@ public class BaseTest : IDisposable, IAsyncLifetime
     private readonly HttpClient _client;
 
     protected readonly MockSpraywallImageService SpraywallImageService;
+    protected readonly DatabaseEmailService EmailService;
 
     protected HttpClient Client()
     {
@@ -63,6 +64,7 @@ public class BaseTest : IDisposable, IAsyncLifetime
         var serviceScope = _factory.Services.CreateScope();
         BiBaBoulderDbContext = serviceScope.ServiceProvider.GetRequiredService<BiBaBoulderDbContext>();
         SpraywallImageService = (MockSpraywallImageService)serviceScope.ServiceProvider.GetRequiredService<ISpraywallImageService>();
+        EmailService = (DatabaseEmailService)serviceScope.ServiceProvider.GetRequiredService<IEmailService>();
     }
 
     public async ValueTask InitializeAsync()

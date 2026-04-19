@@ -1,6 +1,9 @@
+using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Bogus;
+using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Model.Authorization;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
@@ -42,7 +45,9 @@ public class FeedbacksControllerTest : BaseTest
             role: AuthorizationRoles.User,
             username: user.Username);
 
-        var body = new { Feedback = _bogus.Lorem.Sentence() };
+        var feedbackText = _bogus.Lorem.Sentence();
+        var body = new { Feedback = feedbackText };
+        var timestamp = DateTime.UtcNow;
 
         var response = await client.PostAsync(
             $"{_baseUrl}/send",
@@ -50,5 +55,19 @@ public class FeedbacksControllerTest : BaseTest
             TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
+
+        Assert.Equal(1, EmailService.SendCount);
+        Assert.Equal(user.Email, EmailService.LastRecipient);
+        Assert.Contains(feedbackText, EmailService.LastBody);
+
+        var savedMail = await BiBaBoulderDbContext.Mails
+            .Where(m => m.To == user.Email)
+            .FirstOrDefaultAsync(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(savedMail);
+        Assert.Equal(user.Email, savedMail.To);
+        Assert.Contains(user.Email, savedMail.Subject);
+        Assert.Contains(feedbackText, savedMail.Body);
+        Assert.True(savedMail.SentAt > timestamp);
     }
 }

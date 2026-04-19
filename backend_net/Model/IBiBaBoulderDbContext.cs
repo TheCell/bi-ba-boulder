@@ -23,6 +23,7 @@ public interface IBiBaBoulderDbContext : IDisposable
     DbSet<Bloc> Blocs { get; set; }
     DbSet<Line> Lines { get; set; }
     DbSet<Point> Points { get; set; }
+    DbSet<Mail> Mails { get; set; }
 
     Task InsertEntityAsync(VersionedEntity entity);
 
@@ -35,6 +36,8 @@ public interface IBiBaBoulderDbContext : IDisposable
     Task UpdateEntityAsync(VersionedEntity entityFromDb, long version);
 
     Task RemoveEntityAsync(VersionedEntity entityFromDb, long version);
+
+    Task RemoveEntityAndSaveAsync(EntityAuditFields entityFromDb);
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

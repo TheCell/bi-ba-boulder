@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
 using Thecell.Bibaboulder.Spraywall.Handler;
@@ -12,13 +14,21 @@ namespace TheCell.Bibaboulder.Unittests.Spraywall;
 public class SendFeedbackTest
 {
     private readonly Mock<ICurrentUserService> _currentUserServiceMock;
-    private readonly InMemoryEmailService _emailService;
+    private readonly DatabaseEmailService _emailService;
     private readonly User _testUser;
+    private readonly IBiBaBoulderDbContext _dbContext;
+    private readonly IServiceProvider _serviceProvider;
 
     public SendFeedbackTest()
     {
         _currentUserServiceMock = new Mock<ICurrentUserService>();
-        _emailService = new InMemoryEmailService();
+        _dbContext = new DbContextMock().Build();
+
+        var services = new ServiceCollection();
+        services.AddScoped(_ => _dbContext);
+        _serviceProvider = services.BuildServiceProvider();
+
+        _emailService = new DatabaseEmailService(_serviceProvider);
         _testUser = new UserBuilder().SetEmail("feedback@test.com").Build();
         _currentUserServiceMock.Setup(s => s.GetCurrentUserOrThrowAsync()).ReturnsAsync(_testUser);
     }
