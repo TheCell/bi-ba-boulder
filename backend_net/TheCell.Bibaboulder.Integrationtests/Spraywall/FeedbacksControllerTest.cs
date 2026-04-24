@@ -60,7 +60,7 @@ public class FeedbacksControllerTest : BaseTest
         Assert.Equal(user.Email, EmailService.LastRecipient);
         Assert.Contains(feedbackText, EmailService.LastBody);
 
-        var savedMail = await BiBaBoulderDbContext.Mails
+        var savedMail = await BiBaBoulderDbContext.Emails
             .Where(m => m.To == user.Email)
             .FirstOrDefaultAsync(cancellationToken: TestContext.Current.CancellationToken);
 
