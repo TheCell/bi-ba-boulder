@@ -34,7 +34,7 @@ public class DatabaseEmailService : IEmailService
         using var scope = _serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<IBiBaBoulderDbContext>();
 
-        var mail = new Mail
+        var mail = new Email
         {
             Id = Guid.NewGuid(),
             To = to,

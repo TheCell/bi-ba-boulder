@@ -4,7 +4,7 @@ using Thecell.Bibaboulder.Model.Basics;
 
 namespace Thecell.Bibaboulder.Model.Model;
 
-public class Mail : EntityAuditFields
+public class Email : EntityAuditFields
 {
     public Guid Id { get; set; }
 

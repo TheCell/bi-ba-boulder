@@ -40,7 +40,7 @@ public class SmtpEmailService : IEmailService
         };
         message.Body = bodyBuilder.ToMessageBody();
 
-        var mail = new Mail
+        var mail = new Email
         {
             Id = Guid.NewGuid(),
             To = to,

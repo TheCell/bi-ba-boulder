@@ -17,8 +17,10 @@ public class BaseTest : IDisposable, IAsyncLifetime
 
     private readonly HttpClient _client;
 
+#pragma warning disable CA1051 // Do not declare visible instance fields
     protected readonly MockSpraywallImageService SpraywallImageService;
     protected readonly DatabaseEmailService EmailService;
+#pragma warning restore CA1051 // Do not declare visible instance fields
 
     protected HttpClient Client()
     {

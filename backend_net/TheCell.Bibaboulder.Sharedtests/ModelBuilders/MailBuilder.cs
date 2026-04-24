@@ -4,7 +4,7 @@ using Thecell.Bibaboulder.Model.Model;
 
 namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
-public class MailBuilder : BuilderBase<Mail>
+public class MailBuilder : BuilderBase<Email>
 {
     public MailBuilder() : base()
     {

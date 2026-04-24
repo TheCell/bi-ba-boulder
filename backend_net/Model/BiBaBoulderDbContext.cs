@@ -32,7 +32,7 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
     public DbSet<Bloc> Blocs { get; set; }
     public DbSet<Line> Lines { get; set; }
     public DbSet<Point> Points { get; set; }
-    public DbSet<Mail> Mails { get; set; }
+    public DbSet<Email> Emails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
