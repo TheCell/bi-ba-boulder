@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { SectorComponent } from './sector.component';
 import { BlocDto } from '@api-net/index';
 
 describe('SectorComponent', () => {
   let component: SectorComponent;
   let fixture: ComponentFixture<SectorComponent>;
-  let mockActivatedRoute: Partial<ActivatedRoute>;
+  let mockActivatedRoute: { snapshot: Partial<ActivatedRouteSnapshot> };
 
   const mockBlocs: BlocDto[] = [
     {
@@ -31,7 +31,7 @@ describe('SectorComponent', () => {
     mockActivatedRoute = {
       snapshot: {
         data: { blocs: mockBlocs }
-      } as any
+      }
     };
 
     await TestBed.configureTestingModule({
