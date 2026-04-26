@@ -106,7 +106,7 @@ this.form = new FormGroup({
 });
 ``
 
-**API Calls**: Use generated services from `src/app/api/`:
+**API Calls**: Use generated services from `src/app/api-net/`:
 ``typescript
 import { SpraywallsService, SpraywallDto } from '@api-net/index';
 constructor(private spraywallsService: SpraywallsService) {}

@@ -1,4 +1,4 @@
-This project is porting the symfony project over to .net
+This is the .NET 10 backend for Bi Ba Boulder using EF Core and CQRS pattern.
 
 # Setup
 ```bash
