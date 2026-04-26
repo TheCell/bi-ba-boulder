@@ -18,7 +18,7 @@ public static class SpraywallProblemMapping
             FontGrade = problem.FontGrade,
             CreatedById = problem.CreatorId,
             CreatedByName = createdByName,
-            CreatedDate = problem.CreatedDate.ToString("u"),
+            CreatedDate = problem.CreatedDate.ToString("o", System.Globalization.CultureInfo.InvariantCulture),
             Description = problem.Description,
             Metadata = new SpraywallProblemMetadataDto
             {
