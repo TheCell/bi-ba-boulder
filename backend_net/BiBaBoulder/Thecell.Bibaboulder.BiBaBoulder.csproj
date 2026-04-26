@@ -30,6 +30,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -53,6 +57,7 @@
     <ProjectReference Include="..\Thecell.Bibaboulder.Common\Thecell.Bibaboulder.Common.csproj" />
     <ProjectReference Include="..\Thecell.Bibaboulder.Outdoor\Thecell.Bibaboulder.Outdoor.csproj" />
     <ProjectReference Include="..\Thecell.Bibaboulder.Spraywall\Thecell.Bibaboulder.Spraywall.csproj" />
+    <ProjectReference Include="..\Migrations\Thecell.Bibaboulder.Migrations.csproj" />
   </ItemGroup>
 
 </Project>
