@@ -166,6 +166,12 @@ jobs:
       - name: Install EF Core tools
         run: dotnet tool install --global dotnet-ef
 
+      - name: Restore dependencies
+        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+
+      - name: Build solution
+        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --no-restore --configuration Release
+
       - name: Run migrations
         run: dotnet ef database update --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --connection "${{ secrets.MSSQL_CONNECTION_STRING }}"
         env:
