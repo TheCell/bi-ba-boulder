@@ -60,7 +60,12 @@ jobs:
       - name: Install SkiaSharp dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libfontconfig1
+          sudo apt-get install -y \
+            libfontconfig1 \
+            libfreetype6 \
+            libharfbuzz0b \
+            libgl1-mesa-glx \
+            libglib2.0-0
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
