@@ -64,7 +64,7 @@ jobs:
             libfontconfig1 \
             libfreetype6 \
             libharfbuzz0b \
-            libgl1-mesa-glx \
+            libgl1 \
             libglib2.0-0
 
       - name: Setup .NET 10
