@@ -108,7 +108,7 @@ public class SpraywallsControllerTest : BaseTest
         SpraywallProblemAssertion.Assert(body, result);
         Assert.Equal(user.Id, result.CreatedById);
         Assert.Equal(user.Username, result.CreatedByName);
-        Assert.True(DateTime.Parse(result.CreatedDate, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind) >= beforeSend);
+        Assert.True(DateTime.Parse(result.CreatedDate, System.Globalization.CultureInfo.InvariantCulture) >= beforeSend);
         Assert.True(result.Metadata.CanDelete);
         Assert.True(result.Metadata.CanEdit);
     }
