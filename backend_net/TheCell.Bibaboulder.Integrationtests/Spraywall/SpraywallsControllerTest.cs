@@ -95,6 +95,7 @@ public class SpraywallsControllerTest : BaseTest
         };
 
         var beforeSend = DateTime.UtcNow;
+        Console.WriteLine($"Before sending request: {beforeSend:u}");
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
         var response = await client.PutAsync(
             $"{_baseUrl}/{spraywall.Id}/problem",
@@ -108,6 +109,7 @@ public class SpraywallsControllerTest : BaseTest
         SpraywallProblemAssertion.Assert(body, result);
         Assert.Equal(user.Id, result.CreatedById);
         Assert.Equal(user.Username, result.CreatedByName);
+        Console.WriteLine($"Result request: {result.CreatedDate:u}");
         Assert.True(DateTime.Parse(result.CreatedDate, System.Globalization.CultureInfo.InvariantCulture) >= beforeSend);
         Assert.True(result.Metadata.CanDelete);
         Assert.True(result.Metadata.CanEdit);
