@@ -1,4 +1,3 @@
-import { inject } from '@angular/core';
 import type { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot } from '@angular/router';
 import { DebugLoader } from '../../background-loading/debug-loader';
 

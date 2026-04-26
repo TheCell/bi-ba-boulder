@@ -116,6 +116,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
 
       - name: Restore dependencies
         run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
@@ -138,6 +139,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
 
       - name: Install EF Core tools
         run: dotnet tool install --global dotnet-ef

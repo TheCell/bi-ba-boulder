@@ -8,8 +8,6 @@ import { ToastService } from '../../toast-container/toast.service';
 import { CloseModalEvent } from '../modal/close-modal-event';
 import { BffAuthService } from 'src/app/auth/bff-auth.service';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-// interface IRegistrationForm extends PostRegisterRequest { }
 interface IRegistrationForm {
   username: string;
   email: string;
