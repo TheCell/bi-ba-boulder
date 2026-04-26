@@ -24,9 +24,56 @@ env:
   # BUILD_PATH: subfolder
 
 jobs:
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ env.BUILD_PATH }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Run tests
+        run: npm test -- --watch=false --browsers=ChromeHeadless
+        working-directory: ${{ env.BUILD_PATH }}
+
+  test-backend:
+    name: Test .NET Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+
+      - name: Build
+        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet test backend_net/TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj --configuration Release --no-build --verbosity normal
+
+      - name: Run integration tests
+        run: dotnet test backend_net/TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj --configuration Release --no-build --verbosity normal
+
   build:
     name: Build Frontend
     runs-on: ubuntu-latest
+    needs: [test-frontend]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,7 +118,7 @@ jobs:
           name: Frontend_Build
 
   pack_backend:
-    name: Pack backend
+    name: Pack PHP backend (legacy)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -88,9 +135,63 @@ jobs:
           name: Backend_Build
           path: ${{ env.BUILD_PATH }}/backend
 
+  build-dotnet-backend:
+    name: Build .NET Backend
+    runs-on: ubuntu-latest
+    needs: [test-backend]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+
+      - name: Build solution
+        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --configuration Release --output ./publish --no-build
+
+      - name: Copy web.config to publish directory
+        run: cp backend_net/BiBaBoulder/web.config ./publish/
+
+      - name: Upload .NET artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DotNet_Backend_Build
+          path: ./publish
+
+  run-migrations:
+    name: Run EF Core Migrations
+    runs-on: ubuntu-latest
+    needs: [build-dotnet-backend]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Run migrations
+        run: dotnet ef database update --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --connection "${{ secrets.MSSQL_CONNECTION_STRING }}"
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
+
 
   backend-deploy:
-    name: Deploy Backend to FTP
+    name: Deploy PHP Backend to FTP (legacy)
     runs-on: ubuntu-latest
     permissions:
         contents: write
@@ -139,13 +240,93 @@ jobs:
         port: 21
         local-dir: ./
 
+  dotnet-backend-deploy:
+    name: Deploy .NET Backend to FTP
+    runs-on: ubuntu-latest
+    permissions:
+        contents: write
+
+    needs: [build-dotnet-backend, run-migrations]
+
+    steps:
+    - name: Checkout (for fileshare directory)
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: |
+          fileshare
+
+    - name: Download .NET Backend artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: DotNet_Backend_Build
+        path: ./backend
+
+    - name: Create appsettings.Production.json with secrets
+      run: |
+        cat > ./backend/appsettings.Production.json << 'EOF'
+        {
+          "Logging": {
+            "LogLevel": {
+              "Default": "Information",
+              "Microsoft.AspNetCore": "Warning",
+              "Microsoft.EntityFrameworkCore": "Warning"
+            }
+          },
+          "ApiUrl": "https://api.bibaboulder.org",
+          "ConnectionStrings": {
+            "BiBaBoulderDatabase": "${{ secrets.MSSQL_CONNECTION_STRING }}"
+          },
+          "Oidc": {
+            "Authority": "https://accounts.google.com",
+            "ClientId": "${{ secrets.OIDC_CLIENT_ID }}",
+            "ClientSecret": "${{ secrets.OIDC_CLIENT_SECRET }}"
+          },
+          "FrontendOrigin": "https://bibaboulder.org",
+          "FileStorageBasePath": "C:\\inetpub\\vhosts\\api.bibaboulder.org\\fileshare",
+          "Email": {
+            "Host": "${{ secrets.SMTP_HOST }}",
+            "Port": ${{ secrets.SMTP_PORT }},
+            "UseSsl": false,
+            "UseStartTls": true,
+            "Username": "${{ secrets.SMTP_USERNAME }}",
+            "Password": "${{ secrets.SMTP_PASSWORD }}",
+            "FromAddress": "noreply@bibaboulder.org",
+            "FromName": "Bi Ba Boulder"
+          },
+          "AllowedHosts": "*"
+        }
+        EOF
+
+    - run: ls -R
+
+    - name: Deploy backend to FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: api.bibaboulder.org
+        username: ${{ secrets.FTP_USER_BACKEND }}
+        password: ${{ secrets.FTP_PASSWORD_BACKEND }}
+        protocol: ftp
+        port: 21
+        local-dir: ./backend/
+        
+    - name: Deploy fileshare to FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: api.bibaboulder.org
+        username: ${{ secrets.FTP_USER_BACKEND }}
+        password: ${{ secrets.FTP_PASSWORD_BACKEND }}
+        protocol: ftp
+        port: 21
+        local-dir: ./fileshare/
+        server-dir: /fileshare/
+
   web-deploy:
     name: Deploy Frontend to FTP
     runs-on: ubuntu-latest
     permissions:
         contents: write
 
-    needs: [build, pack_backend]
+    needs: [build, dotnet-backend-deploy]
 
     steps:
     - name: Download Frontend artifact
@@ -163,12 +344,12 @@ jobs:
 
     - run: ls -R
 
-    - name: Sync files
+    - name: Sync files to bibaboulder.org
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: bibaboulder.thecell.eu
-        username: ${{ secrets.FTPUSER }}
-        password: ${{ secrets.FTPPASSWORD }}
+        server: bibaboulder.org
+        username: ${{ secrets.FTP_USER_FRONTEND }}
+        password: ${{ secrets.FTP_PASSWORD_FRONTEND }}
         protocol: ftp
         port: 21
         local-dir: ./

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Thecell.Bibaboulder.BiBaBoulder.Extensions;
 using Thecell.Bibaboulder.BiBaBoulder.Middleware;
@@ -32,6 +34,7 @@ public class Program
         Configuration = configuration;
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1502:Avoid excessive complexity", Justification = "Main method handles application bootstrapping")]
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -70,6 +73,7 @@ public class Program
         builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
         builder.Services.AddScoped<IEmailService, SmtpEmailService>();
         builder.Services.RegisterCqrsAndControllerAssemblies();
+        builder.Services.AddHealthChecks();
 
         var frontendOrigin = builder.Configuration["FrontendOrigin"]?.TrimEnd('/')
             ?? throw new InvalidOperationException("FrontendOrigin is not configured in appsettings.");
@@ -221,7 +225,21 @@ public class Program
         app.UseMiddleware<AntiforgeryMiddleware>();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+        // Static file serving for 3D models and other assets
+        var fileStoragePath = builder.Configuration["FileStorageBasePath"];
+        if (!string.IsNullOrEmpty(fileStoragePath) && Directory.Exists(fileStoragePath))
+        {
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(fileStoragePath),
+                RequestPath = "/fileshare",
+                ServeUnknownFileTypes = true,
+                DefaultContentType = "application/octet-stream"
+            });
+        }
+
         app.MapControllers();
+        app.MapHealthChecks("/health");
 
         app.Run();
     }
