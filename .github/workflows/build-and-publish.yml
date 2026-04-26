@@ -117,24 +117,6 @@ jobs:
           path: ${{ env.BUILD_PATH }}/dist/bibaboulder/browser
           name: Frontend_Build
 
-  pack_backend:
-    name: Pack PHP backend (legacy)
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        php-versions: ["8.3"]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Backend_Build
-          path: ${{ env.BUILD_PATH }}/backend
-
   build-dotnet-backend:
     name: Build .NET Backend
     runs-on: ubuntu-latest
@@ -188,57 +170,6 @@ jobs:
         run: dotnet ef database update --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --connection "${{ secrets.MSSQL_CONNECTION_STRING }}"
         env:
           ASPNETCORE_ENVIRONMENT: Production
-
-
-  backend-deploy:
-    name: Deploy PHP Backend to FTP (legacy)
-    runs-on: ubuntu-latest
-    permissions:
-        contents: write
-
-    needs: [pack_backend, build]
-
-    steps:
-    - name: Download Backend artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: Backend_Build
-
-    # - name: Create .env file
-    #   run: |
-    #     echo "APP_ENV=prod" > .env
-
-    - name: Create .env.local.php file
-      run: |
-        echo "<?php" >> .env.local.php
-        echo "// This file is generated in the deploy script " >> .env.local.php
-        echo "" >> .env.local.php
-        echo "return array (" >> .env.local.php
-        echo "  'APP_ENV' => 'prod'," >> .env.local.php
-        echo "  'SYMFONY_DOTENV_PATH' => './.env'," >> .env.local.php
-        echo "  'APP_SECRET' => '${{ secrets.APP_SECRET }}'," >> .env.local.php
-        echo "  'DATABASE_URL' => '${{ secrets.DATABASE_URL }}'," >> .env.local.php
-        echo "  'TESTVAR' => '${{ secrets.TESTVAR }}'," >> .env.local.php
-        echo "  'SENDEREMAIL' => '${{ secrets.SENDEREMAIL }}'," >> .env.local.php
-        echo "  'ADMINMAIL' => '${{ secrets.ADMINMAIL }}'," >> .env.local.php
-        echo "  'JWT_SECRET_KEY' => '%kernel.project_dir%/config/jwt/private.pem'," >> .env.local.php
-        echo "  'JWT_PUBLIC_KEY' => '%kernel.project_dir%/config/jwt/public.pem'," >> .env.local.php
-        echo "  'JWT_PASSPHRASE' => '${{ secrets.JWT_PASSPHRASE }}'," >> .env.local.php
-        echo "  'CORS_ALLOW_ORIGIN' => '^https?://(bibaboulder.thecell.eu|boulderapi.thecell.eu|localhost|127\.0\.0\.1)(:[0-9]+)?$'," >> .env.local.php
-        echo ");" >> .env.local.php
-        echo "?>" >> .env.local.php
-
-    - run: ls -R
-
-    - name: Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: boulderapi.thecell.eu
-        username: ${{ secrets.API_FTPUSER }}
-        password: ${{ secrets.API_FTPPASSWORD }}
-        protocol: ftp
-        port: 21
-        local-dir: ./
 
   dotnet-backend-deploy:
     name: Deploy .NET Backend to FTP
