@@ -1,0 +1,11 @@
+generatorName: typescript-angular
+inputSpec: backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.json
+additionalProperties:
+  ngVersion: 21
+  providedIn: root
+  withInterfaces: true
+  supportsES6: true
+  useSingleRequestParameter: false
+  enumPropertyNaming: original
+  fileNaming: camelCase
+  arrayBracketNotation: true

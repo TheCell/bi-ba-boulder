@@ -5,6 +5,7 @@ const angular = require("angular-eslint");
 
 module.exports = tseslint.config(
   {
+    ignores: ["src/app/api-net/**"], // ignore generated API client code for now
     files: ["**/*.ts"],
     extends: [
       eslint.configs.recommended,

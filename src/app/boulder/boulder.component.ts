@@ -4,7 +4,7 @@ import { BoulderLegendComponent } from '../components/boulder-legend/boulder-leg
 import { BoulderRenderComponent } from '../renderer/boulder-render/boulder-render.component';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
-import { BlocDto } from '@api/index';
+import { BlocDto } from '@api-net/index';
 import { BoulderLine } from '../interfaces/boulder-line';
 import { ResolutionLevel } from '../interfaces/resolution-level';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
@@ -39,10 +39,10 @@ export class BoulderComponent implements OnDestroy {
   private resolutionToLoad?: ResolutionLevel;
 
   private boulderLoaderService = inject(BoulderLoaderService);
+  private activatedRoute = inject(ActivatedRoute);
+  private changeDetectorRef = inject(ChangeDetectorRef);
 
-  public constructor(
-    private activatedRoute: ActivatedRoute,
-    private changeDetectorRef: ChangeDetectorRef) {
+  public constructor() {
       this.bloc = this.activatedRoute.snapshot.data['bloc'];
 
       this.subscription.add(this.loadNextResolution.subscribe({

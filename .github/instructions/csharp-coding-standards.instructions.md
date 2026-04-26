@@ -1,0 +1,4 @@
+- Always use file based namespaces in C#. For example, if a file is located at `Model/Model/User.cs`, the namespace should be `Model.Model`. This helps maintain a clear and organized project structure.
+- Use CQRS pattern for organizing your C# code, separating commands (actions that change state) from queries (actions that retrieve data).
+- All handlers must be async and return Task or Task<T> to ensure non-blocking operations.
+- Use the required modifier for non-nullable properties in C# 11 and later to enforce

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { DaoneRenderTestComponent } from '../daone-render-test/daone-render-test.component';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
@@ -23,6 +23,12 @@ import { HttpClient } from '@angular/common/http';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DaoneTestComponent implements OnDestroy {
+  private boulderLoaderService = inject(BoulderLoaderService);
+  private boulderProblemsService = inject(BoulderProblemsService);
+  private domSanitizer = inject(DomSanitizer);
+  private changeDetectorRef = inject(ChangeDetectorRef);
+  private activatedRoute = inject(ActivatedRoute);
+  private httpClient = inject(HttpClient);
   public title: string;
   public boulderImageUrl: SafeStyle;
   public image: string;
@@ -35,13 +41,7 @@ export class DaoneTestComponent implements OnDestroy {
   private subscription = new Subscription();
   private number: string | null;
 
-  public constructor(
-    private boulderLoaderService: BoulderLoaderService,
-    private boulderProblemsService: BoulderProblemsService,
-    private domSanitizer: DomSanitizer,
-    private changeDetectorRef: ChangeDetectorRef,
-    private activatedRoute: ActivatedRoute,
-    private httpClient: HttpClient) {
+  public constructor() {
     this.title = 'test';
     this.image = './test-images/Bloc_5.jpg';
     this.boulderImageUrl = this.domSanitizer.bypassSecurityTrustStyle('url(./test-images/Bloc_5.jpg)');

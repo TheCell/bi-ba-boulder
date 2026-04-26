@@ -1,0 +1,204 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches: 
+      - main
+      - develop
+      - deploy
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+env:
+  BUILD_PATH: "."
+
+jobs:
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ env.BUILD_PATH }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Run linter
+        run: npm run lint
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Run tests
+        run: npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage
+          path: ${{ env.BUILD_PATH }}/coverage
+
+  test-backend:
+    name: Test .NET Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install SkiaSharp dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libfontconfig1 \
+            libfreetype6 \
+            libharfbuzz0b \
+            libgl1 \
+            libglib2.0-0 \
+            libx11-6 \
+            libice6 \
+            libsm6
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Restore dependencies
+        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --runtime linux-x64
+
+      - name: Build
+        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet test backend_net/TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+
+      - name: Run integration tests
+        run: dotnet test backend_net/TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-coverage
+          path: backend_net/**/TestResults/**/coverage.cobertura.xml
+
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    needs: [test-frontend]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ env.BUILD_PATH }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ${{ env.BUILD_PATH }}
+
+      - name: Build Frontend
+        run: npm run buildpipeline
+        working-directory: ${{ env.BUILD_PATH }}
+
+  build-backend:
+    name: Build .NET Backend
+    runs-on: ubuntu-latest
+    needs: [test-backend]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Restore dependencies
+        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+
+      - name: Build solution
+        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --configuration Release --output ./publish --no-build
+
+  validate-migrations:
+    name: Validate EF Core Migrations
+    runs-on: ubuntu-latest
+    needs: [test-backend]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Restore dependencies
+        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+
+      - name: Build solution
+        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --no-restore
+
+      - name: Build Migrations project
+        run: dotnet build backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --no-restore
+
+      - name: Check for pending model changes
+        run: |
+          dotnet ef migrations has-pending-model-changes --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj
+          if [ $? -eq 0 ]; then
+            echo "✅ No pending model changes detected"
+          else
+            echo "⚠️ Warning: Pending model changes detected. Consider creating a migration."
+            exit 0
+          fi
+
+  pr-summary:
+    name: PR Validation Summary
+    runs-on: ubuntu-latest
+    needs: [test-frontend, test-backend, build-frontend, build-backend, validate-migrations]
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.test-frontend.result }}" != "success" ]; then
+            echo "❌ Frontend tests failed"
+            exit 1
+          fi
+          if [ "${{ needs.test-backend.result }}" != "success" ]; then
+            echo "❌ Backend tests failed"
+            exit 1
+          fi
+          if [ "${{ needs.build-frontend.result }}" != "success" ]; then
+            echo "❌ Frontend build failed"
+            exit 1
+          fi
+          if [ "${{ needs.build-backend.result }}" != "success" ]; then
+            echo "❌ Backend build failed"
+            exit 1
+          fi
+          echo "✅ All checks passed successfully!"

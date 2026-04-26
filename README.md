@@ -8,7 +8,7 @@
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue.svg
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
-Bi Ba Boulder © 2025 by Simon Hischier is licensed under CC BY-NC-SA 4.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/ 
+Bi Ba Boulder © 2026 by Simon Hischier is licensed under CC BY-NC-SA 4.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/ 
 
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
@@ -37,8 +37,8 @@ The next todos:
 [x] custom highlighting texture   
 [x] build highlight texture optimizer   
 [] streamline spraywall + rgb texture download not hardcoded   
-[] Refresh token [https://github.com/markitosgv/JWTRefreshTokenBundle](https://github.com/markitosgv/JWTRefreshTokenBundle)   
-[] logout   
+[] Refresh token   
+[-] logout   
 [-] rate limiting   
 [x] upload only while logged in and verified (controller blocks, frontend still shows)   
 [] Version Number   
@@ -50,8 +50,8 @@ The next todos:
 [x] reset Create Spraywall after saving   
 [] split production and develop   
 [-] revert und redo function   
-[] don't rerender when not in active use   
-[] fix crashes on mobile   
+[x] don't rerender when not in active use   
+[?] fix crashes on mobile   
 [] predefined camera positions and reference character position   
 [] check spraywall upload for 1 start 1 top hold   
 [] make colors grayscale and changeable in shader   
@@ -64,9 +64,8 @@ Generate interface etc. from json: [https://app.quicktype.io/](https://app.quick
 to simulate the database locally I use XAMPP
 
 # The Backend
-The Backend is build with PHP, MySQL   
-I'm using Symfony for the Backend and Composer to create the Files etc.  
-Check out the Readme in the backend folder to set it up
+The Backend is built with .NET 10 and MSSQL using EF Core.  
+Check out the Readme in the backend_net folder for more information.
 
 # Setup Fileshare
 1. Open an elevated PowerShell
@@ -75,9 +74,9 @@ Check out the Readme in the backend folder to set it up
 4. Now you can download the files with ``http://localhost/boulders/...`` (example ``http://localhost/boulders/bimano/bimano_high.glb``)
 
 # Starting the Devtools
-1. start xampp
+1. start xampp (for file serving)
 2. npm start
-3. in a second terminal `cd .\backend\symfony-project\` and then `symfony server:start`
+3. in a second terminal `cd backend_net\BiBaBoulder` and then `dotnet run`
 
 # Deployment
 The deployment works over Github Actions  
@@ -86,3 +85,18 @@ The .htaccess won't be copied you have to do that on your own.
 # Postman
 I've added a Postman collection to test some endpoints.   
 For emails I use Papercut [https://www.papercut-smtp.com/](https://www.papercut-smtp.com/)
+
+# Generate the API
+We could generate the API on the fly by changing the input line in `openapi-generator-net.yaml` to `inputSpec: http://localhost:5088/openapi/v1.json` but I prefer the written json spec to see changes whenever I start the backend.
+
+1. start the backend to generate the new `backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.json`
+```bash
+cd C:\dev\git\bi-ba-boulder\backend_net\BiBaBoulder
+dotnet run
+```
+2. Check the OpenApi here during runtime: `http://localhost:5088/openapi/v1.json`
+3. run the generate npm package
+```bash
+cd C:\dev\git\bi-ba-boulder
+npm run generate:api-net
+```

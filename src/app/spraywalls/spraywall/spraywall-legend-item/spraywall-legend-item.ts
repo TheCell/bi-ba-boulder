@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { SpraywallProblemDto } from '@api/index';
+import { SpraywallProblemDto } from '@api-net/index';
 import { FontGradePipePipe } from 'src/app/core/pipes/font-grade-pipe-pipe';
 
 @Component({

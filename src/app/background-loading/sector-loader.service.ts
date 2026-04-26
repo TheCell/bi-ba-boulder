@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { BoulderSector } from '../interfaces/boulder-sector';
@@ -7,9 +6,6 @@ import { BoulderSector } from '../interfaces/boulder-sector';
   providedIn: 'root'
 })
 export class SectorLoaderService {
-
-  public constructor(private http: HttpClient) { }
-
   public getTestSector(id: string): Observable<BoulderSector> {
     console.log(id);
 

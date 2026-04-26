@@ -1,5 +1,5 @@
 
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -22,6 +22,7 @@ import { BoulderLine } from '../interfaces/boulder-line';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DaoneRenderTestComponent implements AfterViewInit {
+  private el = inject(ElementRef);
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
@@ -54,7 +55,7 @@ export class DaoneRenderTestComponent implements AfterViewInit {
 
   private currentGltf?: GLTF;
 
-  public constructor(private el: ElementRef) {
+  public constructor() {
     effect(() => {
       const rawModel = this.rawModel();
       if (rawModel !== this.proccessedRawModel) {

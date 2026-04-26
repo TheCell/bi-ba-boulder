@@ -3,15 +3,15 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { Configuration, ConfigurationParameters } from './api';
+import { Configuration, ConfigurationParameters } from './api-net';
 import { environment } from '../environments/environment';
 import { errorHandlerInterceptor } from './core/interceptors/error-handler-interceptor';
-import { loggedInInterceptor } from './core/interceptors/logged-in-interceptor';
+import { csrfInterceptor } from './core/interceptors/csrf-interceptor';
 
 function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.apiURL,
-    withCredentials: false
+    withCredentials: true
   }
   return new Configuration(params);
 }
@@ -29,7 +29,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withFetch(),
-      withInterceptors([errorHandlerInterceptor, loggedInInterceptor])
+      withInterceptors([errorHandlerInterceptor, csrfInterceptor])
     )
   ]
 };

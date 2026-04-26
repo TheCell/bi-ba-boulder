@@ -3,6 +3,6 @@ export interface SpraywallSaveData {
     spraywallId: string;
     name: string;
     description?: string | null;
-    fontGrade?: number | null;
+    fontGrade?: number;
     existingId?: string;
 }

@@ -10,7 +10,7 @@ import { holdColorOptions, TypeAndColor } from '../common/spraywall-hold-types';
 import { ColorAndIndex } from '../common/spraywall-color-and-index';
 import { getImageDataFromTexture, htmlImageElementTextureToDataTexture } from '../common/util';
 import { Subject } from 'rxjs';
-import { SpraywallProblemDto } from '@api/index';
+import { SpraywallProblemDto } from '@api-net/index';
 
 @Component({
   selector: 'app-spraywall-editor-renderer',

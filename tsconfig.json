@@ -20,7 +20,7 @@
     "module": "ES2022",
     "baseUrl": "./",
     "paths": {
-      "@api/*": ["src/app/api/*"]
+      "@api-net/*": ["src/app/api-net/*"]
     }
   },
   "angularCompilerOptions": {

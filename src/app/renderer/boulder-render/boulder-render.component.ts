@@ -12,7 +12,7 @@ import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { ActivatedRoute } from '@angular/router';
-import { SpraywallProblemDto } from '@api/index';
+import { SpraywallProblemDto } from '@api-net/index';
 
 @Component({
   selector: 'app-boulder-render',
@@ -271,7 +271,8 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     image.onerror = (ev) => {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
     }
-    image.src = 'data:image/png;base64,' + base64String;
+
+    image.src = base64String;
   }
 
   private setupHighlightTexture(): void {
