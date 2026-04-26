@@ -37,7 +37,7 @@ The next todos:
 [x] custom highlighting texture   
 [x] build highlight texture optimizer   
 [] streamline spraywall + rgb texture download not hardcoded   
-[] Refresh token [https://github.com/markitosgv/JWTRefreshTokenBundle](https://github.com/markitosgv/JWTRefreshTokenBundle)   
+[] Refresh token   
 [-] logout   
 [-] rate limiting   
 [x] upload only while logged in and verified (controller blocks, frontend still shows)   
@@ -64,9 +64,8 @@ Generate interface etc. from json: [https://app.quicktype.io/](https://app.quick
 to simulate the database locally I use XAMPP
 
 # The Backend
-The Backend is build with PHP, MySQL   
-I'm using Symfony for the Backend and Composer to create the Files etc.  
-Check out the Readme in the backend folder to set it up
+The Backend is built with .NET 10 and MSSQL using EF Core.  
+Check out the Readme in the backend_net folder for more information.
 
 # Setup Fileshare
 1. Open an elevated PowerShell
@@ -75,9 +74,9 @@ Check out the Readme in the backend folder to set it up
 4. Now you can download the files with ``http://localhost/boulders/...`` (example ``http://localhost/boulders/bimano/bimano_high.glb``)
 
 # Starting the Devtools
-1. start xampp
+1. start xampp (for file serving)
 2. npm start
-3. in a second terminal `cd .\backend\symfony-project\` and then `symfony server:start`
+3. in a second terminal `cd backend_net\BiBaBoulder` and then `dotnet run`
 
 # Deployment
 The deployment works over Github Actions  

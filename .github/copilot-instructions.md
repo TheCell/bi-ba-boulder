@@ -4,8 +4,7 @@
 **Bouldering App**: 3D web application for visualizing and managing bouldering routes in climbing gyms. Features include route creation, 3D model rendering with LOD (Level of Detail), user authentication, and real-time 3D interaction.
 
 **Tech Stack**:
-- **Legacy Backend**: PHP 8+ with Symfony 6, MySQL/MSSQL, Doctrine ORM, JWT auth via `lexik/jwt-authentication-bundle`
-- **New Backend**: .NET 10 with EF Core, MSSQL, CQRS pattern (in migration)
+- **Backend**: .NET 10 with EF Core, MSSQL, CQRS pattern
 - **Frontend**: Angular 21+ standalone components, Three.js for 3D rendering, TypeScript strict mode
 - **Build**: Vite for dev server, GitHub Actions for CI/CD
 
@@ -16,10 +15,9 @@
 ### Local Development Setup
 ``powershell
 # Start all development services
-1. Start XAMPP (for MySQL/file serving)
+1. Start XAMPP (for file serving)
 2. npm start                                    # Angular dev server (port 4200)
-3. cd backend; symfony server:start             # Symfony API (port 8000)
-4. (Optional) cd backend_net; dotnet run        # .NET API
+3. cd backend_net/BiBaBoulder; dotnet run       # .NET API (port 5088)
 ``
 
 ### Fileshare Symlink (3D Assets)
@@ -30,31 +28,21 @@ New-Item -ItemType SymbolicLink -Path C:\xampp\htdocs\boulders -Target C:\dev\Gi
 ``
 
 ### API Generation Workflow
-Frontend API clients are **auto-generated** from Symfony OpenAPI spec:
+Frontend API clients are **auto-generated** from .NET OpenAPI spec:
 ``bash
-# 1. Start Symfony server (generates OpenAPI spec at /api/doc.json)
+# 1. Start .NET server (generates OpenAPI spec at /openapi/v1.json)
 # 2. Generate TypeScript clients:
-npm run generate:api   # Uses openapi-generator-cli 7.9.0
-# Output: src/app/api/* (DO NOT manually edit these files)
+npm run generate:api-net   # Uses openapi-generator-cli
+# Output: src/app/api-net/* (DO NOT manually edit these files)
 ``
 
 ### Database Migrations
-**Symfony**:
-``bash
-cd backend
-symfony console doctrine:database:create           # First time only
-symfony console make:migration                     # Generate migration
-symfony console doctrine:migrations:migrate        # Apply migration
-symfony console doctrine:migrations:status         # Check status
-``
-
-**.NET**
-``bash
-dotnet build backend_net/Bibaboulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release    # Ensure build succeeds
-``
-
 **EF Core (.NET)**:
 ``bash
+# Ensure build succeeds first
+dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release
+
+# Generate and apply migrations
 cd backend_net/Migrations
 dotnet ef migrations add MigrationName
 dotnet ef database update
@@ -69,10 +57,9 @@ GitHub Actions workflow: `.github/workflows/build-and-publish.yml` handles FTP d
 
 ## Architecture & Data Flow
 
-### Backend Migration Status
-- **Active**: Symfony backend (`backend/`) serving all endpoints
-- **In Progress**: .NET backend (`backend_net/`) - porting to CQRS with Command/Query handlers
-- .NET is using MSSQL, rebuilding the DB and porting the data from MSSQL once with EF Core migrations.
+### Backend Architecture
+- **Active**: .NET backend (`backend_net/`) serving all endpoints with CQRS pattern
+- .NET uses MSSQL with EF Core migrations
 
 ### 3D Rendering Pipeline
 ``
@@ -85,20 +72,13 @@ User Request  BoulderLoaderService  HTTP fetch GLB
 
 ### Key Directories
 ``
-backend/src/
-   Controller/      # Symfony REST endpoints
-   Entity/          # Doctrine ORM entities (DB schema)
-   DTO/             # Data Transfer Objects for API responses
-   Repository/      # DB query methods
-   Security/        # JWT auth, email verification
-
 backend_net/
    BiBaBoulder/Controllers/   # ASP.NET controllers (CQRS)
    Model/                     # EF Core entities
    Migrations/                # EF migrations
 
 src/app/
-   api/             #  Auto-generated OpenAPI clients (DO NOT EDIT)
+   api-net/         # Auto-generated OpenAPI clients (DO NOT EDIT)
    renderer/        # Three.js scene management
    spraywalls/      # Spraywall feature components
    auth/            # Login/JWT handling
@@ -138,25 +118,6 @@ constructor(private spraywallsService: SpraywallsService) {}
 - Implement `AfterViewInit` for canvas initialization
 - Progressive LOD loading via `BoulderLoaderService.getUrl()`
 
-### Backend (Symfony PHP)
-
-**Controllers**:
-- Extend `AbstractController`, use `#[Route('/api/...')]`
-- **Always** return DTOs, never raw entities
-- OpenAPI annotations: `#[OA\Response]`, `#[OA\RequestBody]`
-``php
-#[Route('/api/spraywalls', methods: ['GET'])]
-#[OA\Response(response: 200, content: new OA\JsonContent(type: 'array', items: new Model(type: SpraywallDto::class)))]
-public function index(): JsonResponse {
-    return $this->json($this->spraywallRepository->findAllAsDto());
-}
-``
-
-**Entities**:
-- Doctrine annotations/attributes for ORM mapping
-- Generate via: `symfony console make:entity`
-- Use UUIDs for primary keys (see existing patterns)
-
 ### Backend (.NET CQRS Pattern)
 
 **Controllers** (see detailed rules in `.github/chatmodes/copilot-instructions.md`):
@@ -183,17 +144,8 @@ public async Task<Guid> GetDossierId([FromQuery] Guid? applicationId) {
 3. **Email Testing**: Use Papercut SMTP (https://www.papercut-smtp.com/) locally
 4. **Postman Collection**: Available in `Postman/` folder for API testing
 5. **.htaccess**: Not auto-deployed via GitHub Actions - manual deployment required
-6. **XAMPP PHP Extensions**: Enable `gd2`, `openssl`, `sodium` in `xampp/php/php.ini`
-7. **JWT Setup**: Run `symfony console lexik:jwt:generate-keypair` and set passphrase in `.env.local`
 
 ## Testing & Debugging
-
-**Symfony Debug Commands**:
-``bash
-symfony console debug:router              # List all routes
-symfony console debug:config security     # Security config
-symfony console cache:clear               # Clear cache
-``
 
 **NPM Scripts**:
 ``json
