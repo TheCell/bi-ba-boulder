@@ -39,10 +39,10 @@ export class BoulderComponent implements OnDestroy {
   private resolutionToLoad?: ResolutionLevel;
 
   private boulderLoaderService = inject(BoulderLoaderService);
+  private activatedRoute = inject(ActivatedRoute);
+  private changeDetectorRef = inject(ChangeDetectorRef);
 
-  public constructor(
-    private activatedRoute: ActivatedRoute,
-    private changeDetectorRef: ChangeDetectorRef) {
+  public constructor() {
       this.bloc = this.activatedRoute.snapshot.data['bloc'];
 
       this.subscription.add(this.loadNextResolution.subscribe({

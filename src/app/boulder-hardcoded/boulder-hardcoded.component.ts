@@ -1,5 +1,5 @@
 
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { BoulderHardcodedRenderComponent } from "../boulder-hardcoded-render/boulder-hardcoded-render.component";
 
@@ -12,12 +12,13 @@ import { BoulderHardcodedRenderComponent } from "../boulder-hardcoded-render/bou
   styleUrl: './boulder-hardcoded.component.scss'
 })
 export class BoulderHardcodedComponent {
+  private domSanitizer = inject(DomSanitizer);
   public title: string;
   public boulderImageUrl: SafeStyle;
   public image: string;
   public modelLoaded = false;
 
-  public constructor(private domSanitizer: DomSanitizer) {
+  public constructor() {
     this.title = 'test';
     this.image = './test-images/bimano-image.webp';
     this.boulderImageUrl = this.domSanitizer.bypassSecurityTrustStyle('url(./test-images/bimano-image.webp)');

@@ -1,5 +1,5 @@
 
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -22,6 +22,10 @@ import { BoulderLine } from '../interfaces/boulder-line';
   styleUrl: './boulder-hardcoded-render.component.scss'
 })
 export class BoulderHardcodedRenderComponent implements AfterViewInit {
+  private boulderLoaderService = inject(BoulderLoaderService);
+  private boulderProblemsService = inject(BoulderProblemsService);
+  private el = inject(ElementRef);
+
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
@@ -52,11 +56,6 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
   private textBlocks: ThreeMeshUI.Block[] = [];
   private lineMaterials: MeshLineMaterial[] = [];
   private currentRandomRadius = Math.random() * 360;
-
-  public constructor(
-    private boulderLoaderService: BoulderLoaderService,
-    private boulderProblemsService: BoulderProblemsService,
-    private el: ElementRef) {}
 
   public ngAfterViewInit(): void {
     this.createCanvas();

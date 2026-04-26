@@ -1,5 +1,5 @@
 
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SectorDto } from '@api-net/index';
 
@@ -13,10 +13,11 @@ import { SectorDto } from '@api-net/index';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SectorsListComponent {
+  private activatedRoute = inject(ActivatedRoute);
   public sectors: SectorDto[] = [];
 
-  public constructor(activatedRoute: ActivatedRoute) {
-    const sectors = activatedRoute.snapshot.data['sectors'];
+  public constructor() {
+    const sectors = this.activatedRoute.snapshot.data['sectors'];
     this.sectors = sectors;
   }
 }
