@@ -161,6 +161,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
 
+      - name: Build solution
+        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --no-restore
+
       - name: Check for pending model changes
         run: |
           dotnet ef migrations has-pending-model-changes --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj
