@@ -1,3 +1,4 @@
+using System;
 using Thecell.Bibaboulder.Model.Dto;
 using Thecell.Bibaboulder.Model.Model;
 
@@ -18,7 +19,7 @@ public static class SpraywallProblemMapping
             FontGrade = problem.FontGrade,
             CreatedById = problem.CreatorId,
             CreatedByName = createdByName,
-            CreatedDate = problem.CreatedDate.ToString("o", System.Globalization.CultureInfo.InvariantCulture),
+            CreatedDate = DateTime.SpecifyKind(problem.CreatedDate, DateTimeKind.Utc).ToString("o", System.Globalization.CultureInfo.InvariantCulture),
             Description = problem.Description,
             Metadata = new SpraywallProblemMetadataDto
             {
