@@ -65,7 +65,10 @@ jobs:
             libfreetype6 \
             libharfbuzz0b \
             libgl1 \
-            libglib2.0-0
+            libglib2.0-0 \
+            libx11-6 \
+            libice6 \
+            libsm6
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
@@ -74,7 +77,7 @@ jobs:
           dotnet-quality: 'preview'
 
       - name: Restore dependencies
-        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --runtime linux-x64
 
       - name: Build
         run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
