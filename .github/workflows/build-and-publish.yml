@@ -149,34 +149,34 @@ jobs:
           name: DotNet_Backend_Build
           path: ./publish
 
-  run-migrations:
-    name: Run EF Core Migrations
-    runs-on: ubuntu-latest
-    needs: [build-dotnet-backend]
+  # run-migrations:
+  #   name: Run EF Core Migrations
+  #   runs-on: ubuntu-latest
+  #   needs: [build-dotnet-backend]
     
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-          dotnet-quality: 'preview'
+  #     - name: Setup .NET 10
+  #       uses: actions/setup-dotnet@v4
+  #       with:
+  #         dotnet-version: '10.0.x'
+  #         dotnet-quality: 'preview'
 
-      - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef
+  #     - name: Install EF Core tools
+  #       run: dotnet tool install --global dotnet-ef
 
-      - name: Restore dependencies
-        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+  #     - name: Restore dependencies
+  #       run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
 
-      - name: Build solution
-        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --no-restore --configuration Release
+  #     - name: Build solution
+  #       run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --no-restore --configuration Release
 
-      - name: Run migrations
-        run: dotnet ef database update --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --connection "${{ secrets.MSSQL_CONNECTION_STRING }}"
-        env:
-          ASPNETCORE_ENVIRONMENT: Production
+  #     - name: Run migrations
+  #       run: dotnet ef database update --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --connection "${{ secrets.MSSQL_CONNECTION_STRING }}"
+  #       env:
+  #         ASPNETCORE_ENVIRONMENT: Production
 
   dotnet-backend-deploy:
     name: Deploy .NET Backend to FTP
@@ -184,7 +184,8 @@ jobs:
     permissions:
         contents: write
 
-    needs: [build-dotnet-backend, run-migrations]
+    # needs: [build-dotnet-backend, run-migrations]
+    needs: [build-dotnet-backend]
 
     steps:
     - name: Checkout (for fileshare directory)
