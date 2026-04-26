@@ -15,7 +15,7 @@ public static class SpraywallProblemAssertion
         Xunit.Assert.Equal(expected.Description, actual.Description);
         Xunit.Assert.Equal(expected.FontGrade, actual.FontGrade);
         Xunit.Assert.Equal(expected.CreatorId, actual.CreatedById);
-        Xunit.Assert.Equal(expected.CreatedDate.ToString("u"), actual.CreatedDate);
+        Xunit.Assert.Equal(expected.CreatedDate.ToString("o", System.Globalization.CultureInfo.InvariantCulture), actual.CreatedDate);
     }
 
     public static void Assert(UpdateSpraywallProblemCommand expected, SpraywallProblem actual)
