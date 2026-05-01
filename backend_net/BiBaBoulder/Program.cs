@@ -251,8 +251,8 @@ public class Program
             });
         }
 
-        app.MapControllers();
-        app.MapHealthChecks("/health");
+        app.MapControllers().RequireCors();
+        app.MapHealthChecks("/health").RequireCors();
 
         app.Run();
     }
