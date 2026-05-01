@@ -13,7 +13,7 @@ public class LocalFileStorageClient : IFileStorageClient
 
     public LocalFileStorageClient(IConfiguration configuration)
     {
-        _basePath = configuration["FileStorageBasePath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "file-storage");
+        _basePath = configuration["UserContentBasePath"] ?? Path.Combine(Directory.GetCurrentDirectory(), "user-content");
 
         // Ensure base directory exists
         Directory.CreateDirectory(_basePath);

@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "https://api.bibaboulder.org"
+      "url": "http://localhost:5088"
     }
   ],
   "paths": {

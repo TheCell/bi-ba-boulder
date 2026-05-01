@@ -221,7 +221,8 @@ jobs:
             "ClientSecret": "${{ secrets.OIDC_CLIENT_SECRET }}"
           },
           "FrontendOrigin": "https://bibaboulder.org",
-          "FileStorageBasePath": "/file-storage/bibaboulder",
+          "BackendAssetsBasePath": "C:\\inetpub\\vhosts\\bibaboulder.org\\subdomains\\api\\httpdocs\\fileshare",
+          "UserContentBasePath": "C:\\inetpub\\vhosts\\bibaboulder.org\\subdomains\\api\\httpdocs\\user-content",
           "Email": {
             "Host": "${{ secrets.SMTP_HOST }}",
             "Port": ${{ secrets.SMTP_PORT }},

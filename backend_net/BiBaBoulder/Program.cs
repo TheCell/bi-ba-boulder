@@ -225,14 +225,27 @@ public class Program
         app.UseMiddleware<AntiforgeryMiddleware>();
         app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-        // Static file serving for 3D models and other assets
-        var fileStoragePath = builder.Configuration["FileStorageBasePath"];
-        if (!string.IsNullOrEmpty(fileStoragePath) && Directory.Exists(fileStoragePath))
+        // Static file serving for backend-managed 3D models and assets
+        var backendAssetsPath = builder.Configuration["BackendAssetsBasePath"];
+        if (!string.IsNullOrEmpty(backendAssetsPath) && Directory.Exists(backendAssetsPath))
         {
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(fileStoragePath),
+                FileProvider = new PhysicalFileProvider(backendAssetsPath),
                 RequestPath = "/fileshare",
+                ServeUnknownFileTypes = true,
+                DefaultContentType = "application/octet-stream"
+            });
+        }
+
+        // Static file serving for user-uploaded content (spraywall images, etc.)
+        var userContentPath = builder.Configuration["UserContentBasePath"];
+        if (!string.IsNullOrEmpty(userContentPath) && Directory.Exists(userContentPath))
+        {
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(userContentPath),
+                RequestPath = "/user-content",
                 ServeUnknownFileTypes = true,
                 DefaultContentType = "application/octet-stream"
             });
