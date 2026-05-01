@@ -16,7 +16,7 @@ public class LocalFileStorageClientTests : IDisposable
         _testBasePath = Path.Combine(Path.GetTempPath(), $"test-storage-{Guid.NewGuid()}");
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection([
-                new System.Collections.Generic.KeyValuePair<string, string?>("FileStorageBasePath", _testBasePath)
+                new System.Collections.Generic.KeyValuePair<string, string?>("UserContentBasePath", _testBasePath)
             ])
             .Build();
 
