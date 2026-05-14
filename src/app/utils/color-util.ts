@@ -34,7 +34,7 @@ export function HexToHSL(hex: string): { h: number; s: number; l: number } {
   const min = Math.min(r, g, b);
 
   let h = (max + min) / 2;
-  let s = h;
+  let s: number;
   let l = h;
 
   if (max === min) {
@@ -114,7 +114,6 @@ export function RGBToHSL(rgb: { r: number; g: number; b: number; }): {
   const min = Math.min(r, g, b);
 
   let h = (max + min) / 2;
-  let s = h;
   const l = h;
 
   if (max === min) {
@@ -123,7 +122,7 @@ export function RGBToHSL(rgb: { r: number; g: number; b: number; }): {
   }
 
   const d = max - min;
-  s = l >= 0.5 ? d / (2 - (max + min)) : d / (max + min);
+  const s = l >= 0.5 ? d / (2 - (max + min)) : d / (max + min);
   switch (max) {
     case r:
       h = ((g - b) / d + 0) * 60;

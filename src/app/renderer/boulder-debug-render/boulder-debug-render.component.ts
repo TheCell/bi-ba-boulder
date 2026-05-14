@@ -669,8 +669,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
   private getBitsFromNumber(type: SpraywallHoldType, index: number): number {
     // saving the type in the high endian 2 bits, and the index in the low endian 14 bits
-    let twoByteInfo = 0x00000;
-    twoByteInfo = (type << 16) | (index);
+    const twoByteInfo = (type << 16) | (index);
     return twoByteInfo;
   }
 
