@@ -57,15 +57,15 @@ public class FeedbacksControllerTest : BaseTest
         response.EnsureSuccessStatusCode();
 
         Assert.Equal(1, EmailService.SendCount);
-        Assert.Equal(user.Email, EmailService.LastRecipient);
+        Assert.Equal("info@bibaboulder.com", EmailService.LastRecipient);
         Assert.Contains(feedbackText, EmailService.LastBody);
 
         var savedMail = await BiBaBoulderDbContext.Emails
-            .Where(m => m.To == user.Email)
+            .Where(m => m.To == "info@bibaboulder.com")
             .FirstOrDefaultAsync(cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(savedMail);
-        Assert.Equal(user.Email, savedMail.To);
+        Assert.Equal("info@bibaboulder.com", savedMail.To);
         Assert.Contains(user.Email, savedMail.Subject);
         Assert.Contains(feedbackText, savedMail.Body);
         Assert.True(savedMail.SentAt > timestamp);

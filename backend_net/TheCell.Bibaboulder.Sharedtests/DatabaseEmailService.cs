@@ -14,6 +14,7 @@ public class DatabaseEmailService : IEmailService
     public string? LastRecipient { get; private set; }
     public string? LastSubject { get; private set; }
     public string? LastBody { get; private set; }
+    public string? LastReplyTo { get; private set; }
     public string? LastBcc { get; private set; }
     public int SendCount { get; private set; }
 
@@ -22,11 +23,12 @@ public class DatabaseEmailService : IEmailService
         _serviceProvider = serviceProvider;
     }
 
-    public async Task SendEmailAsync(string to, string subject, string htmlBody, string? bcc = null)
+    public async Task SendEmailAsync(string to, string subject, string htmlBody, string? replyTo = null, string? bcc = null)
     {
         LastRecipient = to;
         LastSubject = subject;
         LastBody = htmlBody;
+        LastReplyTo = replyTo;
         LastBcc = bcc;
         SendCount++;
 
@@ -39,6 +41,7 @@ public class DatabaseEmailService : IEmailService
             Id = Guid.NewGuid(),
             To = to,
             Bcc = bcc,
+            ReplyTo = replyTo,
             Subject = subject,
             Body = htmlBody,
             SentAt = DateTime.UtcNow

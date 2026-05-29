@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using Thecell.Bibaboulder.Common.Appsettings;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
@@ -21,10 +22,14 @@ public class SmtpEmailService : IEmailService
         _dbContext = dbContext;
     }
 
-    public async Task SendEmailAsync(string to, string subject, string htmlBody, string? bcc = null)
+    public async Task SendEmailAsync(string to, string subject, string htmlBody, string? replyTo = null, string? bcc = null)
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(_settings.FromName, _settings.FromAddress));
+        if (!string.IsNullOrEmpty(replyTo))
+        {
+            message.ReplyTo.Add(MailboxAddress.Parse(replyTo));
+        }
         message.To.Add(MailboxAddress.Parse(to));
 
         if (!string.IsNullOrEmpty(bcc))
@@ -77,16 +82,4 @@ public class SmtpEmailService : IEmailService
             throw;
         }
     }
-}
-
-public class EmailSettings
-{
-    public string Host { get; set; } = string.Empty;
-    public int Port { get; set; } = 587;
-    public bool UseSsl { get; set; }
-    public bool UseStartTls { get; set; } = true;
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string FromAddress { get; set; } = string.Empty;
-    public string FromName { get; set; } = "Bi Ba Boulder";
 }

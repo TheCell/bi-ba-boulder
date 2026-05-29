@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Thecell.Bibaboulder.Common.Appsettings;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model.Services;
 
@@ -9,13 +11,16 @@ public class SendFeedbackCommandHandler : ICommandHandler<SendFeedbackCommand>
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly IEmailService _emailService;
+    private readonly IOptions<EmailSettings> _emailSettings;
 
     public SendFeedbackCommandHandler(
         ICurrentUserService currentUserService,
-        IEmailService emailService)
+        IEmailService emailService,
+        IOptions<EmailSettings> emailSettings)
     {
         _currentUserService = currentUserService;
         _emailService = emailService;
+        _emailSettings = emailSettings;
     }
 
     public async Task HandleAsync(SendFeedbackCommand command)
@@ -31,8 +36,9 @@ public class SendFeedbackCommandHandler : ICommandHandler<SendFeedbackCommand>
         var body = $"<p>Feedback from <strong>{currentUser.Email}</strong>:</p><p>{command.Feedback}</p>";
 
         await _emailService.SendEmailAsync(
-            currentUser.Email,
+            _emailSettings.Value.ContactAddress,
             subject,
-            body);
+            body,
+            currentUser.Email);
     }
 }

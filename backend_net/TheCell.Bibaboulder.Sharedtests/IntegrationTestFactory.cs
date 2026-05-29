@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Thecell.Bibaboulder.BiBaBoulder.Extensions;
 using Thecell.Bibaboulder.BiBaBoulder.Middleware;
 using Thecell.Bibaboulder.BiBaBoulder.Services;
+using Thecell.Bibaboulder.Common.Appsettings;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Services;
 
@@ -34,6 +35,18 @@ public class IntegrationTestFactory : WebApplicationFactory<EntryPoint>
         {
             var configuration = context.Configuration;
             //services.Configure<AppSettings>(configuration.GetSection("AppSettings"));
+            services.Configure<EmailSettings>(options =>
+            {
+                options.Host = "smtp.example.com";
+                options.Port = 587;
+                options.UseSsl = false;
+                options.UseStartTls = true;
+                options.Username = "test@example.com";
+                options.Password = "password";
+                options.ContactAddress = "info@bibaboulder.com";
+                options.FromAddress = "noreply@bibaboulder.com";
+                options.FromName = "Bi Ba Boulder";
+            });
 
             // Add SQLite in-memory database for testing
             services.AddEntityFrameworkSqlite();

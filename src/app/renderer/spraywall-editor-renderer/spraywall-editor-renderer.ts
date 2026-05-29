@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, InputSignal, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, effect, ElementRef, HostListener, inject, input, InputSignal, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -24,6 +24,7 @@ import { SpraywallProblemDto } from '@api-net/index';
 })
 export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private el: ElementRef = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
@@ -114,6 +115,8 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
         this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
       }
     });
+
+    this.destroyRef.onDestroy(() => this.dispose());
   }
 
   public ngOnInit(): void {
@@ -258,6 +261,12 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   }
 
   private removeBoulderFromScene(gltf: GLTF): void {
+    gltf.scene.traverse((child) => {
+      const mesh = child as THREE.Mesh;
+      if (mesh.isMesh) {
+        mesh.geometry?.dispose();
+      }
+    });
     this.scene.remove(gltf.scene);
   }
   
@@ -417,6 +426,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   }
   
   private setupCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
+    this.rgbBlockMaterial?.dispose();
     const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
 
     material.onBeforeCompile = (shader) => {
@@ -539,6 +549,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   }
   
   private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
+    this.highlightedHoldsTexture?.dispose();
     const image = new Image(width, height);
     const texture = new THREE.Texture(image);
     image.onload = () => {
@@ -556,5 +567,29 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
 
     image.src = base64String;
+  }
+
+  private dispose(): void {
+    this.controls?.removeEventListener('change', this.handleOrbitControlChangeEvent);
+    this.controls?.removeEventListener('start', this.handleOrbitControlStartEvent);
+    this.controls?.removeEventListener('end', this.handleOrbitControlEndEvent);
+    this.controls?.dispose();
+
+    if (this.currentGltf) {
+      this.removeBoulderFromScene(this.currentGltf);
+    }
+
+    this.scene.traverse((child) => {
+      const mesh = child as THREE.Mesh;
+      if (mesh.isMesh) {
+        mesh.geometry?.dispose();
+      }
+    });
+
+    this.highlightedHoldsTexture?.dispose();
+    this.standardHighlightedHoldsTexture?.dispose();
+    this.rgbBlockTexture?.dispose();
+    this.rgbBlockMaterial?.dispose();
+    this.renderer?.dispose();
   }
 }
