@@ -18,6 +18,7 @@ export interface SpraywallProblemDto {
     createdById: string;
     createdByName: string;
     createdDate: string;
+    version: number;
     description?: string | null;
     metadata: SpraywallProblemMetadataDto;
 }

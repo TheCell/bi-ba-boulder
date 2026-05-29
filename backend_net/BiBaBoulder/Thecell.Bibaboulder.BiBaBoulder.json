@@ -1045,6 +1045,7 @@
           "createdById",
           "createdByName",
           "createdDate",
+          "version",
           "metadata"
         ],
         "type": "object",
@@ -1078,6 +1079,10 @@
           },
           "createdDate": {
             "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
           },
           "description": {
             "type": [

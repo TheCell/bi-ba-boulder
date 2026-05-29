@@ -32,7 +32,8 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
   public saveForm = this._fb.nonNullable.group<ISpraywallForm>({
     name: '',
     description: undefined,
-    fontGrade: undefined
+    fontGrade: undefined,
+    version: undefined,
   });
 
   private imageData?: string;
@@ -65,6 +66,7 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
     this.saveForm.controls.name.setValue(data.name);
     this.saveForm.controls.fontGrade?.setValue(data.fontGrade === undefined ? undefined : data.fontGrade);
     this.saveForm.controls.description?.setValue(data.description);
+    this.saveForm.controls.version?.setValue(data.version === undefined ? undefined : data.version);
   }
 
   public onSubmit(): void {
@@ -76,7 +78,8 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
         name: this.saveForm.controls.name.value!,
         description: this.saveForm.controls.description?.value,
         image: this.imageData!,
-        fontGrade: this.saveForm.controls.fontGrade?.value
+        fontGrade: this.saveForm.controls.fontGrade?.value,
+        version: this.saveForm.controls.version?.value,
       }
       this.spraywallProblemsService.updateProblem(this.problemId, update).subscribe({
         next: () => {
