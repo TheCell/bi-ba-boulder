@@ -68,14 +68,14 @@ Check out the Readme in the backend_net folder for more information.
 # Starting the Devtools
 1. npm start
 2. in a second terminal `cd backend_net\BiBaBoulder` and then `dotnet run`
+3. Start Papercut SMTP [https://www.papercut-smtp.com/](https://www.papercut-smtp.com/) for local email testing
 
 # Deployment
 The deployment works over Github Actions  
 The .htaccess won't be copied you have to do that on your own.
 
 # Bruno
-I've added a Bruno collection to test some endpoints.   
-For emails I use Papercut [https://www.papercut-smtp.com/](https://www.papercut-smtp.com/)
+I've added a Bruno collection to test some endpoints.
 
 # Generate the API
 We could generate the API on the fly by changing the input line in `openapi-generator-net.yaml` to `inputSpec: http://localhost:5088/openapi/v1.json` but I prefer the written json spec to see changes whenever I start the backend.

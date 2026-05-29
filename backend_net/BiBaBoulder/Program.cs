@@ -39,6 +39,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.AddBiBaBoulderServices();
+
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi(options =>
         {

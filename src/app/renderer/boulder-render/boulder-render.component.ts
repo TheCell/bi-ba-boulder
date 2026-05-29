@@ -231,11 +231,6 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       const mesh = child as THREE.Mesh;
       if (mesh.isMesh) {
         mesh.geometry?.dispose();
-        const materials = (Array.isArray(mesh.material) ? mesh.material : [mesh.material]) as THREE.MeshStandardMaterial[];
-        for (const mat of materials) {
-          mat.map?.dispose();
-          mat.dispose();
-        }
       }
     });
     this.scene.remove(gltf.scene);
@@ -364,11 +359,6 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       const mesh = child as THREE.Mesh;
       if (mesh.isMesh) {
         mesh.geometry?.dispose();
-        const materials = (Array.isArray(mesh.material) ? mesh.material : [mesh.material]) as THREE.MeshStandardMaterial[];
-        for (const mat of materials) {
-          mat.map?.dispose();
-          mat.dispose();
-        }
       }
     });
 

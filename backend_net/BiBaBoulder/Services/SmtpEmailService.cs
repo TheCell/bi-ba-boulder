@@ -21,10 +21,14 @@ public class SmtpEmailService : IEmailService
         _dbContext = dbContext;
     }
 
-    public async Task SendEmailAsync(string to, string subject, string htmlBody, string? bcc = null)
+    public async Task SendEmailAsync(string to, string subject, string htmlBody, string? replyTo = null, string? bcc = null)
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(_settings.FromName, _settings.FromAddress));
+        if (!string.IsNullOrEmpty(replyTo))
+        {
+            message.ReplyTo.Add(MailboxAddress.Parse(replyTo));
+        }
         message.To.Add(MailboxAddress.Parse(to));
 
         if (!string.IsNullOrEmpty(bcc))

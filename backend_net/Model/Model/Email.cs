@@ -15,6 +15,9 @@ public class Email : EntityAuditFields
     public string? Cc { get; set; }
 
     [MaxLength(512)]
+    public string? ReplyTo { get; set; }
+
+    [MaxLength(512)]
     public string? Bcc { get; set; }
 
     [MaxLength(1024)]
