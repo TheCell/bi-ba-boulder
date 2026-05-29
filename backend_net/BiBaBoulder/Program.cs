@@ -102,7 +102,7 @@ public class Program
             options.Cookie.HttpOnly = true;
             // Production: Require HTTPS with strict settings
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.SameSite = SameSiteMode.None; // needed for cross-origin frontend to send cookies
+            options.Cookie.SameSite = SameSiteMode.Lax;
 
             options.Cookie.Name = "BiBaBoulder.Auth";
 
@@ -155,6 +155,17 @@ public class Program
 
             options.Events = new OpenIdConnectEvents
             {
+                OnRedirectToIdentityProvider = ctx =>
+                {
+                    if (ctx.Request.Path.StartsWithSegments("/api") ||
+                        ctx.Request.Path.StartsWithSegments("/bff"))
+                    {
+                        ctx.Response.StatusCode = 401;
+                        ctx.HandleResponse();
+                    }
+
+                    return Task.CompletedTask;
+                },
                 OnTokenValidated = async ctx =>
                 {
                     var sub = ctx.Principal?.FindFirstValue("sub");
