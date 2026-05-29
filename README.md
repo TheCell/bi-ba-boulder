@@ -61,29 +61,20 @@ The next todos:
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)
 
-to simulate the database locally I use XAMPP
-
 # The Backend
 The Backend is built with .NET 10 and MSSQL using EF Core.  
 Check out the Readme in the backend_net folder for more information.
 
-# Setup Fileshare
-1. Open an elevated PowerShell
-2. ``New-Item -ItemType SymbolicLink -Path C:\xampp\htdocs\boulders -Target C:\dev\Git\bi-ba-boulder\fileshare``
-3. start the Devtools
-4. Now you can download the files with ``http://localhost/boulders/...`` (example ``http://localhost/boulders/bimano/bimano_high.glb``)
-
 # Starting the Devtools
-1. start xampp (for file serving)
-2. npm start
-3. in a second terminal `cd backend_net\BiBaBoulder` and then `dotnet run`
+1. npm start
+2. in a second terminal `cd backend_net\BiBaBoulder` and then `dotnet run`
 
 # Deployment
 The deployment works over Github Actions  
 The .htaccess won't be copied you have to do that on your own.
 
-# Postman
-I've added a Postman collection to test some endpoints.   
+# Bruno
+I've added a Bruno collection to test some endpoints.   
 For emails I use Papercut [https://www.papercut-smtp.com/](https://www.papercut-smtp.com/)
 
 # Generate the API
