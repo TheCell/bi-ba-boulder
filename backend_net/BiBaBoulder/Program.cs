@@ -102,7 +102,7 @@ public class Program
             options.Cookie.HttpOnly = true;
             // Production: Require HTTPS with strict settings
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.SameSite = SameSiteMode.None; // needed for cross-origin frontend to send cookies
 
             options.Cookie.Name = "BiBaBoulder.Auth";
 
