@@ -1,5 +1,5 @@
 
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -25,6 +25,7 @@ import { SpraywallProblemDto } from '@api-net/index';
 })
 export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private el: ElementRef = inject(ElementRef);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
@@ -101,6 +102,8 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
     const activatedRoute = inject(ActivatedRoute);
     this.rgbBlockTexture = activatedRoute.snapshot.data['spraywallDebugTexture'];
+
+    this.destroyRef.onDestroy(() => this.dispose());
   }
 
   public ngOnInit(): void {
@@ -224,6 +227,17 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   }
 
   private removeBoulderFromScene(gltf: GLTF): void {
+    gltf.scene.traverse((child) => {
+      const mesh = child as THREE.Mesh;
+      if (mesh.isMesh) {
+        mesh.geometry?.dispose();
+        const materials = (Array.isArray(mesh.material) ? mesh.material : [mesh.material]) as THREE.MeshStandardMaterial[];
+        for (const mat of materials) {
+          mat.map?.dispose();
+          mat.dispose();
+        }
+      }
+    });
     this.scene.remove(gltf.scene);
   }
 
@@ -255,6 +269,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   }
 
   private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
+    this.highlightedHoldsTexture?.dispose();
     const image = new Image(width, height);
     const texture = new THREE.Texture(image);
     image.onload = () => {
@@ -297,6 +312,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   }
 
   private setupCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
+    this.rgbBlockMaterial?.dispose();
     const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
 
     material.onBeforeCompile = (shader) => {
@@ -334,6 +350,32 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     }
 
     return material;
+  }
+
+  private dispose(): void {
+    this.controls?.removeEventListener('change', this.loop);
+    this.controls?.dispose();
+
+    if (this.currentGltf) {
+      this.removeBoulderFromScene(this.currentGltf);
+    }
+
+    this.scene.traverse((child) => {
+      const mesh = child as THREE.Mesh;
+      if (mesh.isMesh) {
+        mesh.geometry?.dispose();
+        const materials = (Array.isArray(mesh.material) ? mesh.material : [mesh.material]) as THREE.MeshStandardMaterial[];
+        for (const mat of materials) {
+          mat.map?.dispose();
+          mat.dispose();
+        }
+      }
+    });
+
+    this.highlightedHoldsTexture?.dispose();
+    this.rgbBlockTexture?.dispose();
+    this.rgbBlockMaterial?.dispose();
+    this.renderer?.dispose();
   }
 }
 
