@@ -21,6 +21,7 @@ using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
 using Microsoft.OpenApi;
+using Thecell.Bibaboulder.Common.Appsettings;
 
 namespace Thecell.Bibaboulder.BiBaBoulder;
 

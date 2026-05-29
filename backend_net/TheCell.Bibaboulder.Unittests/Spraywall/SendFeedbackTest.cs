@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Moq;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Common.Appsettings;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
 using Thecell.Bibaboulder.Spraywall.Handler;
@@ -18,6 +20,7 @@ public class SendFeedbackTest
     private readonly User _testUser;
     private readonly IBiBaBoulderDbContext _dbContext;
     private readonly IServiceProvider _serviceProvider;
+    private readonly IOptions<EmailSettings> _emailSettings;
 
     public SendFeedbackTest()
     {
@@ -29,6 +32,18 @@ public class SendFeedbackTest
         _serviceProvider = services.BuildServiceProvider();
 
         _emailService = new DatabaseEmailService(_serviceProvider);
+        _emailSettings = Options.Create(new EmailSettings
+        {
+            Host = "smtp.example.com",
+            Port = 587,
+            UseSsl = false,
+            UseStartTls = true,
+            Username = "test@example.com",
+            Password = "password",
+            ContactAddress = "contact@bibaboulder.com",
+            FromAddress = "noreply@bibaboulder.com",
+            FromName = "Bi Ba Boulder"
+        });
         _testUser = new UserBuilder().SetEmail("feedback@test.com").Build();
         _currentUserServiceMock.Setup(s => s.GetCurrentUserOrThrowAsync()).ReturnsAsync(_testUser);
     }
@@ -41,11 +56,11 @@ public class SendFeedbackTest
             Feedback = "Great app!"
         };
 
-        var handler = new SendFeedbackCommandHandler(_currentUserServiceMock.Object, _emailService);
+        var handler = new SendFeedbackCommandHandler(_currentUserServiceMock.Object, _emailService, _emailSettings);
         await handler.HandleAsync(command);
 
         Assert.Equal(1, _emailService.SendCount);
-        Assert.Equal("feedback@test.com", _emailService.LastRecipient);
+        Assert.Equal("contact@bibaboulder.com", _emailService.LastRecipient);
         Assert.Contains("Great app!", _emailService.LastBody);
     }
 
@@ -57,7 +72,7 @@ public class SendFeedbackTest
             Feedback = "   "
         };
 
-        var handler = new SendFeedbackCommandHandler(_currentUserServiceMock.Object, _emailService);
+        var handler = new SendFeedbackCommandHandler(_currentUserServiceMock.Object, _emailService, _emailSettings);
 
         await Assert.ThrowsAsync<ArgumentException>(async () =>
             await handler.HandleAsync(command));

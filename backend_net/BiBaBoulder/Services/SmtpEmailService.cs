@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using Thecell.Bibaboulder.Common.Appsettings;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
@@ -81,16 +82,4 @@ public class SmtpEmailService : IEmailService
             throw;
         }
     }
-}
-
-public class EmailSettings
-{
-    public string Host { get; set; } = string.Empty;
-    public int Port { get; set; } = 587;
-    public bool UseSsl { get; set; }
-    public bool UseStartTls { get; set; } = true;
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string FromAddress { get; set; } = string.Empty;
-    public string FromName { get; set; } = "Bi Ba Boulder";
 }

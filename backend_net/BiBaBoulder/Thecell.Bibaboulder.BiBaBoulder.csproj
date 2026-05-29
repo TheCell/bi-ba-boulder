@@ -60,4 +60,8 @@
     <ProjectReference Include="..\Migrations\Thecell.Bibaboulder.Migrations.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="backend_net\Model\Configuration\" />
+  </ItemGroup>
+
 </Project>
