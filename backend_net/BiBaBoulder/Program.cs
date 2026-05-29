@@ -155,6 +155,16 @@ public class Program
 
             options.Events = new OpenIdConnectEvents
             {
+                OnRedirectToIdentityProvider = ctx =>
+                {
+                    if (ctx.Request.Path.StartsWithSegments("/api") ||
+                        (ctx.Request.Path.StartsWithSegments("/bff") && !ctx.Request.Path.StartsWithSegments("/bff/login")))
+                    {
+                        ctx.Response.StatusCode = 401;
+                        ctx.HandleResponse();
+                    }
+                    return Task.CompletedTask;
+                },
                 OnTokenValidated = async ctx =>
                 {
                     var sub = ctx.Principal?.FindFirstValue("sub");
