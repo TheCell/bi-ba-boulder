@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Thecell.Bibaboulder.BoulderLog.Handler;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Outdoor.Handler;
@@ -18,7 +19,8 @@ public static class RegisterHandlersExtensions
             typeof(Program).Assembly,
             typeof(GetTestingQueryHandler).Assembly,
             typeof(GetSectorQueryHandler).Assembly,
-            typeof(GetSpraywallsQueryHandler).Assembly
+            typeof(GetSpraywallsQueryHandler).Assembly,
+            typeof(GetBoulderLogQueryHandler).Assembly
         ]);
     }
 

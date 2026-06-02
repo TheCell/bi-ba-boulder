@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <Authors>Simon Hischier</Authors>
@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Model\Thecell.Bibaboulder.Model.csproj" />
+    <ProjectReference Include="..\Thecell.Bibaboulder.BoulderLog\Thecell.Bibaboulder.BoulderLog.csproj" />
     <ProjectReference Include="..\Thecell.Bibaboulder.Common\Thecell.Bibaboulder.Common.csproj" />
     <ProjectReference Include="..\Thecell.Bibaboulder.Outdoor\Thecell.Bibaboulder.Outdoor.csproj" />
     <ProjectReference Include="..\Thecell.Bibaboulder.Spraywall\Thecell.Bibaboulder.Spraywall.csproj" />
