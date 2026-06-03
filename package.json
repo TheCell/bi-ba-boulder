@@ -25,7 +25,7 @@
     "@angular/platform-browser-dynamic": "^21.2.10",
     "@angular/router": "^21.2.10",
     "@lume/three-meshline": "^4.0.5",
-    "@openapitools/openapi-generator-cli": "^2.25.1",
+    "@openapitools/openapi-generator-cli": "^2.34.0",
     "@types/three": "^0.184.0",
     "ng-keyboard-shortcuts": "^13.0.8",
     "rxjs": "~7.8.0",
