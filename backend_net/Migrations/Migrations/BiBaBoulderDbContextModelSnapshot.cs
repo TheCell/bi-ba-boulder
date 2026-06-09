@@ -80,50 +80,6 @@ namespace BiBaBoulder.Migrations
                     b.ToTable("Blocs");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Bookmark", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsFavourite")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsProject")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UpdatedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Bookmarks");
-                });
-
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.BoulderLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -590,17 +546,6 @@ namespace BiBaBoulder.Migrations
                     b.Navigation("Sector");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Bookmark", b =>
-                {
-                    b.HasOne("Thecell.Bibaboulder.Model.Model.User", "User")
-                        .WithMany("Bookmarks")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.BoulderLog", b =>
                 {
                     b.HasOne("Thecell.Bibaboulder.Model.Model.SpraywallProblem", "SpraywallProblem")
@@ -700,8 +645,6 @@ namespace BiBaBoulder.Migrations
 
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.User", b =>
                 {
-                    b.Navigation("Bookmarks");
-
                     b.Navigation("BoulderLogs");
 
                     b.Navigation("SpraywallProblems");

@@ -31,7 +31,7 @@ import {
 })
 export class DevAuthService implements DevAuthServiceInterface {
 
-    protected basePath = 'http://localhost:5088';
+    protected basePath = 'http://todo';
     public defaultHeaders = new HttpHeaders();
     public configuration = new Configuration();
     public encoder: HttpParameterCodec;

@@ -27,7 +27,6 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
     public DbSet<SpraywallProblem> SpraywallProblems { get; set; }
     public DbSet<BoulderLog> BoulderLogs { get; set; }
     public DbSet<LogEntry> LogEntries { get; set; }
-    public DbSet<Bookmark> Bookmarks { get; set; }
     public DbSet<Sector> Sectors { get; set; }
     public DbSet<Bloc> Blocs { get; set; }
     public DbSet<Line> Lines { get; set; }

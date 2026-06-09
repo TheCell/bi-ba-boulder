@@ -1,6 +1,9 @@
 export * from './blocDto';
+export * from './boulderLogDto';
+export * from './createBoulderLogCommand';
 export * from './createSectorCommand';
 export * from './createSpraywallProblemCommand';
+export * from './deleteBoulderLogCommand';
 export * from './lineDto';
 export * from './searchProblemsRequest';
 export * from './sectorDto';
@@ -10,5 +13,6 @@ export * from './spraywallProblemDto';
 export * from './spraywallProblemListDto';
 export * from './spraywallProblemMetadataDto';
 export * from './testDto';
+export * from './updateBoulderLogCommand';
 export * from './updateSpraywallProblemCommand';
 export * from './userDto';

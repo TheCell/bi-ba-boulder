@@ -32,6 +32,4 @@ public class User : VersionedEntity
     public ICollection<SpraywallProblem> SpraywallProblems { get; set; } = [];
 
     public ICollection<BoulderLog> BoulderLogs { get; set; } = [];
-
-    public ICollection<Bookmark> Bookmarks { get; set; } = [];
 }

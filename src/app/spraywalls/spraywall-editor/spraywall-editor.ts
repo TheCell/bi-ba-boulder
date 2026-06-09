@@ -126,6 +126,7 @@ export class SpraywallEditor implements OnInit, OnDestroy {
       dialogData.name = this.spraywallProblemForEdit.name;
       dialogData.description = this.spraywallProblemForEdit.description;
       dialogData.fontGrade = this.spraywallProblemForEdit.fontGrade;
+      dialogData.version = this.spraywallProblemForEdit.version;
     }
     component.initialize!(dialogData);
   }

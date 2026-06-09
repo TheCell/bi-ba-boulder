@@ -5,4 +5,5 @@ export interface SpraywallSaveData {
     description?: string | null;
     fontGrade?: number;
     existingId?: string;
+    version?: number;
 }

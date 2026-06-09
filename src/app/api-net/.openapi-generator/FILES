@@ -9,6 +9,8 @@ api/bff.service.ts
 api/bff.serviceInterface.ts
 api/blocs.service.ts
 api/blocs.serviceInterface.ts
+api/boulderLogs.service.ts
+api/boulderLogs.serviceInterface.ts
 api/devAuth.service.ts
 api/devAuth.serviceInterface.ts
 api/feedbacks.service.ts
@@ -30,8 +32,11 @@ encoder.ts
 git_push.sh
 index.ts
 model/blocDto.ts
+model/boulderLogDto.ts
+model/createBoulderLogCommand.ts
 model/createSectorCommand.ts
 model/createSpraywallProblemCommand.ts
+model/deleteBoulderLogCommand.ts
 model/lineDto.ts
 model/models.ts
 model/searchProblemsRequest.ts
@@ -42,6 +47,7 @@ model/spraywallProblemDto.ts
 model/spraywallProblemListDto.ts
 model/spraywallProblemMetadataDto.ts
 model/testDto.ts
+model/updateBoulderLogCommand.ts
 model/updateSpraywallProblemCommand.ts
 model/userDto.ts
 param.ts

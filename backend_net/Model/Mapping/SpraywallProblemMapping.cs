@@ -21,6 +21,7 @@ public static class SpraywallProblemMapping
             CreatedByName = createdByName,
             CreatedDate = DateTime.SpecifyKind(problem.CreatedDate, DateTimeKind.Utc).ToString("o", System.Globalization.CultureInfo.InvariantCulture),
             Description = problem.Description,
+            Version = problem.Version,
             Metadata = new SpraywallProblemMetadataDto
             {
                 CanEdit = false,

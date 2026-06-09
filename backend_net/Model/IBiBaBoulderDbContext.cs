@@ -18,7 +18,6 @@ public interface IBiBaBoulderDbContext : IDisposable
     DbSet<SpraywallProblem> SpraywallProblems { get; set; }
     DbSet<BoulderLog> BoulderLogs { get; set; }
     DbSet<LogEntry> LogEntries { get; set; }
-    DbSet<Bookmark> Bookmarks { get; set; }
     DbSet<Sector> Sectors { get; set; }
     DbSet<Bloc> Blocs { get; set; }
     DbSet<Line> Lines { get; set; }

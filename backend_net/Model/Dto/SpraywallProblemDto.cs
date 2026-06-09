@@ -12,6 +12,7 @@ public class SpraywallProblemDto
     public required Guid CreatedById { get; set; }
     public required string CreatedByName { get; set; }
     public required string CreatedDate { get; set; }
+    public required long Version { get; set; }
     public string? Description { get; set; }
     public required SpraywallProblemMetadataDto Metadata { get; set; }
 }
