@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Model.Authorization;
+using Thecell.Bibaboulder.Spraywall.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -46,7 +47,7 @@ public class FeedbacksControllerTest : BaseTest
             username: user.Username);
 
         var feedbackText = _bogus.Lorem.Sentence();
-        var body = new { Feedback = feedbackText };
+        var body = new SendFeedbackCommand { Feedback = feedbackText };
         var timestamp = DateTime.UtcNow;
 
         var response = await client.PostAsync(

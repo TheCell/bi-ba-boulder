@@ -78,7 +78,7 @@ public class BoulderLogsControllerTest : BaseTest
     [Fact]
     public async Task CreateBoulderLog_Anonymous_Unauthorized()
     {
-        var body = new { IsSent = true, IsProject = false };
+        var body = new CreateBoulderLogCommand { IsSent = true, IsProject = false };
         var response = await Client().PutAsync(_baseUrl, GetJsonHttpBody(body), TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -111,7 +111,7 @@ public class BoulderLogsControllerTest : BaseTest
     public async Task UpdateBoulderLog_Anonymous_Unauthorized()
     {
         var id = Guid.CreateVersion7();
-        var body = new { Version = 1L, IsSent = true, IsProject = false };
+        var body = new UpdateBoulderLogCommand { Id = Guid.CreateVersion7(), Version = 1L, IsSent = true, IsProject = true, Rating = Rating.Five };
         var response = await Client().PostAsync($"{_baseUrl}/{id}", GetJsonHttpBody(body), TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -125,7 +125,7 @@ public class BoulderLogsControllerTest : BaseTest
         var log = new BoulderLogBuilder().SetUserId(user.Id).SetIsSent(false).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(log);
 
-        var body = new { Version = 1L, IsSent = true, IsProject = true, Rating = Rating.Five };
+        var body = new UpdateBoulderLogCommand { Id = Guid.CreateVersion7(), Version = 1L, IsSent = true, IsProject = true, Rating = Rating.Five };
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
         var response = await client.PostAsync($"{_baseUrl}/{log.Id}", GetJsonHttpBody(body), TestContext.Current.CancellationToken);
@@ -142,7 +142,7 @@ public class BoulderLogsControllerTest : BaseTest
     public async Task DeleteBoulderLog_Anonymous_Unauthorized()
     {
         var id = Guid.CreateVersion7();
-        var body = new { Version = 1L };
+        var body = new DeleteBoulderLogCommand { Id = id, Version = 1L };
         var request = new HttpRequestMessage(HttpMethod.Delete, $"{_baseUrl}/{id}")
         {
             Content = GetJsonHttpBody(body)
@@ -160,7 +160,7 @@ public class BoulderLogsControllerTest : BaseTest
         var log = new BoulderLogBuilder().SetUserId(user.Id).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(log);
 
-        var body = new { Version = 1L };
+        var body = new DeleteBoulderLogCommand { Id = Guid.CreateVersion7(), Version = 1L };
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
         var request = new HttpRequestMessage(HttpMethod.Delete, $"{_baseUrl}/{log.Id}")
