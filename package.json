@@ -11,8 +11,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "pregenerate:api-net": "node -e \"require('fs').rmSync('src/app/api-net', {recursive:true,force:true})\"",
-    "generate:api-net": "openapi-generator-cli generate -c openapi-generator-net.yaml -o src/app/api-net"
+    "generate:api-net": "node -e \"require('fs').rmSync('src/app/api-net', {recursive:true,force:true})\" | openapi-generator-cli generate -c openapi-generator-net.yaml -o src/app/api-net"
   },
   "private": true,
   "dependencies": {
