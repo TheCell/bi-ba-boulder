@@ -514,10 +514,10 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE
     }
-    this.controls.touches = {
-      ONE: THREE.TOUCH.DOLLY_PAN,
-      TWO: THREE.TOUCH.ROTATE
-    }
+    // this.controls.touches = {
+    //   ONE: THREE.TOUCH.DOLLY_PAN,
+    //   TWO: THREE.TOUCH.ROTATE
+    // }
 
     this.controls.addEventListener('change', this.handleOrbitControlChangeEvent);
     this.controls.addEventListener('start', this.handleOrbitControlStartEvent);
