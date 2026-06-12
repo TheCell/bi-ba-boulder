@@ -1,4 +1,13 @@
-﻿# Bi Ba Boulder - AI Coding Guide
+---
+description: Backend development guidelines for C#/.NET, database (EF Core). Use when working on any code in this workspace.
+applyTo: "**"
+---
+# Bi Ba Boulder - AI Coding Guide
+
+## Chat Instructions
+You are an expert full-stack developer with deep experience in C#/.NET, Angular, and Three.js. Your task is to provide clear, concise coding guidance based on the project's architecture and conventions. Always refer to the specific instructions in this file when answering questions about code style, architecture, or development workflows.
+
+Most importantly: Keep your answers brief and to the point. Focus on providing clear, actionable guidance that can be easily followed by developers. Avoid unnecessary explanations or justifications unless they add significant value.
 
 ## Project Overview
 **Bouldering App**: 3D web application for visualizing and managing bouldering routes in climbing gyms. Features include route creation, 3D model rendering with LOD (Level of Detail), user authentication, and real-time 3D interaction.
@@ -165,4 +174,81 @@ public async Task<Guid> GetDossierId([FromQuery] Guid? applicationId) {
 - **Modal System**: Custom modal service in `src/app/core/modal/`
 - **Toast Notifications**: `ToastService` for user feedback
 
-For detailed .NET controller patterns, see `.github/chatmodes/copilot-instructions.md`.
+For detailed .NET controller patterns, see `.github/copilot-instructions.md`.
+
+# Development Guidelines
+
+## General Code Principles
+
+Keep your answers brief and to the point. Focus on providing clear, actionable guidance that can be easily followed by developers. Avoid unnecessary explanations or justifications unless they add significant value.
+
+### Clean Code
+
+- ALWAYS follow Clean Code principles.
+- ALWAYS apply the "Bad Comments" philosophy: DO NOT write comments unless they provide value beyond what the code itself expresses. Only comment on non-self-explanatory logic.
+- ALWAYS choose a simple solution over a complex one.
+- ALWAYS try to write code in the same manner as existing code.
+- ALWAYS try to add logging.
+- ALWAYS use SOLID Principle when writing code.
+- ALWAYS use best practices in C#.
+- ALWAYS write Integration tests.
+- NEVER implement unnecessary features or optimizations.
+- NEVER suggest over-engineered solutions.
+- NEVER suggest overkill. Focus on real-world wins.
+- NEVER recreate existing libraries or frameworks.
+
+### Language Conventions
+
+**Domain Model:**
+- ALWAYS use the exact entity names from the domain model consistently throughout the codebase
+
+### Architecture & Design Principles
+
+- **Single Responsibility Principle (SRP)**: Each class, method, and component should have one reason to change
+- **DRY (Don't Repeat Yourself)**: Extract common functionality into reusable components, services, and utilities
+- **Separation of Concerns**: Clearly separate business logic, data access, and presentation layers
+- **Dependency Injection**: Use .NET Core's built-in DI container for loose coupling
+- **Clean Architecture**: Organize code in layers (Domain, Application, Infrastructure, Presentation)
+
+
+### Security (OWASP TOP 10)
+
+ALWAYS follow OWASP TOP 10 security measures for secure web applications.
+
+---
+
+## Backend (C#/.NET)
+
+ALWAYS read and follow the complete backend instructions in [backend-instructions.md](backend-instructions.md).
+
+Before working on any C# code, ALWAYS consult the backend-instructions.md file which contains:
+- C# Coding Conventions & Static Code Analysis rules
+- REST API Guidelines & Route Naming conventions
+- Exception Handling standards
+- Database/EF Core best practices
+- Test Patterns (Builders, Directors, Asserters)
+- Integration testing requirements
+
+### Build Configuration (Release)
+
+- ALWAYS use **Release** configuration for any build, test, publish, or restore verification that is meant to validate the code quality.
+- This ensures that **Warnings as Errors** and all analyzer rules are enforced consistently.
+
+#### .NET CLI rules
+- ALWAYS prefer:
+  - `dotnet build -c Release`
+  - `dotnet test -c Release`
+  - `dotnet publish -c Release`
+- NEVER run quality-validation builds using Debug (unless explicitly requested for debugging).
+
+#### CI/CD pipelines
+- When editing or proposing pipeline steps, ALWAYS ensure the build configuration is `Release`
+  - Example: `--configuration Release` or `-c Release`
+
+---
+
+## References
+
+- [.NET Core Security Best Practices](https://docs.microsoft.com/en-us/aspnet/core/security/)
+- [Clean Architecture in .NET](https://docs.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)

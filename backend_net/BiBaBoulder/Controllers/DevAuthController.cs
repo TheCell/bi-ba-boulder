@@ -41,7 +41,7 @@ public class DevAuthController : ControllerBase
     {
         if (!_environment.IsDevelopment())
         {
-            return NotFound(); // Hide this endpoint in production
+            return NotFound();
         }
 
         // Extra security: Only allow localhost requests
