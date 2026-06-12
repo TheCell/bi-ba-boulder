@@ -13,7 +13,7 @@ import { Modal } from 'src/app/core/modal/modal/modal';
 import { ModalService } from 'src/app/core/modal/modal.service';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
 import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 
 interface iHoldColorForm { 
@@ -36,6 +36,7 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService);
   private changeDetectorRef = inject(ChangeDetectorRef);
+  private router = inject(Router);
 
   public colorForm = this._fb.group<iHoldColorForm>({
     spraywallHoldType: (SpraywallHoldType.hold),
@@ -99,7 +100,7 @@ export class SpraywallEditor implements OnInit, OnDestroy {
     if (closeModalEvent.closeType > 0) {
       // don't reset
     } else {
-      this.resetSignal.next();
+      this.router.navigate(['/', 'spraywall', this.spraywallId]);
     }
   }
 

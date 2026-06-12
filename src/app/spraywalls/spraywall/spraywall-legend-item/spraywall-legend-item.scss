@@ -24,9 +24,29 @@
 
 .item {
   display: grid;
-  grid-template: 'header header header header header header';
+  grid-template: 'name description fontGrade createdByName createdDate header';
   grid-template-columns: 30% 40% 10% 10% 10%;
   white-space: nowrap;
+}
+
+.name {
+  grid-area: name;
+}
+
+.description {
+  grid-area: description;
+}
+
+.fontGrade {
+  grid-area: fontGrade;
+}
+
+.createdByName {
+  grid-area: createdByName;
+}
+
+.createdDate {
+  grid-area: createdDate;
 }
 
 .item-cell {
@@ -35,16 +55,48 @@
 }
 
 .hidden-on-mobile {
-  color: $gray;
+  color: $secondary;
+}
+
+.show-on-mobile {
+  display: none;
+}
+
+.item.selected>.item-cell {
+  text-overflow: unset;
+  white-space: normal;
+}
+
+.item.selected>.hidden-on-mobile {
+  color: $light;
+  text-shadow: $dark 1px 1px 5px;
+}
+
+.item.selected>.name {
+  color: $info;
 }
 
 @media (max-width: 600px) {
   .item {
-    grid-template: 'header header header';
+    grid-template: 'name fontGrade createdByName';
+    grid-template-columns: 60% 10% 30%;
+  }
+  
+  .item.selected {
+    grid-template: 'name fontGrade createdByName'
+                   'description additional createdDate';
     grid-template-columns: 60% 10% 30%;
   }
 
   .hidden-on-mobile {
     display: none;
+  }
+
+  .show-on-mobile {
+    display: unset;
+  }
+
+  .item.selected > .description.hidden-on-mobile {
+    display: unset;
   }
 }

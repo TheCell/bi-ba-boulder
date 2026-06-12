@@ -85,8 +85,8 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
         next: () => {
           this.isLoading = false;
           this.saveForm.reset();
-          this.closeModal.emit({ closeType: 0 });
           this.toastService.showSuccess('Updated Successfully', 'You have successfully updated the spraywall.');
+          this.closeModal.emit({ closeType: 0 });
         },
         error: () => {
           this.isLoading = false;
