@@ -375,10 +375,10 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE
     }
-    // this.controls.touches = {
-    //   ONE: THREE.TOUCH.DOLLY_PAN,
-    //   TWO: THREE.TOUCH.ROTATE
-    // }
+    this.controls.touches = {
+      ONE: THREE.TOUCH.PAN,
+      TWO: THREE.TOUCH.DOLLY_ROTATE
+    }
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
