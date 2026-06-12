@@ -164,6 +164,15 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     this.scene.add(this.directionalLight);
     this.scene.add(this.ambientLight);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.mouseButtons = {
+      LEFT: THREE.MOUSE.PAN,
+      MIDDLE: THREE.MOUSE.DOLLY,
+      RIGHT: THREE.MOUSE.ROTATE
+    }
+    this.controls.touches = {
+      ONE: THREE.TOUCH.DOLLY_PAN,
+      TWO: THREE.TOUCH.ROTATE
+    }
     this.controls.addEventListener('change', this.loop)
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
