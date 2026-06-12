@@ -7,6 +7,7 @@ import { Configuration, ConfigurationParameters } from './api-net';
 import { environment } from '../environments/environment';
 import { errorHandlerInterceptor } from './core/interceptors/error-handler-interceptor';
 import { csrfInterceptor } from './core/interceptors/csrf-interceptor';
+import { loggedInInterceptor } from './core/interceptors/logged-in-interceptor';
 
 function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -29,7 +30,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withFetch(),
-      withInterceptors([errorHandlerInterceptor, csrfInterceptor])
+      withInterceptors([loggedInInterceptor, errorHandlerInterceptor, csrfInterceptor])
     )
   ]
 };

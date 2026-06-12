@@ -1,5 +1,7 @@
-import { HttpEvent, HttpHandlerFn, HttpRequest, type HttpInterceptorFn } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
+import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest, type HttpInterceptorFn } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
+import { AuthSessionStateService } from '../../auth/auth-session-state.service';
 
 /**
  * In the BFF pattern, authentication is handled via HttpOnly cookies that the browser
@@ -10,5 +12,15 @@ import { Observable } from 'rxjs';
  * Cookies are sent automatically when withCredentials is true (configured in app.config.ts).
  */
 export const loggedInInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
-  return next(req);
+  const authSessionStateService = inject(AuthSessionStateService);
+
+  return next(req).pipe(
+    catchError((error: unknown) => {
+      if (error instanceof HttpErrorResponse && error.status === 401) {
+        authSessionStateService.setUnauthenticated();
+      }
+
+      return throwError(() => error);
+    })
+  );
 };

@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
-import { BffAuthService, BffUserClaim } from './bff-auth.service';
+import { BffAuthService } from './bff-auth.service';
 import { HttpContext } from '@angular/common/http';
 import { SKIP_ERROR_HANDLER } from '../core/interceptors/error-handler-interceptor';
 import { DevAuthService } from '@api-net/index';
+import { AuthSessionStateService } from './auth-session-state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,11 +12,10 @@ import { DevAuthService } from '@api-net/index';
 export class LoginTrackerService {
   private bffAuthService = inject(BffAuthService);
   private devAuthService = inject(DevAuthService);
-  private claims: BffUserClaim[] = [];
-  private authenticated = false;
+  private authSessionStateService = inject(AuthSessionStateService);
 
   /** Emits whenever the authentication state changes. */
-  public authStateChanged$ = new Subject<boolean>();
+  public authStateChanged$: Subject<boolean> = this.authSessionStateService.authStateChanged$;
 
   /**
    * Fetches the current session state from the BFF.
@@ -24,20 +24,16 @@ export class LoginTrackerService {
   public checkSession(): void {
     this.bffAuthService.getUser(new HttpContext().set(SKIP_ERROR_HANDLER, true)).subscribe({
       next: (claims) => {
-        this.claims = claims;
-        this.authenticated = true;
-        this.authStateChanged$.next(true);
+        this.authSessionStateService.setAuthenticated(claims);
       },
       error: () => {
-        this.claims = [];
-        this.authenticated = false;
-        this.authStateChanged$.next(false);
+        this.authSessionStateService.setUnauthenticated();
       },
     });
   }
 
   public isLoggedIn(): boolean {
-    return this.authenticated;
+    return this.authSessionStateService.isLoggedIn();
   }
 
   public getUserMail(): string | undefined {
@@ -78,22 +74,16 @@ export class LoginTrackerService {
   public logout(): void {
     this.bffAuthService.logout().subscribe({
       next: () => {
-        this.claims = [];
-        this.authenticated = false;
-        this.authStateChanged$.next(false);
+        this.authSessionStateService.setUnauthenticated();
         window.location.href = '/';
       },
       error: () => {
-        // Even on error, clear local state
-        this.claims = [];
-        this.authenticated = false;
-        this.authStateChanged$.next(false);
+        this.authSessionStateService.setUnauthenticated();
       },
     });
   }
 
   private getClaimValue(type: string): string | undefined {
-    const claim = this.claims.find((c) => c.type === type);
-    return claim?.value;
+    return this.authSessionStateService.getClaimValue(type);
   }
 }
