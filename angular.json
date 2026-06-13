@@ -46,8 +46,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "10kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "30kB"
                 }
               ],
               "outputHashing": "all",
@@ -75,7 +75,8 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "ssl": true
+            "ssl": true,
+            "hmr": true
           },
           "configurations": {
             "production": {

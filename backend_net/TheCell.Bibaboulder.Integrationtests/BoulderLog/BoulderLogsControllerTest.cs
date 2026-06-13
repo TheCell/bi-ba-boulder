@@ -36,7 +36,7 @@ public class BoulderLogsControllerTest : BaseTest
         var user = new UserBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var log = new BoulderLogBuilder().SetUserId(user.Id).SetIsSent(true).Build();
+        var log = new BoulderLogBuilder().SetUser(user).SetIsSent(true).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(log);
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
@@ -63,7 +63,7 @@ public class BoulderLogsControllerTest : BaseTest
         var user = new UserBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var log = new BoulderLogBuilder().SetUserId(user.Id).SetIsSent(true).Build();
+        var log = new BoulderLogBuilder().SetUser(user).SetIsSent(true).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(log);
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
@@ -76,29 +76,63 @@ public class BoulderLogsControllerTest : BaseTest
     }
 
     [Fact]
-    public async Task CreateBoulderLog_Anonymous_Unauthorized()
+    public async Task GetBoulderLogBySpraywall_Anonymous_Unauthorized()
     {
-        var body = new CreateBoulderLogCommand { IsSent = true, IsProject = false };
-        var response = await Client().PutAsync(_baseUrl, GetJsonHttpBody(body), TestContext.Current.CancellationToken);
+        var spraywallProblemId = Guid.CreateVersion7();
+        var response = await Client().GetAsync($"{_baseUrl}/spraywall/{spraywallProblemId}", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
-    public async Task CreateBoulderLog_Authenticated_Ok()
+    public async Task GetBoulderLogBySpraywall_Authenticated_Ok()
     {
         var user = new UserBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var sprayWall = new SpraywallBuilder().Build();
+        var spraywallProblem = new SpraywallProblemBuilder(user, sprayWall).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(spraywallProblem);
+
+        var boulderLog = new BoulderLogBuilder()
+            .SetUser(user)
+            .SetIsSent(true)
+            .SetIsProject(false)
+            .SetRating(Rating.Four)
+            .SetFontGrade(FontGrade.ThreePlus)
+            .SetSpraywallProblem(spraywallProblem)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(boulderLog);
+
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var response = await client.GetAsync($"{_baseUrl}/spraywall/{spraywallProblem.Id}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<BoulderLogDto>(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(result);
+        BoulderLogAssertion.Assert(boulderLog, result);
+        Assert.Equal(user.Id, result.UserId);
+    }
+
+    [Fact]
+    public async Task CreateBoulderLogForSpraywall_Authenticated_Ok()
+    {
+        var user = new UserBuilder().Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+        var sprayWall = new SpraywallBuilder().Build();
+        var spraywallProblem = new SpraywallProblemBuilder(user, sprayWall).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(spraywallProblem);
 
         var command = new CreateBoulderLogCommand
         {
             IsSent = true,
             IsProject = false,
             Rating = Rating.Four,
-            FontGrade = FontGrade.ThreePlus
+            FontGrade = FontGrade.ThreePlus,
+            SpraywallProblemId = spraywallProblem.Id
         };
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
-        var response = await client.PutAsync(_baseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
+        var response = await client.PutAsync($"{_baseUrl}/{spraywallProblem.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<BoulderLogDto>(cancellationToken: TestContext.Current.CancellationToken);
@@ -122,7 +156,7 @@ public class BoulderLogsControllerTest : BaseTest
         var user = new UserBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var log = new BoulderLogBuilder().SetUserId(user.Id).SetIsSent(false).Build();
+        var log = new BoulderLogBuilder().SetUser(user).SetIsSent(false).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(log);
 
         var body = new UpdateBoulderLogCommand { Id = Guid.CreateVersion7(), Version = 1L, IsSent = true, IsProject = true, Rating = Rating.Five };
@@ -157,7 +191,7 @@ public class BoulderLogsControllerTest : BaseTest
         var user = new UserBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var log = new BoulderLogBuilder().SetUserId(user.Id).Build();
+        var log = new BoulderLogBuilder().SetUser(user).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(log);
 
         var body = new DeleteBoulderLogCommand { Id = Guid.CreateVersion7(), Version = 1L };

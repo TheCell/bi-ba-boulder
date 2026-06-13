@@ -48,7 +48,7 @@ public class DeleteBoulderLogTest
         await _dbContext.InsertEntityAndSaveChangesAsync(owner);
         await _dbContext.InsertEntityAndSaveChangesAsync(otherUser);
 
-        var log = new BoulderLogBuilder().SetUserId(owner.Id).Build();
+        var log = new BoulderLogBuilder().SetUser(owner).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(log);
 
         _currentUserServiceMock.WithUser(otherUser);
@@ -71,7 +71,7 @@ public class DeleteBoulderLogTest
         var user = new UserBuilder().SetRoles(AuthorizationRoles.User).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var log = new BoulderLogBuilder().SetUserId(user.Id).Build();
+        var log = new BoulderLogBuilder().SetUser(user).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(log);
 
         _currentUserServiceMock.WithUser(user);

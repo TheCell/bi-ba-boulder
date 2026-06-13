@@ -10,5 +10,6 @@ import { NgClass } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Icon {
-  public icon = input<IconType>('none');
+  public icon = input.required<IconType>();
+  public isBig = input<boolean>(false);
 }

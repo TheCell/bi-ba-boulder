@@ -1,12 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
-import { SearchProblemsRequest, SpraywallProblemDto, SpraywallProblemListDto, SpraywallProblemsService, SpraywallsService } from '@api-net/index';
+import { BoulderLogDto, BoulderLogsService, SearchProblemsRequest, SpraywallProblemDto, SpraywallProblemListDto, SpraywallProblemsService, SpraywallsService } from '@api-net/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
 import { Icon } from 'src/app/core/icon/icon';
-import { debounceTime, Subject, Subscription, switchMap } from 'rxjs';
+import { debounceTime, filter, Subject, Subscription, switchMap } from 'rxjs';
 import { ModalService } from 'src/app/core/modal/modal.service';
 import { Modal } from 'src/app/core/modal/modal/modal';
 import { SpraywallGradeFilterDialog } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog';
@@ -15,15 +15,16 @@ import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-close-data';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-data';
 import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dialog';
-import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 import { ToastService } from 'src/app/core/toast-container/toast.service';
 import { ConfirmDeleteDialog } from './confirm-delete-dialog/confirm-delete-dialog';
 import { ConfirmDeleteDialogData } from './confirm-delete-dialog/confirm-delete-dialog-data';
+import { AuthSessionStateService } from 'src/app/auth/auth-session-state.service';
+import { ProblemLogOverlay } from './problem-log-overlay/problem-log-overlay';
 
 @Component({
   selector: 'app-spraywall',
   imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, SpraywallLegendItemPlaceholder,
-    RouterLink, Icon, Modal],
+    RouterLink, Icon, Modal, ProblemLogOverlay],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
   changeDetection: ChangeDetectionStrategy.Default
@@ -34,7 +35,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('confirmDelete') private confirmDeleteModal!: Modal;
   @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
   
-  public loginTrackerService = inject(LoginTrackerService);
+  public authSessionStateService = inject(AuthSessionStateService);
   private spraywallsService = inject(SpraywallsService);
   private spraywallProblemsService = inject(SpraywallProblemsService);
   private boulderLoaderService = inject(BoulderLoaderService)
@@ -42,12 +43,14 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   private changeDetectorRef = inject(ChangeDetectorRef);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private boulderLogsService = inject(BoulderLogsService);
 
   public currentRawModel?: ArrayBuffer;
   public spraywallId = '';
 
   public listOfProblems: SpraywallProblemDto[] = [];
   public selectedProblem?: SpraywallProblemDto = undefined;
+  public boulderLog = signal<BoulderLogDto | undefined>(undefined);
   public currentFilter: SearchProblemsRequest = {};
 
   public totalCount = 0;
@@ -56,6 +59,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   private newEntriesLoading = false;
   
   private reloadSearchSubject = new Subject<void>();
+  private loadBoulderLog = new Subject<string>();
   private subscription = new Subscription();
 
   public constructor() {
@@ -75,6 +79,20 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
         this.changeDetectorRef.markForCheck();
       }
     }));
+
+    this.subscription.add(this.loadBoulderLog.pipe(filter(() => this.authSessionStateService.isLoggedIn()), switchMap((problemId) => this.boulderLogsService.getBoulderLogBySpraywall(problemId)))
+      .subscribe({
+        next: (boulderLog?: BoulderLogDto | null) => {
+          if (boulderLog) {
+            this.boulderLog.set(boulderLog);
+          } else {
+            this.boulderLog.set(undefined);
+          }
+        },
+        error: () => {
+          this.boulderLog.set(undefined);
+        }
+      }));
   }
 
   public ngAfterViewInit(): void {
@@ -102,11 +120,14 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       this.onResetSelection();
     } else {
       this.selectedProblem = problem;
+      this.boulderLog.set(undefined);
+      this.loadBoulderLog.next(problem.id);
     }
   }
 
   public onResetSelection(): void {
     this.selectedProblem = undefined;
+    this.boulderLog.set(undefined);
   }
 
   public onDateClicked(): void {

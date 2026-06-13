@@ -60,7 +60,7 @@ public class CreateBoulderLogTest
         var queryHandler = new GetBoulderLogQueryHandler(_dbContext);
         var result = await queryHandler.HandleAsync(new GetBoulderLogQuery { Id = command.Id });
 
-        BoulderLogAssertion.Assert(command, result);
-        Assert.Equal(user.Id, result.UserId);
+        BoulderLogAssertion.Assert(command, result!);
+        Assert.Equal(user.Id, result!.UserId);
     }
 }

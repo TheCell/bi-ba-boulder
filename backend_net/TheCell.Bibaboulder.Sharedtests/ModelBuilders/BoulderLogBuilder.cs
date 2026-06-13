@@ -38,15 +38,17 @@ public class BoulderLogBuilder : BuilderBase<BoulderLog>
         return this;
     }
 
-    public BoulderLogBuilder SetUserId(Guid value)
+    public BoulderLogBuilder SetUser(User value)
     {
-        _instance.UserId = value;
+        _instance.User = value;
+        _instance.UserId = value.Id;
         return this;
     }
 
-    public BoulderLogBuilder SetSpraywallProblemId(Guid? value)
+    public BoulderLogBuilder SetSpraywallProblem(SpraywallProblem? value)
     {
-        _instance.SpraywallProblemId = value;
+        _instance.SpraywallProblem = value;
+        _instance.SpraywallProblemId = value?.Id;
         return this;
     }
 }

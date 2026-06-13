@@ -18,6 +18,7 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 public class BoulderLogsController : ControllerBase
 {
     private readonly IQueryHandler<GetBoulderLogQuery, BoulderLogDto> _getBoulderLogQueryHandler;
+    private readonly IQueryHandler<GetBoulderLogBySpraywallQuery, BoulderLogDto?> _getBoulderLogBySpraywallQueryHandler;
     private readonly IQueryHandler<GetBoulderLogsQuery, ICollection<BoulderLogDto>> _getBoulderLogsQueryHandler;
     private readonly ICommandHandler<CreateBoulderLogCommand> _createBoulderLogCommandHandler;
     private readonly ICommandHandler<UpdateBoulderLogCommand> _updateBoulderLogCommandHandler;
@@ -26,6 +27,7 @@ public class BoulderLogsController : ControllerBase
 
     public BoulderLogsController(
         IQueryHandler<GetBoulderLogQuery, BoulderLogDto> getBoulderLogQueryHandler,
+        IQueryHandler<GetBoulderLogBySpraywallQuery, BoulderLogDto?> getBoulderLogBySpraywallQueryHandler,
         IQueryHandler<GetBoulderLogsQuery, ICollection<BoulderLogDto>> getBoulderLogsQueryHandler,
         ICommandHandler<CreateBoulderLogCommand> createBoulderLogCommandHandler,
         ICommandHandler<UpdateBoulderLogCommand> updateBoulderLogCommandHandler,
@@ -33,6 +35,7 @@ public class BoulderLogsController : ControllerBase
         ICurrentUserService currentUserService)
     {
         _getBoulderLogQueryHandler = getBoulderLogQueryHandler;
+        _getBoulderLogBySpraywallQueryHandler = getBoulderLogBySpraywallQueryHandler;
         _getBoulderLogsQueryHandler = getBoulderLogsQueryHandler;
         _createBoulderLogCommandHandler = createBoulderLogCommandHandler;
         _updateBoulderLogCommandHandler = updateBoulderLogCommandHandler;
@@ -53,11 +56,18 @@ public class BoulderLogsController : ControllerBase
         return await _getBoulderLogQueryHandler.HandleAsync(new GetBoulderLogQuery { Id = id });
     }
 
-    [HttpPut]
-    public async Task<BoulderLogDto> CreateBoulderLog([FromBody] CreateBoulderLogCommand command)
+    [HttpGet("spraywall/{spraywallProblemId}")]
+    public async Task<BoulderLogDto?> GetBoulderLogBySpraywall(Guid spraywallProblemId)
     {
+        return await _getBoulderLogBySpraywallQueryHandler.HandleAsync(new GetBoulderLogBySpraywallQuery { SpraywallProblemId = spraywallProblemId });
+    }
+
+    [HttpPut("{spraywallProblemId}")]
+    public async Task<BoulderLogDto> CreateBoulderLogForSpraywall(Guid spraywallProblemId, [FromBody] CreateBoulderLogCommand command)
+    {
+        command.SpraywallProblemId = spraywallProblemId;
         await _createBoulderLogCommandHandler.HandleAsync(command);
-        return await _getBoulderLogQueryHandler.HandleAsync(new GetBoulderLogQuery { Id = command.Id });
+        return await _getBoulderLogQueryHandler.HandleAsync(new GetBoulderLogQuery { Id = command.Id }) ?? throw new InvalidOperationException("Failed to create boulder log.");
     }
 
     [HttpPost("{id}")]

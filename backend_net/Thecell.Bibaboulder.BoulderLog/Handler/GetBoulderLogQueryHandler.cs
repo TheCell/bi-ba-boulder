@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
@@ -20,10 +19,12 @@ public class GetBoulderLogQueryHandler : IQueryHandler<GetBoulderLogQuery, Bould
     public async Task<BoulderLogDto> HandleAsync(GetBoulderLogQuery query)
     {
         var boulderLog = await _dbContext.BoulderLogs
-            .AsNoTracking()
-            .SingleOrDefaultAsync(b => b.Id == query.Id);
+            .FindAsync(query.Id);
 
-        NotFoundException.ThrowIfNull(boulderLog, nameof(Model.Model.BoulderLog), query.Id);
+        if (boulderLog == null)
+        {
+            NotFoundException.ThrowIfNull(boulderLog, nameof(BoulderLog), query.Id);
+        }
 
         return boulderLog.MapToBoulderLogDto();
     }

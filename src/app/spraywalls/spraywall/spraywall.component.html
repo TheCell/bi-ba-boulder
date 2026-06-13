@@ -1,6 +1,12 @@
 <div class="grid">
   <section class="renderContainer">
     @if (currentRawModel) {
+        @if (authSessionStateService.isLoggedIn() && selectedProblem) {
+            <app-problem-log-overlay
+                [boulderProblemId]="selectedProblem.id"
+                [boulderLog]="boulderLog()">
+            </app-problem-log-overlay>
+        }
         <app-boulder-render
             class="render"
             [rawModel]="currentRawModel"
@@ -17,7 +23,7 @@
         <button class="button action-button" (click)="onResetSelection()">Reset</button>
         <button class="button action-button" (click)="onInfoClicked()">Info</button>
         @if (selectedProblem?.metadata?.canEdit) {
-            @if (loginTrackerService.isLoggedIn()) {
+            @if (authSessionStateService.isLoggedIn()) {
                 <button class="button action-button warning" (click)="onEditProblem()">Edit</button>
             } @else {
                 <button class="button action-button warning" (click)="hintAtNotLoggedIn()">Edit</button>
@@ -26,7 +32,7 @@
         @if (selectedProblem?.metadata?.canDelete) {
             <button class="button action-button danger" (click)="onDeleteProblem()">Delete</button>
         }
-        @if (loginTrackerService.isLoggedIn()) {
+        @if (authSessionStateService.isLoggedIn()) {
             <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
         } @else {
             <button class="button action-button action-end" (click)="hintAtNotLoggedIn()">Create new route</button>

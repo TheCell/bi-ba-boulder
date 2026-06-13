@@ -50,7 +50,7 @@ public class UpdateBoulderLogTest
         await _dbContext.InsertEntityAndSaveChangesAsync(owner);
         await _dbContext.InsertEntityAndSaveChangesAsync(otherUser);
 
-        var log = new BoulderLogBuilder().SetUserId(owner.Id).Build();
+        var log = new BoulderLogBuilder().SetUser(owner).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(log);
 
         _currentUserServiceMock.WithUser(otherUser);
@@ -75,7 +75,7 @@ public class UpdateBoulderLogTest
         var user = new UserBuilder().SetRoles(AuthorizationRoles.User).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var log = new BoulderLogBuilder().SetUserId(user.Id).SetIsSent(false).Build();
+        var log = new BoulderLogBuilder().SetUser(user).SetIsSent(false).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(log);
 
         _currentUserServiceMock.WithUser(user);
@@ -96,7 +96,7 @@ public class UpdateBoulderLogTest
         var queryHandler = new GetBoulderLogQueryHandler(_dbContext);
         var result = await queryHandler.HandleAsync(new GetBoulderLogQuery { Id = log.Id });
 
-        Assert.True(result.IsSent);
+        Assert.True(result!.IsSent);
         Assert.True(result.IsProject);
         Assert.Equal(Rating.Five, result.Rating);
         Assert.Equal(FontGrade.FourMinus, result.FontGrade);
