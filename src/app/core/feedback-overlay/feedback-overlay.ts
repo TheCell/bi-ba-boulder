@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Icon } from '../icon/icon';
 import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
@@ -18,7 +18,7 @@ interface IFeedbackForm {
   styleUrl: './feedback-overlay.scss',
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class FeedbackOverlay implements OnInit {
+export class FeedbackOverlay {
   private _fb = inject(NonNullableFormBuilder);
   public loginTrackerService = inject(LoginTrackerService);
   private feedbacksService = inject(FeedbacksService);
@@ -34,11 +34,6 @@ export class FeedbackOverlay implements OnInit {
   
   public constructor() {
     this.feedbackForm.controls.feedback.addValidators([Validators.required, Validators.minLength(10)]);
-  }
-
-  public ngOnInit(): void {
-    console.log('test');
-    
   }
 
   public openFeedback(): void {

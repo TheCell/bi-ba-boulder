@@ -105,8 +105,6 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   }
 
   public openSaveModal(): void {
-    // console.log(this.renderer.getRouteImage());
-    
     const component = this.modalService.open(this.modal.id, SpraywallSaveDialog);
     if (!component) {
       throw new Error('Modal component not found');
