@@ -18,14 +18,13 @@ import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dial
 import { ToastService } from 'src/app/core/toast-container/toast.service';
 import { ConfirmDeleteDialog } from './confirm-delete-dialog/confirm-delete-dialog';
 import { ConfirmDeleteDialogData } from './confirm-delete-dialog/confirm-delete-dialog-data';
-import { JsonPipe } from '@angular/common';
 import { AuthSessionStateService } from 'src/app/auth/auth-session-state.service';
 import { ProblemLogOverlay } from './problem-log-overlay/problem-log-overlay';
 
 @Component({
   selector: 'app-spraywall',
   imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, SpraywallLegendItemPlaceholder,
-    RouterLink, Icon, Modal, JsonPipe, ProblemLogOverlay],
+    RouterLink, Icon, Modal, ProblemLogOverlay],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
   changeDetection: ChangeDetectionStrategy.Default
