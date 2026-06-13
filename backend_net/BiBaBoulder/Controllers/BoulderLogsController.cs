@@ -17,7 +17,7 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 [Route("api/[controller]")]
 public class BoulderLogsController : ControllerBase
 {
-    private readonly IQueryHandler<GetBoulderLogQuery, BoulderLogDto> _getBoulderLogQueryHandler;
+    private readonly IQueryHandler<GetBoulderLogQuery, BoulderLogDto?> _getBoulderLogQueryHandler;
     private readonly IQueryHandler<GetBoulderLogsQuery, ICollection<BoulderLogDto>> _getBoulderLogsQueryHandler;
     private readonly ICommandHandler<CreateBoulderLogCommand> _createBoulderLogCommandHandler;
     private readonly ICommandHandler<UpdateBoulderLogCommand> _updateBoulderLogCommandHandler;
@@ -25,7 +25,7 @@ public class BoulderLogsController : ControllerBase
     private readonly ICurrentUserService _currentUserService;
 
     public BoulderLogsController(
-        IQueryHandler<GetBoulderLogQuery, BoulderLogDto> getBoulderLogQueryHandler,
+        IQueryHandler<GetBoulderLogQuery, BoulderLogDto?> getBoulderLogQueryHandler,
         IQueryHandler<GetBoulderLogsQuery, ICollection<BoulderLogDto>> getBoulderLogsQueryHandler,
         ICommandHandler<CreateBoulderLogCommand> createBoulderLogCommandHandler,
         ICommandHandler<UpdateBoulderLogCommand> updateBoulderLogCommandHandler,
@@ -48,7 +48,7 @@ public class BoulderLogsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<BoulderLogDto> GetBoulderLog(Guid id)
+    public async Task<BoulderLogDto?> GetBoulderLog(Guid id)
     {
         return await _getBoulderLogQueryHandler.HandleAsync(new GetBoulderLogQuery { Id = id });
     }
@@ -57,11 +57,11 @@ public class BoulderLogsController : ControllerBase
     public async Task<BoulderLogDto> CreateBoulderLog([FromBody] CreateBoulderLogCommand command)
     {
         await _createBoulderLogCommandHandler.HandleAsync(command);
-        return await _getBoulderLogQueryHandler.HandleAsync(new GetBoulderLogQuery { Id = command.Id });
+        return await _getBoulderLogQueryHandler.HandleAsync(new GetBoulderLogQuery { Id = command.Id }) ?? throw new InvalidOperationException("Failed to create boulder log.");
     }
 
     [HttpPost("{id}")]
-    public async Task<BoulderLogDto> UpdateBoulderLog(Guid id, [FromBody] UpdateBoulderLogCommand command)
+    public async Task<BoulderLogDto?> UpdateBoulderLog(Guid id, [FromBody] UpdateBoulderLogCommand command)
     {
         command.Id = id;
         await _updateBoulderLogCommandHandler.HandleAsync(command);

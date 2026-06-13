@@ -18,7 +18,7 @@ public class GetBoulderLogTest
     }
 
     [Fact]
-    public async Task GetBoulderLog_NotFound_NotFoundException()
+    public async Task GetBoulderLog_NotFound_Ok()
     {
         var query = new GetBoulderLogQuery
         {
@@ -27,9 +27,8 @@ public class GetBoulderLogTest
 
         var handler = new GetBoulderLogQueryHandler(_dbContext);
 
-        var ex = await Assert.ThrowsAsync<NotFoundException>(async () =>
-            await handler.HandleAsync(query));
-        Assert.Contains("BoulderLog not found.", ex.Message);
+        var result = await handler.HandleAsync(query);
+        Assert.Null(result);
     }
 
     [Fact]

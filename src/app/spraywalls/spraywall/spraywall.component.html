@@ -16,8 +16,14 @@
     <div class="actions">
         <button class="button action-button" (click)="onResetSelection()">Reset</button>
         <button class="button action-button" (click)="onInfoClicked()">Info</button>
+        @if (boulderLog) {
+            <span>
+                {{ boulderLog | json }}
+            </span>
+            <!-- <button class="button action-button" (click)="onBoulderLogClicked()">Log</button> -->
+        }
         @if (selectedProblem?.metadata?.canEdit) {
-            @if (loginTrackerService.isLoggedIn()) {
+            @if (authSessionStateService.isLoggedIn()) {
                 <button class="button action-button warning" (click)="onEditProblem()">Edit</button>
             } @else {
                 <button class="button action-button warning" (click)="hintAtNotLoggedIn()">Edit</button>
@@ -26,7 +32,7 @@
         @if (selectedProblem?.metadata?.canDelete) {
             <button class="button action-button danger" (click)="onDeleteProblem()">Delete</button>
         }
-        @if (loginTrackerService.isLoggedIn()) {
+        @if (authSessionStateService.isLoggedIn()) {
             <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
         } @else {
             <button class="button action-button action-end" (click)="hintAtNotLoggedIn()">Create new route</button>
