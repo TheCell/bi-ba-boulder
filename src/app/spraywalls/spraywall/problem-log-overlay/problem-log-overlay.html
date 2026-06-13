@@ -1,0 +1,21 @@
+<div class="container">
+    @if (currentBoulderLog() !== undefined && currentBoulderLog() !== null) {
+        <app-icon class="action-button" (click)="onUpdateClick('project')"
+            [icon]="currentBoulderLog()!.isProject ? 'tag-filled' : 'tag-empty'"
+            [isBig]="true">
+        </app-icon>
+        <app-icon class="action-button" (click)="onUpdateClick('sent')"
+            [icon]="currentBoulderLog()!.isSent ? 'sent-filled' : 'sent-empty'"
+            [isBig]="true">
+        </app-icon>
+    } @else {
+        <app-icon class="action-button" (click)="onCreateClick('project')"
+            [icon]="'tag-empty'"
+            [isBig]="true">
+        </app-icon>
+        <app-icon class="action-button" (click)="onCreateClick('sent')"
+            [icon]="'sent-empty'"
+            [isBig]="true">
+        </app-icon>
+    }
+</div>

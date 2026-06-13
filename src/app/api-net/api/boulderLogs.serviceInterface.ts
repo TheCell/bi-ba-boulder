@@ -28,9 +28,10 @@ export interface BoulderLogsServiceInterface {
     /**
      * 
      * 
+     * @param spraywallProblemId 
      * @param createBoulderLogCommand 
      */
-    createBoulderLog(createBoulderLogCommand: CreateBoulderLogCommand, extraHttpRequestParams?: any): Observable<BoulderLogDto>;
+    createBoulderLogForSpraywall(spraywallProblemId: string, createBoulderLogCommand: CreateBoulderLogCommand, extraHttpRequestParams?: any): Observable<BoulderLogDto>;
 
     /**
      * 
@@ -46,6 +47,13 @@ export interface BoulderLogsServiceInterface {
      * @param id 
      */
     getBoulderLog(id: string, extraHttpRequestParams?: any): Observable<BoulderLogDto>;
+
+    /**
+     * 
+     * 
+     * @param spraywallProblemId 
+     */
+    getBoulderLogBySpraywall(spraywallProblemId: string, extraHttpRequestParams?: any): Observable<BoulderLogDto>;
 
     /**
      * 

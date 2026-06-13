@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { BoulderLogDto, BoulderLogsService, SearchProblemsRequest, SpraywallProblemDto, SpraywallProblemListDto, SpraywallProblemsService, SpraywallsService } from '@api-net/index';
@@ -20,11 +20,12 @@ import { ConfirmDeleteDialog } from './confirm-delete-dialog/confirm-delete-dial
 import { ConfirmDeleteDialogData } from './confirm-delete-dialog/confirm-delete-dialog-data';
 import { JsonPipe } from '@angular/common';
 import { AuthSessionStateService } from 'src/app/auth/auth-session-state.service';
+import { ProblemLogOverlay } from './problem-log-overlay/problem-log-overlay';
 
 @Component({
   selector: 'app-spraywall',
   imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, SpraywallLegendItemPlaceholder,
-    RouterLink, Icon, Modal, JsonPipe],
+    RouterLink, Icon, Modal, JsonPipe, ProblemLogOverlay],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
   changeDetection: ChangeDetectionStrategy.Default
@@ -50,7 +51,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public listOfProblems: SpraywallProblemDto[] = [];
   public selectedProblem?: SpraywallProblemDto = undefined;
-  public boulderLog?: BoulderLogDto = undefined;
+  public boulderLog = signal<BoulderLogDto | undefined>(undefined);
   public currentFilter: SearchProblemsRequest = {};
 
   public totalCount = 0;
@@ -80,14 +81,17 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }));
 
-    this.subscription.add(this.loadBoulderLog.pipe(filter(() => this.authSessionStateService.isLoggedIn()), switchMap((problemId) => this.boulderLogsService.getBoulderLog(problemId)))
+    this.subscription.add(this.loadBoulderLog.pipe(filter(() => this.authSessionStateService.isLoggedIn()), switchMap((problemId) => this.boulderLogsService.getBoulderLogBySpraywall(problemId)))
       .subscribe({
-        next: (boulderLog?: BoulderLogDto) => {
-          this.boulderLog = boulderLog;
+        next: (boulderLog?: BoulderLogDto | null) => {
+          if (boulderLog) {
+            this.boulderLog.set(boulderLog);
+          } else {
+            this.boulderLog.set(undefined);
+          }
         },
         error: () => {
-          this.boulderLog = undefined;
-          console.log('no log found');
+          this.boulderLog.set(undefined);
         }
       }));
   }
@@ -117,14 +121,14 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       this.onResetSelection();
     } else {
       this.selectedProblem = problem;
-      this.boulderLog = undefined;
+      this.boulderLog.set(undefined);
       this.loadBoulderLog.next(problem.id);
     }
   }
 
   public onResetSelection(): void {
     this.selectedProblem = undefined;
-    this.boulderLog = undefined;
+    this.boulderLog.set(undefined);
   }
 
   public onDateClicked(): void {

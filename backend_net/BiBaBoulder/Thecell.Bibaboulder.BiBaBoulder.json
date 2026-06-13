@@ -204,54 +204,6 @@
             }
           }
         }
-      },
-      "put": {
-        "tags": [
-          "BoulderLogs"
-        ],
-        "operationId": "createBoulderLog",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBoulderLogCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBoulderLogCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateBoulderLogCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/BoulderLogDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BoulderLogDto"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BoulderLogDto"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/api/BoulderLogs/{id}": {
@@ -392,6 +344,108 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/BoulderLogs/spraywall/{spraywallProblemId}": {
+      "get": {
+        "tags": [
+          "BoulderLogs"
+        ],
+        "operationId": "getBoulderLogBySpraywall",
+        "parameters": [
+          {
+            "name": "spraywallProblemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderLogDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderLogDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderLogDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BoulderLogs/{spraywallProblemId}": {
+      "put": {
+        "tags": [
+          "BoulderLogs"
+        ],
+        "operationId": "createBoulderLogForSpraywall",
+        "parameters": [
+          {
+            "name": "spraywallProblemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoulderLogCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoulderLogCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoulderLogCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderLogDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderLogDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderLogDto"
+                }
+              }
+            }
           }
         }
       }

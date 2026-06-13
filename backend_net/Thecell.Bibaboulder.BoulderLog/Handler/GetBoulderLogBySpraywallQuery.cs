@@ -4,7 +4,7 @@ using Thecell.Bibaboulder.Model.Dto;
 
 namespace Thecell.Bibaboulder.BoulderLog.Handler;
 
-public class GetBoulderLogQuery : IQuery<BoulderLogDto>
+public class GetBoulderLogBySpraywallQuery : IQuery<BoulderLogDto?>
 {
-    public required Guid Id { get; init; }
+    public required Guid SpraywallProblemId { get; init; }
 }

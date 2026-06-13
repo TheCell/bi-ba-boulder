@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.BoulderLog.Handler;
 using Thecell.Bibaboulder.Model;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
@@ -8,31 +7,31 @@ using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
 namespace TheCell.Bibaboulder.Unittests.BoulderLog;
 
-public class GetBoulderLogTest
+public class GetBoulderLogBySpraywallTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
 
-    public GetBoulderLogTest()
+    public GetBoulderLogBySpraywallTest()
     {
         _dbContext = new DbContextMock().Build();
     }
 
     [Fact]
-    public async Task GetBoulderLog_NotFound_Ok()
+    public async Task GetBoulderLogBySpraywall_NotFound_Ok()
     {
-        var query = new GetBoulderLogQuery
+        var query = new GetBoulderLogBySpraywallQuery
         {
-            Id = Guid.CreateVersion7()
+            SpraywallProblemId = Guid.CreateVersion7()
         };
 
-        var handler = new GetBoulderLogQueryHandler(_dbContext);
+        var handler = new GetBoulderLogBySpraywallQueryHandler(_dbContext);
 
-        await Assert.ThrowsAsync<NotFoundException>(async () =>
-            await handler.HandleAsync(query));
+        var result = await handler.HandleAsync(query);
+        Assert.Null(result);
     }
 
     [Fact]
-    public async Task GetBoulderLog_Ok()
+    public async Task GetBoulderLogBySpraywall_Ok()
     {
         var user = new UserBuilder().Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(user);
@@ -51,14 +50,15 @@ public class GetBoulderLogTest
             .Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(boulderLog);
 
-        var query = new GetBoulderLogQuery
+        var query = new GetBoulderLogBySpraywallQuery
         {
-            Id = boulderLog.Id
+            SpraywallProblemId = spraywallProblem.Id
         };
 
-        var handler = new GetBoulderLogQueryHandler(_dbContext);
+        var handler = new GetBoulderLogBySpraywallQueryHandler(_dbContext);
         var result = await handler.HandleAsync(query);
 
+        Assert.NotNull(result);
         BoulderLogAssertion.Assert(boulderLog, result);
     }
 }

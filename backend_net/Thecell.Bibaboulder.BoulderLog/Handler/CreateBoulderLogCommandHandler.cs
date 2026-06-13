@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Services;
@@ -22,6 +23,15 @@ public class CreateBoulderLogCommandHandler : ICommandHandler<CreateBoulderLogCo
     public async Task HandleAsync(CreateBoulderLogCommand command)
     {
         var currentUser = await _currentUserService.GetCurrentUserOrThrowAsync();
+
+        var existingLog = await _dbContext.BoulderLogs
+            .AsNoTracking()
+            .SingleOrDefaultAsync(bl => bl.UserId == currentUser.Id && bl.SpraywallProblemId == command.SpraywallProblemId);
+
+        if (existingLog != null)
+        {
+            throw new InvalidOperationException("Log already exists");
+        }
 
         var boulderLog = new Model.Model.BoulderLog
         {

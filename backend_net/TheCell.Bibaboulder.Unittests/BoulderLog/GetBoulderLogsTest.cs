@@ -22,9 +22,9 @@ public class GetBoulderLogsTest
         await _dbContext.InsertEntityAndSaveChangesAsync(user1);
         await _dbContext.InsertEntityAndSaveChangesAsync(user2);
 
-        var log1 = new BoulderLogBuilder().SetUserId(user1.Id).SetIsSent(true).Build();
-        var log2 = new BoulderLogBuilder().SetUserId(user1.Id).SetIsSent(false).Build();
-        var log3 = new BoulderLogBuilder().SetUserId(user2.Id).SetIsSent(true).Build();
+        var log1 = new BoulderLogBuilder().SetUser(user1).SetIsSent(true).Build();
+        var log2 = new BoulderLogBuilder().SetUser(user1).SetIsSent(false).Build();
+        var log3 = new BoulderLogBuilder().SetUser(user2).SetIsSent(true).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(log1);
         await _dbContext.InsertEntityAndSaveChangesAsync(log2);
         await _dbContext.InsertEntityAndSaveChangesAsync(log3);

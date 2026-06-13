@@ -1,6 +1,12 @@
 <div class="grid">
   <section class="renderContainer">
     @if (currentRawModel) {
+        @if (authSessionStateService.isLoggedIn() && selectedProblem) {
+            <app-problem-log-overlay
+                [boulderProblemId]="selectedProblem.id"
+                [boulderLog]="boulderLog()">
+            </app-problem-log-overlay>
+        }
         <app-boulder-render
             class="render"
             [rawModel]="currentRawModel"
@@ -16,12 +22,6 @@
     <div class="actions">
         <button class="button action-button" (click)="onResetSelection()">Reset</button>
         <button class="button action-button" (click)="onInfoClicked()">Info</button>
-        @if (boulderLog) {
-            <span>
-                {{ boulderLog | json }}
-            </span>
-            <!-- <button class="button action-button" (click)="onBoulderLogClicked()">Log</button> -->
-        }
         @if (selectedProblem?.metadata?.canEdit) {
             @if (authSessionStateService.isLoggedIn()) {
                 <button class="button action-button warning" (click)="onEditProblem()">Edit</button>
