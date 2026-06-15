@@ -56,7 +56,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
   private ambientLightIntensity = 2.0;
-  private ambientLightLowIntensity = 1.5;
+  private ambientLightLowIntensity = 2.0;
   private directionalLightIntensity = 1.0;
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
@@ -71,6 +71,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
   private highlightedHoldsTexture?: THREE.Texture<HTMLImageElement>;
+  private highlightActiveShaderUniform = 0.0;
 
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
@@ -92,9 +93,11 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
       if (boulderProblem) {
         this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
+        this.highlightActiveShaderUniform = 1.0;
         this.ambientLight.intensity = this.ambientLightLowIntensity;
       } else {
         this.highlightedHoldsTexture = undefined;
+        this.highlightActiveShaderUniform = 0.0;
         this.ambientLight.intensity = this.ambientLightIntensity;
       }
       this.loop();
@@ -192,6 +195,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       if (shader) {
         shader.uniforms.useRgbTexture.value = this.useRgbTexture;
         shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
+        shader.uniforms.isHighlightActive.value = this.highlightActiveShaderUniform;
       }
     }
 
@@ -324,6 +328,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       shader.uniforms['time'] = { value: 0 };
       shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
       shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
+      shader.uniforms['isHighlightActive'] = { value: this.highlightActiveShaderUniform };
 
       shader.vertexShader = shader.vertexShader.replace(
         'varying vec3 vViewPosition;',
