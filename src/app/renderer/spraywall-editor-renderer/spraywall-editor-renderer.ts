@@ -74,6 +74,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private useRgbTexture = 0.0;
   // private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.DataTexture;
+  private highlightActiveShaderUniform = 0.0;
   private standardHighlightedHoldsTexture?: THREE.DataTexture;
   private lastClickedHold?: ColorAndIndex;
 
@@ -114,6 +115,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       if (boulderProblem) {
         this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
       }
+
+      // always set the uniform to 0.0 for the editor
+      this.highlightActiveShaderUniform = 0.0;
     });
 
     this.destroyRef.onDestroy(() => this.dispose());
@@ -434,6 +438,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       shader.uniforms['time'] = { value: 0 };
       shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
       shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
+      shader.uniforms['isHighlightActive'] = { value: this.highlightActiveShaderUniform };
 
       shader.vertexShader = shader.vertexShader.replace(
         'varying vec3 vViewPosition;',
@@ -538,6 +543,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       if (shader) {
         shader.uniforms.useRgbTexture.value = this.useRgbTexture;
         shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
+        shader.uniforms.isHighlightActive.value = this.highlightActiveShaderUniform;
       }
     }
 

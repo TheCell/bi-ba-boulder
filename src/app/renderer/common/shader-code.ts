@@ -14,6 +14,7 @@ export const beginVertex = [
 export const uniforms = [
     'uniform float opacity;',
     'uniform float useRgbTexture;',
+    'uniform float isHighlightActive;',
     'uniform sampler2D rgbTexture;',
     'uniform sampler2D highlightedHoldsTexture;',
     'varying vec2 vUv1;',
@@ -42,12 +43,15 @@ export const mapFragment = [
     '#ifdef DECODE_VIDEO_TEXTURE',
     'sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );',
     '#endif',
-    // 'diffuseColor *= sampledDiffuseColor;',
     'float hasHighlight = step(0.0001, highlightedHoldsColor.r + highlightedHoldsColor.g + highlightedHoldsColor.b);',
     'hasHighlight = clamp(hasHighlight * (1.0 - step(0.5, useRgbTexture)), 0.0, 1.0);',
     'vec3 highlightColor = highlightedHoldsColor.rgb * fresnel;',
     'vec4 fresnelGroundColor = vec4(0.2, 0.2, 0.2, 1.0);',
     'diffuseColor = mix(fresnelGroundColor, sampledDiffuseColor, 1.0 - hasHighlight);',
+    'float applyGray = step(0.5, useRgbTexture);',
+    'vec3 grayScale = vec3((sampledDiffuseColor.r * 0.299 + sampledDiffuseColor.g * 0.587 + sampledDiffuseColor.b * 0.114));',
+    'grayScale = mix(grayScale, sampledDiffuseColor.rgb, 0.5);', // mix a bit of color back in to avoid a completely gray look
+    'diffuseColor.rgb = mix(diffuseColor.rgb, mix(diffuseColor.rgb, grayScale, isHighlightActive), (1.0 - hasHighlight));',
     'totalEmissiveRadiance.rgb = mix(totalEmissiveRadiance.rgb, highlightColor, hasHighlight);',
     '#endif'
 ]

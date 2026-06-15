@@ -58,8 +58,6 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
   }
 
   public initialize(data: SpraywallSaveData): void {
-    console.log(data satisfies SpraywallSaveData);
-    
     this.imageData = data.imageData;
     this.spraywallId = data.spraywallId;
     this.problemId = data.existingId ?? '';
