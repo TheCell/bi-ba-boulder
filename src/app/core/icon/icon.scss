@@ -82,3 +82,38 @@
   mask-image: url("data:image/svg+xml;utf8,#{$sent-empty-svg}");
 }
 
+.eye-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$eye-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$eye-empty-svg}");
+}
+
+.eye-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$eye-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$eye-filled-svg}");
+}
+
+.expand-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$expand-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$expand-empty-svg}");
+}
+
+.expand-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$expand-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$expand-filled-svg}");
+  background-color: $primary;
+}
+
+.asterisk {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$asterisk-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$asterisk-svg}");
+}
+
+.projector-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$projector-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$projector-empty-svg}");
+}
+
+.projector-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$projector-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$projector-filled-svg}");
+}
