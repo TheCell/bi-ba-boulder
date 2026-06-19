@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use '../app/core/icon/svg-assets/all' as *;
 
 input, select, textarea {
   all: unset;
@@ -30,6 +31,40 @@ input[type="radio"] {
 input[type="color"] {
   block-size: 32px;
   width: 70px;
+}
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  
+  width: 12px;
+  height: 12px;
+  margin: 3px 0px;
+  background-color: $lightDark;
+  cursor: pointer;
+  position: relative;
+  display: inline-block; // Ensures it respects width/height
+
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$square-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$square-svg}");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  
+  background-color: $light;
+  transition: background-color 0.25s cubic-bezier(0, 0, 0.1, 1.0);
+}
+
+input[type="checkbox"]:checked {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$check-square-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$check-square-svg}");
+  // background-color: $secondary;
+}
+
+input[type="checkbox"]:focus {
+  background-color: $primary;
+  transition: background-color 0.25s cubic-bezier(0, 0, 0.1, 1.0);
 }
 
 .form-group {
@@ -118,8 +153,8 @@ input:focus, select:focus, textarea:focus {
   transition: border-color 0.25s cubic-bezier(0, 0, 0.1, 1.0);
 }
 
-input:not(:placeholder-shown) + .group-label,
-input:focus + .group-label,
+input:not([type="checkbox"]):focus + .group-label,
+input:not([type="checkbox"]):not(:placeholder-shown) + .group-label,
 select:not(:placeholder-shown) + .group-label,
 select:focus + .group-label,
 textarea:not(:placeholder-shown) + .group-label,
@@ -128,6 +163,11 @@ textarea:focus + .group-label {
   font-size: 11px;
   pointer-events: initial;
   left: 0px;
+}
+
+input:is([type="checkbox"]):focus + .group-label,
+input:is([type="checkbox"]):not(:placeholder-shown) + .group-label {
+  left: 30px;
 }
 
 input:focus + .group-label,

@@ -138,3 +138,13 @@
   mask-image: url("data:image/svg+xml;utf8,#{$expand-alt-filled-svg}");
   background-color: $success;
 }
+
+.check-square {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$check-square-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$check-square-svg}");
+}
+
+.times-square {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$times-square-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$times-square-svg}");
+}
