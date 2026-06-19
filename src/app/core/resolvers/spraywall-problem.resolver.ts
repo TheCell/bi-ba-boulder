@@ -3,7 +3,10 @@ import type { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot } from '@an
 import { SpraywallProblemDto, SpraywallProblemsService } from '@api-net/index';
 import { Observable, of } from 'rxjs';
 
-export const spraywallProblemResolver: ResolveFn<Observable<SpraywallProblemDto | undefined>> = (route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
+export const spraywallProblemResolver: ResolveFn<Observable<SpraywallProblemDto | undefined>> = (
+  route: ActivatedRouteSnapshot,
+  _state: RouterStateSnapshot
+) => {
   const spraywallProblemsService = inject(SpraywallProblemsService);
   const spraywallProblemId = route.paramMap.get('problemId');
   if (spraywallProblemId) {

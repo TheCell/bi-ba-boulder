@@ -1,0 +1,26 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: block;
+  position: absolute;
+  pointer-events: none;
+  right: 0;
+  margin-top: 4em + 3 * 2em;
+  backdrop-filter: blur(4px);
+}
+
+.action-button {
+  pointer-events: auto;
+  width: 2em;
+}
+
+.container {
+  background-color: color-mix($lightDark, #00000000 30%);
+  border: 1px solid $primary;
+  border-radius: 5px;
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  width: 2em;
+  padding: 0.5em;
+}

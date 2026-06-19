@@ -2,8 +2,6 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { IToast } from './toast/I-toast';
 import { IToastInternal } from './I-toast-internal';
 
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -36,7 +34,6 @@ export class ToastService {
   }
 
   public remove(id: string): void {
-    this.toasts = this.toasts.filter(t => t.id !== id);
+    this.toasts = this.toasts.filter((t) => t.id !== id);
   }
-
 }

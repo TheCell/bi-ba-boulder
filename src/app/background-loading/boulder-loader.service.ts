@@ -12,10 +12,13 @@ export class BoulderLoaderService {
   private http: HttpClient = inject(HttpClient);
 
   public loadBoulder(url: string): Observable<ArrayBuffer> {
-    return this.http.get(`${environment.boulderResourceURL}/${url}`, { responseType: 'arraybuffer'});
+    return this.http.get(`${environment.boulderResourceURL}/${url}`, { responseType: 'arraybuffer' });
   }
 
-  public getUrl(blocDto: BlocDto, resolutionLevel?: ResolutionLevel): { url: string, higherResolution: ResolutionLevel | undefined } {
+  public getUrl(
+    blocDto: BlocDto,
+    resolutionLevel?: ResolutionLevel
+  ): { url: string; higherResolution: ResolutionLevel | undefined } {
     if (resolutionLevel === undefined) {
       resolutionLevel = this.getFirstResolution(blocDto);
     }
@@ -87,45 +90,64 @@ export class BoulderLoaderService {
   // }
 
   public loadTestBoulder(): Observable<ArrayBuffer> {
-    return this.http.get('./api-test/boulder/bimano/bimano_low_pos_corrected.glb', { responseType: 'arraybuffer'});
+    return this.http.get('./api-test/boulder/bimano/bimano_low_pos_corrected.glb', { responseType: 'arraybuffer' });
   }
 
   public loadTestDaoneBoulder(resolutionLevel: ResolutionLevel): Observable<ArrayBuffer> {
     switch (resolutionLevel) {
       case 'low':
-        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb', { responseType: 'arraybuffer'});
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb', {
+          responseType: 'arraybuffer'
+        });
       case 'medium':
-        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.002.glb', { responseType: 'arraybuffer'});
-        case 'high':
-        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.001.glb', { responseType: 'arraybuffer'});
-        default:
-        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb', { responseType: 'arraybuffer'});
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.002.glb', {
+          responseType: 'arraybuffer'
+        });
+      case 'high':
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.001.glb', {
+          responseType: 'arraybuffer'
+        });
+      default:
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb', {
+          responseType: 'arraybuffer'
+        });
     }
   }
 
   public loadTestDaoneBoulder2(resolutionLevel: ResolutionLevel): Observable<ArrayBuffer> {
     switch (resolutionLevel) {
       case 'low':
-        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb', { responseType: 'arraybuffer'});
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb', {
+          responseType: 'arraybuffer'
+        });
       case 'medium':
-        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.01_tex_0.25.glb', { responseType: 'arraybuffer'});
-        case 'high':
-        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.02_tex_0.35.glb', { responseType: 'arraybuffer'});
-        default:
-        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb', { responseType: 'arraybuffer'});
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.01_tex_0.25.glb', {
+          responseType: 'arraybuffer'
+        });
+      case 'high':
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.02_tex_0.35.glb', {
+          responseType: 'arraybuffer'
+        });
+      default:
+        return this.http.get('./api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb', {
+          responseType: 'arraybuffer'
+        });
     }
   }
 
   public loadTestSpraywall(): Observable<ArrayBuffer> {
-    return this.http.get('./api-test/boulder/spraywall/Spraywall_separated_test_4096.glb', { responseType: 'arraybuffer'});
+    return this.http.get('./api-test/boulder/spraywall/Spraywall_separated_test_4096.glb', {
+      responseType: 'arraybuffer'
+    });
   }
 
   public loadTestSpraywall2(): Observable<ArrayBuffer> {
-    return this.http.get('./api-test/boulder/spraywall2/Bimano_Spraywall_02_LOD0.glb', { responseType: 'arraybuffer'});
+    return this.http.get('./api-test/boulder/spraywall2/Bimano_Spraywall_02_LOD0.glb', { responseType: 'arraybuffer' });
   }
 
   public loadTestSpraywall3(): Observable<ArrayBuffer> {
-    return this.http.get('./api-test/boulder/spraywall2/Bimano_Spraywall_2025_UV_shenanigans_03.glb', { responseType: 'arraybuffer'});
+    return this.http.get('./api-test/boulder/spraywall2/Bimano_Spraywall_2025_UV_shenanigans_03.glb', {
+      responseType: 'arraybuffer'
+    });
   }
-
 }

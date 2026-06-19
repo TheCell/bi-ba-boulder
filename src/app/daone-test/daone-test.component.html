@@ -2,21 +2,19 @@
   <!-- boulder render  -->
   <section class="imageContainer">
     @if (currentRawModel !== undefined) {
-      <app-daone-render-test
-        class="render"
-        [lines]="currentLines"
-        [rawModel]="currentRawModel">
+      <app-daone-render-test class="render" [lines]="currentLines" [rawModel]="currentRawModel">
       </app-daone-render-test>
     }
 
-    <img class="image" [src]="image" [ngClass]="{ fadeOut: currentRawModel !== undefined }" alt="photo of the boulder">
-
+    <img
+      class="image"
+      [src]="image"
+      [ngClass]="{ fadeOut: currentRawModel !== undefined }"
+      alt="photo of the boulder" />
   </section>
 
   <!-- legend -->
   <section class="boulderLegend">
-    <app-boulder-legend
-      [lines]="currentLines">
-    </app-boulder-legend>
+    <app-boulder-legend [lines]="currentLines"> </app-boulder-legend>
   </section>
 </div>

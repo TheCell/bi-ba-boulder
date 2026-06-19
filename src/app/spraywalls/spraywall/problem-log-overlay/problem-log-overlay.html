@@ -1,21 +1,43 @@
 <div class="container">
-    @if (currentBoulderLog() !== undefined && currentBoulderLog() !== null) {
-        <app-icon class="action-button" (click)="onUpdateClick('project')"
-            [icon]="currentBoulderLog()!.isProject ? 'tag-filled' : 'tag-empty'"
-            [isBig]="true">
-        </app-icon>
-        <app-icon class="action-button" (click)="onUpdateClick('sent')"
-            [icon]="currentBoulderLog()!.isSent ? 'sent-filled' : 'sent-empty'"
-            [isBig]="true">
-        </app-icon>
-    } @else {
-        <app-icon class="action-button" (click)="onCreateClick('project')"
-            [icon]="'tag-empty'"
-            [isBig]="true">
-        </app-icon>
-        <app-icon class="action-button" (click)="onCreateClick('sent')"
-            [icon]="'sent-empty'"
-            [isBig]="true">
-        </app-icon>
-    }
+  @if (currentBoulderLog() !== undefined && currentBoulderLog() !== null) {
+  <app-icon
+    class="action-button"
+    (click)="onExpandClick()"
+    [icon]="isLoadingModal() ? 'loading' : 'expand-alt-filled'"
+    [isBig]="true">
+  </app-icon>
+  <app-icon
+    class="action-button"
+    (click)="onUpdateClick('project')"
+    [icon]="isLoadingIsProject() ? 'loading' : (currentBoulderLog()!.isProject ? 'tag-filled' : 'tag-empty')"
+    [isBig]="true">
+  </app-icon>
+  <app-icon
+    class="action-button"
+    (click)="onUpdateClick('sent')"
+    [icon]="isLoadingIsSent() ? 'loading' : (currentBoulderLog()!.isSent ? 'sent-filled' : 'sent-empty')"
+    [isBig]="true">
+  </app-icon>
+  } @else {
+  <app-icon
+    class="action-button"
+    (click)="onExpandClick()"
+    [icon]="isLoadingModal() ? 'loading' : 'expand-alt-empty'"
+    [isBig]="true">
+  </app-icon>
+  <app-icon
+    class="action-button"
+    (click)="onCreateClick('project')"
+    [icon]="isLoadingIsProject() ? 'loading' : 'tag-empty'"
+    [isBig]="true">
+  </app-icon>
+  <app-icon
+    class="action-button"
+    (click)="onCreateClick('sent')"
+    [icon]="isLoadingIsSent() ? 'loading' : 'sent-empty'"
+    [isBig]="true">
+  </app-icon>
+  }
 </div>
+
+<app-modal #modal (closed)="closeModal($event)"> </app-modal>

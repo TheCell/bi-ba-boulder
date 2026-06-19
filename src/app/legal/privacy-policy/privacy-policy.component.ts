@@ -5,6 +5,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   imports: [],
   templateUrl: './privacy-policy.component.html',
   styleUrl: './privacy-policy.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PrivacyPolicyComponent { }
+export class PrivacyPolicyComponent {}

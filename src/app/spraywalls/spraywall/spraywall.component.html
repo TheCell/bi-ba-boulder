@@ -1,94 +1,82 @@
 <div class="grid">
   <section class="renderContainer">
     @if (currentRawModel) {
-        @if (authSessionStateService.isLoggedIn() && selectedProblem) {
-            <app-problem-log-overlay
-                [boulderProblemId]="selectedProblem.id"
-                [boulderLog]="boulderLog()">
-            </app-problem-log-overlay>
-        }
-        <app-boulder-render
-            class="render"
-            [rawModel]="currentRawModel"
-            [boulderProblem]="selectedProblem">
-        </app-boulder-render>
+      @if (authSessionStateService.isLoggedIn() && selectedProblem) {
+        <app-problem-log-overlay [spraywallProblemId]="selectedProblem.id" [boulderLog]="boulderLog()">
+        </app-problem-log-overlay>
+      }
+      <app-camera-controls> </app-camera-controls>
+      <app-boulder-render class="render" [rawModel]="currentRawModel" [boulderProblem]="selectedProblem">
+      </app-boulder-render>
     } @else {
-        <app-loading-image
-            class="render">
-        </app-loading-image>
+      <app-loading-image class="render"> </app-loading-image>
     }
   </section>
   <section class="legend">
     <div class="actions">
-        <button class="button action-button" (click)="onResetSelection()">Reset</button>
-        <button class="button action-button" (click)="onInfoClicked()">Info</button>
-        @if (selectedProblem?.metadata?.canEdit) {
-            @if (authSessionStateService.isLoggedIn()) {
-                <button class="button action-button warning" (click)="onEditProblem()">Edit</button>
-            } @else {
-                <button class="button action-button warning" (click)="hintAtNotLoggedIn()">Edit</button>
-            }
-        }
-        @if (selectedProblem?.metadata?.canDelete) {
-            <button class="button action-button danger" (click)="onDeleteProblem()">Delete</button>
-        }
+      <button class="button action-button" (click)="onResetSelection()">Reset</button>
+      <button class="button action-button" (click)="onInfoClicked()">Info</button>
+      @if (selectedProblem?.metadata?.canEdit) {
         @if (authSessionStateService.isLoggedIn()) {
-            <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">Create new route</button>
+          <button class="button action-button warning" (click)="onEditProblem()">Edit</button>
         } @else {
-            <button class="button action-button action-end" (click)="hintAtNotLoggedIn()">Create new route</button>
+          <button class="button action-button warning" (click)="hintAtNotLoggedIn()">Edit</button>
         }
+      }
+      @if (selectedProblem?.metadata?.canDelete) {
+        <button class="button action-button danger" (click)="onDeleteProblem()">Delete</button>
+      }
+      @if (authSessionStateService.isLoggedIn()) {
+        <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">
+          Create new route
+        </button>
+      } @else {
+        <button class="button action-button action-end" (click)="hintAtNotLoggedIn()">Create new route</button>
+      }
     </div>
     <div class="legend-list">
-
-        <div class="list-header">
-            <div class="">name</div>
-            <div class="hidden-on-mobile">description</div>
-            <div aria-hidden="true" (click)="onGradeClicked()" class="filterable">grade
-                @if (currentFilter.gradeMax || currentFilter.gradeMin) {
-                    <app-icon [icon]="'filter'"></app-icon>
-                }
-            </div>
-            <div class="">creator</div>
-            <div aria-hidden="true" (click)="onDateClicked()" class="hidden-on-mobile filterable">created Date 
-                @if (currentFilter.dateOrder) {
-                    @if (currentFilter.dateOrder === 'asc') {
-                        <app-icon [icon]="'filter-asc'"></app-icon>
-                    } @else {
-                        <app-icon [icon]="'filter-desc'"></app-icon>
-                    }
-                }
-            </div>
+      <div class="list-header">
+        <div class="">name</div>
+        <div class="hidden-on-mobile">description</div>
+        <div aria-hidden="true" (click)="onGradeClicked()" class="filterable">
+          grade
+          @if (currentFilter.gradeMax || currentFilter.gradeMin) {
+            <app-icon [icon]="'filter'"></app-icon>
+          }
         </div>
-        <div #scrollList class="list-content">
-            <ul>
-                @for (problem of listOfProblems; track problem.id) {
-                    <app-spraywall-legend-item
-                        class="li-item"
-                        [problem]="problem"
-                        [isSelected]="selectedProblem?.id === problem.id"
-                        (selected)="onSelectedProblem($event)">
-                    </app-spraywall-legend-item>
-                }
-                @if (listOfProblems.length < totalCount) {
-                    <app-spraywall-legend-item-placeholder
-                        class="li-item">
-                    </app-spraywall-legend-item-placeholder>
-                }
-            </ul>
+        <div class="">creator</div>
+        <div aria-hidden="true" (click)="onDateClicked()" class="hidden-on-mobile filterable">
+          created Date
+          @if (currentFilter.dateOrder) {
+            @if (currentFilter.dateOrder === 'asc') {
+              <app-icon [icon]="'filter-asc'"></app-icon>
+            } @else {
+              <app-icon [icon]="'filter-desc'"></app-icon>
+            }
+          }
         </div>
+      </div>
+      <div #scrollList class="list-content">
+        <ul>
+          @for (problem of listOfProblems; track problem.id) {
+            <app-spraywall-legend-item
+              class="li-item"
+              [problem]="problem"
+              [isSelected]="selectedProblem?.id === problem.id"
+              (selected)="onSelectedProblem($event)">
+            </app-spraywall-legend-item>
+          }
+          @if (listOfProblems.length < totalCount) {
+            <app-spraywall-legend-item-placeholder class="li-item"> </app-spraywall-legend-item-placeholder>
+          }
+        </ul>
+      </div>
     </div>
   </section>
 </div>
 
-<app-modal #infoModal>
-</app-modal>
+<app-modal #infoModal> </app-modal>
 
-<app-modal #fontGradeFilterModal
-  [isSmall]="true"
-  (closed)="onFontGradeModalClosed($event)">
-</app-modal>
+<app-modal #fontGradeFilterModal [isSmall]="true" (closed)="onFontGradeModalClosed($event)"> </app-modal>
 
-<app-modal #confirmDelete
-  [isSmall]="true"
-  (closed)="onDeleteProblemConfirmed($event)">
-</app-modal>
+<app-modal #confirmDelete [isSmall]="true" (closed)="onDeleteProblemConfirmed($event)"> </app-modal>

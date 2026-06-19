@@ -43,9 +43,10 @@ export class BoulderComponent implements OnDestroy {
   private changeDetectorRef = inject(ChangeDetectorRef);
 
   public constructor() {
-      this.bloc = this.activatedRoute.snapshot.data['bloc'];
+    this.bloc = this.activatedRoute.snapshot.data['bloc'];
 
-      this.subscription.add(this.loadNextResolution.subscribe({
+    this.subscription.add(
+      this.loadNextResolution.subscribe({
         next: () => {
           if (this.resolutionToLoad !== undefined) {
             const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, this.resolutionToLoad);
@@ -57,20 +58,23 @@ export class BoulderComponent implements OnDestroy {
             }
           }
         }
-      }));
+      })
+    );
 
-      this.subscription.add(this.startLoadingBoulder.pipe(switchMap(() => this.boulderLoaderService.loadBoulder(this.boulderUrl))).subscribe({
+    this.subscription.add(
+      this.startLoadingBoulder.pipe(switchMap(() => this.boulderLoaderService.loadBoulder(this.boulderUrl))).subscribe({
         next: (data: ArrayBuffer) => {
           this.currentRawModel = data;
           this.loadNextResolution.next();
           this.changeDetectorRef.markForCheck();
-        },
-      }));
+        }
+      })
+    );
 
-      const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc);
-      this.resolutionToLoad = urlAndInfo.higherResolution;
-      this.boulderUrl = urlAndInfo.url;
-      this.startLoadingBoulder.next();
+    const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc);
+    this.resolutionToLoad = urlAndInfo.higherResolution;
+    this.boulderUrl = urlAndInfo.url;
+    this.startLoadingBoulder.next();
   }
 
   public ngOnDestroy(): void {

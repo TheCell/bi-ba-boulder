@@ -38,7 +38,7 @@ The next todos:
 [x] build highlight texture optimizer   
 [] streamline spraywall + rgb texture download not hardcoded   
 [] Refresh token   
-[-] logout   
+[x] logout   
 [-] rate limiting   
 [x] upload only while logged in and verified (controller blocks, frontend still shows)   
 [] Version Number   
@@ -57,6 +57,16 @@ The next todos:
 [] make colors grayscale and changeable in shader   
 [] high dpi logo   
 [] rock as loading animation    
+[] add storybook for some components like icon   
+
+# Setup
+To get this started you must install and start the .NET backend. See the Readme in the backend_net/BiBaBoulder Folder
+
+Getting the Frontent started first install all packages. Then generate dev certificates. See the backend Readme to generate them.
+```Shell
+npm install
+npm start
+```
 
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)

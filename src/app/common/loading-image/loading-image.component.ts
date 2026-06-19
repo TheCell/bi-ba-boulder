@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-loading-image',
   imports: [],
   templateUrl: './loading-image.component.html',
-  styleUrl: './loading-image.component.scss',
+  styleUrl: './loading-image.component.scss'
 })
-export class LoadingImageComponent {
-
-}
+export class LoadingImageComponent {}

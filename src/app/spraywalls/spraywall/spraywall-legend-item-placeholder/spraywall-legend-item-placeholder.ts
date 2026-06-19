@@ -5,6 +5,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   imports: [],
   templateUrl: './spraywall-legend-item-placeholder.html',
   styleUrl: './spraywall-legend-item-placeholder.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SpraywallLegendItemPlaceholder { }
+export class SpraywallLegendItemPlaceholder {}

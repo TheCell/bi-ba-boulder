@@ -1,4 +1,4 @@
-import { BoulderLine } from "./boulder-line";
+import { BoulderLine } from './boulder-line';
 
 export interface BoulderBloc {
   id: string;

@@ -1,21 +1,21 @@
 <div class="grid">
-    <section class="imageContainer">
-        <app-boulder-debug-render
-            class="render"
-            [blocId]="'123'"
-            [lines]="currentLines"
-            [rawModel]="currentRawModel"
-            [boulderProblems]="spraywallProblems"
-            [selectedProblemId]="selectedProblemId">
-        </app-boulder-debug-render>
-    </section>
-    <section class="legendContainer">
-        <ul>
-            @for (spraywallProblem of spraywallProblems; track spraywallProblem.id) {
-                <li [class.selected]="spraywallProblem.id === selectedProblemId">
-                    <button (click)="selectProblem(spraywallProblem.id)">{{ spraywallProblem.id }}</button>
-                </li>
-            }
-        </ul>
-    </section>
+  <section class="imageContainer">
+    <app-boulder-debug-render
+      class="render"
+      [blocId]="'123'"
+      [lines]="currentLines"
+      [rawModel]="currentRawModel"
+      [boulderProblems]="spraywallProblems"
+      [selectedProblemId]="selectedProblemId">
+    </app-boulder-debug-render>
+  </section>
+  <section class="legendContainer">
+    <ul>
+      @for (spraywallProblem of spraywallProblems; track spraywallProblem.id) {
+        <li [class.selected]="spraywallProblem.id === selectedProblemId">
+          <button (click)="selectProblem(spraywallProblem.id)">{{ spraywallProblem.id }}</button>
+        </li>
+      }
+    </ul>
+  </section>
 </div>

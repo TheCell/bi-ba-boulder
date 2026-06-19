@@ -11,7 +11,10 @@ import { AuthSessionStateService } from '../../auth/auth-session-state.service';
  * The CSRF header is handled by the csrfInterceptor.
  * Cookies are sent automatically when withCredentials is true (configured in app.config.ts).
  */
-export const loggedInInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+export const loggedInInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
   const authSessionStateService = inject(AuthSessionStateService);
 
   return next(req).pipe(

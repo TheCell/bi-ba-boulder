@@ -8,24 +8,25 @@ import { Subscription } from 'rxjs';
   imports: [Toast],
   templateUrl: './toast-container.html',
   styleUrl: './toast-container.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToastContainer implements OnInit, OnDestroy {
   private changeDetectorRef = inject(ChangeDetectorRef);
   public toastService = inject(ToastService);
 
   private subscription = new Subscription();
-  
+
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
   public ngOnInit(): void {
-    this.subscription.add(this.toastService.arrayUpdated.subscribe({
-      next: () => {
-        this.changeDetectorRef.markForCheck();
-      }
-    }));
+    this.subscription.add(
+      this.toastService.arrayUpdated.subscribe({
+        next: () => {
+          this.changeDetectorRef.markForCheck();
+        }
+      })
+    );
   }
-
 }

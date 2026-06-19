@@ -1,0 +1,17 @@
+dist/
+.angular/
+.github/
+.vscode/
+node_modules/
+src/app/api-net/
+backend_net/
+environments/
+package-lock.json
+*.json
+*.config
+*.conf.js
+*.config.js
+*.md
+*.pem
+*.yml
+*.scss

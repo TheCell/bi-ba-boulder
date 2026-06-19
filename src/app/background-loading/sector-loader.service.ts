@@ -14,9 +14,8 @@ export class SectorLoaderService {
       name: 'La Plana',
       description: 'La Plana is a sector in Daone',
       boulderBlocIds: ['8d7fb0fe-8ef8-4086-97e0-51d44de2af83', '9ef9bf37-a629-4839-aee4-0b9d3dd8cb2b']
-    }
+    };
 
     return of(sector);
   }
-
 }

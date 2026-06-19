@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { BffUserClaim } from './bff-auth.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthSessionStateService {
   private claims: BffUserClaim[] = [];

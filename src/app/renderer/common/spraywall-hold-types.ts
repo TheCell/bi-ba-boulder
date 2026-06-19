@@ -7,8 +7,7 @@ export enum SpraywallHoldType {
   hold = 3,
   foot = 4,
   custom = 5
-};
-
+}
 
 export interface TypeAndColor {
   type: SpraywallHoldType;

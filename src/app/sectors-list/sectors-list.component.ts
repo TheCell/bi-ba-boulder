@@ -1,13 +1,10 @@
-
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SectorDto } from '@api-net/index';
 
 @Component({
   selector: 'app-sectors-list',
-  imports: [
-    RouterLink
-  ],
+  imports: [RouterLink],
   templateUrl: './sectors-list.component.html',
   styleUrl: './sectors-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

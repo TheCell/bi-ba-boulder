@@ -1,13 +1,10 @@
-
 import { Component, inject } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
-import { BoulderHardcodedRenderComponent } from "../boulder-hardcoded-render/boulder-hardcoded-render.component";
+import { BoulderHardcodedRenderComponent } from '../boulder-hardcoded-render/boulder-hardcoded-render.component';
 
 @Component({
   selector: 'app-boulder-hardcoded',
-  imports: [
-    BoulderHardcodedRenderComponent
-],
+  imports: [BoulderHardcodedRenderComponent],
   templateUrl: './boulder-hardcoded.component.html',
   styleUrl: './boulder-hardcoded.component.scss'
 })

@@ -8,6 +8,20 @@ dotnet tool restore
 // if you have issues with nuget packages
 dotnet nuget locals all --clear
 
+## Certificates
+1. Install/Trust: Run mkcert -install (only needs to be done once).
+2. Generate Certs: Run mkcert localhost in your project folder to get .pem files.
+
+### 1
+// if choco is not installed yet install it via Powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+// install mkcert first
+choco install mkcert
+mkcert -install
+
+### 2
+cd C:\dev\git\bi-ba-boulder\ssl
+mkcert localhost
 ```
 
 # Migrations

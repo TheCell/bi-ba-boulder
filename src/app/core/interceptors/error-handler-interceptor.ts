@@ -1,4 +1,11 @@
-import { HttpContextToken, HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest, type HttpInterceptorFn } from '@angular/common/http';
+import {
+  HttpContextToken,
+  HttpErrorResponse,
+  HttpEvent,
+  HttpHandlerFn,
+  HttpRequest,
+  type HttpInterceptorFn
+} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ToastService } from '../toast-container/toast.service';
 import { inject } from '@angular/core';
@@ -6,7 +13,10 @@ import { environment } from '../../../environments/environment';
 
 export const SKIP_ERROR_HANDLER = new HttpContextToken<boolean>(() => false);
 
-export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+export const errorHandlerInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
   const toastService = inject(ToastService);
 
   if (req.context.get(SKIP_ERROR_HANDLER)) {
@@ -26,7 +36,7 @@ export const errorHandlerInterceptor: HttpInterceptorFn = (req: HttpRequest<unkn
           if (!environment.production) {
             console.log(err);
           }
-          
+
           if (err.status === 401) {
             message = 'You are not logged in or your session has expired.';
           } else if (err.status === 403) {

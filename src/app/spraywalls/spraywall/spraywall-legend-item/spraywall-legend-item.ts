@@ -8,7 +8,7 @@ import { FontGradePipePipe } from 'src/app/core/pipes/font-grade-pipe-pipe';
   imports: [FontGradePipePipe, DatePipe],
   templateUrl: './spraywall-legend-item.html',
   styleUrl: './spraywall-legend-item.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpraywallLegendItem {
   public problem = input.required<SpraywallProblemDto>();

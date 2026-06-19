@@ -3,9 +3,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-boulder-sector',
-  imports: [
-    CommonModule,
-  ],
-  templateUrl: './boulder-sector.component.html',
+  imports: [CommonModule],
+  templateUrl: './boulder-sector.component.html'
 })
-export class BoulderSectorComponent { }
+export class BoulderSectorComponent {}

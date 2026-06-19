@@ -19,7 +19,7 @@ interface IRegistrationForm {
   imports: [CommonModule, FormsModule, ReactiveFormsModule, Icon],
   templateUrl: './registration-dialog.component.html',
   styleUrl: './registration-dialog.component.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class RegistrationDialogComponent implements IModal, OnDestroy {
   private _fb = inject(NonNullableFormBuilder);
@@ -27,24 +27,28 @@ export class RegistrationDialogComponent implements IModal, OnDestroy {
   private toastService = inject(ToastService);
 
   public closeModal = output<CloseModalEvent>();
-  
+
   public canCloseWithoutPermission = true;
   public isLoading = false;
   public registrationForm = this._fb.group<IRegistrationForm>({
     username: '',
     email: '',
-    password: '',
+    password: ''
   });
 
   private subscription: Subscription = new Subscription();
-  
+
   public constructor() {
     this.registrationForm.controls.email.addValidators([Validators.required, Validators.email]);
     this.registrationForm.controls.username.addValidators([Validators.required, Validators.minLength(3)]);
     this.registrationForm.controls.password.addValidators([Validators.required, Validators.minLength(8)]);
 
     this.registrationForm.valueChanges.subscribe(() => {
-      if (this.registrationForm.controls.email.value || this.registrationForm.controls.username.value || this.registrationForm.controls.password.value) {
+      if (
+        this.registrationForm.controls.email.value ||
+        this.registrationForm.controls.username.value ||
+        this.registrationForm.controls.password.value
+      ) {
         this.canCloseWithoutPermission = false;
       } else {
         this.canCloseWithoutPermission = true;

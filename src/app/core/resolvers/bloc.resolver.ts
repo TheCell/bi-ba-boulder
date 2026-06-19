@@ -2,21 +2,25 @@ import { inject } from '@angular/core';
 import type { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot } from '@angular/router';
 import { BlocDto, BlocsService } from '@api-net/index';
 
-export const blocsOfSectorResolver: ResolveFn<BlocDto[]> = (route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
-    const sectorId = route.paramMap.get('sectorId');
-    
-    if (!sectorId) {
-        throw new Error('Sector ID is missing in route parameters');
-    }
-    
-    return inject(BlocsService).getBlocsBySectorId(sectorId)};
+export const blocsOfSectorResolver: ResolveFn<BlocDto[]> = (
+  route: ActivatedRouteSnapshot,
+  _state: RouterStateSnapshot
+) => {
+  const sectorId = route.paramMap.get('sectorId');
+
+  if (!sectorId) {
+    throw new Error('Sector ID is missing in route parameters');
+  }
+
+  return inject(BlocsService).getBlocsBySectorId(sectorId);
+};
 
 export const blocResolver: ResolveFn<BlocDto> = (route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
-    const id = route.paramMap.get('id');
-    
-    if (!id) {
-        throw new Error('Bloc ID is missing in route parameters');
-    }
-    
-    return inject(BlocsService).getBloc(id);
-}
+  const id = route.paramMap.get('id');
+
+  if (!id) {
+    throw new Error('Bloc ID is missing in route parameters');
+  }
+
+  return inject(BlocsService).getBloc(id);
+};

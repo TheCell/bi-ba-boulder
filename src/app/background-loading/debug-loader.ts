@@ -7,7 +7,6 @@ import { inject, Injectable } from '@angular/core';
 export class DebugLoader {
   private http: HttpClient = inject(HttpClient);
 
-
   // public loadSpraywallDebugTexture(): Observable<ArrayBuffer> {
   //   return this.http.get('./images/highlight_debug.png', { responseType: 'arraybuffer'});
   // }

@@ -29,76 +29,65 @@ export class CanvasBoxComponent implements AfterViewInit {
     pointLight.position.z = 2;
     scene.add(pointLight);
 
-    const box = new THREE.Mesh(
-      new THREE.BoxGeometry(1.5, 1.5, 1.5),
-      material
-    );
+    const box = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5), material);
 
-    const torus = new THREE.Mesh(
-      new THREE.TorusGeometry(5, 1.5, 16, 100),
-      material
-    );
+    const torus = new THREE.Mesh(new THREE.TorusGeometry(5, 1.5, 16, 100), material);
 
     scene.add(torus, box);
 
     const canvasSizes = {
-    width: window.innerWidth,
-    height: window.innerHeight,
+      width: window.innerWidth,
+      height: window.innerHeight
     };
 
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      canvasSizes.width / canvasSizes.height,
-      0.001,
-      1000
-    );
+    const camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
     camera.position.z = 30;
     scene.add(camera);
 
     console.log(canvas);
 
     if (!canvas) {
-    return;
+      return;
     }
 
     const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
+      canvas: canvas
     });
-   renderer.setClearColor(0xe232222, 1);
-   renderer.setSize(canvasSizes.width, canvasSizes.height);
+    renderer.setClearColor(0xe232222, 1);
+    renderer.setSize(canvasSizes.width, canvasSizes.height);
 
-  //  window.addEventListener('resize', () => {
-  //   canvasSizes.width = window.innerWidth;
-  //   canvasSizes.height = window.innerHeight;
+    //  window.addEventListener('resize', () => {
+    //   canvasSizes.width = window.innerWidth;
+    //   canvasSizes.height = window.innerHeight;
 
-  //   camera.aspect = canvasSizes.width / canvasSizes.height;
-  //   camera.updateProjectionMatrix();
+    //   camera.aspect = canvasSizes.width / canvasSizes.height;
+    //   camera.updateProjectionMatrix();
 
-  //   renderer.setSize(canvasSizes.width, canvasSizes.height);
-  //   renderer.render(scene, camera);
-  // });
+    //   renderer.setSize(canvasSizes.width, canvasSizes.height);
+    //   renderer.render(scene, camera);
+    // });
 
-  const clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
-  const animateGeometry = () => {
-    const elapsedTime = clock.getElapsedTime();
+    const animateGeometry = () => {
+      const elapsedTime = clock.getElapsedTime();
 
-    // Update animation objects
-    box.rotation.x = elapsedTime;
-    box.rotation.y = elapsedTime;
-    box.rotation.z = elapsedTime;
+      // Update animation objects
+      box.rotation.x = elapsedTime;
+      box.rotation.y = elapsedTime;
+      box.rotation.z = elapsedTime;
 
-    torus.rotation.x = -elapsedTime;
-    torus.rotation.y = -elapsedTime;
-    torus.rotation.z = -elapsedTime;
+      torus.rotation.x = -elapsedTime;
+      torus.rotation.y = -elapsedTime;
+      torus.rotation.z = -elapsedTime;
 
-    // Render
-    renderer.render(scene, camera);
+      // Render
+      renderer.render(scene, camera);
 
-    // Call animateGeometry again on the next frame
-    window.requestAnimationFrame(animateGeometry);
-  };
+      // Call animateGeometry again on the next frame
+      window.requestAnimationFrame(animateGeometry);
+    };
 
-  animateGeometry();
- }
+    animateGeometry();
+  }
 }

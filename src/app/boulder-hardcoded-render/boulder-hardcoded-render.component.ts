@@ -1,4 +1,3 @@
-
 import { AfterViewInit, Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import * as THREE from 'three';
@@ -15,9 +14,7 @@ import { BoulderLine } from '../interfaces/boulder-line';
 
 @Component({
   selector: 'app-boulder-hardcoded-render',
-  imports: [
-    KeyboardShortcutsModule
-],
+  imports: [KeyboardShortcutsModule],
   templateUrl: './boulder-hardcoded-render.component.html',
   styleUrl: './boulder-hardcoded-render.component.scss'
 })
@@ -29,10 +26,9 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
-
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight,
+        height: this.el.nativeElement.offsetHeight
       };
 
       this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -63,21 +59,25 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
     this.lineMaterials.push(this.getNewMeshLineMaterial());
     this.lineMaterials.push(this.getNewMeshLineMaterial());
 
-    window.addEventListener( 'click', this.getClickCoordinate.bind(this) );
+    window.addEventListener('click', this.getClickCoordinate.bind(this));
 
-    this.shortcuts.push({
-      key: ['ctrl + z'],
-      preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.removeLastPoint() // eslint-disable-line @typescript-eslint/no-unused-vars
-    }, {
-      key: ['ctrl + space'],
-      preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.startNewLine() // eslint-disable-line @typescript-eslint/no-unused-vars
-    }, {
-      key: ['ctrl + y'],
-      preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.printClickPoints() // eslint-disable-line @typescript-eslint/no-unused-vars
-    });
+    this.shortcuts.push(
+      {
+        key: ['ctrl + z'],
+        preventDefault: true,
+        command: (e: ShortcutEventOutput) => this.removeLastPoint() // eslint-disable-line @typescript-eslint/no-unused-vars
+      },
+      {
+        key: ['ctrl + space'],
+        preventDefault: true,
+        command: (e: ShortcutEventOutput) => this.startNewLine() // eslint-disable-line @typescript-eslint/no-unused-vars
+      },
+      {
+        key: ['ctrl + y'],
+        preventDefault: true,
+        command: (e: ShortcutEventOutput) => this.printClickPoints() // eslint-disable-line @typescript-eslint/no-unused-vars
+      }
+    );
 
     const testBoulder = this.boulderLoaderService.loadTestBoulder();
     testBoulder.subscribe({
@@ -90,7 +90,11 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
     testRoutes.subscribe({
       next: (data: BoulderLine[]) => {
         data.forEach((boulderLine: BoulderLine) => {
-          this.addLineToScene(this.scene, boulderLine.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), boulderLine.color)
+          this.addLineToScene(
+            this.scene,
+            boulderLine.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
+            boulderLine.color
+          );
         });
       }
     });
@@ -104,21 +108,16 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
 
     const canvasSizes = {
       width: canvas.offsetWidth,
-      height: canvas.offsetHeight,
+      height: canvas.offsetHeight
     };
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: canvas,
       alpha: true
     });
-    this.renderer.setClearColor( 0x000000, 0 );
+    this.renderer.setClearColor(0x000000, 0);
 
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      canvasSizes.width / canvasSizes.height,
-      0.001,
-      1000
-    );
+    this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
 
@@ -145,7 +144,7 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
     this.updateTextRotation();
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(this.loop);
-  }
+  };
 
   private updateTextRotation(): void {
     this.textBlocks.forEach((block) => {
@@ -154,26 +153,29 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
   }
 
   private addBoulderToScene(buffer: ArrayBuffer): void {
-    this.loader.parse(buffer, '', (gltf: GLTF) => {
+    this.loader.parse(
+      buffer,
+      '',
+      (gltf: GLTF) => {
+        this.scene.add(gltf.scene);
+        gltf.scene.traverse((child) => {
+          child.layers.set(1); // set hit layer
+        });
 
-      this.scene.add(gltf.scene);
-      gltf.scene.traverse((child) => {
-        child.layers.set(1); // set hit layer
-      });
-
-      // this.drawBoundingBox(gltf.scene);
-      fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
-      // this.addRoutes(this.scene);
-    },
-    (err: ErrorEvent) => {
-      throw new Error(err.message);
-    });
+        // this.drawBoundingBox(gltf.scene);
+        fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+        // this.addRoutes(this.scene);
+      },
+      (err: ErrorEvent) => {
+        throw new Error(err.message);
+      }
+    );
   }
 
   private drawBoundingBox(scene: THREE.Group<THREE.Object3DEventMap>): void {
     const bbox = new THREE.Box3().setFromObject(scene);
-    const helper = new THREE.Box3Helper( bbox, 0xffff00 );
-    this.scene.add( helper );
+    const helper = new THREE.Box3Helper(bbox, 0xffff00);
+    this.scene.add(helper);
   }
 
   private addLights(scene: THREE.Scene): void {
@@ -196,7 +198,7 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
     // const line = new MeshLine();
     const geometry = new MeshLineGeometry();
     geometry.setPoints(points);
-    geometry.setPoints(points, p => 2 + Math.sin(50 * p)); // makes width sinusoidal
+    geometry.setPoints(points, (p) => 2 + Math.sin(50 * p)); // makes width sinusoidal
     const line = new MeshLine(geometry, this.lineMaterials[0]);
     scene.add(line);
   }
@@ -210,7 +212,7 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
     const pointer = new THREE.Vector2();
 
     pointer.x = (mouseEvent.clientX / this.canvas.nativeElement.offsetWidth) * 2 - 1;
-    pointer.y = - (mouseEvent.clientY / this.canvas.nativeElement.offsetHeight) * 2 + 1;
+    pointer.y = -(mouseEvent.clientY / this.canvas.nativeElement.offsetHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(pointer, this.camera);
 
@@ -222,7 +224,7 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
     }
 
     const normal = intersects[0].normal ?? new THREE.Vector3(0, 0, 0);
-    const newPoint: THREE.Vector3 = new THREE.Vector3 (
+    const newPoint: THREE.Vector3 = new THREE.Vector3(
       intersects[0].point.x + 0.1 * normal.x,
       intersects[0].point.y + 0.1 * normal.y,
       intersects[0].point.z + 0.1 * normal.z
@@ -271,19 +273,19 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
       padding: 0.1,
       fontFamily: './font/Roboto-msdf.json',
       fontTexture: './font/Roboto-msdf.png',
-      justifyContent: 'center',
-     });
-     container.position.set(position.x, position.y, position.z);
-     container.lookAt(this.camera.position);
-     container.position.lerpVectors(container.position, this.camera.position, 0.05);
+      justifyContent: 'center'
+    });
+    container.position.set(position.x, position.y, position.z);
+    container.lookAt(this.camera.position);
+    container.position.lerpVectors(container.position, this.camera.position, 0.05);
 
-     const textMesh = new ThreeMeshUI.Text({
+    const textMesh = new ThreeMeshUI.Text({
       content: text
-     });
+    });
 
-     container.add(textMesh);
-     this.textBlocks.push(container);
-     scene.add(container);
+    container.add(textMesh);
+    this.textBlocks.push(container);
+    scene.add(container);
   }
 
   private getNewMeshLineMaterial(color?: string): MeshLineMaterial {
@@ -308,8 +310,8 @@ export class BoulderHardcodedRenderComponent implements AfterViewInit {
   }
 
   private getRandomColor(): string {
-    const currentRadius =  this.currentRandomRadius;
-    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80});
+    const currentRadius = this.currentRandomRadius;
+    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80 });
     this.currentRandomRadius *= Math.E;
     this.currentRandomRadius %= 360;
     return randomColor;

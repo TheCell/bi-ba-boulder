@@ -1,4 +1,17 @@
-import { ChangeDetectionStrategy, Component, ComponentRef, ElementRef, inject, input, OnDestroy, OnInit, output, Type, ViewChild, ViewContainerRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ComponentRef,
+  ElementRef,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  output,
+  Type,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
 import { ModalService } from '../modal.service';
 import { NgClass } from '@angular/common';
 import { IModal } from './modal.interface';
@@ -9,12 +22,12 @@ import { CloseModalEvent } from './close-modal-event';
   imports: [NgClass],
   templateUrl: './modal.html',
   styleUrl: './modal.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class Modal implements OnInit, OnDestroy {
   @ViewChild('dynamicContent', { read: ViewContainerRef }) public dynamicContent!: ViewContainerRef;
   @ViewChild('noButton') public noButton!: ElementRef<HTMLElement>;
-  
+
   private modalService = inject(ModalService);
   private elementRef = inject(ElementRef);
   public isSmall = input<boolean>(false);
@@ -80,11 +93,11 @@ export class Modal implements OnInit, OnDestroy {
     this.showAskForPermissionToClose = false;
     this.resetComponent();
     this.isOpen = false;
+    this.closed.emit({ closeType: 1 });
   }
 
   private resetComponent(): void {
     this.dynamicContent.clear();
     this.componentRef = undefined;
   }
-
 }

@@ -1,5 +1,5 @@
-import { OutputEmitterRef } from "@angular/core";
-import { CloseModalEvent } from "./close-modal-event";
+import { OutputEmitterRef } from '@angular/core';
+import { CloseModalEvent } from './close-modal-event';
 
 export interface IModal {
   canCloseWithoutPermission: boolean;

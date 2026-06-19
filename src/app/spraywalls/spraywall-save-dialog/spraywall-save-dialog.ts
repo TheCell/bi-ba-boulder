@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CreateSpraywallProblemCommand, SpraywallProblemsService, SpraywallsService, UpdateSpraywallProblemCommand } from '@api-net/index';
+import {
+  CreateSpraywallProblemCommand,
+  SpraywallProblemsService,
+  SpraywallsService,
+  UpdateSpraywallProblemCommand
+} from '@api-net/index';
 import { Icon } from 'src/app/core/icon/icon';
 import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { ToastService } from 'src/app/core/toast-container/toast.service';
@@ -10,30 +15,30 @@ import { Subscription } from 'rxjs';
 import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ISpraywallForm extends Omit<UpdateSpraywallProblemCommand, "image"> { }
+interface ISpraywallForm extends Omit<UpdateSpraywallProblemCommand, 'image'> {}
 
 @Component({
   selector: 'app-spraywall-save-dialog',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, Icon],
   templateUrl: './spraywall-save-dialog.html',
   styleUrl: './spraywall-save-dialog.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpraywallSaveDialog implements IModal, OnDestroy {
   private _fb = inject(FormBuilder);
   private spraywallsService = inject(SpraywallsService);
   private spraywallProblemsService = inject(SpraywallProblemsService);
   private toastService = inject(ToastService);
-  
+
   public closeModal = output<CloseModalEvent>();
-  
+
   public canCloseWithoutPermission = true;
   public isLoading = false;
   public saveForm = this._fb.nonNullable.group<ISpraywallForm>({
     name: '',
     description: undefined,
     fontGrade: undefined,
-    version: undefined,
+    version: undefined
   });
 
   private imageData?: string;
@@ -44,13 +49,15 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
   public constructor() {
     this.saveForm.controls.name.addValidators([Validators.required]);
 
-    this.subscription.add(this.saveForm.valueChanges.subscribe(() => {
-      if (this.saveForm.dirty) {
-        this.canCloseWithoutPermission = false;
-      } else {
-        this.canCloseWithoutPermission = true;
-      }
-    }));
+    this.subscription.add(
+      this.saveForm.valueChanges.subscribe(() => {
+        if (this.saveForm.dirty) {
+          this.canCloseWithoutPermission = false;
+        } else {
+          this.canCloseWithoutPermission = true;
+        }
+      })
+    );
   }
 
   public ngOnDestroy(): void {
@@ -77,8 +84,8 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
         description: this.saveForm.controls.description?.value,
         image: this.imageData!,
         fontGrade: this.saveForm.controls.fontGrade?.value,
-        version: this.saveForm.controls.version?.value,
-      }
+        version: this.saveForm.controls.version?.value
+      };
       this.spraywallProblemsService.updateProblem(this.problemId, update).subscribe({
         next: () => {
           this.isLoading = false;
@@ -97,9 +104,9 @@ export class SpraywallSaveDialog implements IModal, OnDestroy {
         name: this.saveForm.controls.name.value!,
         description: this.saveForm.controls.description?.value,
         image: this.imageData!,
-        fontGrade: this.saveForm.controls.fontGrade?.value,
+        fontGrade: this.saveForm.controls.fontGrade?.value
       };
-  
+
       this.spraywallsService.createSpraywallProblem(this.spraywallId, postRegisterRequest).subscribe({
         next: () => {
           this.isLoading = false;
