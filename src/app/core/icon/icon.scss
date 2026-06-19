@@ -117,3 +117,24 @@
   -webkit-mask-image: url("data:image/svg+xml;utf8,#{$projector-filled-svg}");
   mask-image: url("data:image/svg+xml;utf8,#{$projector-filled-svg}");
 }
+
+.paperclip-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$paperclip-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$paperclip-empty-svg}");
+}
+
+.paperclip-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$paperclip-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$paperclip-filled-svg}");
+}
+
+.expand-alt-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$expand-alt-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$expand-alt-empty-svg}");
+}
+
+.expand-alt-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$expand-alt-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$expand-alt-filled-svg}");
+  background-color: $success;
+}

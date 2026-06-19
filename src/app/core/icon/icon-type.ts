@@ -1,2 +1,2 @@
-export const ICONS = ['none', 'loading', 'filter-asc', 'filter-desc', 'filter', 'tag-empty', 'tag-filled', 'sent-empty', 'sent-filled', 'eye-empty', 'eye-filled', 'expand-empty', 'expand-filled', 'asterisk', 'projector-empty', 'projector-filled'] as const;
+export const ICONS = ['none', 'loading', 'filter-asc', 'filter-desc', 'filter', 'tag-empty', 'tag-filled', 'sent-empty', 'sent-filled', 'eye-empty', 'eye-filled', 'expand-empty', 'expand-filled', 'asterisk', 'projector-empty', 'projector-filled', 'paperclip-empty', 'paperclip-filled', 'expand-alt-empty', 'expand-alt-filled'] as const;
 export type IconType = typeof ICONS[number];
