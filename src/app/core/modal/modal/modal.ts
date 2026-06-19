@@ -9,7 +9,7 @@ import { CloseModalEvent } from './close-modal-event';
   imports: [NgClass],
   templateUrl: './modal.html',
   styleUrl: './modal.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Eager,
 })
 export class Modal implements OnInit, OnDestroy {
   @ViewChild('dynamicContent', { read: ViewContainerRef }) public dynamicContent!: ViewContainerRef;
@@ -80,6 +80,7 @@ export class Modal implements OnInit, OnDestroy {
     this.showAskForPermissionToClose = false;
     this.resetComponent();
     this.isOpen = false;
+    this.closed.emit({ closeType: 1 });
   }
 
   private resetComponent(): void {
