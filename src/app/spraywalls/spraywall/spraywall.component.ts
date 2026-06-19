@@ -20,11 +20,12 @@ import { ConfirmDeleteDialog } from './confirm-delete-dialog/confirm-delete-dial
 import { ConfirmDeleteDialogData } from './confirm-delete-dialog/confirm-delete-dialog-data';
 import { AuthSessionStateService } from 'src/app/auth/auth-session-state.service';
 import { ProblemLogOverlay } from './problem-log-overlay/problem-log-overlay';
+import { CameraControls } from './camera-controls/camera-controls';
 
 @Component({
   selector: 'app-spraywall',
   imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, SpraywallLegendItemPlaceholder,
-    RouterLink, Icon, Modal, ProblemLogOverlay],
+    RouterLink, Icon, Modal, ProblemLogOverlay, CameraControls],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
   changeDetection: ChangeDetectionStrategy.Default
@@ -114,7 +115,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.unsubscribe();
     this.scrollList.nativeElement.removeEventListener('scroll', this.scrollEventListener);
   }
-  
+
   public onSelectedProblem(problem: SpraywallProblemDto): void {
     if (this.selectedProblem?.id === problem.id) {
       this.onResetSelection();

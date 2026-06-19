@@ -5,7 +5,7 @@
   position: absolute;
   pointer-events: none;
   right: 0;
-  margin-top: 2em;
+  margin-top: 8em;
   backdrop-filter: blur(4px);
 }
 
@@ -16,7 +16,7 @@
 
 .container {
   background-color: color-mix($lightDark, #00000000 30%);
-  border: 1px solid $success;
+  border: 1px solid $primary;
   border-radius: 5px;
   border-right: none;
   border-top-right-radius: 0;

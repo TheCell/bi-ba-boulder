@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, effect, 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
@@ -11,6 +11,7 @@ import { ColorAndIndex } from '../common/spraywall-color-and-index';
 import { getImageDataFromTexture, htmlImageElementTextureToDataTexture } from '../common/util';
 import { Subject } from 'rxjs';
 import { SpraywallProblemDto } from '@api-net/index';
+import { CameraControlsService } from '../camera-controls.service';
 
 @Component({
   selector: 'app-spraywall-editor-renderer',
@@ -25,6 +26,7 @@ import { SpraywallProblemDto } from '@api-net/index';
 export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private el: ElementRef = inject(ElementRef);
   private destroyRef = inject(DestroyRef);
+  private cameraControlsService = inject(CameraControlsService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
@@ -251,17 +253,23 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
       if (this.currentGltf !== undefined) {
         this.removeBoulderFromScene(this.currentGltf);
+        this.currentGltf = gltf;
       } else {
-        if (this.initialized) {
-          fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
-        }
+        this.currentGltf = gltf;
+        this.resetCameraPosition();
       }
-      this.currentGltf = gltf;
       this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
     });
+  }
+
+  private resetCameraPosition(): void {
+    if (this.initialized && this.currentGltf) {
+      fitCameraToCenteredObject(this.camera, this.currentGltf.scene, 0, this.controls);
+      this.cameraControlsService.setOrbitControls(this.controls);
+    }
   }
 
   private removeBoulderFromScene(gltf: GLTF): void {

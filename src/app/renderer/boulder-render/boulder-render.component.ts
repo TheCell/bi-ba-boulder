@@ -2,7 +2,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
@@ -13,6 +13,7 @@ import { HSLToHex } from '../../utils/color-util';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { ActivatedRoute } from '@angular/router';
 import { SpraywallProblemDto } from '@api-net/index';
+import { CameraControlsService } from '../camera-controls.service';
 
 @Component({
   selector: 'app-boulder-render',
@@ -26,6 +27,7 @@ import { SpraywallProblemDto } from '@api-net/index';
 export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private el: ElementRef = inject(ElementRef);
   private destroyRef = inject(DestroyRef);
+  private cameraControlsService = inject(CameraControlsService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
@@ -200,7 +202,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     }
 
     this.renderer.render(this.scene, this.camera);
-    // window.requestAnimationFrame(this.loop);
+    // window.requestAnimationFrame(this.loop); // removed to not rerender on idle
   }
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
@@ -225,18 +227,24 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
       if (this.currentGltf !== undefined) {
         this.removeBoulderFromScene(this.currentGltf);
+        this.currentGltf = gltf;
       } else {
-        if (this.initialized) {
-          fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
-        }
+        this.currentGltf = gltf;
+        this.resetCameraPosition();
       }
-      this.currentGltf = gltf;
       this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
       this.loop();
     },
     (err: ErrorEvent) => {
       throw new Error(err.message);
     });
+  }
+
+  private resetCameraPosition(): void {
+    if (this.initialized && this.currentGltf) {
+      fitCameraToCenteredObject(this.camera, this.currentGltf.scene, 0, this.controls);
+      this.cameraControlsService.setOrbitControls(this.controls);
+    }
   }
 
   private removeBoulderFromScene(gltf: GLTF): void {

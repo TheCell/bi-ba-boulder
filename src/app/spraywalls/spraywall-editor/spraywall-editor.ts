@@ -15,6 +15,7 @@ import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dia
 import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
+import { CameraControls } from '../spraywall/camera-controls/camera-controls';
 
 interface iHoldColorForm { 
     spraywallHoldType: SpraywallHoldType;
@@ -22,7 +23,7 @@ interface iHoldColorForm {
 
 @Component({
   selector: 'app-spraywall-editor',
-  imports: [LoadingImageComponent, SpraywallEditorRenderer, FormsModule, ReactiveFormsModule, NgClass, Modal, RouterLink],
+  imports: [LoadingImageComponent, SpraywallEditorRenderer, FormsModule, ReactiveFormsModule, NgClass, Modal, RouterLink, CameraControls],
   templateUrl: './spraywall-editor.html',
   styleUrl: './spraywall-editor.scss',
   changeDetection: ChangeDetectionStrategy.Default,
