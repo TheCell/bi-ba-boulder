@@ -12,7 +12,7 @@
         <label for="description" class="group-label">description</label>
     </div>
 
-    <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.description?.disabled}">
+    <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.fontGrade?.disabled}">
         <select name="grade" id="grade" placeholder="" formControlName="fontGrade">
             <option [ngValue]="null">?</option>
             <option [ngValue]="7">3</option>
@@ -45,8 +45,7 @@
             <option [ngValue]="49">9C</option>
             <option [ngValue]="50">9C+</option>
         </select>
-        <!-- <input id="description" placeholder="" autocomplete="off" type="text" formControlName="description" /> -->
-        <label for="description" class="group-label">Grade</label>
+        <label for="grade" class="group-label">Grade</label>
     </div>
     
     <div class="form-group form-action">
