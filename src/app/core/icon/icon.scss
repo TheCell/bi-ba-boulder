@@ -148,3 +148,14 @@
   -webkit-mask-image: url("data:image/svg+xml;utf8,#{$times-square-svg}");
   mask-image: url("data:image/svg+xml;utf8,#{$times-square-svg}");
 }
+
+.star-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$star-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$star-empty-svg}");
+}
+
+.star-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$star-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$star-filled-svg}");
+  background-color: $warning;
+}
