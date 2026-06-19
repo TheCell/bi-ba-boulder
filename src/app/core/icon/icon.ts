@@ -7,7 +7,7 @@ import { NgClass } from '@angular/common';
   imports: [NgClass],
   templateUrl: './icon.html',
   styleUrl: './icon.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Icon {
   public icon = input.required<IconType>();

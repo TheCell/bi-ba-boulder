@@ -8,7 +8,7 @@ import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/rende
   imports: [],
   templateUrl: './spraywall-info-dialog.html',
   styleUrl: './spraywall-info-dialog.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpraywallInfoDialog implements IModal {
   public closeModal = output<CloseModalEvent>();
@@ -17,9 +17,8 @@ export class SpraywallInfoDialog implements IModal {
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public colorFormId = ''.appendUniqueId();
 
-
   public enumName(type: SpraywallHoldType): string {
-    const enumNames = Object.keys(SpraywallHoldType).filter(key => isNaN(Number(key)));
+    const enumNames = Object.keys(SpraywallHoldType).filter((key) => isNaN(Number(key)));
     return enumNames[type];
   }
 

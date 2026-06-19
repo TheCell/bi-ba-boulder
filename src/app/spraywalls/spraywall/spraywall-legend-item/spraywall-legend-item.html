@@ -1,9 +1,18 @@
-<li [class.selected]="isSelected()" class="item" role="button" tabindex="0"
-    (click)="selectProblem()"
-    (keypress)="selectProblem()" [id]="problem().id">
-        <span class="item-cell name">{{ problem().name }}</span>
-        <span class="item-cell description hidden-on-mobile">{{ problem().description }}</span>
-        <span class="item-cell fontGrade">{{ problem().fontGrade ?? undefined | appFontGradePipe }}</span>
-        <span class="item-cell createdByName">{{ problem().createdByName }}<span class="show-on-mobile"> / {{ problem().createdDate | date:'dd.MM.yyyy' }}</span></span>
-        <span class="item-cell createdDate hidden-on-mobile">{{ problem().createdDate | date:'dd.MM.yyyy' }}</span>
+<li
+  [class.selected]="isSelected()"
+  class="item"
+  role="button"
+  tabindex="0"
+  (click)="selectProblem()"
+  (keypress)="selectProblem()"
+  [id]="problem().id">
+  <span class="item-cell name">{{ problem().name }}</span>
+  <span class="item-cell description hidden-on-mobile">{{ problem().description }}</span>
+  <span class="item-cell fontGrade">{{ problem().fontGrade ?? undefined | appFontGradePipe }}</span>
+  <span class="item-cell createdByName"
+    >{{ problem().createdByName }}<span class="show-on-mobile">
+      / {{ problem().createdDate | date:'dd.MM.yyyy' }}</span
+    ></span
+  >
+  <span class="item-cell createdDate hidden-on-mobile">{{ problem().createdDate | date:'dd.MM.yyyy' }}</span>
 </li>

@@ -2,9 +2,14 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 // source: https://wejn.org/2020/12/cracking-the-threejs-object-fitting-nut/
-export function fitCameraToCenteredObject(camera: THREE.PerspectiveCamera, object: THREE.Group<THREE.Object3DEventMap>, offset?: number, orbitControls?: OrbitControls): void {
+export function fitCameraToCenteredObject(
+  camera: THREE.PerspectiveCamera,
+  object: THREE.Group<THREE.Object3DEventMap>,
+  offset?: number,
+  orbitControls?: OrbitControls
+): void {
   const boundingBox = new THREE.Box3();
-  boundingBox.setFromObject( object );
+  boundingBox.setFromObject(object);
 
   const size = new THREE.Vector3();
   boundingBox.getSize(size);
@@ -44,23 +49,23 @@ export function fitCameraToCenteredObject(camera: THREE.PerspectiveCamera, objec
   // FTR, from https://threejs.org/docs/#api/en/cameras/PerspectiveCamera
   // the camera.fov is the vertical FOV.
 
-  const fov = camera.fov * ( Math.PI / 180 );
-  const fovh = 2*Math.atan(Math.tan(fov/2) * camera.aspect);
-  const dx = size.z / 2 + Math.abs( size.x / 2 / Math.tan( fovh / 2 ) );
-  const dy = size.z / 2 + Math.abs( size.y / 2 / Math.tan( fov / 2 ) );
+  const fov = camera.fov * (Math.PI / 180);
+  const fovh = 2 * Math.atan(Math.tan(fov / 2) * camera.aspect);
+  const dx = size.z / 2 + Math.abs(size.x / 2 / Math.tan(fovh / 2));
+  const dy = size.z / 2 + Math.abs(size.y / 2 / Math.tan(fov / 2));
   let cameraZ = Math.max(dx, dy);
 
   if (offset && offset !== 0) {
     cameraZ *= offset;
   }
-    
+
   let center = new THREE.Vector3();
   center = boundingBox.getCenter(center);
 
-  camera.position.set( center.x, center.y, cameraZ );
+  camera.position.set(center.x, center.y, cameraZ);
 
   const minZ = boundingBox.min.z;
-  const cameraToFarEdge = ( minZ < 0 ) ? -minZ + cameraZ : cameraZ - minZ;
+  const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ - minZ;
 
   camera.far = cameraToFarEdge * 3;
   camera.updateProjectionMatrix();
@@ -69,4 +74,4 @@ export function fitCameraToCenteredObject(camera: THREE.PerspectiveCamera, objec
     orbitControls.target = center;
     orbitControls.maxDistance = cameraToFarEdge * 2;
   }
-};
+}

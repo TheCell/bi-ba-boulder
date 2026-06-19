@@ -13,11 +13,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-daone-test',
-  imports: [
-    CommonModule,
-    DaoneRenderTestComponent,
-    BoulderLegendComponent
-  ],
+  imports: [CommonModule, DaoneRenderTestComponent, BoulderLegendComponent],
   templateUrl: './daone-test.component.html',
   styleUrl: './daone-test.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -70,53 +66,57 @@ export class DaoneTestComponent implements OnDestroy {
       });
     }
 
-    this.subscription.add(this.finishedLoading.subscribe({
-      next: (resolutionLevel: ResolutionLevel) => {
-        this.changeDetectorRef.markForCheck();
+    this.subscription.add(
+      this.finishedLoading.subscribe({
+        next: (resolutionLevel: ResolutionLevel) => {
+          this.changeDetectorRef.markForCheck();
 
-        if (resolutionLevel === 'low') {
-          if (this.number) {
-            this.boulderLoaderService.loadTestDaoneBoulder2('medium').subscribe({
-              next: (data) => {
-                this.currentRawModel = data;
-                this.finishedLoading.next('medium');
-              }
-            });
-          } else {
-            this.boulderLoaderService.loadTestDaoneBoulder('medium').subscribe({
-              next: (data) => {
-                this.currentRawModel = data;
-                this.finishedLoading.next('medium');
-              }
-            });
-          }
-        } else if (resolutionLevel === 'medium') {
-          if (this.number) {
-            this.boulderLoaderService.loadTestDaoneBoulder2('high').subscribe({
-              next: (data) => {
-                this.currentRawModel = data;
-                this.finishedLoading.next('high');
-              }
-            });
-          } else {
-            this.boulderLoaderService.loadTestDaoneBoulder('high').subscribe({
-              next: (data) => {
-                this.currentRawModel = data;
-                this.finishedLoading.next('high');
-              }
-            });
+          if (resolutionLevel === 'low') {
+            if (this.number) {
+              this.boulderLoaderService.loadTestDaoneBoulder2('medium').subscribe({
+                next: (data) => {
+                  this.currentRawModel = data;
+                  this.finishedLoading.next('medium');
+                }
+              });
+            } else {
+              this.boulderLoaderService.loadTestDaoneBoulder('medium').subscribe({
+                next: (data) => {
+                  this.currentRawModel = data;
+                  this.finishedLoading.next('medium');
+                }
+              });
+            }
+          } else if (resolutionLevel === 'medium') {
+            if (this.number) {
+              this.boulderLoaderService.loadTestDaoneBoulder2('high').subscribe({
+                next: (data) => {
+                  this.currentRawModel = data;
+                  this.finishedLoading.next('high');
+                }
+              });
+            } else {
+              this.boulderLoaderService.loadTestDaoneBoulder('high').subscribe({
+                next: (data) => {
+                  this.currentRawModel = data;
+                  this.finishedLoading.next('high');
+                }
+              });
+            }
           }
         }
-      }
-    }));
+      })
+    );
 
     if (this.number === null) {
-      this.subscription.add(this.boulderProblemsService.loadDaoneTestBoulderProblem().subscribe({
-        next: (data: BoulderLine[]) => {
-          this.currentLines = data;
-          this.changeDetectorRef.markForCheck();
-        }
-      }));
+      this.subscription.add(
+        this.boulderProblemsService.loadDaoneTestBoulderProblem().subscribe({
+          next: (data: BoulderLine[]) => {
+            this.currentLines = data;
+            this.changeDetectorRef.markForCheck();
+          }
+        })
+      );
     }
   }
 

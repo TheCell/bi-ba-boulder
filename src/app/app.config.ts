@@ -13,7 +13,7 @@ function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.apiURL,
     withCredentials: true
-  }
+  };
   return new Configuration(params);
 }
 
@@ -28,9 +28,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     // provideRouter(routes, withDebugTracing()),
     provideRouter(routes),
-    provideHttpClient(
-      withFetch(),
-      withInterceptors([loggedInInterceptor, errorHandlerInterceptor, csrfInterceptor])
-    )
+    provideHttpClient(withFetch(), withInterceptors([loggedInInterceptor, errorHandlerInterceptor, csrfInterceptor]))
   ]
 };

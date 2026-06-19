@@ -1,4 +1,17 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, effect, ElementRef, HostListener, inject, input, InputSignal, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  InputSignal,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -15,13 +28,10 @@ import { CameraControlsService } from '../camera-controls.service';
 
 @Component({
   selector: 'app-spraywall-editor-renderer',
-  imports: [
-    KeyboardShortcutsModule,
-    FormsModule,
-    ReactiveFormsModule],
+  imports: [KeyboardShortcutsModule, FormsModule, ReactiveFormsModule],
   templateUrl: './spraywall-editor-renderer.html',
   styleUrl: './spraywall-editor-renderer.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private el: ElementRef = inject(ElementRef);
@@ -33,7 +43,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     if (this.renderer) {
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight,
+        height: this.el.nativeElement.offsetHeight
       };
 
       this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -44,8 +54,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   }
 
   public rawModel: InputSignal<ArrayBuffer | undefined> = input<ArrayBuffer>();
-  public highlightUv: InputSignal<THREE.Texture<HTMLImageElement> | undefined> = input<THREE.Texture<HTMLImageElement>>();
-  public highlightColor: InputSignal<THREE.Color> = input.required<THREE.Color>()
+  public highlightUv: InputSignal<THREE.Texture<HTMLImageElement> | undefined> =
+    input<THREE.Texture<HTMLImageElement>>();
+  public highlightColor: InputSignal<THREE.Color> = input.required<THREE.Color>();
   public currentHighlightedHoldsTexturePath: InputSignal<string> = input.required<string>();
   public resetRoute: InputSignal<Subject<void>> = input.required<Subject<void>>();
   public undoLastHighlight: InputSignal<Subject<void>> = input.required<Subject<void>>();
@@ -109,7 +120,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
         this.lastClickedHold = undefined;
       }
     });
-    
+
     effect(() => {
       // todo: Check if highlightUv and this can have a timing problem
       const boulderProblem = this.boulderProblem();
@@ -138,7 +149,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     });
     this.newRoute();
   }
-  
+
   public ngAfterViewInit(): void {
     this.createCanvas();
 
@@ -151,18 +162,18 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       this.useRgbTexture = this.useRgbTexture === 0.0 ? 1.0 : 0.0;
     }
   }
-  
+
   public newRoute(): void {
     const width = 128;
     const height = 128;
     const size = width * height;
-    const data = new Uint8Array( size * 4 );
-    for ( let i = 0; i < size; i ++ ) {
+    const data = new Uint8Array(size * 4);
+    for (let i = 0; i < size; i++) {
       const stride = i * 4;
-      data[ stride ] = 0;     // red
-      data[ stride + 1 ] = 0; // green
-      data[ stride + 2 ] = 0; // blue
-      data[ stride + 3 ] = 255; // alpha
+      data[stride] = 0; // red
+      data[stride + 1] = 0; // green
+      data[stride + 2] = 0; // blue
+      data[stride + 3] = 255; // alpha
     }
 
     const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
@@ -180,12 +191,19 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     //   console.log(`Hold color changed to : ${this.enumName(selectedColorOption.type)} `, this.highlightColor());
     // }
   }
-  
+
   public getRouteImage(): string | undefined {
-    if (this.highlightedHoldsTexture?.isTexture && this.highlightedHoldsTexture.image && this.highlightedHoldsTexture.image.data) {
+    if (
+      this.highlightedHoldsTexture?.isTexture &&
+      this.highlightedHoldsTexture.image &&
+      this.highlightedHoldsTexture.image.data
+    ) {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d')!;
-      const imgData = context.createImageData(this.highlightedHoldsTexture.image.width, this.highlightedHoldsTexture.image.height);
+      const imgData = context.createImageData(
+        this.highlightedHoldsTexture.image.width,
+        this.highlightedHoldsTexture.image.height
+      );
       canvas.width = this.highlightedHoldsTexture.image.width;
       canvas.height = this.highlightedHoldsTexture.image.height;
 
@@ -202,20 +220,20 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
     return undefined;
   }
-  
+
   private setupHighlightDebugTexture(texture: THREE.Texture<HTMLImageElement>) {
     this.rgbBlockImageData = getImageDataFromTexture(texture);
     this.rgbBlockMaterial = this.setupCustomShaderMaterial();
     this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
   }
-  
+
   private setupHighlightTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
-      const object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      const object = this.currentGltf.scene.children[0] as THREE.Mesh;
       object.material = this.rgbBlockMaterial;
     }
   }
-  
+
   private loadHighlightedHoldsTexture(path: string): void {
     const loader = new THREE.DataTextureLoader();
     loader.load(path, (texture: THREE.DataTexture) => {
@@ -227,42 +245,46 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       this.standardHighlightedHoldsTexture = texture;
     });
   }
-  
+
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
-    this.loader.parse(buffer, '', (gltf: GLTF) => {
-      this.scene.add(gltf.scene);
-      this.rgbBlockMaterial = undefined;
-      this.originalBlockMaterial = undefined;
-      this.originalBlockTexture = null;
+    this.loader.parse(
+      buffer,
+      '',
+      (gltf: GLTF) => {
+        this.scene.add(gltf.scene);
+        this.rgbBlockMaterial = undefined;
+        this.originalBlockMaterial = undefined;
+        this.originalBlockTexture = null;
 
-      gltf.scene.traverse((child) => {
-        child.layers.set(1);
-        const mesh = (child as THREE.Mesh);
-        if (mesh.isMesh) {
-          this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
-          this.originalBlockTexture = this.originalBlockMaterial.map;
+        gltf.scene.traverse((child) => {
+          child.layers.set(1);
+          const mesh = child as THREE.Mesh;
+          if (mesh.isMesh) {
+            this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
+            this.originalBlockTexture = this.originalBlockMaterial.map;
 
-          this.originalBlockMaterial.needsUpdate = true;
-          if (this.originalBlockTexture) {
-            this.originalBlockTexture.colorSpace = THREE.LinearSRGBColorSpace;
+            this.originalBlockMaterial.needsUpdate = true;
+            if (this.originalBlockTexture) {
+              this.originalBlockTexture.colorSpace = THREE.LinearSRGBColorSpace;
+            }
+            this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+            this.rgbBlockMaterial = this.setupCustomShaderMaterial();
           }
-          this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-          this.rgbBlockMaterial = this.setupCustomShaderMaterial();
-        }
-      });
+        });
 
-      if (this.currentGltf !== undefined) {
-        this.removeBoulderFromScene(this.currentGltf);
-        this.currentGltf = gltf;
-      } else {
-        this.currentGltf = gltf;
-        this.resetCameraPosition();
+        if (this.currentGltf !== undefined) {
+          this.removeBoulderFromScene(this.currentGltf);
+          this.currentGltf = gltf;
+        } else {
+          this.currentGltf = gltf;
+          this.resetCameraPosition();
+        }
+        this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
+      },
+      (err: ErrorEvent) => {
+        throw new Error(err.message);
       }
-      this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
-    },
-    (err: ErrorEvent) => {
-      throw new Error(err.message);
-    });
+    );
   }
 
   private resetCameraPosition(): void {
@@ -281,7 +303,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     });
     this.scene.remove(gltf.scene);
   }
-  
+
   private getClickCoordinate(event: Event): void {
     if (this.wasClickeForNavigation || this.scene == undefined || this.scene.children == undefined) {
       return;
@@ -297,8 +319,8 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     const mouseX = mouseEvent.clientX - canvasLeft;
     const mouseY = mouseEvent.clientY - canvasTop;
 
-    pointer.x = (mouseX / (canvasWidth)) * 2 - 1;
-    pointer.y = - (mouseY / (canvasHeight)) * 2 + 1;
+    pointer.x = (mouseX / canvasWidth) * 2 - 1;
+    pointer.y = -(mouseY / canvasHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(pointer, this.camera);
 
@@ -313,7 +335,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       this.drawNewHighlight(intersects[0].uv1);
     }
   }
-  
+
   private sampleColorFromImageData(imageData: THREE.DataTextureImageData, u: number, v: number): ColorAndIndex {
     const { data, width, height } = imageData;
 
@@ -322,7 +344,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
 
     // Clamp and flip Y (because WebGL textures are usually upside down)
-    
+
     u = THREE.MathUtils.clamp(u, 0, 1);
     v = THREE.MathUtils.clamp(v, 0, 1);
 
@@ -352,9 +374,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     const blueColorGroup = colorAndIndex.b;
     if (blueColorGroup === 0) {
       indices.push(colorAndIndex.index);
-      return indices
+      return indices;
     }
-    
+
     const blueColorOffset = 2;
     for (let blueColorIndex = blueColorOffset; blueColorIndex < data.length - 4; blueColorIndex += 4) {
       const blueValue = data[blueColorIndex];
@@ -368,14 +390,18 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
   private drawNewHighlight(uv: THREE.Vector2): void {
     console.log('drawNewHighlight');
-    
+
     if (!this.rgbBlockImageData) {
       return;
     }
 
     const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
     // console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
-    if (!this.highlightedHoldsTexture || this.highlightedHoldsTexture.image.data === null || colorAndIndex.r === 255 && colorAndIndex.g === 63) {
+    if (
+      !this.highlightedHoldsTexture ||
+      this.highlightedHoldsTexture.image.data === null ||
+      (colorAndIndex.r === 255 && colorAndIndex.g === 63)
+    ) {
       console.error('No highlighted holds texture or data to draw on.');
       return;
     }
@@ -392,13 +418,20 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
-
-        if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] === 0) {
+        if (
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] +
+            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] +
+            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] ===
+          0
+        ) {
           everythingWasHighlighted = false;
         }
-        if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] +
+        if (
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] +
             this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] +
-            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] > 0) {
+            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] >
+          0
+        ) {
           nothingWasHighlighted = false;
         }
 
@@ -436,7 +469,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     this.previousLastClickedHold = this.lastClickedHold;
     this.lastClickedHold = colorAndIndex;
   }
-  
+
   private setupCustomShaderMaterial(): THREE.MeshPhysicalMaterial {
     this.rgbBlockMaterial?.dispose();
     const material = new THREE.MeshPhysicalMaterial({ map: this.originalBlockTexture });
@@ -448,40 +481,29 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
       shader.uniforms['isHighlightActive'] = { value: this.highlightActiveShaderUniform };
 
-      shader.vertexShader = shader.vertexShader.replace(
-        'varying vec3 vViewPosition;',
-        vViewPositionReplace.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('varying vec3 vViewPosition;', vViewPositionReplace.join('\n'));
 
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <begin_vertex>',
-        beginVertex.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', beginVertex.join('\n'));
 
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <worldpos_vertex>',
-        worldposVertex.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('#include <worldpos_vertex>', worldposVertex.join('\n'));
 
-      shader.fragmentShader = shader.fragmentShader.replace(
-        'uniform float opacity;',
-        uniforms.join('\n')
-      );
+      shader.fragmentShader = shader.fragmentShader.replace('uniform float opacity;', uniforms.join('\n'));
 
-      shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <map_fragment>',
-        mapFragment.join( '\n' )
-      );
+      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', mapFragment.join('\n'));
 
       material.userData['shader'] = shader;
-    }
+    };
 
     return material;
   }
 
   private undo(): void {
     this.lastClickedHold = this.previousLastClickedHold;
-    if (this.highlightedHoldsTexture && this.highlightedHoldsTexture.image.data && this.previousHighlightedHoldsImageData) {
+    if (
+      this.highlightedHoldsTexture &&
+      this.highlightedHoldsTexture.image.data &&
+      this.previousHighlightedHoldsImageData
+    ) {
       this.highlightedHoldsTexture.image.data.set(this.previousHighlightedHoldsImageData);
       this.highlightedHoldsTexture.needsUpdate = true;
     }
@@ -498,7 +520,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
     const canvasSizes = {
       width: canvas.offsetWidth,
-      height: canvas.offsetHeight,
+      height: canvas.offsetHeight
     };
 
     this.renderer = new THREE.WebGLRenderer({
@@ -506,14 +528,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       canvas: canvas,
       alpha: true
     });
-    this.renderer.setClearColor( 0x000000, 0 );
+    this.renderer.setClearColor(0x000000, 0);
 
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      canvasSizes.width / canvasSizes.height,
-      0.001,
-      1000
-    );
+    this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
 
@@ -526,17 +543,17 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       LEFT: THREE.MOUSE.PAN,
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE
-    }
+    };
     this.controls.touches = {
       ONE: THREE.TOUCH.PAN,
       TWO: THREE.TOUCH.DOLLY_ROTATE
-    }
+    };
 
     this.controls.addEventListener('change', this.handleOrbitControlChangeEvent);
     this.controls.addEventListener('start', this.handleOrbitControlStartEvent);
     this.controls.addEventListener('end', this.handleOrbitControlEndEvent);
-    
-    canvas.addEventListener('click', this.getClickCoordinate.bind(this) );
+
+    canvas.addEventListener('click', this.getClickCoordinate.bind(this));
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
@@ -557,20 +574,20 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(this.loop);
-  }
+  };
 
   private handleOrbitControlStartEvent = (_event: THREE.Event<'start', OrbitControls>): void => {
     this.wasClickeForNavigation = false;
-  }
+  };
 
   private handleOrbitControlChangeEvent = (_event: THREE.Event<'change', OrbitControls>): void => {
     this.wasClickeForNavigation = true;
-  }
+  };
 
   private handleOrbitControlEndEvent = (_event: THREE.Event<'end', OrbitControls>): void => {
     // empty for now
-  }
-  
+  };
+
   private setHighlightedHoldsTextureFromData(base64String: string, width: number, height: number): void {
     this.highlightedHoldsTexture?.dispose();
     const image = new Image(width, height);
@@ -581,13 +598,13 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
       this.highlightedHoldsTexture = htmlImageElementTextureToDataTexture(texture);
-    }
+    };
     image.onabort = (ev) => {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
-    }
+    };
     image.onerror = (ev) => {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
-    }
+    };
 
     image.src = base64String;
   }

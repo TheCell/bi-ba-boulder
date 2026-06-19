@@ -13,11 +13,11 @@ import { ToastService } from 'src/app/core/toast-container/toast.service';
   imports: [Icon, Modal],
   templateUrl: './problem-log-overlay.html',
   styleUrl: './problem-log-overlay.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProblemLogOverlay {
   @ViewChild('modal') private modal!: Modal;
-  
+
   private boulderLogsService = inject(BoulderLogsService);
   private modalService = inject(ModalService);
   private toastService = inject(ToastService);
@@ -35,12 +35,12 @@ export class ProblemLogOverlay {
       this.currentBoulderLog.set(this.boulderLog());
     });
   }
-  
+
   public onCreateClick(action: 'sent' | 'project'): void {
     const newLog: CreateBoulderLogCommand = {
       isProject: action === 'project',
       isSent: action === 'sent'
-    }
+    };
     this.boulderLogsService.createBoulderLogForSpraywall(this.spraywallProblemId(), newLog).subscribe({
       next: (boulderLog?: BoulderLogDto) => {
         this.currentBoulderLog.set(boulderLog);
@@ -63,7 +63,7 @@ export class ProblemLogOverlay {
       isSent: this.currentBoulderLog()!.isSent,
       id: this.currentBoulderLog()!.id,
       version: this.currentBoulderLog()!.version
-    }
+    };
 
     if (action === 'project') {
       updateLog.isProject = !updateLog.isProject;
@@ -79,7 +79,8 @@ export class ProblemLogOverlay {
         } else {
           this.isLoadingIsProject.set(false);
         }
-      }, error: () => {
+      },
+      error: () => {
         if (action === 'sent') {
           this.isLoadingIsSent.set(false);
         } else {
@@ -98,13 +99,13 @@ export class ProblemLogOverlay {
     const problemLogDialogData: ProblemLogDialogData = {
       spraywallProblemId: this.spraywallProblemId(),
       problemLog: this.currentBoulderLog()
-    }
+    };
     const modal = this.modalService.open(this.modal.id, ProblemLogDialog);
     if (modal && modal.initialize) {
       modal.initialize(problemLogDialogData);
     }
   }
-    
+
   public closeModal(closeModalEvent: CloseModalEvent) {
     if (closeModalEvent.closeType === 0) {
       const boulderLog = closeModalEvent.data as BoulderLogDto | undefined;

@@ -1,4 +1,15 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -11,7 +22,7 @@ import { BoulderLine } from '../../interfaces/boulder-line';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
-import Stats from 'stats.js'
+import Stats from 'stats.js';
 import { SpraywallsService, SpraywallProblemDto } from '@api-net/index';
 import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
 import { downloadSpraywallProblemImage, getImageDataFromTexture } from '../common/util';
@@ -24,11 +35,7 @@ interface ITempForm {
 
 @Component({
   selector: 'app-boulder-debug-render',
-  imports: [
-    KeyboardShortcutsModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
+  imports: [KeyboardShortcutsModule, FormsModule, ReactiveFormsModule],
   templateUrl: './boulder-debug-render.component.html',
   styleUrl: './boulder-debug-render.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -42,7 +49,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     if (this.renderer) {
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight,
+        height: this.el.nativeElement.offsetHeight
       };
 
       this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -122,25 +129,30 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.shortcuts.push({
-      key: ['ctrl + z'],
-      preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.removeLastPoint() // eslint-disable-line @typescript-eslint/no-unused-vars
-    }, {
-      key: ['ctrl + space'],
-      preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.startNewLine() // eslint-disable-line @typescript-eslint/no-unused-vars
-    }, {
-      key: ['ctrl + y'],
-      preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.printClickPoints() // eslint-disable-line @typescript-eslint/no-unused-vars
-    }, {
-      key: ['ctrl + shift'],
-      preventDefault: true,
-      command: (e: ShortcutEventOutput) => this.toggleNormalLines() // eslint-disable-line @typescript-eslint/no-unused-vars
-    });
+    this.shortcuts.push(
+      {
+        key: ['ctrl + z'],
+        preventDefault: true,
+        command: (e: ShortcutEventOutput) => this.removeLastPoint() // eslint-disable-line @typescript-eslint/no-unused-vars
+      },
+      {
+        key: ['ctrl + space'],
+        preventDefault: true,
+        command: (e: ShortcutEventOutput) => this.startNewLine() // eslint-disable-line @typescript-eslint/no-unused-vars
+      },
+      {
+        key: ['ctrl + y'],
+        preventDefault: true,
+        command: (e: ShortcutEventOutput) => this.printClickPoints() // eslint-disable-line @typescript-eslint/no-unused-vars
+      },
+      {
+        key: ['ctrl + shift'],
+        preventDefault: true,
+        command: (e: ShortcutEventOutput) => this.toggleNormalLines() // eslint-disable-line @typescript-eslint/no-unused-vars
+      }
+    );
 
-    window.addEventListener( 'contextmenu', this.getClickCoordinate.bind(this) );
+    window.addEventListener('contextmenu', this.getClickCoordinate.bind(this));
 
     this.form = new FormGroup<ITempForm>({
       tempPsw: new FormControl<string>('', { nonNullable: true })
@@ -159,7 +171,11 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     if (lines !== this.processedLines) {
       if (lines !== undefined) {
         lines.forEach((line: BoulderLine) => {
-          this.addLineToScene(this.scene, line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), line.color);
+          this.addLineToScene(
+            this.scene,
+            line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
+            line.color
+          );
         });
 
         this.processedLines = lines;
@@ -177,7 +193,10 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   }
 
   public switchRoute(): void {
-    this.currentHighlightedHoldsTexturePath = this.currentHighlightedHoldsTexturePath === './images/Bimano_Spraywall_02_highlight_02.png' ? './images/Bimano_Spraywall_02_highlight_01.png' : './images/Bimano_Spraywall_02_highlight_02.png';
+    this.currentHighlightedHoldsTexturePath =
+      this.currentHighlightedHoldsTexturePath === './images/Bimano_Spraywall_02_highlight_02.png'
+        ? './images/Bimano_Spraywall_02_highlight_01.png'
+        : './images/Bimano_Spraywall_02_highlight_02.png';
     this.loadHighlightedHoldsTexture(this.currentHighlightedHoldsTexturePath);
   }
 
@@ -185,13 +204,13 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     const width = 128;
     const height = 128;
     const size = width * height;
-    const data = new Uint8Array( size * 4 );
-    for ( let i = 0; i < size; i ++ ) {
+    const data = new Uint8Array(size * 4);
+    for (let i = 0; i < size; i++) {
       const stride = i * 4;
-      data[ stride ] = 0;     // red
-      data[ stride + 1 ] = 0; // green
-      data[ stride + 2 ] = 0; // blue
-      data[ stride + 3 ] = 255; // alpha
+      data[stride] = 0; // red
+      data[stride + 1] = 0; // green
+      data[stride + 2] = 0; // blue
+      data[stride + 3] = 255; // alpha
     }
 
     const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
@@ -207,10 +226,17 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   }
 
   public uploadRoute(): void {
-    if (this.highlightedHoldsTexture?.isTexture && this.highlightedHoldsTexture.image && this.highlightedHoldsTexture.image.data) {
+    if (
+      this.highlightedHoldsTexture?.isTexture &&
+      this.highlightedHoldsTexture.image &&
+      this.highlightedHoldsTexture.image.data
+    ) {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d')!;
-      const imgData = context.createImageData(this.highlightedHoldsTexture.image.width, this.highlightedHoldsTexture.image.height);
+      const imgData = context.createImageData(
+        this.highlightedHoldsTexture.image.width,
+        this.highlightedHoldsTexture.image.height
+      );
       canvas.width = this.highlightedHoldsTexture.image.width;
       canvas.height = this.highlightedHoldsTexture.image.height;
 
@@ -222,26 +248,28 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       }
 
       context.putImageData(imgData, 0, 0);
-      this.spraywallsService.createSpraywallProblem('e4b5991c-54c8-f011-9457-71a4df1b7093', {
-        name: 'New Problem',
-        description: 'Description of the new problem',
-        fontGrade: -1,
-        image: canvas.toDataURL('image/png')
-      }).subscribe({
-        next: (response: SpraywallProblemDto) => {
-          console.log('Problem created successfully:', response);
-        },
-        error: (error: unknown) => {
-          console.error('Error creating problem:', error);
-        }
-      });
+      this.spraywallsService
+        .createSpraywallProblem('e4b5991c-54c8-f011-9457-71a4df1b7093', {
+          name: 'New Problem',
+          description: 'Description of the new problem',
+          fontGrade: -1,
+          image: canvas.toDataURL('image/png')
+        })
+        .subscribe({
+          next: (response: SpraywallProblemDto) => {
+            console.log('Problem created successfully:', response);
+          },
+          error: (error: unknown) => {
+            console.error('Error creating problem:', error);
+          }
+        });
     }
   }
 
   public onHoldColorChange(event: EventTarget | null): void {
     const selectElement = event as HTMLSelectElement;
     const selectedColorType = parseInt(selectElement.value);
-    const selectedColorOption = holdColorOptions.find(option => option.type === selectedColorType);
+    const selectedColorOption = holdColorOptions.find((option) => option.type === selectedColorType);
     if (selectedColorOption) {
       this.highlightColor = selectedColorOption.color;
       console.log(`Hold color changed to : ${this.enumName(selectedColorOption.type)} `, this.highlightColor);
@@ -249,7 +277,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
   }
 
   public enumName(type: SpraywallHoldType): string {
-    const enumNames = Object.keys(SpraywallHoldType).filter(key => isNaN(Number(key)));
+    const enumNames = Object.keys(SpraywallHoldType).filter((key) => isNaN(Number(key)));
     return enumNames[type];
   }
 
@@ -272,7 +300,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       element.style.top = `${offset}px`;
     }
 
-    this.el.nativeElement.appendChild( this.stats.dom );
+    this.el.nativeElement.appendChild(this.stats.dom);
   }
 
   private setupHighlightDebugTexture() {
@@ -294,7 +322,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
   private setupHighlightTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
-      const object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      const object = this.currentGltf.scene.children[0] as THREE.Mesh;
       object.material = this.rgbBlockMaterial;
     }
   }
@@ -323,20 +351,20 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     // const texture = new THREE.DataTexture(undefined, width, height, THREE.RGBFormat);
     // texture.source
 
-  //   image.onload = () => {
-  //     texture.flipY = false;
-  //     texture.needsUpdate = true;
-  //     texture.minFilter = THREE.NearestFilter;
-  //     texture.magFilter = THREE.NearestFilter;
-  //     this.highlightedHoldsTexture = texture;
-  //   }
-  //   image.onabort = (ev) => {
-  //     console.error('Failed to load highlighted holds texture from base64 data.', ev);
-  //   }
-  //   image.onerror = (ev) => {
-  //     console.error('Failed to load highlighted holds texture from base64 data.', ev);
-  //   }
-  //   image.src = 'data:image/png;base64,' + base64String;
+    //   image.onload = () => {
+    //     texture.flipY = false;
+    //     texture.needsUpdate = true;
+    //     texture.minFilter = THREE.NearestFilter;
+    //     texture.magFilter = THREE.NearestFilter;
+    //     this.highlightedHoldsTexture = texture;
+    //   }
+    //   image.onabort = (ev) => {
+    //     console.error('Failed to load highlighted holds texture from base64 data.', ev);
+    //   }
+    //   image.onerror = (ev) => {
+    //     console.error('Failed to load highlighted holds texture from base64 data.', ev);
+    //   }
+    //   image.src = 'data:image/png;base64,' + base64String;
   }
 
   private createCanvas(): void {
@@ -347,7 +375,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
     const canvasSizes = {
       width: canvas.offsetWidth,
-      height: canvas.offsetHeight,
+      height: canvas.offsetHeight
     };
 
     this.renderer = new THREE.WebGLRenderer({
@@ -355,14 +383,9 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       canvas: canvas,
       alpha: true
     });
-    this.renderer.setClearColor( 0x000000, 0 );
+    this.renderer.setClearColor(0x000000, 0);
 
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      canvasSizes.width / canvasSizes.height,
-      0.001,
-      1000
-    );
+    this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
 
@@ -374,11 +397,11 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       LEFT: THREE.MOUSE.PAN,
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE
-    }
+    };
     this.controls.touches = {
       ONE: THREE.TOUCH.PAN,
       TWO: THREE.TOUCH.DOLLY_ROTATE
-    }
+    };
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
@@ -401,46 +424,50 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     this.renderer.render(this.scene, this.camera);
     this.stats?.end();
     window.requestAnimationFrame(this.loop);
-  }
+  };
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
-    this.loader.parse(buffer, '', (gltf: GLTF) => {
-      this.scene.add(gltf.scene);
-      this.rgbBlockMaterial = undefined;
-      this.originalBlockMaterial = undefined;
-      this.originalBlockTexture = null;
+    this.loader.parse(
+      buffer,
+      '',
+      (gltf: GLTF) => {
+        this.scene.add(gltf.scene);
+        this.rgbBlockMaterial = undefined;
+        this.originalBlockMaterial = undefined;
+        this.originalBlockTexture = null;
 
-      gltf.scene.traverse((child) => {
-        child.layers.set(1);
-        const mesh = (child as THREE.Mesh);
-        if (mesh.isMesh) {
-          this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
-          this.originalBlockTexture = this.originalBlockMaterial.map;
+        gltf.scene.traverse((child) => {
+          child.layers.set(1);
+          const mesh = child as THREE.Mesh;
+          if (mesh.isMesh) {
+            this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
+            this.originalBlockTexture = this.originalBlockMaterial.map;
 
-          this.originalBlockMaterial.needsUpdate = true;
-          // this.originalBlockTexture!.needsUpdate = true;
-          if (this.originalBlockTexture) {
-            this.originalBlockTexture.colorSpace = THREE.LinearSRGBColorSpace;
+            this.originalBlockMaterial.needsUpdate = true;
+            // this.originalBlockTexture!.needsUpdate = true;
+            if (this.originalBlockTexture) {
+              this.originalBlockTexture.colorSpace = THREE.LinearSRGBColorSpace;
+            }
+            this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+            // this.originalBlockMaterial.wireframe = true;
+            this.rgbBlockMaterial = this.setupCustomShaderMaterial();
           }
-          this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-          // this.originalBlockMaterial.wireframe = true;
-          this.rgbBlockMaterial = this.setupCustomShaderMaterial();
-        }
-      });
+        });
 
-      if (this.currentGltf !== undefined) {
-        this.removeBoulderFromScene(this.currentGltf);
-      } else {
-        if (this.initialized) {
-          fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+        if (this.currentGltf !== undefined) {
+          this.removeBoulderFromScene(this.currentGltf);
+        } else {
+          if (this.initialized) {
+            fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+          }
         }
+        this.currentGltf = gltf;
+        this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
+      },
+      (err: ErrorEvent) => {
+        throw new Error(err.message);
       }
-      this.currentGltf = gltf;
-      this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
-    },
-    (err: ErrorEvent) => {
-      throw new Error(err.message);
-    });
+    );
   }
 
   private removeBoulderFromScene(gltf: GLTF): void {
@@ -462,8 +489,8 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
     const mouseX = mouseEvent.clientX - canvasLeft;
     const mouseY = mouseEvent.clientY - canvasTop;
 
-    pointer.x = (mouseX / (canvasWidth)) * 2 - 1;
-    pointer.y = - (mouseY / (canvasHeight)) * 2 + 1;
+    pointer.x = (mouseX / canvasWidth) * 2 - 1;
+    pointer.y = -(mouseY / canvasHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(pointer, this.camera);
 
@@ -480,13 +507,13 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
 
     if (!this.drawingNewHighlight) {
       const normal = intersects[0].normal ?? new THREE.Vector3(0, 0, 0);
-      const newPoint: THREE.Vector3 = new THREE.Vector3 (
+      const newPoint: THREE.Vector3 = new THREE.Vector3(
         intersects[0].point.x + 0.1 * normal.x,
         intersects[0].point.y + 0.1 * normal.y,
         intersects[0].point.z + 0.1 * normal.z
       );
       this.clickPoints.push(newPoint);
-      console.log('newPoint:',  `(${newPoint.x}, ${newPoint.y}, ${newPoint.z})`);
+      console.log('newPoint:', `(${newPoint.x}, ${newPoint.y}, ${newPoint.z})`);
 
       if (this.clickPoints.length < 2) {
         return;
@@ -518,7 +545,7 @@ export class BoulderDebugRenderComponent implements OnInit, AfterViewInit {
       opacity: 1,
       linewidth: 5,
       resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
-      dashed: false,
+      dashed: false
     });
   }
 
@@ -543,8 +570,8 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
   }
 
   private getRandomColor(): string {
-    const currentRadius =  this.currentRandomRadius;
-    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80});
+    const currentRadius = this.currentRandomRadius;
+    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80 });
     this.currentRandomRadius *= Math.E;
     this.currentRandomRadius %= 360;
     return randomColor;
@@ -556,19 +583,19 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
     }
 
     if (this.vertexNormalsHelpers.length > 0) {
-      this.scene.remove( ...this.vertexNormalsHelpers );
+      this.scene.remove(...this.vertexNormalsHelpers);
       this.vertexNormalsHelpers = [];
       return;
     }
 
     this.currentGltf.scene.traverse((child) => {
       if (child.type === 'Mesh') {
-        const vnh = new VertexNormalsHelper( child, 1, 0xff0000 );
+        const vnh = new VertexNormalsHelper(child, 1, 0xff0000);
         this.vertexNormalsHelpers.push(vnh);
       }
     });
 
-    this.scene.add( ...this.vertexNormalsHelpers );
+    this.scene.add(...this.vertexNormalsHelpers);
   }
 
   private sampleColorFromImageData(imageData: THREE.DataTextureImageData, u: number, v: number): ColorAndIndex {
@@ -632,13 +659,20 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let groupIndexIterator = 0; groupIndexIterator < group.length; groupIndexIterator++) {
-
-        if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] + this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] === 0) {
+        if (
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] +
+            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] +
+            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] ===
+          0
+        ) {
           everythingWasHighlighted = false;
         }
-        if (this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] +
+        if (
+          this.highlightedHoldsTexture!.image.data[group[groupIndexIterator]] +
             this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 1] +
-            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] > 0) {
+            this.highlightedHoldsTexture!.image.data[group[groupIndexIterator] + 2] >
+          0
+        ) {
           nothingWasHighlighted = false;
         }
 
@@ -678,7 +712,7 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
 
   private getBitsFromNumber(type: SpraywallHoldType, index: number): number {
     // saving the type in the high endian 2 bits, and the index in the low endian 14 bits
-    const twoByteInfo = (type << 16) | (index);
+    const twoByteInfo = (type << 16) | index;
     return twoByteInfo;
   }
 
@@ -696,33 +730,18 @@ INSERT INTO point (line_id, x, y, z) VALUES ${this.clickPoints.map((point) => `(
       shader.uniforms['useRgbTexture'] = { value: this.useRgbTexture };
       shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
 
-      shader.vertexShader = shader.vertexShader.replace(
-        'varying vec3 vViewPosition;',
-        vViewPositionReplace.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('varying vec3 vViewPosition;', vViewPositionReplace.join('\n'));
 
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <begin_vertex>',
-        beginVertex.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', beginVertex.join('\n'));
 
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <worldpos_vertex>',
-        worldposVertex.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('#include <worldpos_vertex>', worldposVertex.join('\n'));
 
-      shader.fragmentShader = shader.fragmentShader.replace(
-        'uniform float opacity;',
-        uniforms.join('\n')
-      );
+      shader.fragmentShader = shader.fragmentShader.replace('uniform float opacity;', uniforms.join('\n'));
 
-      shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <map_fragment>',
-        mapFragment.join( '\n' )
-      );
+      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', mapFragment.join('\n'));
 
       material.userData['shader'] = shader;
-    }
+    };
 
     return material;
   }

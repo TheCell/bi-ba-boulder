@@ -1,7 +1,26 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild
+} from '@angular/core';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
-import { BoulderLogDto, BoulderLogsService, SearchProblemsRequest, SpraywallProblemDto, SpraywallProblemListDto, SpraywallProblemsService, SpraywallsService } from '@api-net/index';
+import {
+  BoulderLogDto,
+  BoulderLogsService,
+  SearchProblemsRequest,
+  SpraywallProblemDto,
+  SpraywallProblemListDto,
+  SpraywallProblemsService,
+  SpraywallsService
+} from '@api-net/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
@@ -24,8 +43,17 @@ import { CameraControls } from './camera-controls/camera-controls';
 
 @Component({
   selector: 'app-spraywall',
-  imports: [LoadingImageComponent, BoulderRenderComponent, SpraywallLegendItem, SpraywallLegendItemPlaceholder,
-    RouterLink, Icon, Modal, ProblemLogOverlay, CameraControls],
+  imports: [
+    LoadingImageComponent,
+    BoulderRenderComponent,
+    SpraywallLegendItem,
+    SpraywallLegendItemPlaceholder,
+    RouterLink,
+    Icon,
+    Modal,
+    ProblemLogOverlay,
+    CameraControls
+  ],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss',
   changeDetection: ChangeDetectionStrategy.Default
@@ -35,11 +63,11 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
   @ViewChild('confirmDelete') private confirmDeleteModal!: Modal;
   @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
-  
+
   public authSessionStateService = inject(AuthSessionStateService);
   private spraywallsService = inject(SpraywallsService);
   private spraywallProblemsService = inject(SpraywallProblemsService);
-  private boulderLoaderService = inject(BoulderLoaderService)
+  private boulderLoaderService = inject(BoulderLoaderService);
   private modalService = inject(ModalService);
   private changeDetectorRef = inject(ChangeDetectorRef);
   private router = inject(Router);
@@ -58,7 +86,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   private currentMaxPage = 1;
   // private pageSize = 30;
   private newEntriesLoading = false;
-  
+
   private reloadSearchSubject = new Subject<void>();
   private loadBoulderLog = new Subject<string>();
   private subscription = new Subscription();
@@ -67,33 +95,46 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     const route = inject(ActivatedRoute);
     this.spraywallId = route.snapshot.params['id'];
 
-    this.subscription.add(this.reloadSearchSubject.pipe(debounceTime(300), switchMap(() => this.spraywallsService.searchSpraywallProblems(this.spraywallId, this.currentFilter))).subscribe({
-      next: (problemSearchResult: SpraywallProblemListDto) => {
-        this.newEntriesLoading = false;
-        if (problemSearchResult.currentPage > 0) {
-          this.listOfProblems.push(... problemSearchResult.problems);
-        } else {
-          this.listOfProblems = problemSearchResult.problems;
-        }
-        this.totalCount = problemSearchResult.totalCount;
+    this.subscription.add(
+      this.reloadSearchSubject
+        .pipe(
+          debounceTime(300),
+          switchMap(() => this.spraywallsService.searchSpraywallProblems(this.spraywallId, this.currentFilter))
+        )
+        .subscribe({
+          next: (problemSearchResult: SpraywallProblemListDto) => {
+            this.newEntriesLoading = false;
+            if (problemSearchResult.currentPage > 0) {
+              this.listOfProblems.push(...problemSearchResult.problems);
+            } else {
+              this.listOfProblems = problemSearchResult.problems;
+            }
+            this.totalCount = problemSearchResult.totalCount;
 
-        this.changeDetectorRef.markForCheck();
-      }
-    }));
+            this.changeDetectorRef.markForCheck();
+          }
+        })
+    );
 
-    this.subscription.add(this.loadBoulderLog.pipe(filter(() => this.authSessionStateService.isLoggedIn()), switchMap((problemId) => this.boulderLogsService.getBoulderLogBySpraywall(problemId)))
-      .subscribe({
-        next: (boulderLog?: BoulderLogDto | null) => {
-          if (boulderLog) {
-            this.boulderLog.set(boulderLog);
-          } else {
+    this.subscription.add(
+      this.loadBoulderLog
+        .pipe(
+          filter(() => this.authSessionStateService.isLoggedIn()),
+          switchMap((problemId) => this.boulderLogsService.getBoulderLogBySpraywall(problemId))
+        )
+        .subscribe({
+          next: (boulderLog?: BoulderLogDto | null) => {
+            if (boulderLog) {
+              this.boulderLog.set(boulderLog);
+            } else {
+              this.boulderLog.set(undefined);
+            }
+          },
+          error: () => {
             this.boulderLog.set(undefined);
           }
-        },
-        error: () => {
-          this.boulderLog.set(undefined);
-        }
-      }));
+        })
+    );
   }
 
   public ngAfterViewInit(): void {
@@ -155,7 +196,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       const data: SpraywallGradeFilterDialogData = {
         maxGrade: this.currentFilter.gradeMax,
         minGrade: this.currentFilter.gradeMin
-      }
+      };
       modal.initialize(data);
     }
   }
@@ -165,7 +206,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       const data = closeModalEvent.data as SpraywallGradeFilterDialogCloseData;
       this.currentFilter.gradeMax = data.maxGrade;
       this.currentFilter.gradeMin = data.minGrade;
-  
+
       this.resetFilterPageAndResultsPosition();
       this.reloadSearchSubject.next();
     }
@@ -185,10 +226,10 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.selectedProblem) {
       const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteDialog);
       if (modal && modal.initialize) {
-      const data: ConfirmDeleteDialogData = {
-        spraywallProblem: this.selectedProblem
-      }
-      modal.initialize(data);
+        const data: ConfirmDeleteDialogData = {
+          spraywallProblem: this.selectedProblem
+        };
+        modal.initialize(data);
       }
     }
   }
@@ -210,7 +251,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private scrollEventListener = () => {
     this.scrollEvent();
-  }
+  };
 
   private scrollEvent(): void {
     if (this.currentScrollPosition() < 25 && this.listOfProblems.length < this.totalCount) {

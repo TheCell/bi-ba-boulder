@@ -1,10 +1,18 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Modal } from './core/modal/modal/modal';
 import { ModalService } from './core/modal/modal.service';
 import { LoginDialogComponent } from './core/modal/login-dialog/login-dialog.component';
-import { ToastContainer } from "./core/toast-container/toast-container";
+import { ToastContainer } from './core/toast-container/toast-container';
 import { LoginTrackerService } from './auth/login-tracker.service';
 
 @Component({

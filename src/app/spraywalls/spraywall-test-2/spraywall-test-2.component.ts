@@ -20,7 +20,7 @@ export class SpraywallTest2Component implements OnInit {
   public currentLines: BoulderLine[] = [];
   public selectedProblemId?: string;
   public spraywallProblems: SpraywallProblemDto[] = [];
-  
+
   public constructor() {
     const testBoulder = this.boulderLoaderService.loadTestSpraywall3();
     testBoulder.subscribe({

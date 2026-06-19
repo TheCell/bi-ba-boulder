@@ -11,11 +11,14 @@ import { environment } from 'src/environments/environment';
  *
  * The backend requires this header on all /api/* requests.
  */
-export const csrfInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
+export const csrfInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<unknown>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<unknown>> => {
   if (req.url.startsWith(environment.apiURL)) {
     const csrfReq = req.clone({
       headers: req.headers.set('X-CSRF', '1'),
-      withCredentials: true,
+      withCredentials: true
     });
     return next(csrfReq);
   }

@@ -1,15 +1,11 @@
 <h2>Login</h2>
 
 <div class="login-content">
-    <p>Sign in with your account to continue.</p>
-    <div class="form-group form-action">
-        <button type="button" class="button" (click)="onLogin()">
-            Sign in with Google
-        </button>
-        @if (isDevelopment) {
-            <button type="button" class="button button-secondary" (click)="onDevLogin()">
-                🔧 Dev Login (Skip Google)
-            </button>
-        }
-    </div>
+  <p>Sign in with your account to continue.</p>
+  <div class="form-group form-action">
+    <button type="button" class="button" (click)="onLogin()">Sign in with Google</button>
+    @if (isDevelopment) {
+      <button type="button" class="button button-secondary" (click)="onDevLogin()">🔧 Dev Login (Skip Google)</button>
+    }
+  </div>
 </div>

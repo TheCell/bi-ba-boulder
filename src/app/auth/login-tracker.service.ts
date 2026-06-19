@@ -7,7 +7,7 @@ import { DevAuthService } from '@api-net/index';
 import { AuthSessionStateService } from './auth-session-state.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class LoginTrackerService {
   private bffAuthService = inject(BffAuthService);
@@ -28,7 +28,7 @@ export class LoginTrackerService {
       },
       error: () => {
         this.authSessionStateService.setUnauthenticated();
-      },
+      }
     });
   }
 
@@ -64,7 +64,7 @@ export class LoginTrackerService {
       },
       error: (err) => {
         console.error('Dev login failed:', err);
-      },
+      }
     });
   }
 
@@ -79,7 +79,7 @@ export class LoginTrackerService {
       },
       error: () => {
         this.authSessionStateService.setUnauthenticated();
-      },
+      }
     });
   }
 

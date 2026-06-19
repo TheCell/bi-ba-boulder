@@ -30,8 +30,8 @@ export const routes: Routes = [
       { path: '', component: DaoneTestComponent, pathMatch: 'full' },
       { path: ':number', component: DaoneTestComponent }
     ]
-   },
-   {
+  },
+  {
     path: 'sectors',
     pathMatch: 'full',
     component: SectorsListComponent,
@@ -61,7 +61,7 @@ export const routes: Routes = [
     path: 'spraywall-editor/:spraywallId/:problemId',
     component: SpraywallEditor,
     resolve: {
-      'spraywallProblem': spraywallProblemResolver
+      spraywallProblem: spraywallProblemResolver
     }
   },
   {

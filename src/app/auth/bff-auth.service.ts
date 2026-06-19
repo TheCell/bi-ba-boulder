@@ -9,7 +9,7 @@ export interface BffUserClaim {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class BffAuthService {
   private http = inject(HttpClient);

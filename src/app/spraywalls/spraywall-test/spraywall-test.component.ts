@@ -14,8 +14,8 @@ export class SpraywallTestComponent {
   private boulderLoaderService: BoulderLoaderService = inject(BoulderLoaderService);
   private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   public currentRawModel?: ArrayBuffer = undefined;
-    public currentLines: BoulderLine[] = [];
-  
+  public currentLines: BoulderLine[] = [];
+
   public constructor() {
     const testBoulder = this.boulderLoaderService.loadTestSpraywall();
     testBoulder.subscribe({

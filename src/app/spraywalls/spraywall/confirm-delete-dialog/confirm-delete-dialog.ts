@@ -11,7 +11,7 @@ import { FontGradePipePipe } from 'src/app/core/pipes/font-grade-pipe-pipe';
   imports: [CommonModule, FontGradePipePipe],
   templateUrl: './confirm-delete-dialog.html',
   styleUrl: './confirm-delete-dialog.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfirmDeleteDialog implements IModal {
   public closeModal = output<CloseModalEvent>();

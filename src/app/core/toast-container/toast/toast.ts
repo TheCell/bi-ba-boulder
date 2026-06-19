@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges
+} from '@angular/core';
 import { ToastService } from '../toast.service';
 import { IToastInternal } from '../I-toast-internal';
 import { NgClass } from '@angular/common';
@@ -8,7 +17,7 @@ import { NgClass } from '@angular/common';
   imports: [NgClass],
   templateUrl: './toast.html',
   styleUrl: './toast.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.Eager
 })
 export class Toast implements OnChanges, OnDestroy {
   public toastService = inject(ToastService);
@@ -18,7 +27,7 @@ export class Toast implements OnChanges, OnDestroy {
 
   public id: string = ''.appendUniqueId();
   public showFadeout = false;
-  
+
   // todo messages don't dissapear because of change detection. Update with most recent signals
   private delay?: number;
   private fadeoutDelayTimer?: number;
@@ -29,7 +38,7 @@ export class Toast implements OnChanges, OnDestroy {
     if (toast.previousValue) {
       this.stopDelay();
     }
-    
+
     if (toast.currentValue) {
       if (toast.currentValue.delay) {
         this.startDelay();

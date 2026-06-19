@@ -7,7 +7,7 @@ import { BoulderLogDto, BoulderLogsService, CreateBoulderLogCommand, UpdateBould
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Icon } from 'src/app/core/icon/icon';
-import { disabled, form, FormField } from "@angular/forms/signals";
+import { disabled, form, FormField } from '@angular/forms/signals';
 
 interface IProblemLogForm {
   id?: string;
@@ -23,7 +23,7 @@ interface IProblemLogForm {
   imports: [CommonModule, FormsModule, ReactiveFormsModule, Icon, FormField],
   templateUrl: './problem-log-dialog.html',
   styleUrl: './problem-log-dialog.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProblemLogDialog implements IModal, OnDestroy {
   private boulderLogsService = inject(BoulderLogsService);
@@ -39,13 +39,13 @@ export class ProblemLogDialog implements IModal, OnDestroy {
     isProject: false,
     fontGrade: '',
     rating: 0,
-    version: undefined,
+    version: undefined
   });
 
   public saveForm = form(this.saveModel, (schemaPath) => {
-    disabled(schemaPath, () => this.isDisabled())
+    disabled(schemaPath, () => this.isDisabled());
   });
-  
+
   private problemLog?: BoulderLogDto;
   private spraywallProblemId = '';
   private subscription = new Subscription();
@@ -56,7 +56,7 @@ export class ProblemLogDialog implements IModal, OnDestroy {
       this.canCloseWithoutPermission = !this.saveForm().dirty();
     });
   }
-  
+
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
@@ -70,7 +70,7 @@ export class ProblemLogDialog implements IModal, OnDestroy {
       isProject: this.problemLog?.isProject ?? false,
       fontGrade: this.problemLog?.fontGrade?.toString() ?? '',
       rating: this.problemLog?.rating,
-      version: this.problemLog?.version,
+      version: this.problemLog?.version
     });
   }
 
@@ -79,7 +79,7 @@ export class ProblemLogDialog implements IModal, OnDestroy {
     this.isDisabled.set(true);
 
     // todo delete when all is set to undefined / false
-    
+
     if (this.problemLog) {
       const updateBoulderLogCommand: UpdateBoulderLogCommand = {
         id: this.problemLog.id,
@@ -87,8 +87,8 @@ export class ProblemLogDialog implements IModal, OnDestroy {
         isSent: this.saveModel().isSent,
         isProject: this.saveModel().isProject,
         fontGrade: this.saveModel().fontGrade ? Number(this.saveModel().fontGrade) : undefined,
-        rating: this.saveModel().rating ? Number(this.saveModel().rating) : undefined,
-      }
+        rating: this.saveModel().rating ? Number(this.saveModel().rating) : undefined
+      };
       this.boulderLogsService.updateBoulderLog(this.problemLog.id, updateBoulderLogCommand).subscribe({
         next: (boulderLog?: BoulderLogDto) => {
           this.closeModal.emit({ closeType: 0, data: boulderLog });
@@ -103,7 +103,7 @@ export class ProblemLogDialog implements IModal, OnDestroy {
         isSent: this.saveModel().isSent,
         isProject: this.saveModel().isProject,
         fontGrade: this.saveModel().fontGrade ? Number(this.saveModel().fontGrade) : undefined,
-        rating: this.saveModel().rating ? Number(this.saveModel().rating) : undefined,
+        rating: this.saveModel().rating ? Number(this.saveModel().rating) : undefined
       };
       this.boulderLogsService.createBoulderLogForSpraywall(this.spraywallProblemId, createBoulderLogCommand).subscribe({
         next: (boulderLog?: BoulderLogDto) => {

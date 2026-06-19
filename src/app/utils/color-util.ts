@@ -10,7 +10,7 @@ export function HSLToHex(hsl: { h: number; s: number; l: number }): string {
     // Convert to Hex and prefix with "0" if required
     return Math.round(255 * color)
       .toString(16)
-      .padStart(2, "0");
+      .padStart(2, '0');
   };
   return `#${f(0)}${f(8)}${f(4)}`;
 }
@@ -19,7 +19,7 @@ export function HexToHSL(hex: string): { h: number; s: number; l: number } {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
   if (!result) {
-    throw new Error("Could not parse Hex Color");
+    throw new Error('Could not parse Hex Color');
   }
 
   const rHex = parseInt(result[1], 16);
@@ -66,7 +66,7 @@ export function HexToHSL(hex: string): { h: number; s: number; l: number } {
   return { h, s, l };
 }
 
-export function HSLToRGB(hsl: {h: number; s: number; l: number;}): { r: number; g: number; b: number } {
+export function HSLToRGB(hsl: { h: number; s: number; l: number }): { r: number; g: number; b: number } {
   const { h, s, l } = hsl;
 
   const hDecimal = h / 100;
@@ -86,10 +86,7 @@ export function HSLToRGB(hsl: {h: number; s: number; l: number;}): { r: number; 
     return p;
   };
 
-  const q =
-    lDecimal < 0.5
-      ? lDecimal * (1 + sDecimal)
-      : lDecimal + sDecimal - lDecimal * sDecimal;
+  const q = lDecimal < 0.5 ? lDecimal * (1 + sDecimal) : lDecimal + sDecimal - lDecimal * sDecimal;
   const p = 2 * lDecimal - q;
 
   const r = HueToRGB(p, q, hDecimal + 1 / 3);
@@ -99,7 +96,7 @@ export function HSLToRGB(hsl: {h: number; s: number; l: number;}): { r: number; 
   return { r: r * 255, g: g * 255, b: b * 255 };
 }
 
-export function RGBToHSL(rgb: { r: number; g: number; b: number; }): {
+export function RGBToHSL(rgb: { r: number; g: number; b: number }): {
   h: number;
   s: number;
   l: number;

@@ -1,4 +1,4 @@
 export interface SpraywallGradeFilterDialogData {
-    minGrade?: number;
-    maxGrade?: number;
+  minGrade?: number;
+  maxGrade?: number;
 }

@@ -7,8 +7,8 @@ import { ToastService } from '../toast-container/toast.service';
 import { FeedbacksService, SendFeedbackCommand } from '@api-net/index';
 
 interface IFeedbackForm {
-  email: string,
-  feedback: string
+  email: string;
+  feedback: string;
 }
 
 @Component({
@@ -16,7 +16,7 @@ interface IFeedbackForm {
   imports: [NgClass, FormsModule, ReactiveFormsModule, Icon],
   templateUrl: './feedback-overlay.html',
   styleUrl: './feedback-overlay.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class FeedbackOverlay {
   private _fb = inject(NonNullableFormBuilder);
@@ -26,12 +26,12 @@ export class FeedbackOverlay {
   public isFormOpen = false;
   public isLoading = false;
   public uniqueId = ''.appendUniqueId();
-  
+
   public feedbackForm = this._fb.group<IFeedbackForm>({
-    email: (''),
-    feedback: (''),
+    email: '',
+    feedback: ''
   });
-  
+
   public constructor() {
     this.feedbackForm.controls.feedback.addValidators([Validators.required, Validators.minLength(10)]);
   }
@@ -51,7 +51,7 @@ export class FeedbackOverlay {
   public closeFeedback(): void {
     this.isFormOpen = false;
   }
-  
+
   public onSubmit(): void {
     this.isLoading = true;
     this.feedbackForm.disable();
@@ -64,7 +64,10 @@ export class FeedbackOverlay {
       next: () => {
         this.feedbackForm.reset();
         this.feedbackForm.enable();
-        this.toastService.showSuccess('Feedback Sent Successful', 'Your feedback has been sent. A copy was sent to your address.');
+        this.toastService.showSuccess(
+          'Feedback Sent Successful',
+          'Your feedback has been sent. A copy was sent to your address.'
+        );
         this.isLoading = false;
         this.closeFeedback();
       },

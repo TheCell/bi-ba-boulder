@@ -1,5 +1,16 @@
-
-import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, effect, ElementRef, HostListener, inject, input, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -17,9 +28,7 @@ import { CameraControlsService } from '../camera-controls.service';
 
 @Component({
   selector: 'app-boulder-render',
-  imports: [
-    KeyboardShortcutsModule
-  ],
+  imports: [KeyboardShortcutsModule],
   templateUrl: './boulder-render.component.html',
   styleUrl: './boulder-render.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -34,7 +43,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     if (this.renderer) {
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight,
+        height: this.el.nativeElement.offsetHeight
       };
 
       this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -122,7 +131,11 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     if (lines !== this.processedLines) {
       if (lines !== undefined) {
         lines.forEach((line: BoulderLine) => {
-          this.addLineToScene(this.scene, line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), line.color);
+          this.addLineToScene(
+            this.scene,
+            line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
+            line.color
+          );
         });
 
         this.processedLines = lines;
@@ -145,7 +158,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
     const canvasSizes = {
       width: canvas.offsetWidth,
-      height: canvas.offsetHeight,
+      height: canvas.offsetHeight
     };
 
     this.renderer = new THREE.WebGLRenderer({
@@ -153,14 +166,9 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       canvas: canvas,
       alpha: true
     });
-    this.renderer.setClearColor( 0x000000, 0 );
+    this.renderer.setClearColor(0x000000, 0);
 
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      canvasSizes.width / canvasSizes.height,
-      0.001,
-      1000
-    );
+    this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
 
@@ -173,12 +181,12 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       LEFT: THREE.MOUSE.PAN,
       MIDDLE: THREE.MOUSE.DOLLY,
       RIGHT: THREE.MOUSE.ROTATE
-    }
+    };
     this.controls.touches = {
       ONE: THREE.TOUCH.PAN,
       TWO: THREE.TOUCH.DOLLY_ROTATE
-    }
-    this.controls.addEventListener('change', this.loop)
+    };
+    this.controls.addEventListener('change', this.loop);
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
@@ -203,41 +211,45 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
     this.renderer.render(this.scene, this.camera);
     // window.requestAnimationFrame(this.loop); // removed to not rerender on idle
-  }
+  };
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
-    this.loader.parse(buffer, '', (gltf: GLTF) => {
-      this.scene.add(gltf.scene);
-      // let childCounter = 0;
-      gltf.scene.traverse((child) => {
-        child.layers.set(1);
-        // childCounter++;
-        const mesh = (child as THREE.Mesh);
-        if (mesh.isMesh) {
-          this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
-          this.originalBlockTexture = this.originalBlockMaterial.map;
-          this.originalBlockMaterial.needsUpdate = true;
-          // this.originalBlockTexture!.needsUpdate = true;
-          this.originalBlockTexture!.colorSpace = THREE.LinearSRGBColorSpace;
-          this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-          // this.originalBlockMaterial.wireframe = true;
-          this.rgbBlockMaterial = this.setupCustomShaderMaterial();
-        }
-      });
+    this.loader.parse(
+      buffer,
+      '',
+      (gltf: GLTF) => {
+        this.scene.add(gltf.scene);
+        // let childCounter = 0;
+        gltf.scene.traverse((child) => {
+          child.layers.set(1);
+          // childCounter++;
+          const mesh = child as THREE.Mesh;
+          if (mesh.isMesh) {
+            this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
+            this.originalBlockTexture = this.originalBlockMaterial.map;
+            this.originalBlockMaterial.needsUpdate = true;
+            // this.originalBlockTexture!.needsUpdate = true;
+            this.originalBlockTexture!.colorSpace = THREE.LinearSRGBColorSpace;
+            this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+            // this.originalBlockMaterial.wireframe = true;
+            this.rgbBlockMaterial = this.setupCustomShaderMaterial();
+          }
+        });
 
-      if (this.currentGltf !== undefined) {
-        this.removeBoulderFromScene(this.currentGltf);
-        this.currentGltf = gltf;
-      } else {
-        this.currentGltf = gltf;
-        this.resetCameraPosition();
+        if (this.currentGltf !== undefined) {
+          this.removeBoulderFromScene(this.currentGltf);
+          this.currentGltf = gltf;
+        } else {
+          this.currentGltf = gltf;
+          this.resetCameraPosition();
+        }
+        this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
+        this.loop();
+      },
+      (err: ErrorEvent) => {
+        throw new Error(err.message);
       }
-      this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
-      this.loop();
-    },
-    (err: ErrorEvent) => {
-      throw new Error(err.message);
-    });
+    );
   }
 
   private resetCameraPosition(): void {
@@ -272,13 +284,13 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       opacity: 1,
       linewidth: 5,
       resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), // TODO this will have to be recalculated on resize?
-      dashed: false,
+      dashed: false
     });
   }
 
   private getRandomColor(): string {
-    const currentRadius =  this.currentRandomRadius;
-    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80});
+    const currentRadius = this.currentRandomRadius;
+    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80 });
     this.currentRandomRadius *= Math.E;
     this.currentRandomRadius %= 360;
     return randomColor;
@@ -295,20 +307,20 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       texture.magFilter = THREE.NearestFilter;
       this.highlightedHoldsTexture = texture;
       this.loop();
-    }
+    };
     image.onabort = (ev) => {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
-    }
+    };
     image.onerror = (ev) => {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);
-    }
+    };
 
     image.src = base64String;
   }
 
   private setupHighlightTexture(): void {
     if (this.rgbBlockMaterial && this.originalBlockMaterial && this.currentGltf) {
-      const object = (this.currentGltf.scene.children[0] as THREE.Mesh);
+      const object = this.currentGltf.scene.children[0] as THREE.Mesh;
       object.material = this.rgbBlockMaterial;
     }
   }
@@ -338,33 +350,18 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       shader.uniforms['highlightedHoldsTexture'] = { value: this.highlightedHoldsTexture };
       shader.uniforms['isHighlightActive'] = { value: this.highlightActiveShaderUniform };
 
-      shader.vertexShader = shader.vertexShader.replace(
-        'varying vec3 vViewPosition;',
-        vViewPositionReplace.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('varying vec3 vViewPosition;', vViewPositionReplace.join('\n'));
 
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <begin_vertex>',
-        beginVertex.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', beginVertex.join('\n'));
 
-      shader.vertexShader = shader.vertexShader.replace(
-        '#include <worldpos_vertex>',
-        worldposVertex.join('\n')
-      );
+      shader.vertexShader = shader.vertexShader.replace('#include <worldpos_vertex>', worldposVertex.join('\n'));
 
-      shader.fragmentShader = shader.fragmentShader.replace(
-        'uniform float opacity;',
-        uniforms.join('\n')
-      );
+      shader.fragmentShader = shader.fragmentShader.replace('uniform float opacity;', uniforms.join('\n'));
 
-      shader.fragmentShader = shader.fragmentShader.replace(
-        '#include <map_fragment>',
-        mapFragment.join( '\n' )
-      );
+      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', mapFragment.join('\n'));
 
       material.userData['shader'] = shader;
-    }
+    };
 
     return material;
   }
@@ -390,4 +387,3 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     this.renderer?.dispose();
   }
 }
-

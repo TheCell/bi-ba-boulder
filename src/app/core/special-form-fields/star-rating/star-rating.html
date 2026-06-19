@@ -1,21 +1,17 @@
 <div class="star-rating" [class.disabled]="disabled()" role="radiogroup" [attr.aria-disabled]="disabled()">
-    @for (i of ratingRange; track i) {
-        <button
-            type="button"
-            class="star-button"
-            [disabled]="disabled()"
-            [attr.aria-label]="'Set rating to ' + i"
-            [attr.aria-checked]="value() === i"
-            role="radio"
-            (click)="setRating(i)"
-            (focus)="isFocused()">
-            <app-icon
-                [icon]="isFilled(i) ? 'star-filled' : 'star-empty'"
-                [isBig]="true"
-                [isFocused]="isFocused()">
-            </app-icon>
-        </button>
-    }
+  @for (i of ratingRange; track i) {
+  <button
+    type="button"
+    class="star-button"
+    [disabled]="disabled()"
+    [attr.aria-label]="'Set rating to ' + i"
+    [attr.aria-checked]="value() === i"
+    role="radio"
+    (click)="setRating(i)"
+    (focus)="isFocused()">
+    <app-icon [icon]="isFilled(i) ? 'star-filled' : 'star-empty'" [isBig]="true" [isFocused]="isFocused()"> </app-icon>
+  </button>
+  }
 </div>
 
 <input type="hidden" [value]="value()" [disabled]="disabled()" tabindex="-1" aria-hidden="true" />

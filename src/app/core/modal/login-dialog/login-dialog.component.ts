@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
   imports: [],
   templateUrl: './login-dialog.component.html',
   styleUrl: './login-dialog.component.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class LoginDialogComponent implements IModal {
   private loginTrackerService = inject(LoginTrackerService);

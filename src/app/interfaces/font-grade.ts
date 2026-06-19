@@ -30,7 +30,7 @@ export const FONT_GRADE = {
   nineAPlus: '9a+',
   nineB: '9b',
   nineBPlus: '9b+',
-  nineC: '9c',
+  nineC: '9c'
 } as const;
 
 export type FontGrade = keyof typeof FONT_GRADE;

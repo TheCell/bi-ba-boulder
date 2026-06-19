@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, model, signal } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
-import { Icon } from "../../icon/icon";
+import { Icon } from '../../icon/icon';
 
 @Component({
   selector: 'app-star-rating',

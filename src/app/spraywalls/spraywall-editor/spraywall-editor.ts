@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import { LoadingImageComponent } from 'src/app/common/loading-image/loading-image.component';
 import { SpraywallProblemDto, SpraywallsService } from '@api-net/index';
 import { BoulderLoaderService } from 'src/app/background-loading/boulder-loader.service';
@@ -17,16 +25,25 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { CameraControls } from '../spraywall/camera-controls/camera-controls';
 
-interface iHoldColorForm { 
-    spraywallHoldType: SpraywallHoldType;
+interface iHoldColorForm {
+  spraywallHoldType: SpraywallHoldType;
 }
 
 @Component({
   selector: 'app-spraywall-editor',
-  imports: [LoadingImageComponent, SpraywallEditorRenderer, FormsModule, ReactiveFormsModule, NgClass, Modal, RouterLink, CameraControls],
+  imports: [
+    LoadingImageComponent,
+    SpraywallEditorRenderer,
+    FormsModule,
+    ReactiveFormsModule,
+    NgClass,
+    Modal,
+    RouterLink,
+    CameraControls
+  ],
   templateUrl: './spraywall-editor.html',
   styleUrl: './spraywall-editor.scss',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class SpraywallEditor implements OnInit, OnDestroy {
   @ViewChild('modal') private modal!: Modal;
@@ -40,7 +57,7 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   private router = inject(Router);
 
   public colorForm = this._fb.group<iHoldColorForm>({
-    spraywallHoldType: (SpraywallHoldType.hold),
+    spraywallHoldType: SpraywallHoldType.hold
   });
   public colorFormId = ''.appendUniqueId();
 
@@ -54,7 +71,7 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   public spraywallProblemForEdit?: SpraywallProblemDto;
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
-  
+
   private subscription = new Subscription();
 
   public constructor() {
@@ -71,12 +88,14 @@ export class SpraywallEditor implements OnInit, OnDestroy {
       }
     });
 
-    this.subscription.add(this.resetSignal.subscribe({
-      next: () => {
-        this.problemId = undefined;
-        this.spraywallProblemForEdit = undefined;
-      }
-    }));
+    this.subscription.add(
+      this.resetSignal.subscribe({
+        next: () => {
+          this.problemId = undefined;
+          this.spraywallProblemForEdit = undefined;
+        }
+      })
+    );
   }
 
   public ngOnDestroy(): void {
@@ -96,7 +115,7 @@ export class SpraywallEditor implements OnInit, OnDestroy {
     const todo = './api-test/boulder/spraywall2/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
     this.loadCustomUv(todo);
   }
-  
+
   public closeModal(closeModalEvent: CloseModalEvent) {
     if (closeModalEvent.closeType > 0) {
       // don't reset
@@ -130,16 +149,16 @@ export class SpraywallEditor implements OnInit, OnDestroy {
     }
     component.initialize!(dialogData);
   }
-  
+
   public enumName(type: SpraywallHoldType): string {
-    const enumNames = Object.keys(SpraywallHoldType).filter(key => isNaN(Number(key)));
+    const enumNames = Object.keys(SpraywallHoldType).filter((key) => isNaN(Number(key)));
     return enumNames[type];
   }
 
   public onHoldColorChange(event: EventTarget | null): void {
     const selectElement = event as HTMLSelectElement;
     const selectedColorType = parseInt(selectElement.value);
-    const selectedColorOption = holdColorOptions.find(option => option.type === selectedColorType);
+    const selectedColorOption = holdColorOptions.find((option) => option.type === selectedColorType);
     if (selectedColorOption) {
       this.currentHoldColor = selectedColorOption.color;
     }

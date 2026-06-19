@@ -60,12 +60,7 @@ export function htmlImageElementTextureToDataTexture(texture: THREE.Texture<HTML
   const ctx = canvas.getContext('2d')!;
   ctx.drawImage(image, 0, 0);
   const imageData = ctx.getImageData(0, 0, image.width, image.height);
-  const dataTexture = new THREE.DataTexture(
-    imageData.data,
-    image.width,
-    image.height,
-    THREE.RGBAFormat
-  );
+  const dataTexture = new THREE.DataTexture(imageData.data, image.width, image.height, THREE.RGBAFormat);
   dataTexture.needsUpdate = true;
   return dataTexture;
 }

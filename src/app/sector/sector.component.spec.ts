@@ -36,9 +36,7 @@ describe('SectorComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [SectorComponent],
-      providers: [
-        { provide: ActivatedRoute, useValue: mockActivatedRoute }
-      ]
+      providers: [{ provide: ActivatedRoute, useValue: mockActivatedRoute }]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SectorComponent);
@@ -58,7 +56,7 @@ describe('SectorComponent', () => {
   it('should render bloc links in the template', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const links = compiled.querySelectorAll('a');
-    
+
     expect(links.length).toBe(2);
     expect(links[0].textContent?.trim()).toBe('Test Bloc 1');
     expect(links[1].textContent?.trim()).toBe('Test Bloc 2');
@@ -66,13 +64,13 @@ describe('SectorComponent', () => {
 
   it('should handle empty blocs array', () => {
     mockActivatedRoute.snapshot!.data = { blocs: [] };
-    
+
     const newFixture = TestBed.createComponent(SectorComponent);
     newFixture.detectChanges();
-    
+
     const compiled = newFixture.nativeElement as HTMLElement;
     const links = compiled.querySelectorAll('a');
-    
+
     expect(links.length).toBe(0);
   });
 });

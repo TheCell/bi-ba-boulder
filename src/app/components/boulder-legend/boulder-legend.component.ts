@@ -5,9 +5,7 @@ import { FONT_GRADE } from '../../interfaces/font-grade';
 
 @Component({
   selector: 'app-boulder-legend',
-  imports: [
-    CommonModule,
-  ],
+  imports: [CommonModule],
   templateUrl: './boulder-legend.component.html',
   styleUrl: './boulder-legend.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

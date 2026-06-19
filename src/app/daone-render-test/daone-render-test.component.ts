@@ -1,5 +1,14 @@
-
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, HostListener, inject, input, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  ElementRef,
+  HostListener,
+  inject,
+  input,
+  ViewChild
+} from '@angular/core';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -14,9 +23,7 @@ import { BoulderLine } from '../interfaces/boulder-line';
 
 @Component({
   selector: 'app-daone-render-test',
-  imports: [
-    KeyboardShortcutsModule
-  ],
+  imports: [KeyboardShortcutsModule],
   templateUrl: './daone-render-test.component.html',
   styleUrl: './daone-render-test.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -26,10 +33,9 @@ export class DaoneRenderTestComponent implements AfterViewInit {
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
     if (this.renderer) {
-
       const canvasSizes = {
         width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight,
+        height: this.el.nativeElement.offsetHeight
       };
 
       this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -69,7 +75,11 @@ export class DaoneRenderTestComponent implements AfterViewInit {
       if (lines !== this.processedLines) {
         if (lines !== undefined) {
           lines.forEach((line: BoulderLine) => {
-            this.addLineToScene(this.scene, line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)), line.color);
+            this.addLineToScene(
+              this.scene,
+              line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
+              line.color
+            );
           });
 
           this.processedLines = lines;
@@ -92,7 +102,7 @@ export class DaoneRenderTestComponent implements AfterViewInit {
 
     const canvasSizes = {
       width: canvas.offsetWidth,
-      height: canvas.offsetHeight,
+      height: canvas.offsetHeight
     };
 
     this.renderer = new THREE.WebGLRenderer({
@@ -100,14 +110,9 @@ export class DaoneRenderTestComponent implements AfterViewInit {
       canvas: canvas,
       alpha: true
     });
-    this.renderer.setClearColor( 0x000000, 0 );
+    this.renderer.setClearColor(0x000000, 0);
 
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      canvasSizes.width / canvasSizes.height,
-      0.001,
-      1000
-    );
+    this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
 
@@ -126,31 +131,34 @@ export class DaoneRenderTestComponent implements AfterViewInit {
   private loop = () => {
     this.renderer.render(this.scene, this.camera);
     window.requestAnimationFrame(this.loop);
-  }
+  };
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
-    this.gltfLoader.parse(buffer, '', (gltf: GLTF) => {
-      this.scene.add(gltf.scene);
-      gltf.scene.traverse((child) => {
-        child.layers.set(1);
-      });
+    this.gltfLoader.parse(
+      buffer,
+      '',
+      (gltf: GLTF) => {
+        this.scene.add(gltf.scene);
+        gltf.scene.traverse((child) => {
+          child.layers.set(1);
+        });
 
-      if (this.currentGltf !== undefined) {
-        this.removeBoulderFromScene(this.currentGltf);
-      } else {
-        fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+        if (this.currentGltf !== undefined) {
+          this.removeBoulderFromScene(this.currentGltf);
+        } else {
+          fitCameraToCenteredObject(this.camera, gltf.scene, 0, this.controls);
+        }
+        this.currentGltf = gltf;
+      },
+      (err: ErrorEvent) => {
+        throw new Error(err.message);
       }
-      this.currentGltf = gltf;
-    },
-    (err: ErrorEvent) => {
-      throw new Error(err.message);
-    });
+    );
   }
 
   private removeBoulderFromScene(gltf: GLTF): void {
     this.scene.remove(gltf.scene);
   }
-
 
   private addLights(scene: THREE.Scene): void {
     const ambientLight = new THREE.AmbientLight(0xffffff, 10.5);
@@ -171,13 +179,13 @@ export class DaoneRenderTestComponent implements AfterViewInit {
       opacity: 1,
       linewidth: 5,
       resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight),
-      dashed: false,
+      dashed: false
     });
   }
 
   private getRandomColor(): string {
-    const currentRadius =  this.currentRandomRadius;
-    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80});
+    const currentRadius = this.currentRandomRadius;
+    const randomColor = HSLToHex({ h: currentRadius, s: 70, l: 80 });
     this.currentRandomRadius *= Math.E;
     this.currentRandomRadius %= 360;
     return randomColor;

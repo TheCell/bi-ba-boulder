@@ -7,7 +7,7 @@ import { CameraControlsService } from 'src/app/renderer/camera-controls.service'
   imports: [Icon],
   templateUrl: './camera-controls.html',
   styleUrl: './camera-controls.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CameraControls {
   public cameraControlsService = inject(CameraControlsService);
