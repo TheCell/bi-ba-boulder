@@ -58,6 +58,15 @@ The next todos:
 [] high dpi logo   
 [] rock as loading animation    
 
+# Setup
+To get this started you must install and start the .NET backend. See the Readme in the backend_net/BiBaBoulder Folder
+
+Getting the Frontent started first install all packages. Then generate dev certificates. See the backend Readme to generate them.
+```Shell
+npm install
+npm start
+```
+
 # helpful resources
 Generate interface etc. from json: [https://app.quicktype.io/](https://app.quicktype.io/)
 

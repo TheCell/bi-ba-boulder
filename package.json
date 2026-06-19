@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --configuration development",
+    "start": "ng serve --configuration development --ssl --ssl-cert ssl/localhost.pem --ssl-key ssl/localhost-key.pem",
     "startsecure": "ng serve --ssl true --configuration development",
     "host": "ng serve --host 0.0.0.0 --configuration development",
     "build": "ng build --base-href /bi-ba-boulder/ --configuration production",
