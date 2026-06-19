@@ -3,7 +3,7 @@
     @if (currentRawModel) {
         @if (authSessionStateService.isLoggedIn() && selectedProblem) {
             <app-problem-log-overlay
-                [boulderProblemId]="selectedProblem.id"
+                [spraywallProblemId]="selectedProblem.id"
                 [boulderLog]="boulderLog()">
             </app-problem-log-overlay>
         }

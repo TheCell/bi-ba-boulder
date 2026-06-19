@@ -1,0 +1,38 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: block;
+}
+
+.star-rating {
+  display: flex;
+  gap: 2px;
+}
+
+.star-button {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.star-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background: repeating-linear-gradient(
+    -55deg,
+    $dark,
+    $dark 5px,
+    $lightDark 5px,
+    $lightDark 10px
+  );
+}
+
+.star-rating.disabled {
+  opacity: 0.8;
+}
+
+app-icon > span {
+  background-color: $primary;
+}

@@ -1,21 +1,34 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal, ViewChild } from '@angular/core';
 import { BoulderLogDto, BoulderLogsService, CreateBoulderLogCommand, UpdateBoulderLogCommand } from '@api-net/index';
 import { Icon } from 'src/app/core/icon/icon';
+import { ModalService } from 'src/app/core/modal/modal.service';
+import { Modal } from 'src/app/core/modal/modal/modal';
+import { ProblemLogDialog } from './problem-log-dialog/problem-log-dialog';
+import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
+import { ProblemLogDialogData } from './problem-log-dialog/problem-log-dialog-data.interface';
+import { ToastService } from 'src/app/core/toast-container/toast.service';
 
 @Component({
   selector: 'app-problem-log-overlay',
-  imports: [Icon],
+  imports: [Icon, Modal],
   templateUrl: './problem-log-overlay.html',
   styleUrl: './problem-log-overlay.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProblemLogOverlay {
+  @ViewChild('modal') private modal!: Modal;
+  
   private boulderLogsService = inject(BoulderLogsService);
+  private modalService = inject(ModalService);
+  private toastService = inject(ToastService);
 
-  public boulderProblemId = input.required<string>();
+  public spraywallProblemId = input.required<string>();
   public boulderLog = input<BoulderLogDto>();
 
   public currentBoulderLog = signal<BoulderLogDto | undefined>(undefined);
+  public isLoadingIsProject = signal<boolean>(false);
+  public isLoadingIsSent = signal<boolean>(false);
+  public isLoadingModal = signal<boolean>(false);
 
   public constructor() {
     effect(() => {
@@ -28,7 +41,7 @@ export class ProblemLogOverlay {
       isProject: action === 'project',
       isSent: action === 'sent'
     }
-    this.boulderLogsService.createBoulderLogForSpraywall(this.boulderProblemId(), newLog).subscribe({
+    this.boulderLogsService.createBoulderLogForSpraywall(this.spraywallProblemId(), newLog).subscribe({
       next: (boulderLog?: BoulderLogDto) => {
         this.currentBoulderLog.set(boulderLog);
       }
@@ -36,6 +49,15 @@ export class ProblemLogOverlay {
   }
 
   public onUpdateClick(action: 'sent' | 'project'): void {
+    if (this.isLoadingIsSent() || this.isLoadingIsProject()) {
+      return;
+    }
+
+    if (action === 'sent') {
+      this.isLoadingIsSent.set(true);
+    } else {
+      this.isLoadingIsProject.set(true);
+    }
     const updateLog: UpdateBoulderLogCommand = {
       isProject: this.currentBoulderLog()!.isProject,
       isSent: this.currentBoulderLog()!.isSent,
@@ -52,8 +74,43 @@ export class ProblemLogOverlay {
     this.boulderLogsService.updateBoulderLog(this.currentBoulderLog()!.id, updateLog).subscribe({
       next: (boulderLog?: BoulderLogDto) => {
         this.currentBoulderLog.set(boulderLog);
+        if (action === 'sent') {
+          this.isLoadingIsSent.set(false);
+        } else {
+          this.isLoadingIsProject.set(false);
+        }
+      }, error: () => {
+        if (action === 'sent') {
+          this.isLoadingIsSent.set(false);
+        } else {
+          this.isLoadingIsProject.set(false);
+        }
       }
     });
   }
 
+  public onExpandClick(): void {
+    if (this.isLoadingModal()) {
+      return;
+    }
+    this.isLoadingModal.set(true);
+
+    const problemLogDialogData: ProblemLogDialogData = {
+      spraywallProblemId: this.spraywallProblemId(),
+      problemLog: this.currentBoulderLog()
+    }
+    const modal = this.modalService.open(this.modal.id, ProblemLogDialog);
+    if (modal && modal.initialize) {
+      modal.initialize(problemLogDialogData);
+    }
+  }
+    
+  public closeModal(closeModalEvent: CloseModalEvent) {
+    if (closeModalEvent.closeType === 0) {
+      const boulderLog = closeModalEvent.data as BoulderLogDto | undefined;
+      this.currentBoulderLog.set(boulderLog);
+      this.toastService.showSuccess('Saved successfully', 'Problem Log');
+    }
+    this.isLoadingModal.set(false);
+  }
 }

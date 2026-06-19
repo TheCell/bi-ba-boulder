@@ -153,8 +153,11 @@ input:focus, select:focus, textarea:focus {
   transition: border-color 0.25s cubic-bezier(0, 0, 0.1, 1.0);
 }
 
-input:not([type="checkbox"]):focus + .group-label,
-input:not([type="checkbox"]):not(:placeholder-shown) + .group-label,
+// input:not([type="checkbox"]):focus + .group-label,
+// input:not([type="checkbox"]):not(:placeholder-shown) + .group-label,
+app-star-rating + .group-label,
+input:focus + .group-label,
+input:not(:placeholder-shown) + .group-label,
 select:not(:placeholder-shown) + .group-label,
 select:focus + .group-label,
 textarea:not(:placeholder-shown) + .group-label,
@@ -165,10 +168,10 @@ textarea:focus + .group-label {
   left: 0px;
 }
 
-input:is([type="checkbox"]):focus + .group-label,
-input:is([type="checkbox"]):not(:placeholder-shown) + .group-label {
-  left: 30px;
-}
+// input:is([type="checkbox"]):focus + .group-label,
+// input:is([type="checkbox"]):not(:placeholder-shown) + .group-label {
+//   left: 30px;
+// }
 
 input:focus + .group-label,
 select:focus + .group-label {

@@ -157,5 +157,9 @@
 .star-filled {
   -webkit-mask-image: url("data:image/svg+xml;utf8,#{$star-filled-svg}");
   mask-image: url("data:image/svg+xml;utf8,#{$star-filled-svg}");
-  background-color: $warning;
+  // background-color: $warning;
+}
+
+.focus {
+  background-color: $primary;
 }

@@ -12,4 +12,5 @@ import { NgClass } from '@angular/common';
 export class Icon {
   public icon = input.required<IconType>();
   public isBig = input<boolean>(false);
+  public isFocused = input<boolean>(false);
 }
