@@ -67,6 +67,7 @@ public class SmtpEmailService : IEmailService
                     : SecureSocketOptions.None;
 
             await client.ConnectAsync(_settings.Host, _settings.Port, secureSocketOptions);
+            Console.WriteLine($"Connecting to: {_settings.Host}");
 
             if (!string.IsNullOrEmpty(_settings.Username) && !string.IsNullOrEmpty(_settings.Password))
             {
@@ -76,9 +77,10 @@ public class SmtpEmailService : IEmailService
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             await _dbContext.RemoveEntityAndSaveChangesAsync(mail);
+            Console.WriteLine(ex.Message); // debug
             throw;
         }
     }
