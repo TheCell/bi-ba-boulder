@@ -1,12 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  inject,
-  ViewChild,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, inject, ViewChild } from '@angular/core';
 import { BoulderLoaderService } from '../background-loading/boulder-loader.service';
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -24,7 +16,6 @@ import { BoulderLine } from '../interfaces/boulder-line';
   selector: 'app-boulder-hardcoded-render',
   imports: [KeyboardShortcutsModule],
   templateUrl: './boulder-hardcoded-render.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './boulder-hardcoded-render.component.scss'
 })
 export class BoulderHardcodedRenderComponent implements AfterViewInit {

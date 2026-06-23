@@ -1,5 +1,4 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   ComponentRef,
   ElementRef,
@@ -21,8 +20,7 @@ import { CloseModalEvent } from './close-modal-event';
   selector: 'app-modal',
   imports: [NgClass],
   templateUrl: './modal.html',
-  styleUrl: './modal.scss',
-  changeDetection: ChangeDetectionStrategy.Eager
+  styleUrl: './modal.scss'
 })
 export class Modal implements OnInit, OnDestroy {
   @ViewChild('dynamicContent', { read: ViewContainerRef }) public dynamicContent!: ViewContainerRef;

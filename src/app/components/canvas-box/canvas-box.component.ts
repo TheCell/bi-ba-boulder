@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import * as THREE from 'three';
 
 @Component({
   selector: 'app-canvas-box',
   imports: [],
   templateUrl: './canvas-box.component.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './canvas-box.component.scss'
 })
 export class CanvasBoxComponent implements AfterViewInit {
