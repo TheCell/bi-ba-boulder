@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -24,22 +23,22 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
-import { Icon } from 'src/app/core/icon/icon';
 import { debounceTime, filter, Subject, Subscription, switchMap } from 'rxjs';
-import { ModalService } from 'src/app/core/modal/modal.service';
-import { Modal } from 'src/app/core/modal/modal/modal';
 import { SpraywallGradeFilterDialog } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog';
 import { SpraywallLegendItemPlaceholder } from './spraywall-legend-item-placeholder/spraywall-legend-item-placeholder';
-import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-close-data';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-data';
 import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dialog';
-import { ToastService } from 'src/app/core/toast-container/toast.service';
 import { ConfirmDeleteDialog } from './confirm-delete-dialog/confirm-delete-dialog';
 import { ConfirmDeleteDialogData } from './confirm-delete-dialog/confirm-delete-dialog-data';
-import { AuthSessionStateService } from 'src/app/auth/auth-session-state.service';
 import { ProblemLogOverlay } from './problem-log-overlay/problem-log-overlay';
 import { CameraControls } from './camera-controls/camera-controls';
+import { Icon } from '../../core/icon/icon';
+import { Modal } from '../../core/modal/modal/modal';
+import { AuthSessionStateService } from '../../auth/auth-session-state.service';
+import { ModalService } from '../../core/modal/modal.service';
+import { ToastService } from '../../core/toast-container/toast.service';
+import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 
 @Component({
   selector: 'app-spraywall',
@@ -55,8 +54,7 @@ import { CameraControls } from './camera-controls/camera-controls';
     CameraControls
   ],
   templateUrl: './spraywall.component.html',
-  styleUrl: './spraywall.component.scss',
-  changeDetection: ChangeDetectionStrategy.Default
+  styleUrl: './spraywall.component.scss'
 })
 export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('infoModal') private infoModal!: Modal;

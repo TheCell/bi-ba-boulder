@@ -7,12 +7,12 @@ import {
   SpraywallsService,
   UpdateSpraywallProblemCommand
 } from '@api-net/index';
-import { Icon } from 'src/app/core/icon/icon';
-import { IModal } from 'src/app/core/modal/modal/modal.interface';
-import { ToastService } from 'src/app/core/toast-container/toast.service';
 import { SpraywallSaveData } from './spraywall-save-data.interface';
 import { Subscription } from 'rxjs';
-import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
+import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
+import { IModal } from '../../core/modal/modal/modal.interface';
+import { ToastService } from '../../core/toast-container/toast.service';
+import { Icon } from '../../core/icon/icon';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface ISpraywallForm extends Omit<UpdateSpraywallProblemCommand, 'image'> {}

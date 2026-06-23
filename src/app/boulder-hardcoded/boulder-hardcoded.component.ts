@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { BoulderHardcodedRenderComponent } from '../boulder-hardcoded-render/boulder-hardcoded-render.component';
 
@@ -6,6 +6,7 @@ import { BoulderHardcodedRenderComponent } from '../boulder-hardcoded-render/bou
   selector: 'app-boulder-hardcoded',
   imports: [BoulderHardcodedRenderComponent],
   templateUrl: './boulder-hardcoded.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './boulder-hardcoded.component.scss'
 })
 export class BoulderHardcodedComponent {

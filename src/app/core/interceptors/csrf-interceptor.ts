@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest, type HttpInterceptorFn } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../environments/environment';
 
 /**
  * Adds the X-CSRF header to all AJAX requests targeting the backend API.

@@ -1,10 +1,10 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Icon } from '../icon/icon';
-import { LoginTrackerService } from 'src/app/auth/login-tracker.service';
 import { ToastService } from '../toast-container/toast.service';
 import { FeedbacksService, SendFeedbackCommand } from '@api-net/index';
+import { LoginTrackerService } from '../../auth/login-tracker.service';
 
 interface IFeedbackForm {
   email: string;
@@ -15,8 +15,7 @@ interface IFeedbackForm {
   selector: 'app-feedback-overlay',
   imports: [NgClass, FormsModule, ReactiveFormsModule, Icon],
   templateUrl: './feedback-overlay.html',
-  styleUrl: './feedback-overlay.scss',
-  changeDetection: ChangeDetectionStrategy.Default
+  styleUrl: './feedback-overlay.scss'
 })
 export class FeedbackOverlay {
   private _fb = inject(NonNullableFormBuilder);
