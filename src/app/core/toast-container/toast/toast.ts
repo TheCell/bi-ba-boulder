@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  input,
-  OnChanges,
-  OnDestroy,
-  SimpleChanges
-} from '@angular/core';
+import { ChangeDetectorRef, Component, inject, input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { ToastService } from '../toast.service';
 import { IToastInternal } from '../I-toast-internal';
 import { NgClass } from '@angular/common';
@@ -16,8 +7,7 @@ import { NgClass } from '@angular/common';
   selector: 'app-toast',
   imports: [NgClass],
   templateUrl: './toast.html',
-  styleUrl: './toast.scss',
-  changeDetection: ChangeDetectionStrategy.Eager
+  styleUrl: './toast.scss'
 })
 export class Toast implements OnChanges, OnDestroy {
   public toastService = inject(ToastService);

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal, ViewChild } from '@angular/core';
 import { BoulderLogDto, BoulderLogsService, CreateBoulderLogCommand, UpdateBoulderLogCommand } from '@api-net/index';
-import { Icon } from 'src/app/core/icon/icon';
-import { ModalService } from 'src/app/core/modal/modal.service';
-import { Modal } from 'src/app/core/modal/modal/modal';
 import { ProblemLogDialog } from './problem-log-dialog/problem-log-dialog';
-import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { ProblemLogDialogData } from './problem-log-dialog/problem-log-dialog-data.interface';
-import { ToastService } from 'src/app/core/toast-container/toast.service';
+import { Icon } from '../../../core/icon/icon';
+import { Modal } from '../../../core/modal/modal/modal';
+import { ModalService } from '../../../core/modal/modal.service';
+import { CloseModalEvent } from '../../../core/modal/modal/close-modal-event';
+import { ToastService } from '../../../core/toast-container/toast.service';
 
 @Component({
   selector: 'app-problem-log-overlay',

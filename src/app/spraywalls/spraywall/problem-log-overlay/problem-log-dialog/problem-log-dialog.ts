@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, effect, inject, OnDestroy, output, signal } from '@angular/core';
-import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
-import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { ProblemLogDialogData } from './problem-log-dialog-data.interface';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BoulderLogDto, BoulderLogsService, CreateBoulderLogCommand, UpdateBoulderLogCommand } from '@api-net/index';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { Icon } from 'src/app/core/icon/icon';
 import { disabled, form, FormField } from '@angular/forms/signals';
+import { Icon } from '../../../../core/icon/icon';
+import { IModal } from '../../../../core/modal/modal/modal.interface';
+import { CloseModalEvent } from '../../../../core/modal/modal/close-modal-event';
 
 interface IProblemLogForm {
   id?: string;

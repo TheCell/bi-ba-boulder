@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, output } from '@angular/core';
-import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog-data';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { GreaterThanValidator } from 'src/app/core/validators/greater-than-validator';
 import { Subscription } from 'rxjs';
 import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog-close-data';
-import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
+import { CloseModalEvent } from '../../../core/modal/modal/close-modal-event';
+import { IModal } from '../../../core/modal/modal/modal.interface';
+import { GreaterThanValidator } from '../../../core/validators/greater-than-validator';
 
 interface ISpraywallFilterForm {
   gradeMin: number | undefined;

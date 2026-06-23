@@ -1,29 +1,21 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import { LoadingImageComponent } from 'src/app/common/loading-image/loading-image.component';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { SpraywallProblemDto, SpraywallsService } from '@api-net/index';
-import { BoulderLoaderService } from 'src/app/background-loading/boulder-loader.service';
-import { SpraywallEditorRenderer } from 'src/app/renderer/spraywall-editor-renderer/spraywall-editor-renderer';
-import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';
 import * as THREE from 'three';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { Subject, Subscription } from 'rxjs';
-import { Modal } from 'src/app/core/modal/modal/modal';
-import { ModalService } from 'src/app/core/modal/modal.service';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
 import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
 import { CameraControls } from '../spraywall/camera-controls/camera-controls';
+import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
+import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
+import { ModalService } from '../../core/modal/modal.service';
+import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
+import { Modal } from '../../core/modal/modal/modal';
+import { SpraywallHoldType, TypeAndColor, holdColorOptions } from '../../renderer/common/spraywall-hold-types';
+import { SpraywallEditorRenderer } from '../../renderer/spraywall-editor-renderer/spraywall-editor-renderer';
 
 interface iHoldColorForm {
   spraywallHoldType: SpraywallHoldType;
@@ -42,8 +34,7 @@ interface iHoldColorForm {
     CameraControls
   ],
   templateUrl: './spraywall-editor.html',
-  styleUrl: './spraywall-editor.scss',
-  changeDetection: ChangeDetectionStrategy.Default
+  styleUrl: './spraywall-editor.scss'
 })
 export class SpraywallEditor implements OnInit, OnDestroy {
   @ViewChild('modal') private modal!: Modal;

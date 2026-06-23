@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
-import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
-import { IModal } from 'src/app/core/modal/modal/modal.interface';
 import { ConfirmDeleteDialogData } from './confirm-delete-dialog-data';
 import { SpraywallProblemDto } from '@api-net/index';
-import { FontGradePipePipe } from 'src/app/core/pipes/font-grade-pipe-pipe';
+import { FontGradePipePipe } from '../../../core/pipes/font-grade-pipe-pipe';
+import { IModal } from '../../../core/modal/modal/modal.interface';
+import { CloseModalEvent } from '../../../core/modal/modal/close-modal-event';
 
 @Component({
   selector: 'app-confirm-delete-dialog',

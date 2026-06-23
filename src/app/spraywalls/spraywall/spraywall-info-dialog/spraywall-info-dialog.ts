@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
-import { CloseModalEvent } from 'src/app/core/modal/modal/close-modal-event';
-import { IModal } from 'src/app/core/modal/modal/modal.interface';
-import { holdColorOptions, SpraywallHoldType, TypeAndColor } from 'src/app/renderer/common/spraywall-hold-types';
+import { CloseModalEvent } from '../../../core/modal/modal/close-modal-event';
+import { IModal } from '../../../core/modal/modal/modal.interface';
+import { TypeAndColor, holdColorOptions, SpraywallHoldType } from '../../../renderer/common/spraywall-hold-types';
 
 @Component({
   selector: 'app-spraywall-info-dialog',

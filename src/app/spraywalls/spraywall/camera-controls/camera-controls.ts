@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Icon } from 'src/app/core/icon/icon';
-import { CameraControlsService } from 'src/app/renderer/camera-controls.service';
+import { Icon } from '../../../core/icon/icon';
+import { CameraControlsService } from '../../../renderer/camera-controls.service';
 
 @Component({
   selector: 'app-camera-controls',
