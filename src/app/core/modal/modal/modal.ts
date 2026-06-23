@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ComponentRef,
   ElementRef,
@@ -28,6 +29,8 @@ export class Modal implements OnInit, OnDestroy {
 
   private modalService = inject(ModalService);
   private elementRef = inject(ElementRef);
+  private changeDetectorRef = inject(ChangeDetectorRef);
+
   public isSmall = input<boolean>(false);
   public closed = output<CloseModalEvent>();
 
@@ -68,6 +71,7 @@ export class Modal implements OnInit, OnDestroy {
     this.dynamicContent.clear();
     this.componentRef = this.dynamicContent.createComponent(component);
     this.isOpen = true;
+    this.changeDetectorRef.markForCheck();
     this.componentRef.instance.closeModal.subscribe((closeModalEvent: CloseModalEvent) => {
       this.close(closeModalEvent);
     });
@@ -91,6 +95,7 @@ export class Modal implements OnInit, OnDestroy {
     this.showAskForPermissionToClose = false;
     this.resetComponent();
     this.isOpen = false;
+    this.changeDetectorRef.markForCheck();
     this.closed.emit({ closeType: 1 });
   }
 
