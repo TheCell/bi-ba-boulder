@@ -55,6 +55,9 @@ public partial class CreateSpraywallProblemCommandHandler : ICommandHandlerWithE
             FontGrade = command.FontGrade,
             CreatorId = editor.Id,
             SpraywallId = command.SpraywallId,
+            IsCircuit = command.IsCircuit,
+            NoMatch = command.NoMatch,
+            FreeFeet = command.FreeFeet
         };
 
         await _dbContext.InsertEntityAndSaveChangesAsync(problem);

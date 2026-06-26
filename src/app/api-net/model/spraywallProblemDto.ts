@@ -15,6 +15,9 @@ export interface SpraywallProblemDto {
     name: string;
     image: string;
     fontGrade?: number;
+    isCircuit?: boolean;
+    noMatch?: boolean;
+    freeFeet?: boolean;
     createdById: string;
     createdByName: string;
     createdDate: string;

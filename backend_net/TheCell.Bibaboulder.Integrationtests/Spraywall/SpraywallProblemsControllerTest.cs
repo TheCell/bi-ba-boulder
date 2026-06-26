@@ -144,6 +144,9 @@ public class SpraywallProblemsControllerTest : BaseTest
 
         var problem = new SpraywallProblemBuilder(user, spraywall)
             .SetCreator(user)
+            .SetIsCircuit(_bogus.Random.Bool())
+            .SetNoMatch(_bogus.Random.Bool())
+            .SetFreeFeet(_bogus.Random.Bool())
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(problem);
 
