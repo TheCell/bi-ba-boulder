@@ -1,7 +1,10 @@
 <nav>
   <ul>
     <li><a [routerLink]="['home']" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a></li>
-    @if (loginTrackerService.isLoggedIn()) {
+    @if (authSessionStateService.isLoggedIn()) {
+      @if (authSessionStateService.isAdmin()) {
+        <li><a [routerLink]="['sectors']" routerLinkActive="active" ariaCurrentWhenActive="page">Sectors</a></li>
+      }
       <li><button class="button" (click)="logout()">Logout</button></li>
     } @else {
       <li><button class="button" (click)="openLoginModal()">Login</button></li>
