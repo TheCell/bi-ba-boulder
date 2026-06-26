@@ -2,7 +2,7 @@
   [id]="id"
   role="dialog"
   class="modal"
-  [ngClass]="{ 'isVisible': isOpen }"
+  [ngClass]="{ 'isVisible': isOpen() }"
   (click)="close({ closeType: 1 })"
   (keyup.escape)="close({ closeType: 1 })">
   <div
@@ -14,7 +14,7 @@
     <div class="modal-taskbar">
       <button aria-label="Close modal" class="button close-button" (click)="close({ closeType: 1 })">&times;</button>
     </div>
-    @if (showAskForPermissionToClose) {
+    @if (showAskForPermissionToClose()) {
     <div class="asking-for-permission">
       <div class="permission-modal">
         <h1>Discard changes?</h1>
