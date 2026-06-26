@@ -51,6 +51,9 @@ public partial class UpdateSpraywallProblemCommandHandler : ICommandHandler<Upda
         problem.Name = command.Name.Trim();
         problem.Description = command.Description;
         problem.FontGrade = command.FontGrade;
+        problem.IsCircuit = command.IsCircuit;
+        problem.NoMatch = command.NoMatch;
+        problem.FreeFeet = command.FreeFeet;
 
         await _dbContext.UpdateEntityAndSaveChangesAsync(problem, command.Version);
         await _imageService.SaveImageAsync(problem.SpraywallId, problem.Id, imageBytes);

@@ -160,6 +160,39 @@
   // background-color: $warning;
 }
 
+.circuit-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$circuit-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$circuit-empty-svg}");
+}
+
+.circuit-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$circuit-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$circuit-filled-svg}");
+  background-color: $warning;
+}
+
+.no-match-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$no-match-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$no-match-empty-svg}");
+}
+
+.no-match-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$no-match-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$no-match-filled-svg}");
+  background-color: $warning;
+}
+
+.free-feet-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$free-feet-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$free-feet-empty-svg}");
+}
+
+.free-feet-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$free-feet-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$free-feet-filled-svg}");
+  background-color: $warning;
+}
+
 .focus {
   background-color: $primary;
 }

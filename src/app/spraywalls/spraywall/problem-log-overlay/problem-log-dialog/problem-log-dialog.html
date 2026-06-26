@@ -48,11 +48,7 @@
   </div>
 
   <div class="form-group form-input">
-    <!-- upgrade to angular version 22 first before searching a solution -->
-    <!-- casting strings because undefined is not possible is ridiculous -->
-    <!-- <app-star-rating [formField]="saveForm.rating"></app-star-rating> -->
-    <!-- <div class="form-group form-input" [class.disabled]="saveForm.rating().disabled()"> -->
-    <input id="rating" type="text" value="coming soon" readonly />
+    <app-star-rating [formField]="saveForm.rating"></app-star-rating>
     <label for="rating" class="group-label">Rating</label>
   </div>
 

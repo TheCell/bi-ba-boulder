@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, model, signal } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { Icon } from '../../icon/icon';
 
@@ -13,12 +13,11 @@ import { Icon } from '../../icon/icon';
     '(focusout)': 'isFocused.set(false)'
   }
 })
-export class StarRating implements FormValueControl<number | undefined> {
+export class StarRating implements FormValueControl<number | null> {
+  public value = model<number | null>(null);
+  readonly disabled = input(false);
   public ratingRange = Array.from({ length: 5 }, (_, i) => i + 1);
-  public value = model<number | undefined>(undefined);
-  public disabled = model<boolean>(false);
   public isFocused = signal<boolean>(false);
-  // public focusedStar = signal<number | undefined>(undefined);
 
   public isFilled(star: number): boolean {
     return (this.value() ?? 0) >= star;
@@ -30,7 +29,7 @@ export class StarRating implements FormValueControl<number | undefined> {
     }
 
     if (this.value() === star) {
-      this.value.set(undefined);
+      this.value.set(null);
     } else {
       this.value.set(star);
     }

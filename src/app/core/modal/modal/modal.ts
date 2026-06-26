@@ -8,6 +8,7 @@ import {
   OnDestroy,
   OnInit,
   output,
+  signal,
   Type,
   ViewChild,
   ViewContainerRef
@@ -25,7 +26,7 @@ import { CloseModalEvent } from './close-modal-event';
 })
 export class Modal implements OnInit, OnDestroy {
   @ViewChild('dynamicContent', { read: ViewContainerRef }) public dynamicContent!: ViewContainerRef;
-  @ViewChild('noButton') public noButton!: ElementRef<HTMLElement>;
+  @ViewChild('noButton') public noButton?: ElementRef<HTMLElement>;
 
   private modalService = inject(ModalService);
   private elementRef = inject(ElementRef);
@@ -35,8 +36,8 @@ export class Modal implements OnInit, OnDestroy {
   public closed = output<CloseModalEvent>();
 
   public id: string = 'modal'.appendUniqueId();
-  public isOpen = false;
-  public showAskForPermissionToClose = false;
+  public isOpen = signal(false);
+  public showAskForPermissionToClose = signal(false);
 
   private element: HTMLElement;
   private componentRef?: ComponentRef<IModal>;
@@ -60,17 +61,17 @@ export class Modal implements OnInit, OnDestroy {
   }
 
   public onPermissionToCloseDenied(): void {
-    this.showAskForPermissionToClose = false;
+    this.showAskForPermissionToClose.set(false);
   }
 
   public openWithExternalContent(): void {
-    this.isOpen = true;
+    this.isOpen.set(true);
   }
 
   public open<T extends IModal>(component: Type<T>): IModal {
     this.dynamicContent.clear();
     this.componentRef = this.dynamicContent.createComponent(component);
-    this.isOpen = true;
+    this.isOpen.set(true);
     this.changeDetectorRef.markForCheck();
     this.componentRef.instance.closeModal.subscribe((closeModalEvent: CloseModalEvent) => {
       this.close(closeModalEvent);
@@ -80,9 +81,9 @@ export class Modal implements OnInit, OnDestroy {
 
   public close(closeEvent: CloseModalEvent): void {
     if (this.componentRef?.instance.canCloseWithoutPermission === false) {
-      this.showAskForPermissionToClose = true;
+      this.showAskForPermissionToClose.set(true);
       setTimeout(() => {
-        this.noButton.nativeElement.focus();
+        this.noButton?.nativeElement.focus();
       });
       return;
     }
@@ -92,9 +93,9 @@ export class Modal implements OnInit, OnDestroy {
   }
 
   private closeModal(): void {
-    this.showAskForPermissionToClose = false;
+    this.showAskForPermissionToClose.set(false);
     this.resetComponent();
-    this.isOpen = false;
+    this.isOpen.set(false);
     this.changeDetectorRef.markForCheck();
     this.closed.emit({ closeType: 1 });
   }

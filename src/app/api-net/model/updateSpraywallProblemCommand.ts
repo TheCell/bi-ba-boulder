@@ -14,6 +14,9 @@ export interface UpdateSpraywallProblemCommand {
     description?: string | null;
     image: string;
     fontGrade?: number;
+    isCircuit?: boolean;
+    noMatch?: boolean;
+    freeFeet?: boolean;
     version?: number;
 }
 

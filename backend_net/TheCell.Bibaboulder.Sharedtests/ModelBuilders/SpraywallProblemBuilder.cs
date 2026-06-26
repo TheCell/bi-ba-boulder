@@ -47,4 +47,22 @@ public class SpraywallProblemBuilder : BuilderBase<SpraywallProblem>
         _instance.CreatorId = value.Id;
         return this;
     }
+
+    public SpraywallProblemBuilder SetIsCircuit(bool value)
+    {
+        _instance.IsCircuit = value;
+        return this;
+    }
+
+    public SpraywallProblemBuilder SetNoMatch(bool value)
+    {
+        _instance.NoMatch = value;
+        return this;
+    }
+
+    public SpraywallProblemBuilder SetFreeFeet(bool value)
+    {
+        _instance.FreeFeet = value;
+        return this;
+    }
 }

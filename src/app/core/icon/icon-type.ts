@@ -23,6 +23,12 @@ export const ICONS = [
   'times-square',
   'square',
   'star-empty',
-  'star-filled'
+  'star-filled',
+  'circuit-empty',
+  'circuit-filled',
+  'free-feet-empty',
+  'free-feet-filled',
+  'no-match-empty',
+  'no-match-filled'
 ] as const;
 export type IconType = (typeof ICONS)[number];

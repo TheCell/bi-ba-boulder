@@ -230,6 +230,7 @@ jobs:
             "UseStartTls": true,
             "Username": "${{ secrets.SMTP_USERNAME }}",
             "Password": "${{ secrets.SMTP_PASSWORD }}",
+            "ContactAddress": "info@bibaboulder.org",
             "FromAddress": "noreply@bibaboulder.org",
             "FromName": "Bi Ba Boulder"
           },

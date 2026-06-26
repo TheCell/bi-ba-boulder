@@ -1278,6 +1278,15 @@
                 "$ref": "#/components/schemas/FontGrade"
               }
             ]
+          },
+          "isCircuit": {
+            "type": "boolean"
+          },
+          "noMatch": {
+            "type": "boolean"
+          },
+          "freeFeet": {
+            "type": "boolean"
           }
         }
       },
@@ -1476,6 +1485,15 @@
               }
             ]
           },
+          "isCircuit": {
+            "type": "boolean"
+          },
+          "noMatch": {
+            "type": "boolean"
+          },
+          "freeFeet": {
+            "type": "boolean"
+          },
           "createdById": {
             "type": "string",
             "format": "uuid"
@@ -1630,6 +1648,15 @@
                 "$ref": "#/components/schemas/FontGrade"
               }
             ]
+          },
+          "isCircuit": {
+            "type": "boolean"
+          },
+          "noMatch": {
+            "type": "boolean"
+          },
+          "freeFeet": {
+            "type": "boolean"
           },
           "version": {
             "type": "integer",

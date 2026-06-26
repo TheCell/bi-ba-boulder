@@ -1,0 +1,15 @@
+<div class="container">
+  <div class="list">
+    @if (boulderProblem()?.isCircuit) {
+    <app-icon class="action-button" (click)="onExpandClick('circuit')" [icon]="'circuit-filled'" [isBig]="true">
+    </app-icon>
+    } @if (boulderProblem()?.freeFeet) {
+    <app-icon class="action-button" (click)="onExpandClick('freeFeet')" [icon]="'free-feet-filled'" [isBig]="true">
+    </app-icon>
+    } @if (boulderProblem()?.noMatch) {
+    <app-icon class="action-button" (click)="onExpandClick('noMatch')" [icon]="'no-match-filled'" [isBig]="true">
+    </app-icon>
+    }
+  </div>
+</div>
+

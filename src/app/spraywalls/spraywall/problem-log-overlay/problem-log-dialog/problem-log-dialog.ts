@@ -8,19 +8,20 @@ import { disabled, form, FormField } from '@angular/forms/signals';
 import { Icon } from '../../../../core/icon/icon';
 import { IModal } from '../../../../core/modal/modal/modal.interface';
 import { CloseModalEvent } from '../../../../core/modal/modal/close-modal-event';
+import { StarRating } from '../../../../core/special-form-fields/star-rating/star-rating';
 
 interface IProblemLogForm {
   id?: string;
   version?: number;
   isSent: boolean;
   isProject: boolean;
-  rating?: number;
+  rating: number | null;
   fontGrade: string;
 }
 
 @Component({
   selector: 'app-problem-log-dialog',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, Icon, FormField],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, Icon, FormField, StarRating],
   templateUrl: './problem-log-dialog.html',
   styleUrl: './problem-log-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -29,30 +30,29 @@ export class ProblemLogDialog implements IModal, OnDestroy {
   private boulderLogsService = inject(BoulderLogsService);
   public closeModal = output<CloseModalEvent>();
 
-  public canCloseWithoutPermission: boolean;
-  public isLoading = false;
   private isDisabled = signal<boolean>(false);
-
   private saveModel = signal<IProblemLogForm>({
     id: undefined,
     isSent: false,
     isProject: false,
     fontGrade: '',
-    rating: 0,
+    rating: null,
     version: undefined
   });
-
-  public saveForm = form(this.saveModel, (schemaPath) => {
-    disabled(schemaPath, () => this.isDisabled());
-  });
-
   private problemLog?: BoulderLogDto;
   private spraywallProblemId = '';
   private subscription = new Subscription();
 
+  public canCloseWithoutPermission: boolean;
+  public isLoading = false;
+  public saveForm = form(this.saveModel, (schemaPath) => {
+    disabled(schemaPath.rating, { when: ({ valueOf }) => valueOf(schemaPath.isSent) });
+  });
+
   public constructor() {
     this.canCloseWithoutPermission = true;
     effect(() => {
+      // todo change form to not dirty when values are the same as the original values
       this.canCloseWithoutPermission = !this.saveForm().dirty();
     });
   }
@@ -69,7 +69,7 @@ export class ProblemLogDialog implements IModal, OnDestroy {
       isSent: this.problemLog?.isSent ?? false,
       isProject: this.problemLog?.isProject ?? false,
       fontGrade: this.problemLog?.fontGrade?.toString() ?? '',
-      rating: this.problemLog?.rating,
+      rating: this.problemLog?.rating ?? null,
       version: this.problemLog?.version
     });
   }
@@ -91,6 +91,7 @@ export class ProblemLogDialog implements IModal, OnDestroy {
       };
       this.boulderLogsService.updateBoulderLog(this.problemLog.id, updateBoulderLogCommand).subscribe({
         next: (boulderLog?: BoulderLogDto) => {
+          this.canCloseWithoutPermission = true;
           this.closeModal.emit({ closeType: 0, data: boulderLog });
         },
         error: () => {
@@ -107,6 +108,7 @@ export class ProblemLogDialog implements IModal, OnDestroy {
       };
       this.boulderLogsService.createBoulderLogForSpraywall(this.spraywallProblemId, createBoulderLogCommand).subscribe({
         next: (boulderLog?: BoulderLogDto) => {
+          this.canCloseWithoutPermission = true;
           this.closeModal.emit({ closeType: 0, data: boulderLog });
         },
         error: () => {

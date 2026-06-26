@@ -5,6 +5,7 @@
         <app-problem-log-overlay [spraywallProblemId]="selectedProblem.id" [boulderLog]="boulderLog()">
         </app-problem-log-overlay>
       }
+      <app-problem-rules-overlay [boulderProblem]="selectedProblem"> </app-problem-rules-overlay>
       <app-camera-controls> </app-camera-controls>
       <app-boulder-render class="render" [rawModel]="currentRawModel" [boulderProblem]="selectedProblem">
       </app-boulder-render>

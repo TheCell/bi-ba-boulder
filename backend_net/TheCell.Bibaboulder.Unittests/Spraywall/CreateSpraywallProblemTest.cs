@@ -51,7 +51,10 @@ public class CreateSpraywallProblemTest
             Name = "New Problem",
             Description = "A test problem",
             Image = ValidBase64Png,
-            FontGrade = FontGrade.Three
+            FontGrade = FontGrade.Three,
+            IsCircuit = true,
+            NoMatch = true,
+            FreeFeet = true
         };
         var handler = new CreateSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
 
@@ -79,7 +82,10 @@ public class CreateSpraywallProblemTest
             Name = "New Problem",
             Description = "A test problem",
             Image = ValidBase64Png,
-            FontGrade = FontGrade.Three
+            FontGrade = FontGrade.Three,
+            IsCircuit = true,
+            NoMatch = true,
+            FreeFeet = true
         };
         _currentUserServiceMock.WithUser(user);
         var handler = new CreateSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
@@ -109,7 +115,10 @@ public class CreateSpraywallProblemTest
             Name = "New Problem",
             Description = "A test problem",
             Image = "",
-            FontGrade = FontGrade.Three
+            FontGrade = FontGrade.Three,
+            IsCircuit = true,
+            NoMatch = true,
+            FreeFeet = true
         };
         _currentUserServiceMock.WithUser(user);
         var handler = new CreateSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
@@ -139,7 +148,10 @@ public class CreateSpraywallProblemTest
             Name = "New Problem",
             Description = "A test problem",
             Image = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-            FontGrade = FontGrade.Three
+            FontGrade = FontGrade.Three,
+            IsCircuit = true,
+            NoMatch = true,
+            FreeFeet = true
         };
         _currentUserServiceMock.WithUser(user);
         var handler = new CreateSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
@@ -167,7 +179,10 @@ public class CreateSpraywallProblemTest
             Name = "New Problem",
             Description = "A test problem",
             Image = ValidBase64Png,
-            FontGrade = FontGrade.Three
+            FontGrade = FontGrade.Three,
+            IsCircuit = true,
+            NoMatch = true,
+            FreeFeet = true
         };
         _currentUserServiceMock.WithUser(user);
         var handler = new CreateSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);
@@ -198,7 +213,10 @@ public class CreateSpraywallProblemTest
             Name = "New Problem",
             Description = "A test problem",
             Image = ValidBase64Png,
-            FontGrade = FontGrade.Three
+            FontGrade = FontGrade.Three,
+            IsCircuit = true,
+            NoMatch = true,
+            FreeFeet = true
         };
         _currentUserServiceMock.WithUser(user);
         var handler = new CreateSpraywallProblemCommandHandler(_dbContext, _currentUserServiceMock, _imageServiceMock.Object);

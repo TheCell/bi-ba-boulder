@@ -13,4 +13,7 @@ public class CreateSpraywallProblemCommand : CreateCommand
     public string? Description { get; set; }
     public required string Image { get; set; }
     public FontGrade? FontGrade { get; set; }
+    public bool IsCircuit { get; set; }
+    public bool NoMatch { get; set; }
+    public bool FreeFeet { get; set; }
 }

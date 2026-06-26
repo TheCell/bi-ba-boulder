@@ -22,5 +22,8 @@ public static class SpraywallAssertion
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Description, actual.Description);
         Xunit.Assert.Equal(expected.FontGrade, actual.FontGrade);
+        Xunit.Assert.Equal(expected.IsCircuit, actual.IsCircuit);
+        Xunit.Assert.Equal(expected.NoMatch, actual.NoMatch);
+        Xunit.Assert.Equal(expected.FreeFeet, actual.FreeFeet);
     }
 }

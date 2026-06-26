@@ -1,65 +1,114 @@
 <h2>Save Spraywall Problem</h2>
 
-<form [formGroup]="saveForm" (ngSubmit)="onSubmit()" [ngClass]="{'disabled': saveForm.disabled}">
-  <div class="form-group form-input" [ngClass]="{'disabled': saveForm.controls.name.disabled}">
-    <input id="name" placeholder="" autocomplete="off" type="text" formControlName="name" />
+<form (ngSubmit)="onSubmit()" [class.disabled]="saveForm().disabled()">
+  <div class="form-group form-input" [class.disabled]="saveForm.name().disabled()">
+    <input id="name" placeholder="" autocomplete="off" type="text" [formField]="saveForm.name" />
     <label for="name" class="group-label">name</label>
   </div>
 
-  <div
-    class="form-group form-input"
-    [ngClass]="{'disabled': $safeNavigationMigration(saveForm.controls.description?.disabled)}">
-    <input id="description" placeholder="" autocomplete="off" type="text" formControlName="description" />
+  <div class="form-group form-input" [class.disabled]="saveForm.description().disabled()">
+    <input id="description" placeholder="" autocomplete="off" type="text" [formField]="saveForm.description" />
     <label for="description" class="group-label">description</label>
   </div>
 
-  <div
-    class="form-group form-input"
-    [ngClass]="{'disabled': $safeNavigationMigration(saveForm.controls.fontGrade?.disabled)}">
-    <select name="grade" id="grade" placeholder="" formControlName="fontGrade">
-      <option [ngValue]="null">?</option>
-      <option [ngValue]="7">3</option>
-      <option [ngValue]="10">4</option>
-      <option [ngValue]="11">4+</option>
-      <option [ngValue]="13">5</option>
-      <option [ngValue]="14">5+</option>
-      <option [ngValue]="16">6A</option>
-      <option [ngValue]="17">6A+</option>
-      <option [ngValue]="19">6B</option>
-      <option [ngValue]="20">6B+</option>
-      <option [ngValue]="22">6C</option>
-      <option [ngValue]="23">6C+</option>
-      <option [ngValue]="25">7A</option>
-      <option [ngValue]="26">7A+</option>
-      <option [ngValue]="28">7B</option>
-      <option [ngValue]="29">7B+</option>
-      <option [ngValue]="31">7C</option>
-      <option [ngValue]="32">7C+</option>
-      <option [ngValue]="34">8A</option>
-      <option [ngValue]="35">8A+</option>
-      <option [ngValue]="37">8B</option>
-      <option [ngValue]="38">8B+</option>
-      <option [ngValue]="40">8C</option>
-      <option [ngValue]="41">8C+</option>
-      <option [ngValue]="43">9A</option>
-      <option [ngValue]="44">9A+</option>
-      <option [ngValue]="46">9B</option>
-      <option [ngValue]="47">9B+</option>
-      <option [ngValue]="49">9C</option>
-      <option [ngValue]="50">9C+</option>
+  <div class="form-group form-input" [class.disabled]="saveForm.fontGrade().disabled()">
+    <select id="grade" placeholder="" [formField]="saveForm.fontGrade">
+      <option value="">?</option>
+      <option value="7">3</option>
+      <option value="10">4</option>
+      <option value="11">4+</option>
+      <option value="13">5</option>
+      <option value="14">5+</option>
+      <option value="16">6A</option>
+      <option value="17">6A+</option>
+      <option value="19">6B</option>
+      <option value="20">6B+</option>
+      <option value="22">6C</option>
+      <option value="23">6C+</option>
+      <option value="25">7A</option>
+      <option value="26">7A+</option>
+      <option value="28">7B</option>
+      <option value="29">7B+</option>
+      <option value="31">7C</option>
+      <option value="32">7C+</option>
+      <option value="34">8A</option>
+      <option value="35">8A+</option>
+      <option value="37">8B</option>
+      <option value="38">8B+</option>
+      <option value="40">8C</option>
+      <option value="41">8C+</option>
+      <option value="43">9A</option>
+      <option value="44">9A+</option>
+      <option value="46">9B</option>
+      <option value="47">9B+</option>
+      <option value="49">9C</option>
+      <option value="50">9C+</option>
     </select>
     <label for="grade" class="group-label">Grade</label>
   </div>
 
-  <div class="form-group form-action">
+  <div class="form-group form-input">
     <button
-      type="submit"
-      class="button"
-      [ngClass]="{'disabled': isLoading || saveForm.invalid || saveForm.disabled }"
-      [disabled]="isLoading || saveForm.invalid || saveForm.disabled">
-      @if (isLoading) {
-      <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
-      } @else { Save }
+      type="button"
+      class="button action-button"
+      (click)="saveForm.isCircuit().value.set(!saveForm.isCircuit().value())">
+      @if (saveForm.isCircuit().value()) {
+      <app-icon class="action-button" [icon]="'circuit-filled'"></app-icon>
+      } @else {
+      <app-icon class="action-button" [icon]="'circuit-empty'"></app-icon>
+      }
     </button>
+
+    <button
+      type="button"
+      class="button action-button"
+      (click)="saveForm.noMatch().value.set(!saveForm.noMatch().value())">
+      @if (saveForm.noMatch().value()) {
+      <app-icon class="action-button" [icon]="'no-match-filled'"></app-icon>
+      } @else {
+      <app-icon class="action-button" [icon]="'no-match-empty'"></app-icon>
+      }
+    </button>
+
+    <button
+      type="button"
+      class="button action-button"
+      (click)="saveForm.freeFeet().value.set(!saveForm.freeFeet().value())">
+      @if (saveForm.freeFeet().value()) {
+      <app-icon class="action-button" [icon]="'free-feet-filled'"></app-icon>
+      } @else {
+      <app-icon class="action-button" [icon]="'free-feet-empty'"></app-icon>
+      }
+    </button>
+    <!-- <label for="isCircuit" class="group-label">circuit</label> -->
+  </div>
+
+  <!-- <div class="form-group form-input" [class.disabled]="saveForm.isCircuit().disabled()">
+    <input id="isCircuit" type="checkbox" [formField]="saveForm.isCircuit" />
+    <label for="isCircuit" class="group-label">circuit</label>
+  </div>
+
+  <div class="form-group form-input" [class.disabled]="saveForm.noMatch().disabled()">
+    <input id="noMatch" type="checkbox" [formField]="saveForm.noMatch" />
+    <label for="noMatch" class="group-label">no match</label>
+  </div>
+
+  <div class="form-group form-input" [class.disabled]="saveForm.freeFeet().disabled()">
+    <input id="freeFeet" type="checkbox" [formField]="saveForm.freeFeet" />
+    <label for="freeFeet" class="group-label">free feet</label>
+  </div> -->
+
+  <div class="form-group form-action">
+    <div class="container">
+      <button
+        type="submit"
+        class="button"
+        [class.disabled]="isLoading || isNameMissing() || saveForm().disabled()"
+        [disabled]="isLoading || isNameMissing() || saveForm().disabled()">
+        @if (isLoading) {
+        <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
+        } @else { Save }
+      </button>
+    </div>
   </div>
 </form>
