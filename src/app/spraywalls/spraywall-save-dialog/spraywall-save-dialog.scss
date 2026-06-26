@@ -1,3 +1,20 @@
+@use '../../../styles/variables' as *;
+
 :host {
   display: block;
 }
+
+// .action-button {
+//   width: 2em;
+// }
+
+// .container {
+  // background-color: color-mix($lightDark, #00000000 30%);
+  // border: 1px solid $success;
+  // border-radius: 5px;
+  // border-right: none;
+  // border-top-right-radius: 0;
+  // border-bottom-right-radius: 0;
+  // width: 2em;
+  // padding: 0.5em;
+// }

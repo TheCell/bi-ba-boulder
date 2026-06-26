@@ -1,0 +1,48 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: block;
+  position: absolute;
+  pointer-events: none;
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: blur(4px);
+}
+
+.action-button {
+  pointer-events: auto;
+  width: 2em;
+  animation: scaleIn 0.5s ease-in-out forwards;
+}
+
+.container {
+  transition: padding 0.5s ease-in-out;
+}
+
+.list {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5em;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.container:has(.list>.action-button) {
+  background-color: color-mix($lightDark, #00000000 30%);
+  border: 1px solid $warning;
+  border-radius: 5px;
+  border-top: none;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  padding: 0.5em;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0; /* Optional: adding opacity makes it smoother */
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

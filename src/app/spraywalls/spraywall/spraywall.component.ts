@@ -39,6 +39,7 @@ import { AuthSessionStateService } from '../../auth/auth-session-state.service';
 import { ModalService } from '../../core/modal/modal.service';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
+import { ProblemRulesOverlay } from './problem-rules-overlay/problem-rules-overlay';
 
 @Component({
   selector: 'app-spraywall',
@@ -51,7 +52,8 @@ import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
     Icon,
     Modal,
     ProblemLogOverlay,
-    CameraControls
+    CameraControls,
+    ProblemRulesOverlay
   ],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss'

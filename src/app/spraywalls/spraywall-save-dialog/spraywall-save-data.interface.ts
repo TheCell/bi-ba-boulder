@@ -4,6 +4,9 @@ export interface SpraywallSaveData {
   name: string;
   description?: string | null;
   fontGrade?: number;
+  isCircuit?: boolean;
+  noMatch?: boolean;
+  freeFeet?: boolean;
   existingId?: string;
   version?: number;
 }
