@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
   apiURL: 'https://localhost:7263',
-  boulderResourceURL: 'http://localhost/boulders',
+  boulderResourceURL: 'https://localhost:7263/fileshare/outdoor-test/',
   debugRender: true
 };
