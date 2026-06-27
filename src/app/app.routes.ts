@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { BoulderHardcodedComponent } from './boulder-hardcoded/boulder-hardcoded.component';
 import { DaoneTestComponent } from './daone-test/daone-test.component';
 import { SectorsListComponent } from './sectors-list/sectors-list.component';
 import { sectorsResolver } from './core/resolvers/sector.resolver';
@@ -18,7 +17,6 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'terms', component: TermsComponent },
-  { path: 'single-boulder-test', component: BoulderHardcodedComponent },
   {
     path: 'daone-boulder-test',
     component: DaoneTestComponent,
