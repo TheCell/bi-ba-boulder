@@ -17,6 +17,7 @@ export const blocsOfSectorResolver: ResolveFn<BlocDto[]> = (
 
 export const blocResolver: ResolveFn<BlocDto> = (route: ActivatedRouteSnapshot, _state: RouterStateSnapshot) => {
   const id = route.paramMap.get('id');
+  console.log(id);
 
   if (!id) {
     throw new Error('Bloc ID is missing in route parameters');

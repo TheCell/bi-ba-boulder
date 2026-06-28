@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
   apiURL: 'https://api.bibaboulder.org',
-  boulderResourceURL: 'https://api.bibaboulder.org/fileshare',
+  boulderResourceURL: 'https://fileshare.bibaboulder.org/blocs',
   debugRender: false
 };

@@ -1,3 +1,2 @@
 *.glb
-!bimano/*
-!daone/*/*
+!outdoor-test/*

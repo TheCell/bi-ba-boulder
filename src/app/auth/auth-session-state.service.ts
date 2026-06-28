@@ -25,6 +25,18 @@ export class AuthSessionStateService {
     return this.authenticated;
   }
 
+  /**
+   * Returns true if the user has the "admin" role claim. This will be reworked in the future
+   * @returns
+   */
+  public isAdmin(): boolean {
+    if (!this.authenticated) {
+      return false;
+    }
+
+    return this.claims.some((claim) => claim.type.indexOf('claims/role') !== -1 && claim.value === 'admin');
+  }
+
   public getClaimValue(type: string): string | undefined {
     const claim = this.claims.find((item) => item.type === type);
     return claim?.value;

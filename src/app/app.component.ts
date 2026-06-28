@@ -14,6 +14,7 @@ import { ModalService } from './core/modal/modal.service';
 import { LoginDialogComponent } from './core/modal/login-dialog/login-dialog.component';
 import { ToastContainer } from './core/toast-container/toast-container';
 import { LoginTrackerService } from './auth/login-tracker.service';
+import { AuthSessionStateService } from './auth/auth-session-state.service';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ import { LoginTrackerService } from './auth/login-tracker.service';
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('modal') private modal!: Modal;
   public loginTrackerService = inject(LoginTrackerService);
+  public authSessionStateService = inject(AuthSessionStateService);
   public changeDetectorRef = inject(ChangeDetectorRef);
   private modalService = inject(ModalService);
   private subscription = new Subscription();

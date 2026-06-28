@@ -221,7 +221,7 @@ jobs:
             "ClientSecret": "${{ secrets.OIDC_CLIENT_SECRET }}"
           },
           "FrontendOrigin": "https://bibaboulder.org",
-          "BackendAssetsBasePath": "C:\\inetpub\\vhosts\\bibaboulder.org\\subdomains\\api\\httpdocs\\fileshare",
+          "BackendAssetsBasePath": "C:\\inetpub\\vhosts\\bibaboulder.org\\subdomains\\fileshare\\httpdocs\\blocs",
           "UserContentBasePath": "C:\\inetpub\\vhosts\\bibaboulder.org\\subdomains\\api\\httpdocs\\user-content",
           "Email": {
             "Host": "${{ secrets.SMTP_HOST }}",
@@ -250,16 +250,16 @@ jobs:
         port: 21
         local-dir: ./backend/
         
-    - name: Deploy fileshare to FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: api.bibaboulder.org
-        username: ${{ secrets.FTP_USER_BACKEND }}
-        password: ${{ secrets.FTP_PASSWORD_BACKEND }}
-        protocol: ftp
-        port: 21
-        local-dir: ./fileshare/
-        server-dir: /fileshare/
+    # - name: Deploy fileshare to FTP
+    #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+    #   with:
+    #     server: fileshare.bibaboulder.org
+    #     username: ${{ secrets.FTP_USER_SHARE }}
+    #     password: ${{ secrets.FTP_PASSWORD_SHARE }}
+    #     protocol: ftp
+    #     port: 21
+    #     local-dir: ./devfileshare/
+    #     server-dir: /blocs/
 
   web-deploy:
     name: Deploy Frontend to FTP
