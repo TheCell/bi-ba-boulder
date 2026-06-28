@@ -39,3 +39,10 @@ To run the dotnet typescript generator run the backend with the http profile. Ot
 ```bash
 dotnet run --launch-profile http
 ```
+
+# Using codebase-memory-mcp
+WIP for now. See the github here: https://github.com/DeusData/codebase-memory-mcp
+How to get it working on windows:
+```bash
+codebase-memory-mcp cli index_repository --% "{\"repo_path\": \"C:/dev/git/bi-ba-boulder/backend_net/\"}"
+```

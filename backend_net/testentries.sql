@@ -1,4 +1,8 @@
 
+INSERT INTO Sectors (Id, Name, Description, CreatedDate, CreatedUserId, Version)
+VALUES ('957a8bf5-9197-4e3e-a10d-08de68da32a8', 'Sector 1', 'First sector', GETDATE(), '00000000-0000-0000-0000-000000000000', 1), 
+       ('05e603dd-f9e7-4535-a10e-08de68da32a8', 'Sector 2', 'Second sector', GETDATE(), '00000000-0000-0000-0000-000000000000', 1)
+       
 INSERT INTO Blocs (
     Id, 
     Name, 
