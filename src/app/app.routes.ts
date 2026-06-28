@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { DaoneTestComponent } from './daone-test/daone-test.component';
-import { SectorsListComponent } from './sectors-list/sectors-list.component';
+import { SectorsListComponent } from './outdoors/sectors-list/sectors-list.component';
 import { sectorsResolver } from './core/resolvers/sector.resolver';
-import { SectorComponent } from './sector/sector.component';
+import { SectorComponent } from './outdoors/sector/sector.component';
 import { blocResolver, blocsOfSectorResolver } from './core/resolvers/bloc.resolver';
-import { BoulderComponent } from './boulder/boulder.component';
 import { SpraywallComponent } from './spraywalls/spraywall/spraywall.component';
 import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.component';
 import { TermsComponent } from './legal/terms.component/terms.component';
 import { SpraywallEditor } from './spraywalls/spraywall-editor/spraywall-editor';
 import { spraywallProblemResolver } from './core/resolvers/spraywall-problem.resolver';
+import { OutdoorBloc } from './outdoors/outdoor-bloc/outdoor-bloc';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -42,7 +42,7 @@ export const routes: Routes = [
   },
   {
     path: 'boulder/:id',
-    component: BoulderComponent,
+    component: OutdoorBloc,
     resolve: {
       bloc: blocResolver
     }

@@ -72,7 +72,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
 
-  private raycaster: THREE.Raycaster = null!;
+  // private raycaster: THREE.Raycaster = null!;
   private currentRandomRadius = Math.random() * 360;
 
   // Shader material related
@@ -188,8 +188,8 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
     };
     this.controls.addEventListener('change', this.loop);
 
-    this.raycaster = new THREE.Raycaster(this.camera.position);
-    this.raycaster.layers.set(1);
+    // this.raycaster = new THREE.Raycaster(this.camera.position);
+    // this.raycaster.layers.set(1);
 
     this.loop();
   }
