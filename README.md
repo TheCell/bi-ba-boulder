@@ -51,7 +51,7 @@ The next todos:
 [] split production and develop   
 [-] revert und redo function   
 [x] don't rerender when not in active use   
-[?] fix crashes on mobile   
+[x] fix crashes on mobile   
 [] predefined camera positions and reference character position   
 [] check spraywall upload for 1 start 1 top hold   
 [] make colors grayscale and changeable in shader   
