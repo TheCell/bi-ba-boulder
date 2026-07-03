@@ -16,6 +16,7 @@ import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CameraControlsService } from '../camera-controls.service';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
+import { ColorService } from '../../core/util-services/color.service';
 
 @Component({
   selector: 'app-outdoor-renderer',
@@ -27,6 +28,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private el: ElementRef = inject(ElementRef);
   private destroyRef = inject(DestroyRef);
   private cameraControlsService = inject(CameraControlsService);
+  private colorService = inject(ColorService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
@@ -86,8 +88,18 @@ export class OutdoorRenderer implements AfterViewInit {
     radius: 0.1
   };
   private tubeGeometry?: THREE.TubeGeometry;
-  private tubeMaterial = new THREE.MeshNormalMaterial();
+  private tubeMaterial = new THREE.MeshBasicMaterial({
+    color: this.colorService.nextColor(),
+    transparent: true,
+    opacity: 0.5,
+    depthTest: false,
+    depthWrite: false
+  });
+  private rayVisionMaterial = new THREE.MeshStandardMaterial({
+    color: this.tubeMaterial.color
+  });
   private tubeMesh?: THREE.Mesh;
+  private rayVisionTubeMesh?: THREE.Mesh;
   // debugging stuff end
 
   // Shader material related
@@ -180,7 +192,14 @@ export class OutdoorRenderer implements AfterViewInit {
         this.scene.remove(this.tubeMesh);
         this.tubeMesh = undefined;
       }
+      if (this.rayVisionTubeMesh) {
+        this.scene.remove(this.rayVisionTubeMesh);
+        this.rayVisionTubeMesh = undefined;
+      }
       this.tubeMesh = new THREE.Mesh(this.tubeGeometry, this.tubeMaterial);
+      this.rayVisionTubeMesh = this.tubeMesh.clone();
+      this.rayVisionTubeMesh.material = this.rayVisionMaterial;
+      this.scene.add(this.rayVisionTubeMesh);
       this.scene.add(this.tubeMesh);
     }
     this.loop();
