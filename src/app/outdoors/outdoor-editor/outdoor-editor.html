@@ -7,7 +7,7 @@
       } -->
     <!-- <app-problem-rules-overlay [boulderProblem]="selectedProblem"> </app-problem-rules-overlay> -->
     <app-camera-controls> </app-camera-controls>
-    <app-outdoor-renderer class="render" [rawModel]="currentRawModel()"></app-outdoor-renderer>
+    <app-outdoor-editor-renderer class="render" [rawModel]="currentRawModel()"></app-outdoor-editor-renderer>
     } @else {
     <app-loading-image class="render"> </app-loading-image>
     }
@@ -32,10 +32,9 @@
         </button>
       } @else {
         <button class="button action-button action-end" (click)="hintAtNotLoggedIn()">Create new route</button>
-        } -->
-      <button class="button action-button action-end" [routerLink]="['/', 'boulder-editor', bloc.id]">
-        Create new route
-      </button>
+      } -->
+
+      <button class="button action-button action-end" [routerLink]="['/', 'boulder', bloc.id]">back</button>
     </div>
     <div class="legend-list">
       <div class="list-header">

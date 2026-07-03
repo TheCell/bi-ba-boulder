@@ -11,6 +11,7 @@ import { TermsComponent } from './legal/terms.component/terms.component';
 import { SpraywallEditor } from './spraywalls/spraywall-editor/spraywall-editor';
 import { spraywallProblemResolver } from './core/resolvers/spraywall-problem.resolver';
 import { OutdoorBloc } from './outdoors/outdoor-bloc/outdoor-bloc';
+import { OutdoorEditor } from './outdoors/outdoor-editor/outdoor-editor';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -43,6 +44,13 @@ export const routes: Routes = [
   {
     path: 'boulder/:id',
     component: OutdoorBloc,
+    resolve: {
+      bloc: blocResolver
+    }
+  },
+  {
+    path: 'boulder-editor/:id',
+    component: OutdoorEditor,
     resolve: {
       bloc: blocResolver
     }
