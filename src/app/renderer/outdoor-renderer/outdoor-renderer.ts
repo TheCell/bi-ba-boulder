@@ -58,7 +58,37 @@ export class OutdoorRenderer implements AfterViewInit {
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
 
+  // all the debugging stuff
   private raycaster: THREE.Raycaster = null!;
+  private mouseHelper = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 10), new THREE.MeshNormalMaterial());
+  private lineGeometry = new THREE.BufferGeometry();
+  private line = new THREE.Line(this.lineGeometry, new THREE.LineBasicMaterial());
+  private currentMesh?: THREE.Mesh;
+  private intersection = {
+    intersects: false,
+    point: new THREE.Vector3(),
+    normal: new THREE.Vector3()
+  };
+  private currentIntersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
+
+  private position = new THREE.Vector3();
+  private orientation = new THREE.Euler();
+  private loggedPoints: THREE.Vector3[] = [];
+
+  // tube
+  private tubeParams = {
+    radius: 0.05,
+    extrusionSegments: 100,
+    radiusSegments: 6
+  };
+  // points
+  private pointParams = {
+    radius: 0.1
+  };
+  private tubeGeometry?: THREE.TubeGeometry;
+  private tubeMaterial = new THREE.MeshNormalMaterial();
+  private tubeMesh?: THREE.Mesh;
+  // debugging stuff end
 
   // Shader material related
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
@@ -98,7 +128,111 @@ export class OutdoorRenderer implements AfterViewInit {
     // this.rgbBlockTexture = activatedRoute.snapshot.data['spraywallDebugTexture'];
 
     this.destroyRef.onDestroy(() => this.dispose());
+
+    // raycaster things
+    this.mouseHelper.visible = false;
+    window.addEventListener('pointermove', this.onPointerMove);
+    window.addEventListener('pointerdown', this.addPointToLoggedPoints);
   }
+
+  // more debugging stuff
+  private onPointerMove = (event: PointerEvent) => {
+    if (!this.renderer || !this.camera || !this.raycaster) {
+      return;
+    }
+
+    this.checkIntersection(event.clientX, event.clientY);
+    this.loop();
+  };
+
+  private addPointToLoggedPoints = (event: PointerEvent) => {
+    if (!this.intersection.intersects || event.button === 2) {
+      return;
+    }
+
+    this.position.copy(this.intersection.point);
+    this.orientation.copy(this.mouseHelper.rotation);
+
+    this.loggedPoints.push(this.position.clone());
+
+    const sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(this.pointParams.radius, 16, 16),
+      new THREE.MeshNormalMaterial()
+    );
+    sphere.position.copy(this.position);
+    this.scene.add(sphere);
+
+    if (this.loggedPoints.length > 2) {
+      if (this.tubeGeometry) {
+        this.tubeGeometry.dispose();
+        this.tubeGeometry = undefined;
+      }
+
+      const path = new THREE.CatmullRomCurve3(this.loggedPoints, false, 'chordal', 0.5);
+      this.tubeGeometry = new THREE.TubeGeometry(
+        path,
+        this.tubeParams.extrusionSegments,
+        this.tubeParams.radius,
+        this.tubeParams.radiusSegments,
+        false
+      );
+      if (this.tubeMesh) {
+        this.scene.remove(this.tubeMesh);
+        this.tubeMesh = undefined;
+      }
+      this.tubeMesh = new THREE.Mesh(this.tubeGeometry, this.tubeMaterial);
+      this.scene.add(this.tubeMesh);
+    }
+    this.loop();
+  };
+
+  private checkIntersection(x: number, y: number) {
+    if (this.currentMesh === undefined) {
+      return;
+    }
+
+    const pointer = new THREE.Vector2();
+    const canvasWidth = this.canvas.nativeElement.offsetWidth;
+    const canvasHeight = this.canvas.nativeElement.offsetHeight;
+    const canvasTop = this.canvas.nativeElement.getBoundingClientRect().top;
+    const canvasLeft = this.canvas.nativeElement.getBoundingClientRect().left;
+
+    const mouseX = x - canvasLeft;
+    const mouseY = y - canvasTop;
+
+    pointer.x = (mouseX / canvasWidth) * 2 - 1;
+    pointer.y = -(mouseY / canvasHeight) * 2 + 1;
+
+    this.raycaster.setFromCamera(pointer, this.camera);
+    this.currentIntersections.length = 0;
+    this.raycaster.intersectObject(this.currentMesh, false, this.currentIntersections);
+
+    if (this.currentIntersections.length > 0) {
+      const currentIntersection = this.currentIntersections[0];
+      const point = currentIntersection.point;
+      this.mouseHelper.position.copy(point);
+      this.intersection.point.copy(point);
+
+      const normalMatrix = new THREE.Matrix3().getNormalMatrix(this.currentMesh.matrixWorld);
+
+      const normal = currentIntersection.face!.normal.clone();
+      normal.applyNormalMatrix(normalMatrix);
+      normal.multiplyScalar(10);
+      normal.add(point);
+
+      this.intersection.normal.copy(currentIntersection.face!.normal);
+      this.mouseHelper.lookAt(normal);
+
+      const positions = this.line.geometry.attributes['position'];
+      positions.setXYZ(0, point.x, point.y, point.z);
+      positions.setXYZ(1, normal.x, normal.y, normal.z);
+      positions.needsUpdate = true;
+
+      this.intersection.intersects = true;
+      this.currentIntersections.length = 0;
+    }
+  }
+  // more debugging stuff end
 
   public ngAfterViewInit(): void {
     this.createCanvas();
@@ -162,6 +296,10 @@ export class OutdoorRenderer implements AfterViewInit {
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
 
+    this.scene.add(this.mouseHelper);
+    this.lineGeometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+    this.scene.add(this.line);
+
     this.loop();
   }
 
@@ -196,6 +334,7 @@ export class OutdoorRenderer implements AfterViewInit {
           // childCounter++;
           const mesh = child as THREE.Mesh;
           if (mesh.isMesh) {
+            this.currentMesh = mesh;
             this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
             this.originalBlockTexture = this.originalBlockMaterial.map;
             this.originalBlockMaterial.needsUpdate = true;
@@ -261,4 +400,3 @@ export class OutdoorRenderer implements AfterViewInit {
     this.renderer?.dispose();
   }
 }
-
