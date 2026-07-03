@@ -59,7 +59,8 @@ public class SpraywallImageService : ISpraywallImageService
         {
             canvas.Clear(SKColors.Black);
             var destRect = new SKRect(0, 0, targetWidth, targetHeight);
-            canvas.DrawBitmap(sourceImage, destRect);
+            var samplingOptions = new SKSamplingOptions(SKFilterMode.Nearest);
+            canvas.DrawBitmap(sourceImage, destRect, samplingOptions);
         }
 
         // Encode as PNG with maximum compression
