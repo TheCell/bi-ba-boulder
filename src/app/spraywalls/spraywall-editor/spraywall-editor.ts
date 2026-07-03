@@ -61,7 +61,6 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   public problemId? = '';
   public spraywallProblemForEdit?: SpraywallProblemDto;
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
-  public currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
 
   private subscription = new Subscription();
 
@@ -79,14 +78,14 @@ export class SpraywallEditor implements OnInit, OnDestroy {
       }
     });
 
-    this.subscription.add(
-      this.resetSignal.subscribe({
-        next: () => {
-          this.problemId = undefined;
-          this.spraywallProblemForEdit = undefined;
-        }
-      })
-    );
+    // this.subscription.add(
+    //   this.resetSignal.subscribe({
+    //     next: () => {
+    //       this.problemId = undefined;
+    //       this.spraywallProblemForEdit = undefined;
+    //     }
+    //   })
+    // );
   }
 
   public ngOnDestroy(): void {

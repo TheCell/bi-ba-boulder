@@ -8,7 +8,6 @@ import {
   HostListener,
   inject,
   input,
-  InputSignal,
   OnInit,
   ViewChild
 } from '@angular/core';
@@ -53,15 +52,14 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
   }
 
-  public rawModel: InputSignal<ArrayBuffer | undefined> = input<ArrayBuffer>();
-  public highlightUv: InputSignal<THREE.Texture<HTMLImageElement> | undefined> =
-    input<THREE.Texture<HTMLImageElement>>();
-  public highlightColor: InputSignal<THREE.Color> = input.required<THREE.Color>();
-  public currentHighlightedHoldsTexturePath: InputSignal<string> = input.required<string>();
-  public resetRoute: InputSignal<Subject<void>> = input.required<Subject<void>>();
-  public undoLastHighlight: InputSignal<Subject<void>> = input.required<Subject<void>>();
+  public rawModel = input<ArrayBuffer>();
+  public highlightUv = input<THREE.Texture<HTMLImageElement>>();
+  public highlightColor = input.required<THREE.Color>();
+  // public currentHighlightedHoldsTexturePath: InputSignal<string> = input.required<string>();
+  public resetRoute = input.required<Subject<void>>();
+  public undoLastHighlight = input.required<Subject<void>>();
   // public canUndo: EventEmitter<boolean> = new ReplaySubject<boolean>(1); // todo
-  public boulderProblem: InputSignal<SpraywallProblemDto | undefined> = input<SpraywallProblemDto>(); // this overrides the standard initialization
+  public boulderProblem = input<SpraywallProblemDto>(); // this overrides the standard initialization
 
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
   public shortcuts: ShortcutInput[] = [];
@@ -85,7 +83,6 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockTexture: THREE.Texture | null = null;
   private useRgbTexture = 0.0;
-  // private currentHighlightedHoldsTexturePath = './images/Bimano_Spraywall_02_highlight_01.png';
   private highlightedHoldsTexture?: THREE.DataTexture;
   private highlightActiveShaderUniform = 0.0;
   private standardHighlightedHoldsTexture?: THREE.DataTexture;
@@ -139,7 +136,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   public ngOnInit(): void {
     this.resetRoute().subscribe({
       next: () => {
-        this.newRoute();
+        this.newRouteOrResetChanges();
       }
     });
     this.undoLastHighlight().subscribe({
@@ -147,13 +144,11 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
         this.undo();
       }
     });
-    this.newRoute();
+    this.newRouteOrResetChanges();
   }
 
   public ngAfterViewInit(): void {
     this.createCanvas();
-
-    this.loadHighlightedHoldsTexture(this.currentHighlightedHoldsTexturePath());
     this.initialized = true;
   }
 
@@ -163,22 +158,27 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
   }
 
-  public newRoute(): void {
-    const width = 128;
-    const height = 128;
-    const size = width * height;
-    const data = new Uint8Array(size * 4);
-    for (let i = 0; i < size; i++) {
-      const stride = i * 4;
-      data[stride] = 0; // red
-      data[stride + 1] = 0; // green
-      data[stride + 2] = 0; // blue
-      data[stride + 3] = 255; // alpha
-    }
+  public newRouteOrResetChanges(): void {
+    const boulderProblem = this.boulderProblem();
+    if (boulderProblem) {
+      this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
+    } else {
+      const width = 128;
+      const height = 128;
+      const size = width * height;
+      const data = new Uint8Array(size * 4);
+      for (let i = 0; i < size; i++) {
+        const stride = i * 4;
+        data[stride] = 0; // red
+        data[stride + 1] = 0; // green
+        data[stride + 2] = 0; // blue
+        data[stride + 3] = 255; // alpha
+      }
 
-    const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
-    texture.needsUpdate = true;
-    this.highlightedHoldsTexture = texture;
+      const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
+      texture.needsUpdate = true;
+      this.highlightedHoldsTexture = texture;
+    }
   }
 
   // todo listen to input signal
@@ -232,18 +232,6 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       const object = this.currentGltf.scene.children[0] as THREE.Mesh;
       object.material = this.rgbBlockMaterial;
     }
-  }
-
-  private loadHighlightedHoldsTexture(path: string): void {
-    const loader = new THREE.DataTextureLoader();
-    loader.load(path, (texture: THREE.DataTexture) => {
-      texture.flipY = false;
-      texture.needsUpdate = true;
-      texture.minFilter = THREE.NearestFilter;
-      texture.magFilter = THREE.NearestFilter;
-      this.highlightedHoldsTexture = texture;
-      this.standardHighlightedHoldsTexture = texture;
-    });
   }
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
@@ -389,8 +377,6 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   }
 
   private drawNewHighlight(uv: THREE.Vector2): void {
-    console.log('drawNewHighlight');
-
     if (!this.rgbBlockImageData) {
       return;
     }
