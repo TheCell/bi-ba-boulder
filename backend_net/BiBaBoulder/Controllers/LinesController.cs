@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Thecell.Bibaboulder.Common.Queries;
+using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Dto;
 using Thecell.Bibaboulder.Outdoor.Handler;
 
@@ -23,7 +24,7 @@ public class LinesController : ControllerBase
     }
 
     [HttpGet("by-bloc/{blocId}")]
-    [AllowAnonymous]
+    [Authorize(Roles = AuthorizationRoles.Admin)]
     public async Task<ICollection<LineDto>> GetLinesByBlocId(Guid blocId)
     {
         return await _getLinesByBlocIdQueryHandler.HandleAsync(

@@ -1310,6 +1310,27 @@
       "FontGrade": {
         "type": "integer"
       },
+      "LineData": {
+        "type": "object",
+        "properties": {
+          "positions": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "double"
+              }
+            }
+          },
+          "someMoreStuff": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "LineDto": {
         "required": [
           "id",
@@ -1324,13 +1345,17 @@
           "identifier": {
             "type": "string"
           },
-          "description": {
-            "type": [
-              "null",
-              "string"
+          "fontGrade": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
             ]
           },
-          "color": {
+          "description": {
             "type": [
               "null",
               "string"
@@ -1341,6 +1366,9 @@
               "null",
               "string"
             ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/LineData"
           }
         }
       },

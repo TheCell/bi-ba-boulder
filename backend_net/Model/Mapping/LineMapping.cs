@@ -12,8 +12,9 @@ public static class LineMapping
             Id = line.Id,
             Identifier = line.Identifier,
             Description = line.Description,
-            Color = line.Color,
-            Name = line.Name
+            Name = line.Name,
+            Data = line.Data,
+            FontGrade = line.FontGrade,
         };
     }
 }

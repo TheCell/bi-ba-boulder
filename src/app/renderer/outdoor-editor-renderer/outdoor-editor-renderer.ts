@@ -292,6 +292,9 @@ export class OutdoorEditorRenderer implements AfterViewInit {
         'chordal',
         0.5
       );
+      const json = JSON.stringify(this.loggedPoints.map((lp) => lp.position.toArray()));
+      console.log(json);
+
       this.tubeGeometry = new THREE.TubeGeometry(
         path,
         this.tubeParams.extrusionSegments,

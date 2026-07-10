@@ -1,5 +1,6 @@
 using System;
 using Bogus;
+using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model;
 
 namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
@@ -25,9 +26,15 @@ public class LineBuilder : BuilderBase<Line>
         return this;
     }
 
-    public LineBuilder SetColor(string? value)
+    public LineBuilder SetFontGrade(FontGrade? value)
     {
-        _instance.Color = value;
+        _instance.FontGrade = value;
+        return this;
+    }
+
+    public LineBuilder SetData(LineData value)
+    {
+        _instance.Data = value;
         return this;
     }
 
