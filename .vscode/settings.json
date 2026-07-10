@@ -6,5 +6,9 @@
             "externalTemplate": true,
             "style": "scss"
         }
+    },
+    "chat.tools.terminal.autoApprove": {
+        "dotnet test": true,
+        "dotnet restore": true
     }
 }
