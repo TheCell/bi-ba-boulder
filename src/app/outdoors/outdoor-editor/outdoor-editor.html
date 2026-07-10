@@ -7,13 +7,14 @@
       } -->
     <!-- <app-problem-rules-overlay [boulderProblem]="selectedProblem"> </app-problem-rules-overlay> -->
     <app-camera-controls> </app-camera-controls>
-    <app-outdoor-editor-renderer class="render" [rawModel]="currentRawModel()"></app-outdoor-editor-renderer>
+    <app-outdoor-editor-renderer #renderer class="render" [rawModel]="currentRawModel()"></app-outdoor-editor-renderer>
     } @else {
     <app-loading-image class="render"> </app-loading-image>
     }
   </section>
   <section class="legend">
     <div class="actions">
+      <button class="button action-button" (click)="debugSaveRoute()">Quick and dirty save</button>
       <!-- <button class="button action-button" (click)="onResetSelection()">Reset</button>
       <button class="button action-button" (click)="onInfoClicked()">Info</button>
       @if (selectedProblem?.metadata?.canEdit) {

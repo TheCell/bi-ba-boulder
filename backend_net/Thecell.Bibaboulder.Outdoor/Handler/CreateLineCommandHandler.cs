@@ -19,6 +19,11 @@ public class CreateLineCommandHandler : ICommandHandler<CreateLineCommand>
 
     public async Task HandleAsync(CreateLineCommand command)
     {
+        if (command.Data.Positions.Count < 3)
+        {
+            throw new ArgumentException("A line must have at least 3 positions.");
+        }
+
         await _dbContext.Blocs
             .AsNoTracking()
             .SingleOrDefaultAsync(b => b.Id == command.BlocId)

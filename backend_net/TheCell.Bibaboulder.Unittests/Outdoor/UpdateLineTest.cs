@@ -38,6 +38,35 @@ public class UpdateLineTest
     }
 
     [Fact]
+    public async Task UpdateLine_ArgumentException()
+    {
+        var line = await PrepareLine();
+
+        var command = new UpdateLineCommand
+        {
+            Id = line.Id,
+            Version = line.Version,
+            Identifier = "L-002",
+            Name = "Updated line",
+            Description = "Updated description",
+            Data = new LineData
+            {
+                Positions =
+                [
+                    [1.0, 1.1, 1.2],
+                    [2.0, 2.1, 2.2]
+                ]
+            }
+        };
+
+        var handler = new UpdateLineCommandHandler(_dbContext);
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(async () =>
+            await handler.HandleAsync(command));
+        Assert.Equal("A line must have at least 3 positions.", ex.Message);
+    }
+
+    [Fact]
     public async Task UpdateLine_Ok()
     {
         var line = await PrepareLine();
@@ -93,7 +122,8 @@ public class UpdateLineTest
             Positions =
             [
                 [1.0, 1.1, 1.2],
-                [2.0, 2.1, 2.2]
+                [2.0, 2.1, 2.2],
+                [3.0, 3.1, 3.2]
             ]
         };
     }

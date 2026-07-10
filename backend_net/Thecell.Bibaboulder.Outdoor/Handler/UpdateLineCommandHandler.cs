@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Commands;
@@ -17,6 +18,11 @@ public class UpdateLineCommandHandler : ICommandHandler<UpdateLineCommand>
 
     public async Task HandleAsync(UpdateLineCommand command)
     {
+        if (command.Data.Positions.Count < 3)
+        {
+            throw new ArgumentException("A line must have at least 3 positions.");
+        }
+
         var line = await _dbContext.Lines
             .SingleOrDefaultAsync(l => l.Id == command.Id)
             .ThrowIfNullAsync(command.Id);

@@ -17,6 +17,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CameraControlsService } from '../camera-controls.service';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { ColorService } from '../../core/util-services/color.service';
+import { LineDto } from '@api-net/model/models';
 
 @Component({
   selector: 'app-outdoor-renderer',
@@ -47,6 +48,7 @@ export class OutdoorRenderer implements AfterViewInit {
   }
 
   public rawModel = input<ArrayBuffer>();
+  public lines = input<LineDto[]>();
 
   private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
   private scene = new THREE.Scene();
@@ -65,8 +67,6 @@ export class OutdoorRenderer implements AfterViewInit {
   private line = new THREE.Line(this.lineGeometry, new THREE.LineBasicMaterial());
   private currentMesh?: THREE.Mesh;
 
-  private loggedPoints: THREE.Vector3[] = [];
-
   // tube
   private tubeParams = {
     radius: 0.05,
@@ -74,19 +74,9 @@ export class OutdoorRenderer implements AfterViewInit {
     radiusSegments: 6
   };
 
-  private tubeGeometry?: THREE.TubeGeometry;
-  private tubeMaterial = new THREE.MeshBasicMaterial({
-    color: this.colorService.nextColor(),
-    transparent: true,
-    opacity: 0.3,
-    depthTest: false,
-    depthWrite: false
-  });
-  private rayVisionMaterial = new THREE.MeshStandardMaterial({
-    color: this.tubeMaterial.color
-  });
-  private tubeMesh?: THREE.Mesh;
-  private rayVisionTubeMesh?: THREE.Mesh;
+  private tubeGeometries: THREE.TubeGeometry[] = [];
+  private tubeMeshes: THREE.Mesh[] = [];
+  private rayVisionTubeMeshes: THREE.Mesh[] = [];
 
   // Shader material related
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
@@ -105,6 +95,11 @@ export class OutdoorRenderer implements AfterViewInit {
           this.removePreviousAndAddBoulderToScene(rawModel);
         }
       }
+    });
+
+    effect(() => {
+      this.lines();
+      this.regenerateLines();
     });
 
     // effect(() => {
@@ -189,6 +184,7 @@ export class OutdoorRenderer implements AfterViewInit {
 
     this.lineGeometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
     this.scene.add(this.line);
+    this.regenerateLines();
 
     this.loop();
   }
@@ -250,6 +246,74 @@ export class OutdoorRenderer implements AfterViewInit {
         throw new Error(err.message);
       }
     );
+  }
+
+  private regenerateLines(): void {
+    if (!this.initialized) {
+      return;
+    }
+
+    for (const tubeMesh of this.tubeMeshes) {
+      this.scene.remove(tubeMesh);
+    }
+    this.tubeMeshes = [];
+
+    for (const tubeGeometry of this.tubeGeometries) {
+      tubeGeometry.dispose();
+    }
+    this.tubeGeometries = [];
+
+    for (const rayVisionTubeMesh of this.rayVisionTubeMeshes) {
+      this.scene.remove(rayVisionTubeMesh);
+    }
+    this.rayVisionTubeMeshes = [];
+
+    const lines = this.lines();
+    if (lines === undefined) {
+      return;
+    }
+
+    for (const line of lines) {
+      if (line.data?.positions === undefined || line.data.positions.length < 3) {
+        continue;
+      }
+
+      const tubeMaterial = new THREE.MeshBasicMaterial({
+        color: this.colorService.nextColor(),
+        transparent: true,
+        opacity: 0.3,
+        depthTest: false,
+        depthWrite: false
+      });
+      const rayVisionMaterial = new THREE.MeshStandardMaterial({
+        color: tubeMaterial.color
+      });
+
+      const path = new THREE.CatmullRomCurve3(
+        line.data?.positions.map((point) => new THREE.Vector3(point[0], point[1], point[2])),
+        false,
+        'chordal',
+        0.5
+      );
+
+      const tubeGeometry = new THREE.TubeGeometry(
+        path,
+        this.tubeParams.extrusionSegments,
+        this.tubeParams.radius,
+        this.tubeParams.radiusSegments,
+        false
+      );
+      const tubeMesh: THREE.Mesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+      const rayVisionTubeMesh = tubeMesh.clone();
+      rayVisionTubeMesh.material = rayVisionMaterial;
+      this.tubeGeometries.push(tubeGeometry);
+      this.tubeMeshes.push(tubeMesh);
+      this.rayVisionTubeMeshes.push(rayVisionTubeMesh);
+      this.scene.add(rayVisionTubeMesh);
+      this.scene.add(tubeMesh);
+    }
+
+    this.loop();
   }
 
   private resetCameraPosition(): void {

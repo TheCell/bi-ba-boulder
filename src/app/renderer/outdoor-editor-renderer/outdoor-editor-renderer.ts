@@ -216,6 +216,15 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.resetCameraPosition();
   }
 
+  public getLinePoints(): number[][] | undefined {
+    if (this.loggedPoints.length < 3) {
+      return undefined;
+    }
+
+    const linePoints = this.loggedPoints.map((lp) => [lp.position.x, lp.position.y, lp.position.z]);
+    return linePoints;
+  }
+
   public removeLastPoint(): void {
     this.loggedPoints.pop();
     const sphere = this.sphereArray.pop();
@@ -242,6 +251,10 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   private addPointToLoggedPoints = (event: PointerEvent) => {
     if (!this.intersection.intersects || event.button === 2) {
+      return;
+    }
+
+    if (!this.canvas.nativeElement.contains(event.target as Node)) {
       return;
     }
 

@@ -100,16 +100,20 @@ export class LinesService implements LinesServiceInterface {
     }
 
     /**
+     * @param blocId 
      * @param createLineCommand 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public createLine(createLineCommand: CreateLineCommand, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<LineDto>;
-    public createLine(createLineCommand: CreateLineCommand, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LineDto>>;
-    public createLine(createLineCommand: CreateLineCommand, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LineDto>>;
-    public createLine(createLineCommand: CreateLineCommand, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+    public createLineForBloc(blocId: string, createLineCommand: CreateLineCommand, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<LineDto>;
+    public createLineForBloc(blocId: string, createLineCommand: CreateLineCommand, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpResponse<LineDto>>;
+    public createLineForBloc(blocId: string, createLineCommand: CreateLineCommand, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<HttpEvent<LineDto>>;
+    public createLineForBloc(blocId: string, createLineCommand: CreateLineCommand, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json', context?: HttpContext, transferCache?: boolean}): Observable<any> {
+        if (blocId === null || blocId === undefined) {
+            throw new Error('Required parameter blocId was null or undefined when calling createLineForBloc.');
+        }
         if (createLineCommand === null || createLineCommand === undefined) {
-            throw new Error('Required parameter createLineCommand was null or undefined when calling createLine.');
+            throw new Error('Required parameter createLineCommand was null or undefined when calling createLineForBloc.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -161,7 +165,7 @@ export class LinesService implements LinesServiceInterface {
             }
         }
 
-        let localVarPath = `/api/Lines`;
+        let localVarPath = `/api/Lines/for-bloc/${this.configuration.encodeParam({name: "blocId", value: blocId, in: "path", style: "simple", explode: false, dataType: "string", dataFormat: "uuid"})}`;
         return this.httpClient.request<LineDto>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,

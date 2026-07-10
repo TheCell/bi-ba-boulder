@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Exceptions;
@@ -20,7 +21,7 @@ public class CreateLineTest
     }
 
     [Fact]
-    public async Task CreateLine_NotFound_NotFoundException()
+    public async Task CreateLineForBloc_NotFound_NotFoundException()
     {
         var command = new CreateLineCommand
         {
@@ -38,7 +39,28 @@ public class CreateLineTest
     }
 
     [Fact]
-    public async Task CreateLine_Ok()
+    public async Task CreateLineForBloc_ArgumentException()
+    {
+        var bloc = await PrepareBloc();
+
+        var command = new CreateLineCommand
+        {
+            BlocId = bloc.Id,
+            Identifier = "L-001",
+            Name = "Line",
+            Description = "Description",
+            Data = new LineData { Positions = [] }
+        };
+
+        var handler = new CreateLineCommandHandler(_dbContext);
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(async () =>
+            await handler.HandleAsync(command));
+        Assert.Equal("A line must have at least 3 positions.", ex.Message);
+    }
+
+    [Fact]
+    public async Task CreateLineForBloc_Ok()
     {
         var bloc = await PrepareBloc();
 
@@ -84,7 +106,8 @@ public class CreateLineTest
             Positions =
             [
                 [1.0, 1.1, 1.2],
-                [2.0, 2.1, 2.2]
+                [2.0, 2.1, 2.2],
+                [3.0, 3.1, 3.2]
             ]
         };
     }

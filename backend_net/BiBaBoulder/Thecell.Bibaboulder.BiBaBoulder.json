@@ -572,12 +572,23 @@
         }
       }
     },
-    "/api/Lines": {
+    "/api/Lines/for-bloc/{blocId}": {
       "post": {
         "tags": [
           "Lines"
         ],
-        "operationId": "createLine",
+        "operationId": "createLineForBloc",
+        "parameters": [
+          {
+            "name": "blocId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {

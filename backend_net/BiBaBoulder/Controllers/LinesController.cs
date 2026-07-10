@@ -44,10 +44,11 @@ public class LinesController : ControllerBase
             new GetLinesByBlocIdQuery { BlocId = blocId });
     }
 
-    [HttpPost]
+    [HttpPost("for-bloc/{blocId}")]
     [Authorize(Roles = AuthorizationRoles.Admin)]
-    public async Task<LineDto> CreateLine([FromBody] CreateLineCommand command)
+    public async Task<LineDto> CreateLineForBloc(Guid blocId, [FromBody] CreateLineCommand command)
     {
+        command.BlocId = blocId;
         await _createLineCommandHandler.HandleAsync(command);
         return await _getLineQueryHandler.HandleAsync(new GetLineQuery { Id = command.Id });
     }

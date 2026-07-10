@@ -1,12 +1,13 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { OutdoorRenderer } from '../../renderer/outdoor-renderer/outdoor-renderer';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
-import { BlocDto } from '@api-net/index';
+import { BlocDto, LineDto, LinesService } from '@api-net/index';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camera-controls';
+import { ToastService } from '../../core/toast-container/toast.service';
 
 @Component({
   selector: 'app-outdoor-bloc',
@@ -14,10 +15,14 @@ import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camer
   templateUrl: './outdoor-bloc.html',
   styleUrl: './outdoor-bloc.scss'
 })
-export class OutdoorBloc {
+export class OutdoorBloc implements OnInit {
   private boulderLoaderService = inject(BoulderLoaderService);
+  private linesService = inject(LinesService);
+  private toastService = inject(ToastService);
+
   public currentRawModel = signal<ArrayBuffer | undefined>(undefined);
   public bloc: BlocDto;
+  public lines: LineDto[] = [];
 
   private loadNextResolution = new Subject<void>();
   private startLoadingBoulder = new Subject<void>();
@@ -58,6 +63,14 @@ export class OutdoorBloc {
     this.resolutionToLoad = urlAndInfo.higherResolution;
     this.boulderUrl = urlAndInfo.url;
     this.startLoadingBoulder.next();
+  }
+
+  public ngOnInit(): void {
+    this.linesService.getLinesByBlocId(this.bloc.id).subscribe({
+      next: (lines) => {
+        this.lines = lines;
+      }
+    });
   }
 }
 

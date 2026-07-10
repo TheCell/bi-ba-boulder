@@ -106,7 +106,7 @@ public class LinesControllerTest : BaseTest
     }
 
     [Fact]
-    public async Task CreateLine_Anonymous_Unauthorized()
+    public async Task CreateLineForBloc_Anonymous_Unauthorized()
     {
         var bloc = await PrepareBloc();
 
@@ -121,13 +121,13 @@ public class LinesControllerTest : BaseTest
             Data = CreateLineData()
         };
 
-        var response = await Client().PostAsync(_baseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
+        var response = await Client().PostAsync($"{_baseUrl}/for-bloc/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
-    public async Task CreateLine_User_Forbidden()
+    public async Task CreateLineForBloc_User_Forbidden()
     {
         var user = new UserBuilder()
             .SetUsername(_bogus.Internet.UserName())
@@ -149,13 +149,13 @@ public class LinesControllerTest : BaseTest
         };
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
-        var response = await client.PostAsync(_baseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
+        var response = await client.PostAsync($"{_baseUrl}/for-bloc/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     [Fact]
-    public async Task CreateLine_Admin_Ok()
+    public async Task CreateLineForBloc_Admin_Ok()
     {
         var user = new UserBuilder()
             .SetUsername(_bogus.Internet.UserName())
@@ -178,7 +178,7 @@ public class LinesControllerTest : BaseTest
         };
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
-        var response = await client.PostAsync(_baseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
+        var response = await client.PostAsync($"{_baseUrl}/for-bloc/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<LineDto>(cancellationToken: TestContext.Current.CancellationToken);

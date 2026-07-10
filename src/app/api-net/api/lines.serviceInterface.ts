@@ -28,9 +28,10 @@ export interface LinesServiceInterface {
     /**
      * 
      * 
+     * @param blocId 
      * @param createLineCommand 
      */
-    createLine(createLineCommand: CreateLineCommand, extraHttpRequestParams?: any): Observable<LineDto>;
+    createLineForBloc(blocId: string, createLineCommand: CreateLineCommand, extraHttpRequestParams?: any): Observable<LineDto>;
 
     /**
      * 
