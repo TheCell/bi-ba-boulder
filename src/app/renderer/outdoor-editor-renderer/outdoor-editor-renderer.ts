@@ -14,10 +14,13 @@ import { KeyboardShortcutsModule, ShortcutEventOutput, ShortcutInput } from 'ng-
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { CameraControlsService } from '../camera-controls.service';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { ColorService } from '../../core/util-services/color.service';
 import { Viewpoint } from '../common/viewpoint';
+import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+import { DragControls } from 'three/addons/controls/DragControls.js';
 
 @Component({
   selector: 'app-outdoor-editor-renderer',
@@ -77,9 +80,16 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   private position = new THREE.Vector3();
   private orientation = new THREE.Euler();
-  private loggedPoints: THREE.Vector3[] = [];
+  private loggedPoints: { id: string; position: THREE.Vector3 }[] = [];
   private sphereArray: THREE.Mesh[] = [];
+  // private transformControls?: TransformControls;
+  private dragControls?: DragControls;
+  private isDragging = false;
   private isLooping = false;
+
+  // debugging configs
+  private debugColor = 0x98ff98;
+  private displayNormals = false;
 
   // tube
   private tubeParams = {
@@ -107,7 +117,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   private debugSphere = new THREE.Mesh(
     new THREE.SphereGeometry(1, 32, 32),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    new THREE.MeshBasicMaterial({ color: this.debugColor })
   );
 
   private viewpoints: Record<string, Viewpoint> = {
@@ -207,8 +217,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   public removeLastPoint(): void {
-    console.log('asdlkfj');
-
     this.loggedPoints.pop();
     const sphere = this.sphereArray.pop();
     if (sphere) {
@@ -220,6 +228,10 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   // more debugging stuff
   private onPointerMove = (event: PointerEvent) => {
     if (!this.renderer || !this.camera || !this.raycaster) {
+      return;
+    }
+
+    if (this.isDragging) {
       return;
     }
 
@@ -236,26 +248,28 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.position.copy(this.intersection.point);
     this.orientation.copy(this.mouseHelper.rotation);
 
-    this.loggedPoints.push(this.position.clone());
-    this.generatePoint(this.position);
+    const loggedPoint = { id: crypto.randomUUID(), position: this.position.clone() };
+    this.loggedPoints.push(loggedPoint);
+    this.generatePoint(loggedPoint.id, loggedPoint.position);
     this.regeneratePath();
   };
 
-  private generatePoint(point: THREE.Vector3): void {
+  private generatePoint(uuid: string, point: THREE.Vector3): void {
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(this.pointParams.radius, 16, 16),
       new THREE.MeshNormalMaterial()
     );
+    sphere.uuid = uuid;
+
     if (this.loggedPoints.length > 0) {
       sphere.position.copy(point);
       this.sphereArray.push(sphere);
       this.scene.add(sphere);
+      // this.transformControls?.attach(sphere);
     }
   }
 
   private regeneratePath(): void {
-    console.log(this.currentIntersections);
-
     if (this.tubeMesh) {
       this.scene.remove(this.tubeMesh);
       this.tubeMesh = undefined;
@@ -272,7 +286,12 @@ export class OutdoorEditorRenderer implements AfterViewInit {
         this.tubeGeometry = undefined;
       }
 
-      const path = new THREE.CatmullRomCurve3(this.loggedPoints, false, 'chordal', 0.5);
+      const path = new THREE.CatmullRomCurve3(
+        this.loggedPoints.map((lp) => lp.position),
+        false,
+        'chordal',
+        0.5
+      );
       this.tubeGeometry = new THREE.TubeGeometry(
         path,
         this.tubeParams.extrusionSegments,
@@ -385,6 +404,27 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.scene.add(this.line);
     this.scene.add(this.debugSphere);
 
+    // this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
+    this.dragControls = new DragControls(this.sphereArray, this.camera, this.renderer.domElement);
+    this.dragControls.addEventListener('dragstart', () => {
+      this.isDragging = true;
+      this.intersection.intersects = false;
+      this.cameraControlsService.setCameraInteractable(false);
+    });
+
+    this.dragControls.addEventListener('drag', (event) => {
+      this.loggedPoints.find((lp) => lp.id === event.object.uuid)?.position.copy(event.object.position);
+      this.regeneratePath();
+      this.startLooping();
+    });
+
+    this.dragControls.addEventListener('dragend', () => {
+      this.isDragging = false;
+      this.cameraControlsService.setCameraInteractable(true);
+    });
+
+    // this.scene.add(this.transformControls);
+
     this.startLooping();
   }
 
@@ -417,7 +457,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
     this.renderer.render(this.scene, this.camera);
     if (this.isLooping) {
-      console.log('looping');
       window.requestAnimationFrame(this.loop);
       // this.loop();
     }
@@ -435,6 +474,10 @@ export class OutdoorEditorRenderer implements AfterViewInit {
           // childCounter++;
           const mesh = child as THREE.Mesh;
           if (mesh.isMesh) {
+            if (this.displayNormals) {
+              const normalsMesh = new VertexNormalsHelper(mesh, 0.5, this.debugColor);
+              this.scene.add(normalsMesh);
+            }
             this.currentMesh = mesh;
             this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
             this.originalBlockTexture = this.originalBlockMaterial.map;
@@ -515,7 +558,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       return;
     }
 
-    console.log('startLooping');
     this.isLooping = true;
     this.loop();
   };

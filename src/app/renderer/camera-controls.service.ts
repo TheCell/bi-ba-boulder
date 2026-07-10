@@ -58,6 +58,12 @@ export class CameraControlsService {
     }
   }
 
+  public setCameraInteractable(interactable: boolean): void {
+    if (this.orbitControls) {
+      this.orbitControls.enabled = interactable;
+    }
+  }
+
   /**
    * This method is intended to animate the camera transition to a new viewpoint.
    * This method should be called in the animation loop to ensure smooth transitions.
