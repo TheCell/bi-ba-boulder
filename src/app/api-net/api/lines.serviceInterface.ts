@@ -11,7 +11,10 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { CreateLineCommand } from '../model/models';
+import { DeleteLineCommand } from '../model/models';
 import { LineDto } from '../model/models';
+import { UpdateLineCommand } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -26,7 +29,31 @@ export interface LinesServiceInterface {
      * 
      * 
      * @param blocId 
+     * @param createLineCommand 
+     */
+    createLineForBloc(blocId: string, createLineCommand: CreateLineCommand, extraHttpRequestParams?: any): Observable<LineDto>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param deleteLineCommand 
+     */
+    deleteLine(id: string, deleteLineCommand: DeleteLineCommand, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * 
+     * @param blocId 
      */
     getLinesByBlocId(blocId: string, extraHttpRequestParams?: any): Observable<Array<LineDto>>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param updateLineCommand 
+     */
+    updateLine(id: string, updateLineCommand: UpdateLineCommand, extraHttpRequestParams?: any): Observable<LineDto>;
 
 }

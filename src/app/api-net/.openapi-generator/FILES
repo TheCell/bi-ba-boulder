@@ -34,9 +34,12 @@ index.ts
 model/blocDto.ts
 model/boulderLogDto.ts
 model/createBoulderLogCommand.ts
+model/createLineCommand.ts
 model/createSectorCommand.ts
 model/createSpraywallProblemCommand.ts
 model/deleteBoulderLogCommand.ts
+model/deleteLineCommand.ts
+model/lineData.ts
 model/lineDto.ts
 model/models.ts
 model/searchProblemsRequest.ts
@@ -48,6 +51,7 @@ model/spraywallProblemListDto.ts
 model/spraywallProblemMetadataDto.ts
 model/testDto.ts
 model/updateBoulderLogCommand.ts
+model/updateLineCommand.ts
 model/updateSpraywallProblemCommand.ts
 model/userDto.ts
 param.ts

@@ -10,12 +10,12 @@
 import { LineData } from './lineData';
 
 
-export interface LineDto { 
-    id: string;
+export interface CreateLineCommand { 
+    blocId: string;
     identifier: string;
-    fontGrade?: number;
-    description?: string | null;
     name?: string | null;
-    data?: LineData;
+    description?: string | null;
+    fontGrade?: number;
+    data: LineData;
 }
 

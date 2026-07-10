@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -30,14 +31,23 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
     public DbSet<Sector> Sectors { get; set; }
     public DbSet<Bloc> Blocs { get; set; }
     public DbSet<Line> Lines { get; set; }
-    public DbSet<Point> Points { get; set; }
     public DbSet<Email> Emails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // customize the model here if needed
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        modelBuilder.Entity<Line>()
+            .Property(l => l.Data)
+            .HasConversion(
+                data => JsonSerializer.Serialize(data, options),
+                json => JsonSerializer.Deserialize<LineData>(json, options)!
+            );
     }
 
     public async Task InsertEntityAndSaveChangesAsync(VersionedEntity entity)

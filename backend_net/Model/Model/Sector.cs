@@ -10,6 +10,9 @@ public class Sector : VersionedEntity
     [Key]
     public Guid Id { get; set; }
 
+    /// <summary>
+    /// Sector name ex. The Shield
+    /// </summary>
     [MaxLength(255)]
     public required string Name { get; set; }
 

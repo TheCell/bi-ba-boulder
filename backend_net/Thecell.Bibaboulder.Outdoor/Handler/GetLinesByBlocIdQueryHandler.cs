@@ -25,6 +25,7 @@ public class GetLinesByBlocIdQueryHandler : IQueryHandler<GetLinesByBlocIdQuery,
             .Where(l => l.BlocId == query.BlocId)
             .ToListAsync();
 
-        return lines.Select(l => l.MapToLineDto()).ToList();
+        var test = lines.Select(l => l.MapToLineDto()).ToList();
+        return test;
     }
 }

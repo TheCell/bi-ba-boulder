@@ -1,28 +1,30 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { OutdoorRenderer } from '../../renderer/outdoor-renderer/outdoor-renderer';
+import { Component, inject, signal, ViewChild } from '@angular/core';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
-import { BlocDto, LineDto, LinesService } from '@api-net/index';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { BlocDto, CreateLineCommand, LineData, LineDto, LinesService } from '@api-net/index';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camera-controls';
+import { OutdoorEditorRenderer } from '../../renderer/outdoor-editor-renderer/outdoor-editor-renderer';
 import { ToastService } from '../../core/toast-container/toast.service';
 
 @Component({
-  selector: 'app-outdoor-bloc',
-  imports: [OutdoorRenderer, LoadingImageComponent, CameraControls, RouterLink],
-  templateUrl: './outdoor-bloc.html',
-  styleUrl: './outdoor-bloc.scss'
+  selector: 'app-outdoor-editor',
+  imports: [LoadingImageComponent, CameraControls, OutdoorEditorRenderer, RouterLink],
+  templateUrl: './outdoor-editor.html',
+  styleUrl: './outdoor-editor.scss'
 })
-export class OutdoorBloc implements OnInit {
+export class OutdoorEditor {
+  @ViewChild('renderer') private renderer!: OutdoorEditorRenderer;
+
   private boulderLoaderService = inject(BoulderLoaderService);
   private linesService = inject(LinesService);
   private toastService = inject(ToastService);
+  private router = inject(Router);
 
   public currentRawModel = signal<ArrayBuffer | undefined>(undefined);
   public bloc: BlocDto;
-  public lines: LineDto[] = [];
 
   private loadNextResolution = new Subject<void>();
   private startLoadingBoulder = new Subject<void>();
@@ -65,10 +67,34 @@ export class OutdoorBloc implements OnInit {
     this.startLoadingBoulder.next();
   }
 
-  public ngOnInit(): void {
-    this.linesService.getLinesByBlocId(this.bloc.id).subscribe({
-      next: (lines) => {
-        this.lines = lines;
+  public debugSaveRoute(): void {
+    const linePoints = this.renderer.getLinePoints();
+    if (!linePoints) {
+      this.toastService.showDanger('Debug Save', 'No line data from renderer. Cannot save route.');
+      throw new Error('No line data from renderer');
+    }
+
+    const lineData: LineData = {
+      positions: linePoints
+    };
+
+    const createLine: CreateLineCommand = {
+      blocId: this.bloc.id,
+      identifier: 'debug-save-' + Date.now(),
+      name: 'Debug Save',
+      description: 'Debug save route',
+      fontGrade: 5,
+      data: lineData
+    };
+    console.log(createLine);
+
+    this.linesService.createLineForBloc(this.bloc.id, createLine).subscribe({
+      next: (_: LineDto) => {
+        this.toastService.showSuccess('Debug Save', 'Debug save route clicked. Implement saving logic here.');
+        this.router.navigate(['/', 'boulder', this.bloc.id]);
+      },
+      error: (error: Error) => {
+        this.toastService.showDanger('Debug Save', 'Error saving route: ' + error.message);
       }
     });
   }

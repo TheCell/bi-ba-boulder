@@ -572,6 +572,170 @@
         }
       }
     },
+    "/api/Lines/for-bloc/{blocId}": {
+      "post": {
+        "tags": [
+          "Lines"
+        ],
+        "operationId": "createLineForBloc",
+        "parameters": [
+          {
+            "name": "blocId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLineCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLineCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLineCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Lines/{id}": {
+      "post": {
+        "tags": [
+          "Lines"
+        ],
+        "operationId": "updateLine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLineCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLineCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLineCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Lines"
+        ],
+        "operationId": "deleteLine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteLineCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteLineCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteLineCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Sectors": {
       "get": {
         "tags": [
@@ -1233,6 +1397,48 @@
           }
         }
       },
+      "CreateLineCommand": {
+        "required": [
+          "blocId",
+          "identifier",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "blocId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "identifier": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fontGrade": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/LineData"
+          }
+        }
+      },
       "CreateSectorCommand": {
         "required": [
           "name"
@@ -1307,8 +1513,38 @@
           }
         }
       },
+      "DeleteLineCommand": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "FontGrade": {
         "type": "integer"
+      },
+      "LineData": {
+        "type": "object",
+        "properties": {
+          "positions": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number",
+                "format": "double"
+              }
+            }
+          },
+          "someMoreStuff": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "LineDto": {
         "required": [
@@ -1324,13 +1560,17 @@
           "identifier": {
             "type": "string"
           },
-          "description": {
-            "type": [
-              "null",
-              "string"
+          "fontGrade": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
             ]
           },
-          "color": {
+          "description": {
             "type": [
               "null",
               "string"
@@ -1341,6 +1581,9 @@
               "null",
               "string"
             ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/LineData"
           }
         }
       },
@@ -1617,6 +1860,47 @@
                 "$ref": "#/components/schemas/FontGrade"
               }
             ]
+          }
+        }
+      },
+      "UpdateLineCommand": {
+        "required": [
+          "identifier",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fontGrade": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FontGrade"
+              }
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/LineData"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },

@@ -7,13 +7,14 @@
       } -->
     <!-- <app-problem-rules-overlay [boulderProblem]="selectedProblem"> </app-problem-rules-overlay> -->
     <app-camera-controls> </app-camera-controls>
-    <app-outdoor-renderer class="render" [rawModel]="currentRawModel()" [lines]="lines"></app-outdoor-renderer>
+    <app-outdoor-editor-renderer #renderer class="render" [rawModel]="currentRawModel()"></app-outdoor-editor-renderer>
     } @else {
     <app-loading-image class="render"> </app-loading-image>
     }
   </section>
   <section class="legend">
     <div class="actions">
+      <button class="button action-button" (click)="debugSaveRoute()">Quick and dirty save</button>
       <!-- <button class="button action-button" (click)="onResetSelection()">Reset</button>
       <button class="button action-button" (click)="onInfoClicked()">Info</button>
       @if (selectedProblem?.metadata?.canEdit) {
@@ -32,10 +33,9 @@
         </button>
       } @else {
         <button class="button action-button action-end" (click)="hintAtNotLoggedIn()">Create new route</button>
-        } -->
-      <button class="button action-button action-end" [routerLink]="['/', 'boulder-editor', bloc.id]">
-        Create new route
-      </button>
+      } -->
+
+      <button class="button action-button action-end" [routerLink]="['/', 'boulder', bloc.id]">back</button>
     </div>
     <div class="legend-list">
       <div class="list-header">
@@ -83,3 +83,4 @@
 <app-modal #fontGradeFilterModal [isSmall]="true" (closed)="onFontGradeModalClosed($event)"> </app-modal>
 
 <app-modal #confirmDelete [isSmall]="true" (closed)="onDeleteProblemConfirmed($event)"> </app-modal> -->
+

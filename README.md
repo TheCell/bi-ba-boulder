@@ -13,6 +13,8 @@ Bi Ba Boulder © 2026 by Simon Hischier is licensed under CC BY-NC-SA 4.0. To vi
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
 
+All 3D Objects copyrighted Simon Hischier. You are not allowed to use them 
+
 The next todos:
 
 [x] Figure a route dto out   

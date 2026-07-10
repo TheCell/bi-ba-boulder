@@ -21,7 +21,6 @@ public interface IBiBaBoulderDbContext : IDisposable
     DbSet<Sector> Sectors { get; set; }
     DbSet<Bloc> Blocs { get; set; }
     DbSet<Line> Lines { get; set; }
-    DbSet<Point> Points { get; set; }
     DbSet<Email> Emails { get; set; }
 
     Task InsertEntityAndSaveChangesAsync(VersionedEntity entity);
