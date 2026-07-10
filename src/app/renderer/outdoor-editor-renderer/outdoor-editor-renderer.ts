@@ -17,6 +17,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CameraControlsService } from '../camera-controls.service';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { ColorService } from '../../core/util-services/color.service';
+import { Viewpoint } from '../common/viewpoint';
 
 @Component({
   selector: 'app-outdoor-editor-renderer',
@@ -42,7 +43,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       this.renderer.setSize(canvasSizes.width, canvasSizes.height);
       this.camera.aspect = canvasSizes.width / canvasSizes.height;
       this.camera.updateProjectionMatrix();
-      this.loop();
+      this.startLooping();
     }
   }
 
@@ -78,6 +79,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private orientation = new THREE.Euler();
   private loggedPoints: THREE.Vector3[] = [];
   private sphereArray: THREE.Mesh[] = [];
+  private isLooping = false;
 
   // tube
   private tubeParams = {
@@ -102,6 +104,22 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   });
   private tubeMesh?: THREE.Mesh;
   private rayVisionTubeMesh?: THREE.Mesh;
+
+  private debugSphere = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0xff0000 })
+  );
+
+  private viewpoints: Record<string, Viewpoint> = {
+    seitensprung: {
+      position: new THREE.Vector3(-9.44876021135404, 7.320794224154875, 6.724980613386679),
+      target: new THREE.Vector3(-3.0950377146341763, 7.692263096560984, -2.217579333053568)
+    },
+    overview: {
+      position: new THREE.Vector3(-0.0967487267161844, 9.600426820701172, 11.401826642615301),
+      target: new THREE.Vector3(3.710864794256258, 5.128171870749298, -1.8769139834889017)
+    }
+  };
   // debugging stuff end
 
   // Shader material related
@@ -148,11 +166,23 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     window.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerdown', this.addPointToLoggedPoints);
 
-    this.shortcuts.push({
-      key: ['ctrl + z'],
-      preventDefault: true,
-      command: (_: ShortcutEventOutput) => this.removeLastPoint()
-    });
+    this.shortcuts.push(
+      {
+        key: ['ctrl + z'],
+        preventDefault: true,
+        command: (_: ShortcutEventOutput) => this.removeLastPoint()
+      },
+      {
+        key: ['1'],
+        preventDefault: true,
+        command: (_: ShortcutEventOutput) => this.goToView('overview')
+      },
+      {
+        key: ['2'],
+        preventDefault: true,
+        command: (_: ShortcutEventOutput) => this.goToView('seitensprung')
+      }
+    );
   }
 
   public ngAfterViewInit(): void {
@@ -194,7 +224,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     }
 
     this.checkIntersection(event.clientX, event.clientY);
-    this.loop();
+    // todo uncommment
+    this.startLooping();
   };
 
   private addPointToLoggedPoints = (event: PointerEvent) => {
@@ -256,7 +287,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       this.scene.add(this.tubeMesh);
     }
 
-    this.loop();
+    this.startLooping();
   }
 
   private checkIntersection(x: number, y: number) {
@@ -343,7 +374,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       ONE: THREE.TOUCH.PAN,
       TWO: THREE.TOUCH.DOLLY_ROTATE
     };
-    this.controls.addEventListener('change', this.loop);
+    // todo find a solution for this
+    this.controls.addEventListener('change', this.startLooping);
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
@@ -351,14 +383,17 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.scene.add(this.mouseHelper);
     this.lineGeometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
     this.scene.add(this.line);
+    this.scene.add(this.debugSphere);
 
-    this.loop();
+    this.startLooping();
   }
 
   private loop = () => {
-    if (!this.renderer) {
+    if (!this.renderer || !this.isLooping) {
       return;
     }
+
+    this.isLooping = false;
 
     // if (this.rgbBlockMaterial) {
     //   const shader = this.rgbBlockMaterial.userData['shader'];
@@ -370,8 +405,22 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     //   }
     // }
 
+    if (this.controls) {
+      // console.log('this.controls.target', this.controls.target, 'this.camera.position', this.camera.position);
+      this.debugSphere.position.copy(this.controls.target);
+    }
+
+    if (this.cameraControlsService.needsAnimation) {
+      this.cameraControlsService.animateTransition();
+      this.isLooping = true; // keep looping until the animation is finished
+    }
+
     this.renderer.render(this.scene, this.camera);
-    // window.requestAnimationFrame(this.loop); // removed to not rerender on idle
+    if (this.isLooping) {
+      console.log('looping');
+      window.requestAnimationFrame(this.loop);
+      // this.loop();
+    }
   };
 
   private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
@@ -406,7 +455,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
           this.resetCameraPosition();
         }
         // this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
-        this.loop();
+        this.startLooping();
       },
       (err: ErrorEvent) => {
         throw new Error(err.message);
@@ -432,7 +481,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private dispose(): void {
-    this.controls?.removeEventListener('change', this.loop);
+    this.controls?.removeEventListener('change', this.startLooping);
     this.controls?.dispose();
 
     if (this.currentGltf) {
@@ -451,5 +500,23 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     // this.rgbBlockMaterial?.dispose();
     this.renderer?.dispose();
   }
-}
 
+  public goToView(viewName: string): void {
+    const viewpoint = this.viewpoints[viewName];
+
+    if (viewpoint) {
+      this.cameraControlsService.goToView(viewpoint);
+      this.startLooping();
+    }
+  }
+
+  private startLooping = () => {
+    if (this.isLooping) {
+      return;
+    }
+
+    console.log('startLooping');
+    this.isLooping = true;
+    this.loop();
+  };
+}

@@ -81,13 +81,13 @@ export class CameraControlsService {
     this.orbitControls.target.lerpVectors(this.orbitControls.target, this.transitionTargetPosition, easedT);
     this.orbitControls.update();
 
-    if (t >= 1) {
+    if (easedT >= 1) {
       this.camera.position.copy(this.transitionTargetPosition);
       this.orbitControls.target.copy(this.transitionTargetPosition);
       this.orbitControls.update();
       this.transitionTargetPosition.set(0, 0, 0);
       this.needsAnimation = false;
-      this.orbitControls.enabled = true;
+      // this.orbitControls.enabled = true;
     }
   }
 
@@ -109,7 +109,7 @@ export class CameraControlsService {
     this.transitionStartTime = performance.now();
     this.needsAnimation = true;
     if (this.orbitControls) {
-      this.orbitControls.enabled = false;
+      // this.orbitControls.enabled = false;
     }
   }
 }
