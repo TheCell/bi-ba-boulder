@@ -20,8 +20,11 @@
 - Mesh Model
   - Mesh Color & Texture: Unwrap
     - (Or just Load the settings file)
-    - Settings > Texture resolution 4096 x 4096
+    - Settings > Texture resolution 4096 x 4096 or 8192 x 8192
     - Settings > Unwrap Method: Geometric
+  - Analyze
+    - Check Topology
+    - Check Integrity
   - Export Levels of Detail
     - (Or just Load the settings file)
     - Model Count: 3
