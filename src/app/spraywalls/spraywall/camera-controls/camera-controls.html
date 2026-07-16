@@ -1,7 +1,7 @@
 <div class="container">
   <app-icon
     class="action-button"
-    [icon]="cameraControlsService.isDefaultPosition() ? 'expand-filled' : 'expand-empty'"
+    [icon]="cameraControlsService.isDefaultPosition() ? 'expand-empty' : 'expand-filled'"
     [isBig]="true"
     (click)="cameraControlsService.resetCameraPosition()">
   </app-icon>
