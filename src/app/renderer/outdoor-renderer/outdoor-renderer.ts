@@ -66,6 +66,8 @@ export class OutdoorRenderer implements AfterViewInit {
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
 
   private currentMesh?: THREE.Mesh;
+  private raycaster: THREE.Raycaster = null!;
+  private LINE_LAYER = 2;
 
   // tube
   private tubeParams = {
@@ -111,6 +113,8 @@ export class OutdoorRenderer implements AfterViewInit {
       this.selectedLine();
       this.regenerateLines();
     });
+
+    window.addEventListener('pointerdown', this.onPointerClick);
     this.destroyRef.onDestroy(() => this.dispose());
   }
 
@@ -141,6 +145,7 @@ export class OutdoorRenderer implements AfterViewInit {
     this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
+    this.camera.layers.enable(this.LINE_LAYER);
 
     this.onResize();
     this.scene.add(this.camera);
@@ -157,6 +162,10 @@ export class OutdoorRenderer implements AfterViewInit {
       TWO: THREE.TOUCH.DOLLY_ROTATE
     };
     this.controls.addEventListener('change', this.loop);
+
+    this.raycaster = new THREE.Raycaster(this.camera.position);
+    this.raycaster.layers.set(this.LINE_LAYER);
+
     this.regenerateLines();
 
     this.loop();
@@ -281,8 +290,11 @@ export class OutdoorRenderer implements AfterViewInit {
       false
     );
     const tubeMesh: THREE.Mesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+    tubeMesh.layers.set(this.LINE_LAYER);
+    tubeMesh.userData = { id: line.id, identifier: line.identifier };
     const rayVisionTubeMesh = tubeMesh.clone();
     rayVisionTubeMesh.material = rayVisionMaterial;
+    rayVisionTubeMesh.layers.set(this.LINE_LAYER);
     this.tubeGeometries.push(tubeGeometry);
     this.tubeMeshes.push(tubeMesh);
     this.rayVisionTubeMeshes.push(rayVisionTubeMesh);
@@ -305,6 +317,52 @@ export class OutdoorRenderer implements AfterViewInit {
       }
     });
     this.scene.remove(gltf.scene);
+  }
+
+  private onPointerClick = (event: PointerEvent) => {
+    if (!this.renderer || !this.camera) {
+      return;
+    }
+
+    this.checkIntersection(event.clientX, event.clientY);
+  };
+
+  private checkIntersection(x: number, y: number): void {
+    if (this.tubeMeshes.length === 0) {
+      return;
+    }
+
+    const lines = this.lines();
+    if (lines === undefined || lines.length === 0) {
+      return;
+    }
+
+    const pointer = new THREE.Vector2();
+    const canvasWidth = this.canvas.nativeElement.offsetWidth;
+    const canvasHeight = this.canvas.nativeElement.offsetHeight;
+    const canvasTop = this.canvas.nativeElement.getBoundingClientRect().top;
+    const canvasLeft = this.canvas.nativeElement.getBoundingClientRect().left;
+
+    const mouseX = x - canvasLeft;
+    const mouseY = y - canvasTop;
+
+    pointer.x = (mouseX / canvasWidth) * 2 - 1;
+    pointer.y = -(mouseY / canvasHeight) * 2 + 1;
+
+    this.raycaster.setFromCamera(pointer, this.camera);
+    const currentIntersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
+    this.raycaster.intersectObjects(this.tubeMeshes, false, currentIntersections);
+
+    if (currentIntersections.length > 0) {
+      const currentIntersection = currentIntersections[0];
+      console.log(currentIntersection.object.userData);
+      if (currentIntersection.object.userData['id'] !== undefined) {
+        const selectedLine = lines.find((line) => line.id === currentIntersection.object.userData['id']);
+        if (selectedLine !== undefined) {
+          this.selected.emit(selectedLine);
+        }
+      }
+    }
   }
 
   private dispose(): void {
