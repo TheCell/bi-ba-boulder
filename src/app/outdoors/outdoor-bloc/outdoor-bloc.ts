@@ -22,7 +22,7 @@ export class OutdoorBloc implements OnInit {
 
   public currentRawModel = signal<ArrayBuffer | undefined>(undefined);
   public bloc: BlocDto;
-  public lines: LineDto[] = [];
+  public lines = signal<LineDto[]>([]);
 
   private loadNextResolution = new Subject<void>();
   private startLoadingBoulder = new Subject<void>();
@@ -68,7 +68,7 @@ export class OutdoorBloc implements OnInit {
   public ngOnInit(): void {
     this.linesService.getLinesByBlocId(this.bloc.id).subscribe({
       next: (lines) => {
-        this.lines = lines;
+        this.lines.set(lines);
       }
     });
   }

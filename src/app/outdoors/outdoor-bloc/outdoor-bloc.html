@@ -7,7 +7,7 @@
       } -->
     <!-- <app-problem-rules-overlay [boulderProblem]="selectedProblem"> </app-problem-rules-overlay> -->
     <app-camera-controls> </app-camera-controls>
-    <app-outdoor-renderer class="render" [rawModel]="currentRawModel()" [lines]="lines"></app-outdoor-renderer>
+    <app-outdoor-renderer class="render" [rawModel]="currentRawModel()" [lines]="lines()"></app-outdoor-renderer>
     } @else {
     <app-loading-image class="render"> </app-loading-image>
     }
@@ -47,7 +47,7 @@
             <app-icon [icon]="'filter'"></app-icon>
           }
         </div> -->
-        <div class="">creator</div>
+        <!-- <div class="">creator</div> -->
         <!-- <div aria-hidden="true" (click)="onDateClicked()" class="hidden-on-mobile filterable">
           created Date
           @if (currentFilter.dateOrder) {

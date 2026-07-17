@@ -62,9 +62,6 @@ export class OutdoorRenderer implements AfterViewInit {
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
 
-  // all the debugging stuff
-  private lineGeometry = new THREE.BufferGeometry();
-  private line = new THREE.Line(this.lineGeometry, new THREE.LineBasicMaterial());
   private currentMesh?: THREE.Mesh;
 
   // tube
@@ -101,25 +98,6 @@ export class OutdoorRenderer implements AfterViewInit {
       this.lines();
       this.regenerateLines();
     });
-
-    // effect(() => {
-    //   const boulderProblem = this.boulderProblem();
-
-    //   if (boulderProblem) {
-    //     this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
-    //     this.highlightActiveShaderUniform = 1.0;
-    //     this.ambientLight.intensity = this.ambientLightLowIntensity;
-    //   } else {
-    //     this.highlightedHoldsTexture = undefined;
-    //     this.highlightActiveShaderUniform = 0.0;
-    //     this.ambientLight.intensity = this.ambientLightIntensity;
-    //   }
-    //   this.loop();
-    // });
-
-    // const activatedRoute = inject(ActivatedRoute);
-    // this.rgbBlockTexture = activatedRoute.snapshot.data['spraywallDebugTexture'];
-
     this.destroyRef.onDestroy(() => this.dispose());
   }
 
@@ -181,9 +159,6 @@ export class OutdoorRenderer implements AfterViewInit {
       TWO: THREE.TOUCH.DOLLY_ROTATE
     };
     this.controls.addEventListener('change', this.loop);
-
-    this.lineGeometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-    this.scene.add(this.line);
     this.regenerateLines();
 
     this.loop();
@@ -193,16 +168,6 @@ export class OutdoorRenderer implements AfterViewInit {
     if (!this.renderer) {
       return;
     }
-
-    // if (this.rgbBlockMaterial) {
-    //   const shader = this.rgbBlockMaterial.userData['shader'];
-
-    //   if (shader) {
-    //     shader.uniforms.useRgbTexture.value = this.useRgbTexture;
-    //     shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
-    //     shader.uniforms.isHighlightActive.value = this.highlightActiveShaderUniform;
-    //   }
-    // }
 
     this.renderer.render(this.scene, this.camera);
     // window.requestAnimationFrame(this.loop); // removed to not rerender on idle
@@ -249,7 +214,7 @@ export class OutdoorRenderer implements AfterViewInit {
   }
 
   private regenerateLines(): void {
-    if (!this.initialized) {
+    if (this.scene === undefined) {
       return;
     }
 
@@ -348,9 +313,6 @@ export class OutdoorRenderer implements AfterViewInit {
       }
     });
 
-    // this.highlightedHoldsTexture?.dispose();
-    // this.rgbBlockTexture?.dispose();
-    // this.rgbBlockMaterial?.dispose();
     this.renderer?.dispose();
   }
 }
