@@ -10,7 +10,7 @@
     <app-outdoor-renderer
       class="render"
       [rawModel]="currentRawModel()"
-      [lines]="lines()"
+      [lines]="enhancedLines()"
       [selectedLine]="selectedLine()"
       (selected)="onSelectedLine($event)"></app-outdoor-renderer>
     } @else {
@@ -19,25 +19,6 @@
   </section>
   <section class="legend">
     <div class="actions">
-      <!-- <button class="button action-button" (click)="onResetSelection()">Reset</button>
-      <button class="button action-button" (click)="onInfoClicked()">Info</button>
-      @if (selectedProblem?.metadata?.canEdit) {
-        @if (authSessionStateService.isLoggedIn()) {
-          <button class="button action-button warning" (click)="onEditProblem()">Edit</button>
-        } @else {
-          <button class="button action-button warning" (click)="hintAtNotLoggedIn()">Edit</button>
-        }
-      }
-      @if (selectedProblem?.metadata?.canDelete) {
-        <button class="button action-button danger" (click)="onDeleteProblem()">Delete</button>
-      }
-      @if (authSessionStateService.isLoggedIn()) {
-        <button class="button action-button action-end" [routerLink]="['/', 'spraywall-editor', spraywallId]">
-          Create new route
-        </button>
-      } @else {
-        <button class="button action-button action-end" (click)="hintAtNotLoggedIn()">Create new route</button>
-        } -->
       <button class="button action-button action-end" [routerLink]="['/', 'boulder-editor', bloc.id]">
         Create new route
       </button>
@@ -51,27 +32,14 @@
       <div #scrollList class="list-content">
         <ul>
           @for (line of lines(); track line.id) {
-          <app-bloc-line-item class="li-item" [line]="line" (selected)="onSelectedLine($event)"></app-bloc-line-item>
+          <app-bloc-line-item
+            class="li-item"
+            [line]="line"
+            [isSelected]="selectedLine()?.id === line.id"
+            (selected)="onSelectedLine($event)"></app-bloc-line-item>
           }
-          <!-- @for (problem of listOfProblems; track problem.id) {
-            <app-spraywall-legend-item
-              class="li-item"
-              [problem]="problem"
-              [isSelected]="selectedProblem?.id === problem.id"
-              (selected)="onSelectedProblem($event)">
-            </app-spraywall-legend-item>
-          }
-          @if (listOfProblems.length < totalCount) {
-            <app-spraywall-legend-item-placeholder class="li-item"> </app-spraywall-legend-item-placeholder>
-          } -->
         </ul>
       </div>
     </div>
   </section>
 </div>
-
-<!-- <app-modal #infoModal> </app-modal>
-
-<app-modal #fontGradeFilterModal [isSmall]="true" (closed)="onFontGradeModalClosed($event)"> </app-modal>
-
-<app-modal #confirmDelete [isSmall]="true" (closed)="onDeleteProblemConfirmed($event)"> </app-modal> -->

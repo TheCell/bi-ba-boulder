@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { OutdoorRenderer } from '../../renderer/outdoor-renderer/outdoor-renderer';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { EnhancedLine, OutdoorRenderer } from '../../renderer/outdoor-renderer/outdoor-renderer';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { BlocDto, LineDto, LinesService } from '@api-net/index';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -9,6 +9,7 @@ import { BoulderLoaderService } from '../../background-loading/boulder-loader.se
 import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camera-controls';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { BlocLineItem } from './bloc-line-item/bloc-line-item';
+import { ColorService } from '../../core/util-services/color.service';
 
 @Component({
   selector: 'app-outdoor-bloc',
@@ -20,10 +21,22 @@ export class OutdoorBloc implements OnInit {
   private boulderLoaderService = inject(BoulderLoaderService);
   private linesService = inject(LinesService);
   private toastService = inject(ToastService);
+  private colorService = inject(ColorService);
 
   public currentRawModel = signal<ArrayBuffer | undefined>(undefined);
   public bloc: BlocDto;
   public lines = signal<LineDto[]>([]);
+  public enhancedLines = computed<EnhancedLine[]>(() => {
+    const lines = this.lines();
+    const enhancedLines = lines.map((line) => {
+      const enhancedLine: EnhancedLine = {
+        ...line,
+        lineColor: this.colorService.nextColor()
+      };
+      return enhancedLine;
+    });
+    return enhancedLines;
+  });
   public selectedLine = signal<LineDto | undefined>(undefined);
 
   private loadNextResolution = new Subject<void>();
@@ -75,7 +88,7 @@ export class OutdoorBloc implements OnInit {
     });
   }
 
-  public onSelectedLine(line: LineDto): void {
+  public onSelectedLine(line: LineDto | undefined): void {
     if (this.selectedLine() === line) {
       this.selectedLine.set(undefined);
     } else {
