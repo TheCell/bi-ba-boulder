@@ -51,7 +51,7 @@ export class OutdoorRenderer implements AfterViewInit {
   public rawModel = input<ArrayBuffer>();
   public lines = input<LineDto[]>();
   public selectedLine = input<LineDto | undefined>();
-  public selected = output<LineDto>();
+  public selected = output<LineDto | undefined>();
 
   private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
   private scene = new THREE.Scene();
@@ -324,7 +324,9 @@ export class OutdoorRenderer implements AfterViewInit {
       return;
     }
 
-    this.checkIntersection(event.clientX, event.clientY);
+    if (event.button === 0) {
+      this.checkIntersection(event.clientX, event.clientY);
+    }
   };
 
   private checkIntersection(x: number, y: number): void {
@@ -362,6 +364,8 @@ export class OutdoorRenderer implements AfterViewInit {
           this.selected.emit(selectedLine);
         }
       }
+    } else {
+      this.selected.emit(undefined);
     }
   }
 

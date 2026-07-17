@@ -75,7 +75,7 @@ export class OutdoorBloc implements OnInit {
     });
   }
 
-  public onSelectedLine(line: LineDto): void {
+  public onSelectedLine(line: LineDto | undefined): void {
     if (this.selectedLine() === line) {
       this.selectedLine.set(undefined);
     } else {
