@@ -1,0 +1,12 @@
+<li
+  [class.selected]="isSelected()"
+  class="item"
+  role="button"
+  tabindex="0"
+  (click)="selectLine()"
+  (keypress)="selectLine()"
+  [id]="line().id">
+  <span class="item-cell name">{{ line().name }}</span>
+  <span class="item-cell description hidden-on-mobile">{{ line().description }}</span>
+  <span class="item-cell fontGrade">{{ line().fontGrade ?? undefined | appFontGradePipe }}</span>
+</li>

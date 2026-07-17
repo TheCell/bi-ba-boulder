@@ -20,8 +20,11 @@
 - Mesh Model
   - Mesh Color & Texture: Unwrap
     - (Or just Load the settings file)
-    - Settings > Texture resolution 4096 x 4096
+    - Settings > Texture resolution 4096 x 4096 or 8192 x 8192
     - Settings > Unwrap Method: Geometric
+  - Analyze
+    - Check Topology
+    - Check Integrity
   - Export Levels of Detail
     - (Or just Load the settings file)
     - Model Count: 3
@@ -33,6 +36,7 @@
       - Texture format: WebP
     - Export vertex normals: No
     - Export vertex colors: No
+- Copyright processing see copyright folder
 
 # Prepare Model for export
 - Open the LOD Models in Blender

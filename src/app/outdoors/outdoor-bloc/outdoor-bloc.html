@@ -7,7 +7,12 @@
       } -->
     <!-- <app-problem-rules-overlay [boulderProblem]="selectedProblem"> </app-problem-rules-overlay> -->
     <app-camera-controls> </app-camera-controls>
-    <app-outdoor-renderer class="render" [rawModel]="currentRawModel()" [lines]="lines"></app-outdoor-renderer>
+    <app-outdoor-renderer
+      class="render"
+      [rawModel]="currentRawModel()"
+      [lines]="lines()"
+      [selectedLine]="selectedLine()"
+      (selected)="onSelectedLine($event)"></app-outdoor-renderer>
     } @else {
     <app-loading-image class="render"> </app-loading-image>
     }
@@ -41,26 +46,13 @@
       <div class="list-header">
         <div class="">name</div>
         <div class="hidden-on-mobile">description</div>
-        <!-- <div aria-hidden="true" (click)="onGradeClicked()" class="filterable">
-          grade
-          @if (currentFilter.gradeMax || currentFilter.gradeMin) {
-            <app-icon [icon]="'filter'"></app-icon>
-          }
-        </div> -->
-        <div class="">creator</div>
-        <!-- <div aria-hidden="true" (click)="onDateClicked()" class="hidden-on-mobile filterable">
-          created Date
-          @if (currentFilter.dateOrder) {
-            @if (currentFilter.dateOrder === 'asc') {
-              <app-icon [icon]="'filter-asc'"></app-icon>
-            } @else {
-              <app-icon [icon]="'filter-desc'"></app-icon>
-            }
-          }
-        </div> -->
+        <div class="">grade</div>
       </div>
       <div #scrollList class="list-content">
         <ul>
+          @for (line of lines(); track line.id) {
+          <app-bloc-line-item class="li-item" [line]="line" (selected)="onSelectedLine($event)"></app-bloc-line-item>
+          }
           <!-- @for (problem of listOfProblems; track problem.id) {
             <app-spraywall-legend-item
               class="li-item"

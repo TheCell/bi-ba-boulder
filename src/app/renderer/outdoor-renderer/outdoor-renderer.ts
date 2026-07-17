@@ -7,6 +7,7 @@ import {
   HostListener,
   inject,
   input,
+  output,
   signal,
   ViewChild
 } from '@angular/core';
@@ -49,6 +50,8 @@ export class OutdoorRenderer implements AfterViewInit {
 
   public rawModel = input<ArrayBuffer>();
   public lines = input<LineDto[]>();
+  public selectedLine = input<LineDto | undefined>();
+  public selected = output<LineDto>();
 
   private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
   private scene = new THREE.Scene();
@@ -62,14 +65,18 @@ export class OutdoorRenderer implements AfterViewInit {
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
 
-  // all the debugging stuff
-  private lineGeometry = new THREE.BufferGeometry();
-  private line = new THREE.Line(this.lineGeometry, new THREE.LineBasicMaterial());
   private currentMesh?: THREE.Mesh;
+  private raycaster: THREE.Raycaster = null!;
+  private LINE_LAYER = 2;
 
   // tube
   private tubeParams = {
     radius: 0.05,
+    extrusionSegments: 100,
+    radiusSegments: 6
+  };
+  private highlightedTubeParams = {
+    radius: 0.1,
     extrusionSegments: 100,
     radiusSegments: 6
   };
@@ -102,44 +109,17 @@ export class OutdoorRenderer implements AfterViewInit {
       this.regenerateLines();
     });
 
-    // effect(() => {
-    //   const boulderProblem = this.boulderProblem();
+    effect(() => {
+      this.selectedLine();
+      this.regenerateLines();
+    });
 
-    //   if (boulderProblem) {
-    //     this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
-    //     this.highlightActiveShaderUniform = 1.0;
-    //     this.ambientLight.intensity = this.ambientLightLowIntensity;
-    //   } else {
-    //     this.highlightedHoldsTexture = undefined;
-    //     this.highlightActiveShaderUniform = 0.0;
-    //     this.ambientLight.intensity = this.ambientLightIntensity;
-    //   }
-    //   this.loop();
-    // });
-
-    // const activatedRoute = inject(ActivatedRoute);
-    // this.rgbBlockTexture = activatedRoute.snapshot.data['spraywallDebugTexture'];
-
+    window.addEventListener('pointerdown', this.onPointerClick);
     this.destroyRef.onDestroy(() => this.dispose());
   }
 
   public ngAfterViewInit(): void {
     this.createCanvas();
-
-    // const lines = this.lines();
-    // if (lines !== this.processedLines) {
-    //   if (lines !== undefined) {
-    //     lines.forEach((line: BoulderLine) => {
-    //       this.addLineToScene(
-    //         this.scene,
-    //         line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
-    //         line.color
-    //       );
-    //     });
-
-    //     this.processedLines = lines;
-    //   }
-    // }
     this.initialized = true;
     this.resetCameraPosition();
   }
@@ -165,6 +145,7 @@ export class OutdoorRenderer implements AfterViewInit {
     this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
+    this.camera.layers.enable(this.LINE_LAYER);
 
     this.onResize();
     this.scene.add(this.camera);
@@ -182,8 +163,9 @@ export class OutdoorRenderer implements AfterViewInit {
     };
     this.controls.addEventListener('change', this.loop);
 
-    this.lineGeometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-    this.scene.add(this.line);
+    this.raycaster = new THREE.Raycaster(this.camera.position);
+    this.raycaster.layers.set(this.LINE_LAYER);
+
     this.regenerateLines();
 
     this.loop();
@@ -193,16 +175,6 @@ export class OutdoorRenderer implements AfterViewInit {
     if (!this.renderer) {
       return;
     }
-
-    // if (this.rgbBlockMaterial) {
-    //   const shader = this.rgbBlockMaterial.userData['shader'];
-
-    //   if (shader) {
-    //     shader.uniforms.useRgbTexture.value = this.useRgbTexture;
-    //     shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
-    //     shader.uniforms.isHighlightActive.value = this.highlightActiveShaderUniform;
-    //   }
-    // }
 
     this.renderer.render(this.scene, this.camera);
     // window.requestAnimationFrame(this.loop); // removed to not rerender on idle
@@ -249,7 +221,7 @@ export class OutdoorRenderer implements AfterViewInit {
   }
 
   private regenerateLines(): void {
-    if (!this.initialized) {
+    if (this.scene === undefined) {
       return;
     }
 
@@ -272,48 +244,62 @@ export class OutdoorRenderer implements AfterViewInit {
     if (lines === undefined) {
       return;
     }
+    const selectedLine = this.selectedLine();
 
-    for (const line of lines) {
-      if (line.data?.positions === undefined || line.data.positions.length < 3) {
-        continue;
+    if (selectedLine !== undefined) {
+      this.addLineToScene(selectedLine, true);
+    } else {
+      for (const line of lines) {
+        this.addLineToScene(line, false);
       }
-
-      const tubeMaterial = new THREE.MeshBasicMaterial({
-        color: this.colorService.nextColor(),
-        transparent: true,
-        opacity: 0.3,
-        depthTest: false,
-        depthWrite: false
-      });
-      const rayVisionMaterial = new THREE.MeshStandardMaterial({
-        color: tubeMaterial.color
-      });
-
-      const path = new THREE.CatmullRomCurve3(
-        line.data?.positions.map((point) => new THREE.Vector3(point[0], point[1], point[2])),
-        false,
-        'chordal',
-        0.5
-      );
-
-      const tubeGeometry = new THREE.TubeGeometry(
-        path,
-        this.tubeParams.extrusionSegments,
-        this.tubeParams.radius,
-        this.tubeParams.radiusSegments,
-        false
-      );
-      const tubeMesh: THREE.Mesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
-      const rayVisionTubeMesh = tubeMesh.clone();
-      rayVisionTubeMesh.material = rayVisionMaterial;
-      this.tubeGeometries.push(tubeGeometry);
-      this.tubeMeshes.push(tubeMesh);
-      this.rayVisionTubeMeshes.push(rayVisionTubeMesh);
-      this.scene.add(rayVisionTubeMesh);
-      this.scene.add(tubeMesh);
     }
 
     this.loop();
+  }
+
+  private addLineToScene(line: LineDto, isHighlighted: boolean): void {
+    if (line.data?.positions === undefined || line.data.positions.length < 3) {
+      return;
+    }
+
+    // todo add additional info (start holds highlight etc.)
+
+    const tubeMaterial = new THREE.MeshBasicMaterial({
+      color: this.colorService.nextColor(),
+      transparent: true,
+      opacity: 0.3,
+      depthTest: false,
+      depthWrite: false
+    });
+    const rayVisionMaterial = new THREE.MeshStandardMaterial({
+      color: tubeMaterial.color
+    });
+
+    const path = new THREE.CatmullRomCurve3(
+      line.data?.positions.map((point) => new THREE.Vector3(point[0], point[1], point[2])),
+      false,
+      'chordal',
+      0.5
+    );
+
+    const tubeGeometry = new THREE.TubeGeometry(
+      path,
+      isHighlighted ? this.highlightedTubeParams.extrusionSegments : this.tubeParams.extrusionSegments,
+      isHighlighted ? this.highlightedTubeParams.radius : this.tubeParams.radius,
+      isHighlighted ? this.highlightedTubeParams.radiusSegments : this.tubeParams.radiusSegments,
+      false
+    );
+    const tubeMesh: THREE.Mesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+    tubeMesh.layers.set(this.LINE_LAYER);
+    tubeMesh.userData = { id: line.id, identifier: line.identifier };
+    const rayVisionTubeMesh = tubeMesh.clone();
+    rayVisionTubeMesh.material = rayVisionMaterial;
+    rayVisionTubeMesh.layers.set(this.LINE_LAYER);
+    this.tubeGeometries.push(tubeGeometry);
+    this.tubeMeshes.push(tubeMesh);
+    this.rayVisionTubeMeshes.push(rayVisionTubeMesh);
+    this.scene.add(rayVisionTubeMesh);
+    this.scene.add(tubeMesh);
   }
 
   private resetCameraPosition(): void {
@@ -333,6 +319,52 @@ export class OutdoorRenderer implements AfterViewInit {
     this.scene.remove(gltf.scene);
   }
 
+  private onPointerClick = (event: PointerEvent) => {
+    if (!this.renderer || !this.camera) {
+      return;
+    }
+
+    this.checkIntersection(event.clientX, event.clientY);
+  };
+
+  private checkIntersection(x: number, y: number): void {
+    if (this.tubeMeshes.length === 0) {
+      return;
+    }
+
+    const lines = this.lines();
+    if (lines === undefined || lines.length === 0) {
+      return;
+    }
+
+    const pointer = new THREE.Vector2();
+    const canvasWidth = this.canvas.nativeElement.offsetWidth;
+    const canvasHeight = this.canvas.nativeElement.offsetHeight;
+    const canvasTop = this.canvas.nativeElement.getBoundingClientRect().top;
+    const canvasLeft = this.canvas.nativeElement.getBoundingClientRect().left;
+
+    const mouseX = x - canvasLeft;
+    const mouseY = y - canvasTop;
+
+    pointer.x = (mouseX / canvasWidth) * 2 - 1;
+    pointer.y = -(mouseY / canvasHeight) * 2 + 1;
+
+    this.raycaster.setFromCamera(pointer, this.camera);
+    const currentIntersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
+    this.raycaster.intersectObjects(this.tubeMeshes, false, currentIntersections);
+
+    if (currentIntersections.length > 0) {
+      const currentIntersection = currentIntersections[0];
+      console.log(currentIntersection.object.userData);
+      if (currentIntersection.object.userData['id'] !== undefined) {
+        const selectedLine = lines.find((line) => line.id === currentIntersection.object.userData['id']);
+        if (selectedLine !== undefined) {
+          this.selected.emit(selectedLine);
+        }
+      }
+    }
+  }
+
   private dispose(): void {
     this.controls?.removeEventListener('change', this.loop);
     this.controls?.dispose();
@@ -348,9 +380,6 @@ export class OutdoorRenderer implements AfterViewInit {
       }
     });
 
-    // this.highlightedHoldsTexture?.dispose();
-    // this.rgbBlockTexture?.dispose();
-    // this.rgbBlockMaterial?.dispose();
     this.renderer?.dispose();
   }
 }
