@@ -17,8 +17,11 @@ import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CameraControlsService } from '../camera-controls.service';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
-import { ColorService } from '../../core/util-services/color.service';
 import { LineDto } from '@api-net/model/models';
+
+export interface EnhancedLine extends LineDto {
+  lineColor: THREE.Color;
+}
 
 @Component({
   selector: 'app-outdoor-renderer',
@@ -30,7 +33,6 @@ export class OutdoorRenderer implements AfterViewInit {
   private el: ElementRef = inject(ElementRef);
   private destroyRef = inject(DestroyRef);
   private cameraControlsService = inject(CameraControlsService);
-  private colorService = inject(ColorService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
   @HostListener('window:resize') public onResize(): void {
@@ -49,7 +51,7 @@ export class OutdoorRenderer implements AfterViewInit {
   }
 
   public rawModel = input<ArrayBuffer>();
-  public lines = input<LineDto[]>();
+  public lines = input<EnhancedLine[]>();
   public selectedLine = input<LineDto | undefined>();
   public selected = output<LineDto | undefined>();
 
@@ -64,6 +66,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private directionalLightIntensity = 1.0;
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
+  private pointerClickStartTimeStamp = 0;
 
   private currentMesh?: THREE.Mesh;
   private raycaster: THREE.Raycaster = null!;
@@ -114,7 +117,6 @@ export class OutdoorRenderer implements AfterViewInit {
       this.regenerateLines();
     });
 
-    window.addEventListener('pointerdown', this.onPointerClick);
     this.destroyRef.onDestroy(() => this.dispose());
   }
 
@@ -162,6 +164,14 @@ export class OutdoorRenderer implements AfterViewInit {
       TWO: THREE.TOUCH.DOLLY_ROTATE
     };
     this.controls.addEventListener('change', this.loop);
+
+    canvas.addEventListener('pointerdown', () => (this.pointerClickStartTimeStamp = performance.now()));
+    canvas.addEventListener('pointerup', (event: PointerEvent) => {
+      if (this.pointerClickStartTimeStamp > 0 && performance.now() - this.pointerClickStartTimeStamp < 100) {
+        this.onPointerClick(event);
+      }
+      this.pointerClickStartTimeStamp = 0;
+    });
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(this.LINE_LAYER);
@@ -247,7 +257,10 @@ export class OutdoorRenderer implements AfterViewInit {
     const selectedLine = this.selectedLine();
 
     if (selectedLine !== undefined) {
-      this.addLineToScene(selectedLine, true);
+      const enhancedLine = this.lines()?.find((line) => line.id === selectedLine.id);
+      if (enhancedLine !== undefined) {
+        this.addLineToScene(enhancedLine, true);
+      }
     } else {
       for (const line of lines) {
         this.addLineToScene(line, false);
@@ -257,7 +270,7 @@ export class OutdoorRenderer implements AfterViewInit {
     this.loop();
   }
 
-  private addLineToScene(line: LineDto, isHighlighted: boolean): void {
+  private addLineToScene(line: EnhancedLine, isHighlighted: boolean): void {
     if (line.data?.positions === undefined || line.data.positions.length < 3) {
       return;
     }
@@ -265,7 +278,7 @@ export class OutdoorRenderer implements AfterViewInit {
     // todo add additional info (start holds highlight etc.)
 
     const tubeMaterial = new THREE.MeshBasicMaterial({
-      color: this.colorService.nextColor(),
+      color: line.lineColor,
       transparent: true,
       opacity: 0.3,
       depthTest: false,
@@ -357,7 +370,6 @@ export class OutdoorRenderer implements AfterViewInit {
 
     if (currentIntersections.length > 0) {
       const currentIntersection = currentIntersections[0];
-      console.log(currentIntersection.object.userData);
       if (currentIntersection.object.userData['id'] !== undefined) {
         const selectedLine = lines.find((line) => line.id === currentIntersection.object.userData['id']);
         if (selectedLine !== undefined) {
@@ -372,6 +384,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private dispose(): void {
     this.controls?.removeEventListener('change', this.loop);
     this.controls?.dispose();
+    this.canvas?.nativeElement?.removeEventListener('pointerdown', this.onPointerClick);
 
     if (this.currentGltf) {
       this.removeBoulderFromScene(this.currentGltf);
