@@ -36,6 +36,7 @@
       - Texture format: WebP
     - Export vertex normals: No
     - Export vertex colors: No
+- Copyright processing see copyright folder
 
 # Prepare Model for export
 - Open the LOD Models in Blender
