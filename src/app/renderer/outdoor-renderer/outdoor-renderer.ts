@@ -7,6 +7,7 @@ import {
   HostListener,
   inject,
   input,
+  output,
   signal,
   ViewChild
 } from '@angular/core';
@@ -49,6 +50,8 @@ export class OutdoorRenderer implements AfterViewInit {
 
   public rawModel = input<ArrayBuffer>();
   public lines = input<LineDto[]>();
+  public selectedLine = input<LineDto | undefined>();
+  public selected = output<LineDto>();
 
   private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
   private scene = new THREE.Scene();
@@ -67,6 +70,11 @@ export class OutdoorRenderer implements AfterViewInit {
   // tube
   private tubeParams = {
     radius: 0.05,
+    extrusionSegments: 100,
+    radiusSegments: 6
+  };
+  private highlightedTubeParams = {
+    radius: 0.1,
     extrusionSegments: 100,
     radiusSegments: 6
   };
@@ -98,26 +106,16 @@ export class OutdoorRenderer implements AfterViewInit {
       this.lines();
       this.regenerateLines();
     });
+
+    effect(() => {
+      this.selectedLine();
+      this.regenerateLines();
+    });
     this.destroyRef.onDestroy(() => this.dispose());
   }
 
   public ngAfterViewInit(): void {
     this.createCanvas();
-
-    // const lines = this.lines();
-    // if (lines !== this.processedLines) {
-    //   if (lines !== undefined) {
-    //     lines.forEach((line: BoulderLine) => {
-    //       this.addLineToScene(
-    //         this.scene,
-    //         line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
-    //         line.color
-    //       );
-    //     });
-
-    //     this.processedLines = lines;
-    //   }
-    // }
     this.initialized = true;
     this.resetCameraPosition();
   }
@@ -237,48 +235,59 @@ export class OutdoorRenderer implements AfterViewInit {
     if (lines === undefined) {
       return;
     }
+    const selectedLine = this.selectedLine();
 
-    for (const line of lines) {
-      if (line.data?.positions === undefined || line.data.positions.length < 3) {
-        continue;
+    if (selectedLine !== undefined) {
+      this.addLineToScene(selectedLine, true);
+    } else {
+      for (const line of lines) {
+        this.addLineToScene(line, false);
       }
-
-      const tubeMaterial = new THREE.MeshBasicMaterial({
-        color: this.colorService.nextColor(),
-        transparent: true,
-        opacity: 0.3,
-        depthTest: false,
-        depthWrite: false
-      });
-      const rayVisionMaterial = new THREE.MeshStandardMaterial({
-        color: tubeMaterial.color
-      });
-
-      const path = new THREE.CatmullRomCurve3(
-        line.data?.positions.map((point) => new THREE.Vector3(point[0], point[1], point[2])),
-        false,
-        'chordal',
-        0.5
-      );
-
-      const tubeGeometry = new THREE.TubeGeometry(
-        path,
-        this.tubeParams.extrusionSegments,
-        this.tubeParams.radius,
-        this.tubeParams.radiusSegments,
-        false
-      );
-      const tubeMesh: THREE.Mesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
-      const rayVisionTubeMesh = tubeMesh.clone();
-      rayVisionTubeMesh.material = rayVisionMaterial;
-      this.tubeGeometries.push(tubeGeometry);
-      this.tubeMeshes.push(tubeMesh);
-      this.rayVisionTubeMeshes.push(rayVisionTubeMesh);
-      this.scene.add(rayVisionTubeMesh);
-      this.scene.add(tubeMesh);
     }
 
     this.loop();
+  }
+
+  private addLineToScene(line: LineDto, isHighlighted: boolean): void {
+    if (line.data?.positions === undefined || line.data.positions.length < 3) {
+      return;
+    }
+
+    // todo add additional info (start holds highlight etc.)
+
+    const tubeMaterial = new THREE.MeshBasicMaterial({
+      color: this.colorService.nextColor(),
+      transparent: true,
+      opacity: 0.3,
+      depthTest: false,
+      depthWrite: false
+    });
+    const rayVisionMaterial = new THREE.MeshStandardMaterial({
+      color: tubeMaterial.color
+    });
+
+    const path = new THREE.CatmullRomCurve3(
+      line.data?.positions.map((point) => new THREE.Vector3(point[0], point[1], point[2])),
+      false,
+      'chordal',
+      0.5
+    );
+
+    const tubeGeometry = new THREE.TubeGeometry(
+      path,
+      isHighlighted ? this.highlightedTubeParams.extrusionSegments : this.tubeParams.extrusionSegments,
+      isHighlighted ? this.highlightedTubeParams.radius : this.tubeParams.radius,
+      isHighlighted ? this.highlightedTubeParams.radiusSegments : this.tubeParams.radiusSegments,
+      false
+    );
+    const tubeMesh: THREE.Mesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+    const rayVisionTubeMesh = tubeMesh.clone();
+    rayVisionTubeMesh.material = rayVisionMaterial;
+    this.tubeGeometries.push(tubeGeometry);
+    this.tubeMeshes.push(tubeMesh);
+    this.rayVisionTubeMeshes.push(rayVisionTubeMesh);
+    this.scene.add(rayVisionTubeMesh);
+    this.scene.add(tubeMesh);
   }
 
   private resetCameraPosition(): void {

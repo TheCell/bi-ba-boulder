@@ -8,10 +8,11 @@ import { ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camera-controls';
 import { ToastService } from '../../core/toast-container/toast.service';
+import { BlocLineItem } from './bloc-line-item/bloc-line-item';
 
 @Component({
   selector: 'app-outdoor-bloc',
-  imports: [OutdoorRenderer, LoadingImageComponent, CameraControls, RouterLink],
+  imports: [OutdoorRenderer, LoadingImageComponent, CameraControls, RouterLink, BlocLineItem],
   templateUrl: './outdoor-bloc.html',
   styleUrl: './outdoor-bloc.scss'
 })
@@ -23,6 +24,7 @@ export class OutdoorBloc implements OnInit {
   public currentRawModel = signal<ArrayBuffer | undefined>(undefined);
   public bloc: BlocDto;
   public lines = signal<LineDto[]>([]);
+  public selectedLine = signal<LineDto | undefined>(undefined);
 
   private loadNextResolution = new Subject<void>();
   private startLoadingBoulder = new Subject<void>();
@@ -72,5 +74,12 @@ export class OutdoorBloc implements OnInit {
       }
     });
   }
-}
 
+  public onSelectedLine(line: LineDto): void {
+    if (this.selectedLine() === line) {
+      this.selectedLine.set(undefined);
+    } else {
+      this.selectedLine.set(line);
+    }
+  }
+}

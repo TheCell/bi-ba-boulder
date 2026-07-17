@@ -151,24 +151,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       }
     });
 
-    // effect(() => {
-    //   const boulderProblem = this.boulderProblem();
-
-    //   if (boulderProblem) {
-    //     this.setHighlightedHoldsTextureFromData(boulderProblem.image, 128, 128);
-    //     this.highlightActiveShaderUniform = 1.0;
-    //     this.ambientLight.intensity = this.ambientLightLowIntensity;
-    //   } else {
-    //     this.highlightedHoldsTexture = undefined;
-    //     this.highlightActiveShaderUniform = 0.0;
-    //     this.ambientLight.intensity = this.ambientLightIntensity;
-    //   }
-    //   this.loop();
-    // });
-
-    // const activatedRoute = inject(ActivatedRoute);
-    // this.rgbBlockTexture = activatedRoute.snapshot.data['spraywallDebugTexture'];
-
     this.destroyRef.onDestroy(() => this.dispose());
 
     // raycaster things
