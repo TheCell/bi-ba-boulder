@@ -113,7 +113,17 @@ export class OutdoorRenderer implements AfterViewInit {
     });
 
     effect(() => {
-      this.selectedLine();
+      const line = this.selectedLine();
+      if (line === undefined) {
+        return;
+      }
+
+      const lineObject = this.tubeMeshes.find((tubeMesh) => tubeMesh.userData['id'] === line.id);
+      if (lineObject === undefined) {
+        return;
+      }
+
+      this.cameraControlsService.focusOnObject(lineObject);
       this.regenerateLines();
     });
 
