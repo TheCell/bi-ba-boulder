@@ -6,7 +6,10 @@
   (click)="selectLine()"
   (keypress)="selectLine()"
   [id]="line().id">
-  <span class="item-cell name">{{ line().name }}</span>
-  <span class="item-cell description hidden-on-mobile">{{ line().description }}</span>
-  <span class="item-cell fontGrade">{{ line().fontGrade ?? undefined | appFontGradePipe }}</span>
+  <div class="item-row">
+    <span class="identifier">{{ line().identifier }}</span>
+    <span class="name">{{ line().name }}</span>
+    <span class="fontGrade">{{ line().fontGrade ?? undefined | appFontGradePipe }}</span>
+  </div>
+  <span class="item-row description hidden-on-mobile">{{ line().description }}</span>
 </li>
