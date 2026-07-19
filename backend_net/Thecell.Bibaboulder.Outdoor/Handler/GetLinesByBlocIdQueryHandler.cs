@@ -23,9 +23,9 @@ public class GetLinesByBlocIdQueryHandler : IQueryHandler<GetLinesByBlocIdQuery,
         var lines = await _dbContext.Lines
             .AsNoTracking()
             .Where(l => l.BlocId == query.BlocId)
+            .OrderBy(l => l.Identifier)
             .ToListAsync();
 
-        var test = lines.Select(l => l.MapToLineDto()).ToList();
-        return test;
+        return lines.Select(l => l.MapToLineDto()).ToList();
     }
 }
