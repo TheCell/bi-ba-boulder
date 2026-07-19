@@ -66,11 +66,11 @@ export class OutdoorRenderer implements AfterViewInit {
   private directionalLightIntensity = 1.0;
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
-  private pointerClickStartTimeStamp = 0;
 
   private currentMesh?: THREE.Mesh;
   private raycaster: THREE.Raycaster = null!;
   private LINE_LAYER = 2;
+  private loopCountSincePointerDown = 0;
 
   // tube
   private tubeParams = {
@@ -177,12 +177,13 @@ export class OutdoorRenderer implements AfterViewInit {
     };
     this.controls.addEventListener('change', this.loop);
 
-    canvas.addEventListener('pointerdown', () => (this.pointerClickStartTimeStamp = performance.now()));
+    canvas.addEventListener('pointerdown', () => {
+      this.loopCountSincePointerDown = 0;
+    });
     canvas.addEventListener('pointerup', (event: PointerEvent) => {
-      if (this.pointerClickStartTimeStamp > 0 && performance.now() - this.pointerClickStartTimeStamp < 100) {
+      if (this.loopCountSincePointerDown < 2) {
         this.onPointerClick(event);
       }
-      this.pointerClickStartTimeStamp = 0;
     });
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
@@ -198,6 +199,7 @@ export class OutdoorRenderer implements AfterViewInit {
       return;
     }
 
+    this.loopCountSincePointerDown++;
     this.renderer.render(this.scene, this.camera);
     // window.requestAnimationFrame(this.loop); // removed to not rerender on idle
   };
