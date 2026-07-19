@@ -37,7 +37,7 @@ export class OutdoorBloc implements OnInit {
     });
     return enhancedLines;
   });
-  public selectedLine = signal<LineDto | undefined>(undefined);
+  public selectedLine = signal<{ line: LineDto; setFocus: boolean } | undefined>(undefined);
 
   private loadNextResolution = new Subject<void>();
   private startLoadingBoulder = new Subject<void>();
@@ -88,7 +88,7 @@ export class OutdoorBloc implements OnInit {
     });
   }
 
-  public onSelectedLine(line: LineDto | undefined): void {
+  public onSelectedLine(line: { line: LineDto; setFocus: boolean } | undefined): void {
     if (this.selectedLine() === line) {
       this.selectedLine.set(undefined);
     } else {

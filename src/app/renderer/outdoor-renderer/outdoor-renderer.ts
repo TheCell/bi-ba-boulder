@@ -52,8 +52,8 @@ export class OutdoorRenderer implements AfterViewInit {
 
   public rawModel = input<ArrayBuffer>();
   public lines = input<EnhancedLine[]>();
-  public selectedLine = input<LineDto | undefined>();
-  public selected = output<LineDto | undefined>();
+  public selectedLine = input<{ line: LineDto; setFocus: boolean } | undefined>();
+  public selected = output<{ line: LineDto; setFocus: boolean } | undefined>();
 
   private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
   private scene = new THREE.Scene();
@@ -113,17 +113,19 @@ export class OutdoorRenderer implements AfterViewInit {
     });
 
     effect(() => {
-      const line = this.selectedLine();
-      if (line === undefined) {
+      const lineWithInfos = this.selectedLine();
+      if (lineWithInfos === undefined) {
         return;
       }
 
-      const lineObject = this.tubeMeshes.find((tubeMesh) => tubeMesh.userData['id'] === line.id);
+      const lineObject = this.tubeMeshes.find((tubeMesh) => tubeMesh.userData['id'] === lineWithInfos.line.id);
       if (lineObject === undefined) {
         return;
       }
 
-      this.cameraControlsService.focusOnObject(lineObject);
+      if (lineWithInfos.setFocus) {
+        this.cameraControlsService.focusOnObject(lineObject);
+      }
       this.regenerateLines();
     });
 
@@ -267,7 +269,7 @@ export class OutdoorRenderer implements AfterViewInit {
     const selectedLine = this.selectedLine();
 
     if (selectedLine !== undefined) {
-      const enhancedLine = this.lines()?.find((line) => line.id === selectedLine.id);
+      const enhancedLine = this.lines()?.find((line) => line.id === selectedLine.line.id);
       if (enhancedLine !== undefined) {
         this.addLineToScene(enhancedLine, true);
       }
@@ -382,8 +384,9 @@ export class OutdoorRenderer implements AfterViewInit {
       const currentIntersection = currentIntersections[0];
       if (currentIntersection.object.userData['id'] !== undefined) {
         const selectedLine = lines.find((line) => line.id === currentIntersection.object.userData['id']);
+
         if (selectedLine !== undefined) {
-          this.selected.emit(selectedLine);
+          this.selected.emit({ line: selectedLine, setFocus: false });
         }
       }
     } else {

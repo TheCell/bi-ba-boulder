@@ -30,8 +30,8 @@
           <app-bloc-line-item
             class="li-item"
             [line]="line"
-            [isSelected]="selectedLine()?.id === line.id"
-            (selected)="onSelectedLine($event)"></app-bloc-line-item>
+            [isSelected]="selectedLine()?.line?.id === line.id"
+            (selected)="onSelectedLine({ line: $event, setFocus: true })"></app-bloc-line-item>
           }
         </ul>
       </div>
