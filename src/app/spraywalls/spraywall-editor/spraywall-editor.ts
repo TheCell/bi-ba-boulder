@@ -65,10 +65,10 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   private subscription = new Subscription();
 
   public constructor() {
-    const router = inject(ActivatedRoute);
-    this.spraywallId = router.snapshot.paramMap.get('spraywallId') ?? '';
-    this.problemId = router.snapshot.paramMap.get('problemId') ?? undefined;
-    this.spraywallProblemForEdit = router.snapshot.data['spraywallProblem'];
+    const activatedRoute = inject(ActivatedRoute);
+    this.spraywallId = activatedRoute.snapshot.paramMap.get('spraywallId') ?? '';
+    this.problemId = activatedRoute.snapshot.paramMap.get('problemId') ?? undefined;
+    this.spraywallProblemForEdit = activatedRoute.snapshot.data['spraywallProblem'];
 
     this.currentHoldColor = this.holdColorOptions[this.colorForm.controls.spraywallHoldType.value - 1].color;
 
