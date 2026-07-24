@@ -1,15 +1,21 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, ViewChild } from '@angular/core';
 import { Icon } from '../../core/icon/icon';
 import { ToastService } from '../../core/toast-container/toast.service';
+import { Modal } from '../../core/modal/modal/modal';
+import { SocialsDialogData } from './socials-dialog/socials-dialog-data';
+import { ModalService } from '../../core/modal/modal.service';
+import { SocialsDialog } from './socials-dialog/socials-dialog';
 
 @Component({
   selector: 'app-socials-overlay',
-  imports: [Icon],
+  imports: [Icon, Modal],
   templateUrl: './socials-overlay.html',
   styleUrl: './socials-overlay.scss'
 })
 export class SocialsOverlay {
+  @ViewChild('modal') private modal!: Modal;
   private toastService = inject(ToastService);
+  private modalService = inject(ModalService);
 
   public routeUrl = input<string | undefined>();
 
@@ -47,7 +53,18 @@ export class SocialsOverlay {
   }
 
   public showQrCode(): void {
-    console.log('todo');
+    const routeUrl = this.routeUrl();
+    if (routeUrl === undefined) {
+      return;
+    }
+
+    const socialsDialogData: SocialsDialogData = {
+      url: routeUrl
+    };
+    const modal = this.modalService.open(this.modal.id, SocialsDialog);
+    if (modal && modal.initialize) {
+      modal.initialize(socialsDialogData);
+    }
   }
 
   private isMobileDevice(): boolean {

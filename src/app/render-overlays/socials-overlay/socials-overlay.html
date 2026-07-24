@@ -2,8 +2,10 @@
 <div class="container">
   <div class="list">
     <app-icon class="action-button" (click)="shareUrl()" [icon]="'share'" [isBig]="true"> </app-icon>
-    <!-- <app-icon class="action-button" (click)="showQrCode()" [icon]="'qr-code'" [isBig]="true"> </app-icon> -->
+    <app-icon class="action-button" (click)="showQrCode()" [icon]="'qr-code'" [isBig]="true"> </app-icon>
   </div>
 </div>
 }
+
+<app-modal #modal></app-modal>
 
