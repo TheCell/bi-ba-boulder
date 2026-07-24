@@ -6,7 +6,8 @@
         </app-problem-log-overlay>
       }
       <app-problem-rules-overlay [boulderProblem]="selectedProblem"> </app-problem-rules-overlay>
-      <app-camera-controls> </app-camera-controls>
+      <app-camera-controls></app-camera-controls>
+      <app-socials-overlay [routeUrl]="selectedRouteUrl()"></app-socials-overlay>
       <app-boulder-render class="render" [rawModel]="currentRawModel" [boulderProblem]="selectedProblem">
       </app-boulder-render>
     } @else {

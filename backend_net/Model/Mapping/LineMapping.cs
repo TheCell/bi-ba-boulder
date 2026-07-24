@@ -15,6 +15,12 @@ public static class LineMapping
             Name = line.Name,
             Data = line.Data,
             FontGrade = line.FontGrade,
+            Version = line.Version,
+            Metadata = new LineMetadataDto
+            {
+                CanEdit = false,
+                CanDelete = false
+            }
         };
     }
 }

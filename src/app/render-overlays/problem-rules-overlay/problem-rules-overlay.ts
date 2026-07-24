@@ -1,7 +1,7 @@
 import { Component, inject, input } from '@angular/core';
 import { SpraywallProblemDto } from '@api-net/index';
-import { Icon } from '../../../core/icon/icon';
-import { ToastService } from '../../../core/toast-container/toast.service';
+import { Icon } from '../../core/icon/icon';
+import { ToastService } from '../../core/toast-container/toast.service';
 
 type ProblemRuleType = 'circuit' | 'freeFeet' | 'noMatch';
 

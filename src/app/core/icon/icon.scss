@@ -193,6 +193,18 @@
   background-color: $warning;
 }
 
+.share {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$share-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$share-svg}");
+  // background-color: $warning;
+}
+
+.qr-code {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$qr-code-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$qr-code-svg}");
+  // background-color: $warning;
+}
+
 .focus {
   background-color: $primary;
 }

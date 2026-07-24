@@ -6,7 +6,8 @@
         </app-problem-log-overlay>
       } -->
     <!-- <app-problem-rules-overlay [boulderProblem]="selectedProblem"> </app-problem-rules-overlay> -->
-    <app-camera-controls> </app-camera-controls>
+    <app-camera-controls></app-camera-controls>
+    <app-socials-overlay [routeUrl]="selectedRouteUrl()"></app-socials-overlay>
     <app-outdoor-renderer
       class="render"
       [rawModel]="currentRawModel()"
@@ -19,27 +20,30 @@
   </section>
   <section class="legend">
     <div class="actions">
-      <button class="button action-button action-end" [routerLink]="['/', 'boulder-editor', bloc.id]">
+      @if (selectedLine()?.line?.metadata?.canEdit) {
+      <button class="button action-button warning" (click)="onEditLine()">Edit</button>
+      } @if (selectedLine()?.line?.metadata?.canDelete) {
+      <button class="button action-button danger" (click)="onDeleteLine()">Delete</button>
+      }
+
+      <button class="button action-button action-end" [routerLink]="['/', 'bloc-editor', bloc.id]">
         Create new route
       </button>
     </div>
     <div class="legend-list">
-      <div class="list-header">
-        <div class="">name</div>
-        <div class="hidden-on-mobile">description</div>
-        <div class="">grade</div>
-      </div>
       <div #scrollList class="list-content">
         <ul>
           @for (line of lines(); track line.id) {
           <app-bloc-line-item
             class="li-item"
             [line]="line"
-            [isSelected]="selectedLine()?.id === line.id"
-            (selected)="onSelectedLine($event)"></app-bloc-line-item>
+            [isSelected]="selectedLine()?.line?.id === line.id"
+            (selected)="onSelectedLine({ line: $event, setFocus: true })"></app-bloc-line-item>
           }
         </ul>
       </div>
     </div>
   </section>
 </div>
+
+<app-modal #confirmDelete [isSmall]="true" (closed)="onDeleteProblemConfirmed($event)"> </app-modal>

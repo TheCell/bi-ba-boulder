@@ -161,12 +161,18 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
             if (entry.State == EntityState.Added)
             {
                 entry.Property(nameof(EntityAuditFields.CreatedDate)).CurrentValue = currentDate;
-                entry.Property(nameof(EntityAuditFields.CreatedUserId)).CurrentValue = currentUserId;
+                if ((Guid?)entry.Property(nameof(EntityAuditFields.CreatedUserId)).CurrentValue == Guid.Empty)
+                {
+                    entry.Property(nameof(EntityAuditFields.CreatedUserId)).CurrentValue = currentUserId;
+                }
             }
             else if (entry.State == EntityState.Modified)
             {
                 entry.Property(nameof(EntityAuditFields.UpdatedDate)).CurrentValue = currentDate;
-                entry.Property(nameof(EntityAuditFields.UpdatedUserId)).CurrentValue = currentUserId;
+                if ((Guid?)entry.Property(nameof(EntityAuditFields.CreatedUserId)).CurrentValue == Guid.Empty)
+                {
+                    entry.Property(nameof(EntityAuditFields.UpdatedUserId)).CurrentValue = currentUserId;
+                }
             }
         }
     }

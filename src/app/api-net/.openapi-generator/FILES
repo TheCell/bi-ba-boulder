@@ -38,9 +38,9 @@ model/createLineCommand.ts
 model/createSectorCommand.ts
 model/createSpraywallProblemCommand.ts
 model/deleteBoulderLogCommand.ts
-model/deleteLineCommand.ts
 model/lineData.ts
 model/lineDto.ts
+model/lineMetadataDto.ts
 model/models.ts
 model/searchProblemsRequest.ts
 model/sectorDto.ts

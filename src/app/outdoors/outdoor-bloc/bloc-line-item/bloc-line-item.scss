@@ -11,7 +11,7 @@
 }
 
 .item.selected {
-  background-color: rgba($secondary, 1.0);
+  background-color: rgba($darkDark, 1.0);
 }
 
 .item:hover, .item:focus {
@@ -19,34 +19,21 @@
 }
 
 .item:active {
-  background-color: rgba($primary, 1.0);
+  background-color: rgba($darkDark, 1.0);
 }
 
-.item {
-  display: grid;
-  grid-template: 'name description fontGrade createdByName createdDate header';
-  grid-template-columns: 30% 40% 10% 10% 10%;
-  white-space: nowrap;
-}
-
-.name {
-  grid-area: name;
-}
-
-.description {
-  grid-area: description;
+.identifier {
+  color: $primary;
+  margin-right: 10px;
 }
 
 .fontGrade {
-  grid-area: fontGrade;
+  color: $primary;
+  margin-left: 10px;
 }
 
-.createdByName {
-  grid-area: createdByName;
-}
-
-.createdDate {
-  grid-area: createdDate;
+.item-row {
+  margin-bottom: 5px;
 }
 
 .item-cell {
@@ -68,8 +55,8 @@
 }
 
 .item.selected>.hidden-on-mobile {
-  color: $light;
-  text-shadow: $dark 1px 1px 5px;
+  color: $blueGray;
+  text-shadow: $black 1px 1px 5px;
 }
 
 .item.selected>.name {
@@ -77,17 +64,6 @@
 }
 
 @media (max-width: 600px) {
-  .item {
-    grid-template: 'name fontGrade createdByName';
-    grid-template-columns: 60% 10% 30%;
-  }
-  
-  .item.selected {
-    grid-template: 'name fontGrade createdByName'
-                   'description additional createdDate';
-    grid-template-columns: 60% 10% 30%;
-  }
-
   .hidden-on-mobile {
     display: none;
   }

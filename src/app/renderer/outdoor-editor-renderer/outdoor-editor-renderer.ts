@@ -21,6 +21,7 @@ import { ColorService } from '../../core/util-services/color.service';
 import { Viewpoint } from '../common/viewpoint';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
+import { LineDto } from '@api-net/model/models';
 
 @Component({
   selector: 'app-outdoor-editor-renderer',
@@ -51,6 +52,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   public rawModel = input<ArrayBuffer>();
+  public lineForEdit = input<LineDto | undefined>();
+  public revertLastPointCommand = input(0);
 
   private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
   private scene = new THREE.Scene();
@@ -149,6 +152,35 @@ export class OutdoorEditorRenderer implements AfterViewInit {
           this.removePreviousAndAddBoulderToScene(rawModel);
         }
       }
+    });
+
+    effect(() => {
+      const line = this.lineForEdit();
+      this.clearLoggedPoints();
+
+      if (line === undefined || line.data?.positions === undefined) {
+        return;
+      }
+
+      for (const positions of line.data?.positions ?? []) {
+        const position = new THREE.Vector3(positions[0], positions[1], positions[2]);
+        const loggedPoint = { id: crypto.randomUUID(), position: position };
+        this.loggedPoints.push(loggedPoint);
+        this.generatePoint(loggedPoint.id, loggedPoint.position);
+      }
+
+      if (this.initialized) {
+        this.regeneratePath();
+      }
+    });
+
+    effect(() => {
+      const commandValue = this.revertLastPointCommand();
+      if (commandValue === 0) {
+        return;
+      }
+
+      this.removeLastPoint();
     });
 
     this.destroyRef.onDestroy(() => this.dispose());
@@ -287,8 +319,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
         'chordal',
         0.5
       );
-      const json = JSON.stringify(this.loggedPoints.map((lp) => lp.position.toArray()));
-      console.log(json);
 
       this.tubeGeometry = new THREE.TubeGeometry(
         path,
@@ -421,7 +451,9 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       this.cameraControlsService.setCameraInteractable(true);
     });
 
-    // this.scene.add(this.transformControls);
+    if (this.loggedPoints.length > 0) {
+      this.regeneratePath();
+    }
 
     this.startLooping();
   }
@@ -433,18 +465,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
     this.isLooping = false;
 
-    // if (this.rgbBlockMaterial) {
-    //   const shader = this.rgbBlockMaterial.userData['shader'];
-
-    //   if (shader) {
-    //     shader.uniforms.useRgbTexture.value = this.useRgbTexture;
-    //     shader.uniforms.highlightedHoldsTexture.value = this.highlightedHoldsTexture;
-    //     shader.uniforms.isHighlightActive.value = this.highlightActiveShaderUniform;
-    //   }
-    // }
-
     if (this.controls) {
-      // console.log('this.controls.target', this.controls.target, 'this.camera.position', this.camera.position);
       this.debugSphere.position.copy(this.controls.target);
     }
 
@@ -456,7 +477,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.renderer.render(this.scene, this.camera);
     if (this.isLooping) {
       window.requestAnimationFrame(this.loop);
-      // this.loop();
     }
   };
 
@@ -480,11 +500,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
             this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
             this.originalBlockTexture = this.originalBlockMaterial.map;
             this.originalBlockMaterial.needsUpdate = true;
-            // this.originalBlockTexture!.needsUpdate = true;
-            // this.originalBlockTexture!.colorSpace = THREE.LinearSRGBColorSpace;
-            // this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-            // // this.originalBlockMaterial.wireframe = true;
-            // this.rgbBlockMaterial = this.setupCustomShaderMaterial();
           }
         });
 
@@ -495,7 +510,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
           this.currentGltf = gltf;
           this.resetCameraPosition();
         }
-        // this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
         this.startLooping();
       },
       (err: ErrorEvent) => {
@@ -522,6 +536,9 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private dispose(): void {
+    window.removeEventListener('pointermove', this.onPointerMove);
+    window.removeEventListener('pointerdown', this.addPointToLoggedPoints);
+
     this.controls?.removeEventListener('change', this.startLooping);
     this.controls?.dispose();
 
@@ -536,9 +553,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       }
     });
 
-    // this.highlightedHoldsTexture?.dispose();
-    // this.rgbBlockTexture?.dispose();
-    // this.rgbBlockMaterial?.dispose();
     this.renderer?.dispose();
   }
 
@@ -559,4 +573,22 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.isLooping = true;
     this.loop();
   };
+
+  private clearLoggedPoints(): void {
+    this.loggedPoints.length = 0;
+
+    for (const sphere of this.sphereArray) {
+      this.scene.remove(sphere);
+      sphere.geometry.dispose();
+      const material = sphere.material;
+      if (Array.isArray(material)) {
+        for (const mat of material) {
+          mat.dispose();
+        }
+      } else {
+        material.dispose();
+      }
+    }
+    this.sphereArray = [];
+  }
 }

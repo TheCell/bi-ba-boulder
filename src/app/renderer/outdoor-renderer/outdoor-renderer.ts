@@ -52,8 +52,8 @@ export class OutdoorRenderer implements AfterViewInit {
 
   public rawModel = input<ArrayBuffer>();
   public lines = input<EnhancedLine[]>();
-  public selectedLine = input<LineDto | undefined>();
-  public selected = output<LineDto | undefined>();
+  public selectedLine = input<{ line: LineDto; setFocus: boolean } | undefined>();
+  public selected = output<{ line: LineDto; setFocus: boolean } | undefined>();
 
   private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
   private scene = new THREE.Scene();
@@ -66,11 +66,11 @@ export class OutdoorRenderer implements AfterViewInit {
   private directionalLightIntensity = 1.0;
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
-  private pointerClickStartTimeStamp = 0;
 
   private currentMesh?: THREE.Mesh;
   private raycaster: THREE.Raycaster = null!;
   private LINE_LAYER = 2;
+  private loopCountSincePointerDown = 0;
 
   // tube
   private tubeParams = {
@@ -113,7 +113,19 @@ export class OutdoorRenderer implements AfterViewInit {
     });
 
     effect(() => {
-      this.selectedLine();
+      const lineWithInfos = this.selectedLine();
+      if (lineWithInfos === undefined) {
+        return;
+      }
+
+      const lineObject = this.tubeMeshes.find((tubeMesh) => tubeMesh.userData['id'] === lineWithInfos.line.id);
+      if (lineObject === undefined) {
+        return;
+      }
+
+      if (lineWithInfos.setFocus) {
+        this.cameraControlsService.focusOnObject(lineObject);
+      }
       this.regenerateLines();
     });
 
@@ -165,12 +177,13 @@ export class OutdoorRenderer implements AfterViewInit {
     };
     this.controls.addEventListener('change', this.loop);
 
-    canvas.addEventListener('pointerdown', () => (this.pointerClickStartTimeStamp = performance.now()));
+    canvas.addEventListener('pointerdown', () => {
+      this.loopCountSincePointerDown = 0;
+    });
     canvas.addEventListener('pointerup', (event: PointerEvent) => {
-      if (this.pointerClickStartTimeStamp > 0 && performance.now() - this.pointerClickStartTimeStamp < 100) {
+      if (this.loopCountSincePointerDown < 2) {
         this.onPointerClick(event);
       }
-      this.pointerClickStartTimeStamp = 0;
     });
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
@@ -186,6 +199,7 @@ export class OutdoorRenderer implements AfterViewInit {
       return;
     }
 
+    this.loopCountSincePointerDown++;
     this.renderer.render(this.scene, this.camera);
     // window.requestAnimationFrame(this.loop); // removed to not rerender on idle
   };
@@ -257,7 +271,7 @@ export class OutdoorRenderer implements AfterViewInit {
     const selectedLine = this.selectedLine();
 
     if (selectedLine !== undefined) {
-      const enhancedLine = this.lines()?.find((line) => line.id === selectedLine.id);
+      const enhancedLine = this.lines()?.find((line) => line.id === selectedLine.line.id);
       if (enhancedLine !== undefined) {
         this.addLineToScene(enhancedLine, true);
       }
@@ -372,8 +386,9 @@ export class OutdoorRenderer implements AfterViewInit {
       const currentIntersection = currentIntersections[0];
       if (currentIntersection.object.userData['id'] !== undefined) {
         const selectedLine = lines.find((line) => line.id === currentIntersection.object.userData['id']);
+
         if (selectedLine !== undefined) {
-          this.selected.emit(selectedLine);
+          this.selected.emit({ line: selectedLine, setFocus: false });
         }
       }
     } else {

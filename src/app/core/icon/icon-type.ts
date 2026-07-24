@@ -29,6 +29,8 @@ export const ICONS = [
   'free-feet-empty',
   'free-feet-filled',
   'no-match-empty',
-  'no-match-filled'
+  'no-match-filled',
+  'share',
+  'qr-code'
 ] as const;
 export type IconType = (typeof ICONS)[number];

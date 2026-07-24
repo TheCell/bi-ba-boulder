@@ -8,6 +8,7 @@
  * Do not edit the class manually.
  */
 import { LineData } from './lineData';
+import { LineMetadataDto } from './lineMetadataDto';
 
 
 export interface LineDto { 
@@ -17,5 +18,7 @@ export interface LineDto {
     description?: string | null;
     name?: string | null;
     data?: LineData;
+    version: number;
+    metadata: LineMetadataDto;
 }
 

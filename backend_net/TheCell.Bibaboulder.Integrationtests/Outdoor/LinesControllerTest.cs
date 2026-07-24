@@ -30,6 +30,63 @@ public class LinesControllerTest : BaseTest
     }
 
     [Fact]
+    public async Task GetLine_Anonymous_Unauthorized()
+    {
+        var (_, lines) = await PrepareData();
+        var line = lines.First();
+
+        var response = await Client().GetAsync($"{_baseUrl}/{line.Id}", TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetLine_NormalUser_Forbidden()
+    {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.User)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var (_, lines) = await PrepareData();
+        var line = lines.First();
+
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var response = await client.GetAsync($"{_baseUrl}/{line.Id}", TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetLine_Admin_Ok()
+    {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.Admin)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var (_, lines) = await PrepareData();
+        var line = lines.First();
+
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var response = await client.GetAsync($"{_baseUrl}/{line.Id}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<LineDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Equal(line.Id, result.Id);
+
+        LineAssertion.Assert(line, result);
+        Assert.False(result.Metadata.CanEdit);
+        Assert.True(result.Metadata.CanDelete);
+    }
+
+    [Fact]
     public async Task GetLinesByBlocId_Anonymous_Unauthorized()
     {
         var (bloc, _) = await PrepareData();
@@ -82,6 +139,8 @@ public class LinesControllerTest : BaseTest
         {
             var line = result.Single(l => l.Id == lineFromDb.Id);
             LineAssertion.Assert(lineFromDb, line);
+            Assert.False(line.Metadata.CanEdit);
+            Assert.True(line.Metadata.CanDelete);
         }
     }
 

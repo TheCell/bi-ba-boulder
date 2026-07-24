@@ -9,7 +9,7 @@ export class ToastService {
   public arrayUpdated: EventEmitter<void> = new EventEmitter<void>();
   public toasts: IToastInternal[] = [];
 
-  private standardDelay = 2000;
+  private standardDelay = 1500;
 
   public show(toast: IToast): void {
     const id = ''.appendUniqueId();
