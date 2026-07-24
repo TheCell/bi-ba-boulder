@@ -5,7 +5,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
-import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camera-controls';
 import { OutdoorEditorRenderer } from '../../renderer/outdoor-editor-renderer/outdoor-editor-renderer';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { Modal } from '../../core/modal/modal/modal';
@@ -13,6 +12,7 @@ import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { ModalService } from '../../core/modal/modal.service';
 import { OutdoorSaveDialog } from '../outdoor-save-dialog/outdoor-save-dialog';
 import { OutdoorSaveData } from '../outdoor-save-dialog/outdoor-save-data.interface';
+import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
 
 @Component({
   selector: 'app-outdoor-editor',

@@ -8,7 +8,6 @@ import { Subject, Subscription } from 'rxjs';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
 import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CameraControls } from '../spraywall/camera-controls/camera-controls';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { ModalService } from '../../core/modal/modal.service';
@@ -16,6 +15,7 @@ import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { Modal } from '../../core/modal/modal/modal';
 import { SpraywallHoldType, TypeAndColor, holdColorOptions } from '../../renderer/common/spraywall-hold-types';
 import { SpraywallEditorRenderer } from '../../renderer/spraywall-editor-renderer/spraywall-editor-renderer';
+import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
 
 interface iHoldColorForm {
   spraywallHoldType: SpraywallHoldType;

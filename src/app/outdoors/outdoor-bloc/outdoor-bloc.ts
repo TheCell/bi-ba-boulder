@@ -6,7 +6,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
-import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camera-controls';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { BlocLineItem } from './bloc-line-item/bloc-line-item';
 import { ColorService } from '../../core/util-services/color.service';
@@ -15,6 +14,7 @@ import { ConfirmDeleteDialog } from '../confirm-delete-dialog/confirm-delete-dia
 import { ConfirmDeleteDialogData } from '../confirm-delete-dialog/confirm-delete-dialog-data';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { ModalService } from '../../core/modal/modal.service';
+import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
 
 @Component({
   selector: 'app-outdoor-bloc',

@@ -32,14 +32,14 @@ import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dial
 import { ConfirmDeleteDialog } from './confirm-delete-dialog/confirm-delete-dialog';
 import { ConfirmDeleteDialogData } from './confirm-delete-dialog/confirm-delete-dialog-data';
 import { ProblemLogOverlay } from './problem-log-overlay/problem-log-overlay';
-import { CameraControls } from './camera-controls/camera-controls';
 import { Icon } from '../../core/icon/icon';
 import { Modal } from '../../core/modal/modal/modal';
 import { AuthSessionStateService } from '../../auth/auth-session-state.service';
 import { ModalService } from '../../core/modal/modal.service';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
-import { ProblemRulesOverlay } from './problem-rules-overlay/problem-rules-overlay';
+import { ProblemRulesOverlay } from '../../render-overlays/problem-rules-overlay/problem-rules-overlay';
+import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
 
 @Component({
   selector: 'app-spraywall',
