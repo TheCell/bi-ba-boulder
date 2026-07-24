@@ -12,6 +12,7 @@ import { SpraywallEditor } from './spraywalls/spraywall-editor/spraywall-editor'
 import { spraywallProblemResolver } from './core/resolvers/spraywall-problem.resolver';
 import { OutdoorBloc } from './outdoors/outdoor-bloc/outdoor-bloc';
 import { OutdoorEditor } from './outdoors/outdoor-editor/outdoor-editor';
+import { lineResolver } from './core/resolvers/line.resolver';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -42,14 +43,22 @@ export const routes: Routes = [
     }
   },
   {
-    path: 'boulder/:id',
+    path: 'bloc/:id',
     component: OutdoorBloc,
     resolve: {
       bloc: blocResolver
     }
   },
   {
-    path: 'boulder-editor/:id',
+    path: 'bloc-editor/:id/:lineId',
+    component: OutdoorEditor,
+    resolve: {
+      bloc: blocResolver,
+      line: lineResolver
+    }
+  },
+  {
+    path: 'bloc-editor/:id',
     component: OutdoorEditor,
     resolve: {
       bloc: blocResolver

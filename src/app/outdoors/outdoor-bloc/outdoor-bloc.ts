@@ -1,8 +1,8 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { EnhancedLine, OutdoorRenderer } from '../../renderer/outdoor-renderer/outdoor-renderer';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { BlocDto, LineDto, LinesService } from '@api-net/index';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
@@ -10,18 +10,27 @@ import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camer
 import { ToastService } from '../../core/toast-container/toast.service';
 import { BlocLineItem } from './bloc-line-item/bloc-line-item';
 import { ColorService } from '../../core/util-services/color.service';
+import { Modal } from '../../core/modal/modal/modal';
+import { ConfirmDeleteDialog } from '../confirm-delete-dialog/confirm-delete-dialog';
+import { ConfirmDeleteDialogData } from '../confirm-delete-dialog/confirm-delete-dialog-data';
+import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
+import { ModalService } from '../../core/modal/modal.service';
 
 @Component({
   selector: 'app-outdoor-bloc',
-  imports: [OutdoorRenderer, LoadingImageComponent, CameraControls, RouterLink, BlocLineItem],
+  imports: [OutdoorRenderer, LoadingImageComponent, CameraControls, RouterLink, BlocLineItem, Modal],
   templateUrl: './outdoor-bloc.html',
   styleUrl: './outdoor-bloc.scss'
 })
 export class OutdoorBloc implements OnInit {
+  @ViewChild('confirmDelete') private confirmDeleteModal!: Modal;
+
   private boulderLoaderService = inject(BoulderLoaderService);
   private linesService = inject(LinesService);
   private toastService = inject(ToastService);
   private colorService = inject(ColorService);
+  private router = inject(Router);
+  private modalService = inject(ModalService);
 
   public currentRawModel = signal<ArrayBuffer | undefined>(undefined);
   public bloc: BlocDto;
@@ -86,6 +95,38 @@ export class OutdoorBloc implements OnInit {
         this.lines.set(lines);
       }
     });
+  }
+
+  public onEditLine(): void {
+    if (this.selectedLine() !== undefined) {
+      this.router.navigate(['/', 'bloc-editor', this.bloc.id, this.selectedLine()!.line.id]);
+    }
+  }
+
+  public onDeleteLine(): void {
+    if (this.selectedLine()?.line) {
+      const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteDialog);
+      if (modal && modal.initialize) {
+        const data: ConfirmDeleteDialogData = {
+          line: this.selectedLine()!.line
+        };
+        modal.initialize(data);
+      }
+    }
+  }
+
+  public onDeleteProblemConfirmed(closeModalEvent: CloseModalEvent): void {
+    if (closeModalEvent.closeType === 0) {
+      if (this.selectedLine()?.line) {
+        this.linesService.deleteLine(this.selectedLine()!.line.id).subscribe({
+          next: () => {
+            this.toastService.showSuccess('Success', 'Line successfully deleted');
+            this.lines.set(this.lines().filter((l) => l.id !== this.selectedLine()!.line.id));
+            this.selectedLine.set(undefined);
+          }
+        });
+      }
+    }
   }
 
   public onSelectedLine(line: { line: LineDto; setFocus: boolean } | undefined): void {

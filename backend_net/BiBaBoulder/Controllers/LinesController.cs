@@ -36,6 +36,14 @@ public class LinesController : ControllerBase
         _deleteLineCommandHandler = deleteLineCommandHandler;
     }
 
+    [HttpGet("{lineId}")]
+    [Authorize(Roles = AuthorizationRoles.Admin)]
+    public async Task<LineDto> GetLine(Guid lineId)
+    {
+        return await _getLineQueryHandler.HandleAsync(
+            new GetLineQuery { Id = lineId });
+    }
+
     [HttpGet("by-bloc/{blocId}")]
     [Authorize(Roles = AuthorizationRoles.Admin)]
     public async Task<ICollection<LineDto>> GetLinesByBlocId(Guid blocId)
@@ -64,9 +72,12 @@ public class LinesController : ControllerBase
 
     [HttpDelete("{id}")]
     [Authorize(Roles = AuthorizationRoles.Admin)]
-    public async Task DeleteLine(Guid id, [FromBody] DeleteLineCommand command)
+    public async Task DeleteLine(Guid id)
     {
-        command.Id = id;
+        var command = new DeleteLineCommand
+        {
+            Id = id
+        };
         await _deleteLineCommandHandler.HandleAsync(command);
     }
 }

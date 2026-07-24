@@ -14,6 +14,7 @@ public static class LineAssertion
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Description, actual.Description);
         Xunit.Assert.Equal(expected.FontGrade, actual.FontGrade);
+        Xunit.Assert.Equal(expected.Version, actual.Version);
         Assert(expected.Data, actual.Data);
     }
 

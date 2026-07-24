@@ -12,4 +12,6 @@ public class LineDto
     public string? Description { get; set; }
     public string? Name { get; set; }
     public LineData Data { get; set; } = new LineData();
+    public required long Version { get; set; }
+    public required LineMetadataDto Metadata { get; set; }
 }

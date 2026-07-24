@@ -522,6 +522,47 @@
         }
       }
     },
+    "/api/Lines/{lineId}": {
+      "get": {
+        "tags": [
+          "Lines"
+        ],
+        "operationId": "getLine",
+        "parameters": [
+          {
+            "name": "lineId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Lines/by-bloc/{blocId}": {
       "get": {
         "tags": [
@@ -709,26 +750,6 @@
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteLineCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteLineCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteLineCommand"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1513,15 +1534,6 @@
           }
         }
       },
-      "DeleteLineCommand": {
-        "type": "object",
-        "properties": {
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
       "FontGrade": {
         "type": "integer"
       },
@@ -1549,7 +1561,9 @@
       "LineDto": {
         "required": [
           "id",
-          "identifier"
+          "identifier",
+          "version",
+          "metadata"
         ],
         "type": "object",
         "properties": {
@@ -1584,6 +1598,28 @@
           },
           "data": {
             "$ref": "#/components/schemas/LineData"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/LineMetadataDto"
+          }
+        }
+      },
+      "LineMetadataDto": {
+        "required": [
+          "canEdit",
+          "canDelete"
+        ],
+        "type": "object",
+        "properties": {
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canDelete": {
+            "type": "boolean"
           }
         }
       },

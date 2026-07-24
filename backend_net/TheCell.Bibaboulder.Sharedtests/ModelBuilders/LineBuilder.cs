@@ -49,4 +49,10 @@ public class LineBuilder : BuilderBase<Line>
         _instance.BlocId = value;
         return this;
     }
+
+    public LineBuilder SetCreator(User value)
+    {
+        _instance.CreatedUserId = value.Id;
+        return this;
+    }
 }

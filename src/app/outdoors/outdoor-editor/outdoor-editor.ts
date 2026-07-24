@@ -1,6 +1,6 @@
 import { Component, inject, signal, ViewChild } from '@angular/core';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
-import { BlocDto, CreateLineCommand, LineData, LineDto, LinesService } from '@api-net/index';
+import { BlocDto, LineData, LineDto, LinesService } from '@api-net/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { ResolutionLevel } from '../../interfaces/resolution-level';
@@ -8,23 +8,33 @@ import { BoulderLoaderService } from '../../background-loading/boulder-loader.se
 import { CameraControls } from '../../spraywalls/spraywall/camera-controls/camera-controls';
 import { OutdoorEditorRenderer } from '../../renderer/outdoor-editor-renderer/outdoor-editor-renderer';
 import { ToastService } from '../../core/toast-container/toast.service';
+import { Modal } from '../../core/modal/modal/modal';
+import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
+import { ModalService } from '../../core/modal/modal.service';
+import { OutdoorSaveDialog } from '../outdoor-save-dialog/outdoor-save-dialog';
+import { OutdoorSaveData } from '../outdoor-save-dialog/outdoor-save-data.interface';
 
 @Component({
   selector: 'app-outdoor-editor',
-  imports: [LoadingImageComponent, CameraControls, OutdoorEditorRenderer, RouterLink],
+  imports: [LoadingImageComponent, CameraControls, OutdoorEditorRenderer, RouterLink, Modal],
   templateUrl: './outdoor-editor.html',
   styleUrl: './outdoor-editor.scss'
 })
 export class OutdoorEditor {
+  @ViewChild('modal') private modal!: Modal;
   @ViewChild('renderer') private renderer!: OutdoorEditorRenderer;
 
   private boulderLoaderService = inject(BoulderLoaderService);
   private linesService = inject(LinesService);
   private toastService = inject(ToastService);
   private router = inject(Router);
+  private modalService = inject(ModalService);
 
   public currentRawModel = signal<ArrayBuffer | undefined>(undefined);
   public bloc: BlocDto;
+  public lineId? = '';
+  public lineForEdit = signal<LineDto | undefined>(undefined);
+  public revertLastPointCommand = signal(0);
 
   private loadNextResolution = new Subject<void>();
   private startLoadingBoulder = new Subject<void>();
@@ -35,6 +45,12 @@ export class OutdoorEditor {
   public constructor() {
     const activatedRoute = inject(ActivatedRoute);
     this.bloc = activatedRoute.snapshot.data['bloc'];
+    this.lineForEdit.set(activatedRoute.snapshot.data['line']);
+
+    const lineForEdit = this.lineForEdit();
+    if (lineForEdit) {
+      this.lineId = lineForEdit.id;
+    }
 
     // todo cache and use cached if exists
     this.subscription.add(
@@ -67,7 +83,19 @@ export class OutdoorEditor {
     this.startLoadingBoulder.next();
   }
 
-  public debugSaveRoute(): void {
+  public closeModal(closeModalEvent: CloseModalEvent) {
+    if (closeModalEvent.closeType > 0) {
+      // don't reset
+    } else {
+      this.router.navigate(['/', 'bloc', this.bloc.id]);
+    }
+  }
+
+  public openSaveModal(): void {
+    const component = this.modalService.open(this.modal.id, OutdoorSaveDialog);
+    if (!component) {
+      throw new Error('Modal component not found');
+    }
     const linePoints = this.renderer.getLinePoints();
     if (!linePoints) {
       this.toastService.showDanger('Debug Save', 'No line data from renderer. Cannot save route.');
@@ -78,25 +106,25 @@ export class OutdoorEditor {
       positions: linePoints
     };
 
-    const createLine: CreateLineCommand = {
-      blocId: this.bloc.id,
-      identifier: 'debug-save-' + Date.now(),
-      name: 'Debug Save',
-      description: 'Debug save route',
-      fontGrade: 5,
-      data: lineData
+    const dialogData: OutdoorSaveData = {
+      lineData: lineData,
+      blocId: this.bloc.id
     };
-    console.log(createLine);
 
-    this.linesService.createLineForBloc(this.bloc.id, createLine).subscribe({
-      next: (_: LineDto) => {
-        this.toastService.showSuccess('Debug Save', 'Debug save route clicked. Implement saving logic here.');
-        this.router.navigate(['/', 'boulder', this.bloc.id]);
-      },
-      error: (error: Error) => {
-        this.toastService.showDanger('Debug Save', 'Error saving route: ' + error.message);
-      }
-    });
+    const lineForEdit = this.lineForEdit();
+    if (lineForEdit) {
+      dialogData.existingId = lineForEdit.id;
+      dialogData.name = lineForEdit.name ?? undefined;
+      dialogData.description = lineForEdit.description;
+      dialogData.fontGrade = lineForEdit.fontGrade;
+      dialogData.version = lineForEdit.version;
+      dialogData.identifier = lineForEdit.identifier;
+    }
+    component.initialize!(dialogData);
+  }
+
+  public sendRevertLastPointSignal(): void {
+    this.revertLastPointCommand.update((value) => value + 1);
   }
 }
 

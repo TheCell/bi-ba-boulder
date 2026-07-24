@@ -19,7 +19,13 @@
   </section>
   <section class="legend">
     <div class="actions">
-      <button class="button action-button action-end" [routerLink]="['/', 'boulder-editor', bloc.id]">
+      @if (selectedLine()?.line?.metadata?.canEdit) {
+      <button class="button action-button warning" (click)="onEditLine()">Edit</button>
+      } @if (selectedLine()?.line?.metadata?.canDelete) {
+      <button class="button action-button danger" (click)="onDeleteLine()">Delete</button>
+      }
+
+      <button class="button action-button action-end" [routerLink]="['/', 'bloc-editor', bloc.id]">
         Create new route
       </button>
     </div>
@@ -38,3 +44,5 @@
     </div>
   </section>
 </div>
+
+<app-modal #confirmDelete [isSmall]="true" (closed)="onDeleteProblemConfirmed($event)"> </app-modal>

@@ -12,7 +12,6 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { CreateLineCommand } from '../model/models';
-import { DeleteLineCommand } from '../model/models';
 import { LineDto } from '../model/models';
 import { UpdateLineCommand } from '../model/models';
 
@@ -37,9 +36,15 @@ export interface LinesServiceInterface {
      * 
      * 
      * @param id 
-     * @param deleteLineCommand 
      */
-    deleteLine(id: string, deleteLineCommand: DeleteLineCommand, extraHttpRequestParams?: any): Observable<{}>;
+    deleteLine(id: string, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * 
+     * @param lineId 
+     */
+    getLine(lineId: string, extraHttpRequestParams?: any): Observable<LineDto>;
 
     /**
      * 

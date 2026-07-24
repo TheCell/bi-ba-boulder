@@ -9,7 +9,8 @@
  */
 
 
-export interface DeleteLineCommand { 
-    version?: number;
+export interface LineMetadataDto { 
+    canEdit: boolean;
+    canDelete: boolean;
 }
 
