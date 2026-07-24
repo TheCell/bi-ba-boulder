@@ -47,7 +47,7 @@ export const mapFragment = [
   'diffuseColor = mix(fresnelGroundColor, sampledDiffuseColor, 1.0 - hasHighlight);',
   'float applyGray = step(0.5, useRgbTexture);',
   'vec3 grayScale = vec3((sampledDiffuseColor.r * 0.299 + sampledDiffuseColor.g * 0.587 + sampledDiffuseColor.b * 0.114));',
-  'grayScale = mix(grayScale, sampledDiffuseColor.rgb, 0.5);', // mix a bit of color back in to avoid a completely gray look
+  'grayScale = mix(grayScale, sampledDiffuseColor.rgb, 0.15);', // mix a bit of color back in to avoid a completely gray look
   'diffuseColor.rgb = mix(diffuseColor.rgb, mix(diffuseColor.rgb, grayScale, isHighlightActive), (1.0 - hasHighlight));',
   'totalEmissiveRadiance.rgb = mix(totalEmissiveRadiance.rgb, highlightColor, hasHighlight);',
   '#endif'
