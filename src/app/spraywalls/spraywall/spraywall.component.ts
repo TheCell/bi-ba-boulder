@@ -9,6 +9,7 @@ import {
   signal,
   ViewChild
 } from '@angular/core';
+import { SocialsOverlay } from '../../render-overlays/socials-overlay/socials-overlay';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import {
@@ -53,7 +54,8 @@ import { CameraControls } from '../../render-overlays/camera-controls/camera-con
     Modal,
     ProblemLogOverlay,
     CameraControls,
-    ProblemRulesOverlay
+    ProblemRulesOverlay,
+    SocialsOverlay
   ],
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss'
@@ -81,6 +83,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   public selectedProblem?: SpraywallProblemDto = undefined;
   public boulderLog = signal<BoulderLogDto | undefined>(undefined);
   public currentFilter: SearchProblemsRequest = {};
+  private selectedProblemIdFromQueryParam?: string;
 
   public totalCount = 0;
   private currentMaxPage = 1;
@@ -94,6 +97,15 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   public constructor() {
     const route = inject(ActivatedRoute);
     this.spraywallId = route.snapshot.params['id'];
+
+    this.subscription.add(
+      route.queryParamMap.subscribe({
+        next: (queryParams) => {
+          this.selectedProblemIdFromQueryParam = queryParams.get('routeId') ?? undefined;
+          this.trySelectProblemFromQueryParam();
+        }
+      })
+    );
 
     this.subscription.add(
       this.reloadSearchSubject
@@ -110,6 +122,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
               this.listOfProblems = problemSearchResult.problems;
             }
             this.totalCount = problemSearchResult.totalCount;
+            this.trySelectProblemFromQueryParam();
 
             this.changeDetectorRef.markForCheck();
           }
@@ -161,15 +174,16 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.selectedProblem?.id === problem.id) {
       this.onResetSelection();
     } else {
-      this.selectedProblem = problem;
-      this.boulderLog.set(undefined);
-      this.loadBoulderLog.next(problem.id);
+      this.setSelectedProblem(problem);
     }
   }
 
-  public onResetSelection(): void {
+  public onResetSelection(updateUrl = true): void {
     this.selectedProblem = undefined;
     this.boulderLog.set(undefined);
+    if (updateUrl) {
+      this.updateRouteSelectionInUrl(undefined);
+    }
   }
 
   public onDateClicked(): void {
@@ -281,5 +295,63 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalCount = 0;
     this.listOfProblems = [];
     // this.onResetSelection();
+  }
+
+  public selectedRouteUrl(): string | undefined {
+    if (!this.selectedProblem) {
+      return undefined;
+    }
+
+    const urlTree = this.router.createUrlTree(['/', 'spraywall', this.spraywallId], {
+      queryParams: { routeId: this.selectedProblem.id }
+    });
+
+    return new URL(this.router.serializeUrl(urlTree), window.location.origin).toString();
+  }
+
+  private setSelectedProblem(problem: SpraywallProblemDto, updateUrl = true): void {
+    this.selectedProblem = problem;
+    this.boulderLog.set(undefined);
+    this.loadBoulderLog.next(problem.id);
+    if (updateUrl) {
+      this.updateRouteSelectionInUrl(problem.id);
+    }
+  }
+
+  private trySelectProblemFromQueryParam(): void {
+    const routeId = this.selectedProblemIdFromQueryParam;
+    if (!routeId) {
+      if (this.selectedProblem) {
+        this.onResetSelection(false);
+      }
+      return;
+    }
+
+    if (this.selectedProblem?.id === routeId) {
+      return;
+    }
+
+    const problemFromList = this.listOfProblems.find((problem) => problem.id === routeId);
+    if (problemFromList) {
+      this.setSelectedProblem(problemFromList, false);
+      return;
+    }
+
+    this.spraywallProblemsService.getProblem(routeId).subscribe({
+      next: (problem) => {
+        this.setSelectedProblem(problem, false);
+      },
+      error: () => {
+        this.onResetSelection(false);
+      }
+    });
+  }
+
+  private updateRouteSelectionInUrl(routeId?: string): void {
+    this.router.navigate([], {
+      queryParams: { routeId: routeId ?? null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 }

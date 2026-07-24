@@ -102,11 +102,11 @@ export class OutdoorSaveDialog implements IModal {
       };
 
       this.linesService.updateLine(lineId, updateLineCommand).subscribe({
-        next: (_: LineDto) => {
+        next: (line: LineDto) => {
           this.isLoading = false;
           this.canCloseWithoutPermission = true;
           this.toastService.showSuccess('Updated Successfully', 'You have successfully updated the line.');
-          this.closeModal.emit({ closeType: 0 });
+          this.closeModal.emit({ closeType: 0, data: { routeId: line.id } });
         },
         error: () => {
           this.isLoading = false;
@@ -125,10 +125,10 @@ export class OutdoorSaveDialog implements IModal {
       };
 
       this.linesService.createLineForBloc(this.blocId, postRegisterRequest).subscribe({
-        next: (_: LineDto) => {
+        next: (line: LineDto) => {
           this.isLoading = false;
           this.canCloseWithoutPermission = true;
-          this.closeModal.emit({ closeType: 0 });
+          this.closeModal.emit({ closeType: 0, data: { routeId: line.id } });
           this.toastService.showSuccess('Saved Successfully', 'You have successfully saved the line.');
         },
         error: (_: Error) => {
@@ -139,6 +139,5 @@ export class OutdoorSaveDialog implements IModal {
       });
     }
   }
-
 }
 

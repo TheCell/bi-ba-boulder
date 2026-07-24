@@ -87,7 +87,11 @@ export class OutdoorEditor {
     if (closeModalEvent.closeType > 0) {
       // don't reset
     } else {
-      this.router.navigate(['/', 'bloc', this.bloc.id]);
+      const routeId = (closeModalEvent.data as { routeId?: string } | undefined)?.routeId;
+      this.router.navigate(['/', 'bloc', this.bloc.id], {
+        queryParams: { routeId: routeId ?? null },
+        queryParamsHandling: 'merge'
+      });
     }
   }
 

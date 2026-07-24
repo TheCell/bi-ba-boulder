@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Icon } from '../../core/icon/icon';
 import { CameraControlsService } from '../../renderer/camera-controls.service';
 
@@ -6,8 +6,7 @@ import { CameraControlsService } from '../../renderer/camera-controls.service';
   selector: 'app-camera-controls',
   imports: [Icon],
   templateUrl: './camera-controls.html',
-  styleUrl: './camera-controls.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './camera-controls.scss'
 })
 export class CameraControls {
   public cameraControlsService = inject(CameraControlsService);

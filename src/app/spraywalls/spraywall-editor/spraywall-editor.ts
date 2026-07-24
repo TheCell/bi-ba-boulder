@@ -110,7 +110,11 @@ export class SpraywallEditor implements OnInit, OnDestroy {
     if (closeModalEvent.closeType > 0) {
       // don't reset
     } else {
-      this.router.navigate(['/', 'spraywall', this.spraywallId]);
+      const routeId = (closeModalEvent.data as { routeId?: string } | undefined)?.routeId;
+      this.router.navigate(['/', 'spraywall', this.spraywallId], {
+        queryParams: { routeId: routeId ?? null },
+        queryParamsHandling: 'merge'
+      });
     }
   }
 
