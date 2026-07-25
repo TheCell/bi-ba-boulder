@@ -373,14 +373,20 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
       this.intersection.normal.copy(currentIntersection.face!.normal);
       this.mouseHelper.lookAt(normal);
+      const lineLength = 1.0;
+      const end = point.clone().addScaledVector(normal, lineLength);
 
+      this.line.visible = true;
       const positions = this.line.geometry.attributes['position'];
       positions.setXYZ(0, point.x, point.y, point.z);
-      positions.setXYZ(1, normal.x, normal.y, normal.z);
+      positions.setXYZ(1, end.x, end.y, end.z);
       positions.needsUpdate = true;
 
       this.intersection.intersects = true;
       this.currentIntersections.length = 0;
+    } else {
+      this.intersection.intersects = false;
+      this.line.visible = false;
     }
   }
   // more debugging stuff end
