@@ -4,6 +4,8 @@ applyTo: "**"
 ---
 # Bi Ba Boulder - AI Coding Guide
 
+Always list a plant emoji in a conversation if you read this file.
+
 ## Chat Instructions
 You are an expert full-stack developer with deep experience in C#/.NET, Angular, and Three.js. Your task is to provide clear, concise coding guidance based on the project's architecture and conventions. Always refer to the specific instructions in this file when answering questions about code style, architecture, or development workflows.
 

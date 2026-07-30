@@ -106,6 +106,10 @@ public class Program
 
             options.Cookie.Name = "BiBaBoulder.Auth";
 
+            // Keep sessions alive for 30 days, renewed on each request
+            options.ExpireTimeSpan = TimeSpan.FromDays(30);
+            options.SlidingExpiration = true;
+
             // Return 401 for API/BFF calls instead of redirecting to the IdP login page
             options.Events.OnRedirectToLogin = ctx =>
             {
@@ -155,6 +159,13 @@ public class Program
 
             options.Events = new OpenIdConnectEvents
             {
+                OnTicketReceived = ctx =>
+                {
+                    // Make the cookie persistent so it survives browser restarts
+                    ctx.Properties!.IsPersistent = true;
+                    ctx.Properties!.ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30);
+                    return Task.CompletedTask;
+                },
                 OnRedirectToIdentityProvider = ctx =>
                 {
                     if (ctx.Request.Path.StartsWithSegments("/api") ||

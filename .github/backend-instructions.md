@@ -5,6 +5,8 @@ applyTo: "**/*.cs"
 
 ## Backend (C#/.NET)
 
+Always list an animal emoji in a conversation if you read this file.
+
 ### C# Coding Conventions
 
 ALWAYS use Roslyn Analyzers for static code analysis as defined in coding standards.
