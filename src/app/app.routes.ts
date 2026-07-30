@@ -12,12 +12,14 @@ import { spraywallProblemResolver } from './core/resolvers/spraywall-problem.res
 import { OutdoorBloc } from './outdoors/outdoor-bloc/outdoor-bloc';
 import { OutdoorEditor } from './outdoors/outdoor-editor/outdoor-editor';
 import { lineResolver } from './core/resolvers/line.resolver';
+import { ChangelogComponent } from './changelog/changelog.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
   { path: 'home', component: HomeComponent },
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'terms', component: TermsComponent },
+  { path: 'changelog', component: ChangelogComponent },
   {
     path: 'sectors',
     pathMatch: 'full',

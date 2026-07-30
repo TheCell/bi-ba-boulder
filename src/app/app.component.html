@@ -1,6 +1,7 @@
 <nav>
   <ul>
     <li><a [routerLink]="['home']" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a></li>
+    <li><a [routerLink]="['changelog']" routerLinkActive="active" ariaCurrentWhenActive="page">Changelog</a></li>
     @if (authSessionStateService.isLoggedIn()) {
       @if (authSessionStateService.isAdmin()) {
         <li><a [routerLink]="['sectors']" routerLinkActive="active" ariaCurrentWhenActive="page">Sectors</a></li>

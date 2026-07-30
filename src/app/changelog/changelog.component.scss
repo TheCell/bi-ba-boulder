@@ -1,0 +1,71 @@
+@use '../../styles/variables' as *;
+
+:host {
+  display: block;
+  height: 100%;
+  overflow: auto;
+}
+
+.changelog-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.changelog-header {
+  margin-bottom: 1rem;
+
+  h1 {
+    margin: 0;
+  }
+
+  p {
+    margin-top: 0.5rem;
+    color: color-mix(in srgb, $fontColor 85%, $light 15%);
+  }
+}
+
+.release-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.release-card {
+  border: 1px solid color-mix(in srgb, $primary 45%, $lightDark 55%);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, $lightDark 88%, $dark 12%);
+  padding: 1rem;
+
+  h2 {
+    margin: 0.75rem 0;
+    font-size: 1.1rem;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.15rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+}
+
+.release-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.badge {
+  background: color-mix(in srgb, $primary 80%, $dark 20%);
+  color: $fontColor;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.date {
+  color: color-mix(in srgb, $fontColor 70%, $light 30%);
+  font-size: 0.9rem;
+}
