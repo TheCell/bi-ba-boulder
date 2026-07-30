@@ -65,4 +65,10 @@ public class SpraywallProblemBuilder : BuilderBase<SpraywallProblem>
         _instance.FreeFeet = value;
         return this;
     }
+
+    public SpraywallProblemBuilder SetIsWip(bool value)
+    {
+        _instance.IsWip = value;
+        return this;
+    }
 }

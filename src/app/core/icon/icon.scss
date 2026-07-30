@@ -205,6 +205,17 @@
   // background-color: $warning;
 }
 
+.warning-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$warning-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$warning-empty-svg}");
+}
+
+.warning-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$warning-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$warning-filled-svg}");
+  background-color: $warning;
+}
+
 .focus {
   background-color: $primary;
 }

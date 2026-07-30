@@ -114,6 +114,90 @@ public class SpraywallsControllerTest : BaseTest
         Assert.True(result.Metadata.CanEdit);
     }
 
+    [Fact]
+    public async Task SearchSpraywallProblems_WipProblem_HiddenFromAnonymous()
+    {
+        var (spraywall, user, _) = await PrepareProblems();
+
+        var wipProblem = new SpraywallProblemBuilder(user, spraywall)
+            .SetName("WIP Problem")
+            .SetIsWip(true)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(wipProblem);
+        var mockImageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+        await SpraywallImageService.SaveImageAsync(spraywall.Id, wipProblem.Id, mockImageData);
+
+        var response = await Client().PostAsync(
+            $"{_baseUrl}/{spraywall.Id}/problems",
+            GetJsonHttpBody(new { Page = 1 }),
+            TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<SpraywallProblemListDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.DoesNotContain(result.Problems, p => p.Id == wipProblem.Id);
+    }
+
+    [Fact]
+    public async Task SearchSpraywallProblems_WipProblem_VisibleToCreator()
+    {
+        var (spraywall, user, _) = await PrepareProblems();
+
+        var wipProblem = new SpraywallProblemBuilder(user, spraywall)
+            .SetName("WIP Problem Creator")
+            .SetIsWip(true)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(wipProblem);
+        var mockImageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+        await SpraywallImageService.SaveImageAsync(spraywall.Id, wipProblem.Id, mockImageData);
+
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
+        var response = await client.PostAsync(
+            $"{_baseUrl}/{spraywall.Id}/problems",
+            GetJsonHttpBody(new { Page = 1 }),
+            TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<SpraywallProblemListDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Contains(result.Problems, p => p.Id == wipProblem.Id);
+    }
+
+    [Fact]
+    public async Task SearchSpraywallProblems_WipProblem_HiddenFromOtherUser()
+    {
+        var (spraywall, owner, _) = await PrepareProblems();
+
+        var otherUser = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(otherUser);
+
+        var wipProblem = new SpraywallProblemBuilder(owner, spraywall)
+            .SetName("WIP Problem Other")
+            .SetIsWip(true)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(wipProblem);
+        var mockImageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+        await SpraywallImageService.SaveImageAsync(spraywall.Id, wipProblem.Id, mockImageData);
+
+        var client = AuthenticatedClient(userId: otherUser.OidcSubject, role: AuthorizationRoles.Editor, username: otherUser.Username);
+        var response = await client.PostAsync(
+            $"{_baseUrl}/{spraywall.Id}/problems",
+            GetJsonHttpBody(new { Page = 1 }),
+            TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<SpraywallProblemListDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.DoesNotContain(result.Problems, p => p.Id == wipProblem.Id);
+    }
+
     private async Task<List<Thecell.Bibaboulder.Model.Model.Spraywall>> PrepareSpraywalls()
     {
         var spraywalls = new List<Thecell.Bibaboulder.Model.Model.Spraywall>();

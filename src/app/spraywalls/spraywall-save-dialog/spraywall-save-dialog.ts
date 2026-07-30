@@ -21,6 +21,7 @@ interface ISpraywallForm {
   isCircuit: boolean;
   noMatch: boolean;
   freeFeet: boolean;
+  isWip: boolean;
   version?: number;
 }
 
@@ -43,6 +44,7 @@ export class SpraywallSaveDialog implements IModal {
     isCircuit: false,
     noMatch: false,
     freeFeet: false,
+    isWip: false,
     version: undefined
   });
 
@@ -57,6 +59,7 @@ export class SpraywallSaveDialog implements IModal {
     disabled(schemaPath.isCircuit, { when: () => this.isDisabled() });
     disabled(schemaPath.noMatch, { when: () => this.isDisabled() });
     disabled(schemaPath.freeFeet, { when: () => this.isDisabled() });
+    disabled(schemaPath.isWip, { when: () => this.isDisabled() });
   });
   private imageData?: string;
   private spraywallId = '';
@@ -79,6 +82,7 @@ export class SpraywallSaveDialog implements IModal {
       isCircuit: data.isCircuit ?? false,
       noMatch: data.noMatch ?? false,
       freeFeet: data.freeFeet ?? false,
+      isWip: data.isWip ?? false,
       version: data.version
     });
   }
@@ -100,6 +104,7 @@ export class SpraywallSaveDialog implements IModal {
         isCircuit: this.saveModel().isCircuit,
         noMatch: this.saveModel().noMatch,
         freeFeet: this.saveModel().freeFeet,
+        isWip: this.saveModel().isWip,
         version: this.saveModel().version
       };
       this.spraywallProblemsService.updateProblem(this.problemId, update).subscribe({
@@ -123,7 +128,8 @@ export class SpraywallSaveDialog implements IModal {
         fontGrade: this.saveModel().fontGrade ? Number(this.saveModel().fontGrade) : undefined,
         isCircuit: this.saveModel().isCircuit,
         noMatch: this.saveModel().noMatch,
-        freeFeet: this.saveModel().freeFeet
+        freeFeet: this.saveModel().freeFeet,
+        isWip: this.saveModel().isWip
       };
 
       this.spraywallsService.createSpraywallProblem(this.spraywallId, postRegisterRequest).subscribe({

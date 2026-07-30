@@ -13,6 +13,7 @@ public class SpraywallProblemDto : IProblemTags
     public bool IsCircuit { get; set; }
     public bool NoMatch { get; set; }
     public bool FreeFeet { get; set; }
+    public bool IsWip { get; set; }
     public required Guid CreatedById { get; set; }
     public required string CreatedByName { get; set; }
     public required string CreatedDate { get; set; }

@@ -36,9 +36,12 @@ public class SearchSpraywallProblemsQueryHandler : IQueryHandler<SearchSpraywall
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         var isAdmin = currentUser is not null && currentUser.Roles.Contains(AuthorizationRoles.Admin);
 
+        var currentUserId = currentUser?.Id;
+
         var dbQuery = _dbContext.SpraywallProblems
             .AsNoTracking()
-            .Where(p => p.SpraywallId == query.SpraywallId);
+            .Where(p => p.SpraywallId == query.SpraywallId)
+            .Where(p => !p.IsWip || (currentUserId != null && p.CreatorId == currentUserId));
 
         if (query.GradeMin.HasValue)
         {
@@ -61,8 +64,8 @@ public class SearchSpraywallProblemsQueryHandler : IQueryHandler<SearchSpraywall
         }
 
         dbQuery = query.DateOrder == "asc"
-            ? dbQuery.OrderBy(p => p.CreatedDate)
-            : dbQuery.OrderByDescending(p => p.CreatedDate);
+            ? dbQuery.OrderBy(p => !p.IsWip).ThenBy(p => p.CreatedDate)
+            : dbQuery.OrderBy(p => !p.IsWip).ThenByDescending(p => p.CreatedDate);
 
         var totalCount = await dbQuery.CountAsync();
         var page = Math.Max(1, query.Page);

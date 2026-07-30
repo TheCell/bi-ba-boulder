@@ -57,7 +57,8 @@ public partial class CreateSpraywallProblemCommandHandler : ICommandHandlerWithE
             SpraywallId = command.SpraywallId,
             IsCircuit = command.IsCircuit,
             NoMatch = command.NoMatch,
-            FreeFeet = command.FreeFeet
+            FreeFeet = command.FreeFeet,
+            IsWip = command.IsWip
         };
 
         await _dbContext.InsertEntityAndSaveChangesAsync(problem);

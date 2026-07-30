@@ -17,6 +17,7 @@ export interface UpdateSpraywallProblemCommand {
     isCircuit?: boolean;
     noMatch?: boolean;
     freeFeet?: boolean;
+    isWip?: boolean;
     version?: number;
 }
 

@@ -19,6 +19,7 @@ public static class SpraywallProblemAssertion
         Xunit.Assert.Equal(expected.IsCircuit, actual.IsCircuit);
         Xunit.Assert.Equal(expected.NoMatch, actual.NoMatch);
         Xunit.Assert.Equal(expected.FreeFeet, actual.FreeFeet);
+        Xunit.Assert.Equal(expected.IsWip, actual.IsWip);
     }
 
     public static void Assert(UpdateSpraywallProblemCommand expected, SpraywallProblem actual)
@@ -30,6 +31,7 @@ public static class SpraywallProblemAssertion
         Xunit.Assert.Equal(expected.IsCircuit, actual.IsCircuit);
         Xunit.Assert.Equal(expected.NoMatch, actual.NoMatch);
         Xunit.Assert.Equal(expected.FreeFeet, actual.FreeFeet);
+        Xunit.Assert.Equal(expected.IsWip, actual.IsWip);
     }
 
     public static void Assert(CreateSpraywallProblemCommand expected, SpraywallProblemDto actual)
@@ -42,5 +44,6 @@ public static class SpraywallProblemAssertion
         Xunit.Assert.Equal(expected.IsCircuit, actual.IsCircuit);
         Xunit.Assert.Equal(expected.NoMatch, actual.NoMatch);
         Xunit.Assert.Equal(expected.FreeFeet, actual.FreeFeet);
+        Xunit.Assert.Equal(expected.IsWip, actual.IsWip);
     }
 }

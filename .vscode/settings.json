@@ -13,6 +13,7 @@
         "dotnet build": true,
         "dotnet list": true,
         "dotnet package": true,
-        "ConvertFrom-Json": true
+        "ConvertFrom-Json": true,
+        "npx tsc": true
     }
 }

@@ -7,6 +7,7 @@ export interface SpraywallSaveData {
   isCircuit?: boolean;
   noMatch?: boolean;
   freeFeet?: boolean;
+  isWip?: boolean;
   existingId?: string;
   version?: number;
 }
