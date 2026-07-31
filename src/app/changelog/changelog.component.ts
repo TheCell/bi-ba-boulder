@@ -31,6 +31,29 @@ export class ChangelogComponent {
 
   public readonly releaseNotes: ReleaseNote[] = [
     {
+      prNumber: 108,
+      releasedOn: '2026-07-31',
+      headline: 'Bloc caching, navigation icons, and outdoor editor improvements',
+      highlights: [
+        {
+          text: 'Cached bloc 3D models per resolution level — revisiting a bloc skips re-downloading already loaded quality levels.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Cached spraywall 3D models so navigating between spraywall views and editor avoids redundant downloads.',
+          isOutdoorRelated: false
+        },
+        {
+          text: 'Added icons to the navigation bar for login, logout, sectors, and changelog.',
+          isOutdoorRelated: false
+        },
+        {
+          text: 'Fixed raycasting in the outdoor editor renderer.',
+          isOutdoorRelated: true
+        }
+      ]
+    },
+    {
       prNumber: 107,
       releasedOn: '2026-07-24',
       headline: 'Route sharing and outdoor line usability improvements',
