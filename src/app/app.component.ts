@@ -15,13 +15,13 @@ import { LoginDialogComponent } from './core/modal/login-dialog/login-dialog.com
 import { ToastContainer } from './core/toast-container/toast-container';
 import { LoginTrackerService } from './auth/login-tracker.service';
 import { AuthSessionStateService } from './auth/auth-session-state.service';
+import { Icon } from './core/icon/icon';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, Modal, ToastContainer],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Modal, ToastContainer, Icon],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('modal') private modal!: Modal;

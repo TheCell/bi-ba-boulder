@@ -216,6 +216,56 @@
   background-color: $warning;
 }
 
+.sign-in-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$sign-in-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$sign-in-empty-svg}");
+}
+
+.sign-in-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$sign-in-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$sign-in-filled-svg}");
+}
+
+.sign-out-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$sign-out-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$sign-out-empty-svg}");
+}
+
+.sign-out-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$sign-out-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$sign-out-filled-svg}");
+}
+
+.profile-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$profile-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$profile-empty-svg}");
+}
+
+.profile-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$profile-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$profile-filled-svg}");
+}
+
+.map-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$map-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$map-empty-svg}");
+}
+
+.map-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$map-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$map-filled-svg}");
+}
+
+.change-log-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$change-log-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$change-log-empty-svg}");
+}
+
+.change-log-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$change-log-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$change-log-filled-svg}");
+}
+
 .focus {
   background-color: $primary;
 }
