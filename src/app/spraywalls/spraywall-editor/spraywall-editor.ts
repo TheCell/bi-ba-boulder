@@ -1,10 +1,8 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
-import { SpraywallProblemDto, SpraywallsService } from '@api-net/index';
+import { ChangeDetectorRef, Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { SpraywallProblemDto } from '@api-net/index';
 import * as THREE from 'three';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NonNullableFormBuilder } from '@angular/forms';
-import { NgClass } from '@angular/common';
-import { startWith, Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
 import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,9 +14,10 @@ import { Modal } from '../../core/modal/modal/modal';
 import { SpraywallHoldType, TypeAndColor, holdColorOptions } from '../../renderer/common/spraywall-hold-types';
 import { SpraywallEditorRenderer } from '../../renderer/spraywall-editor-renderer/spraywall-editor-renderer';
 import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
+import { form, FormField } from '@angular/forms/signals';
 
-interface iHoldColorForm {
-  spraywallHoldType: SpraywallHoldType;
+interface IHoldColorForm {
+  spraywallHoldType: string;
 }
 
 @Component({
@@ -28,32 +27,33 @@ interface iHoldColorForm {
     SpraywallEditorRenderer,
     FormsModule,
     ReactiveFormsModule,
-    NgClass,
+    FormField,
     Modal,
     CameraControls
   ],
   templateUrl: './spraywall-editor.html',
   styleUrl: './spraywall-editor.scss'
 })
-export class SpraywallEditor implements OnInit, OnDestroy {
+export class SpraywallEditor implements OnInit {
   @ViewChild('modal') private modal!: Modal;
   @ViewChild('renderer') private renderer!: SpraywallEditorRenderer;
 
   private modalService = inject(ModalService);
-  private _fb = inject(NonNullableFormBuilder);
-  private spraywallsService = inject(SpraywallsService);
   private boulderLoaderService = inject(BoulderLoaderService);
   private changeDetectorRef = inject(ChangeDetectorRef);
   private router = inject(Router);
 
-  public colorForm = this._fb.group<iHoldColorForm>({
-    spraywallHoldType: SpraywallHoldType.hold
+  public colorModel = signal<IHoldColorForm>({
+    spraywallHoldType: SpraywallHoldType.hold.toString()
   });
+  public colorForm = form(this.colorModel);
   public colorFormId = ''.appendUniqueId();
 
   public currentRawModel?: ArrayBuffer;
   public currentHighlightUv = signal<THREE.Texture<HTMLImageElement> | undefined>(undefined);
-  public currentHoldColor: THREE.Color = null!;
+  public currentHoldColor = computed<THREE.Color>(() =>
+    this.resolveHoldColor(Number(this.colorForm.spraywallHoldType().value()) as SpraywallHoldType).clone()
+  );
   public resetSignal: Subject<void> = new Subject<void>();
   public undoLastHighlightSignal: Subject<void> = new Subject<void>();
   public spraywallId = '';
@@ -61,23 +61,11 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   public spraywallProblemForEdit?: SpraywallProblemDto;
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
 
-  private subscription = new Subscription();
-
   public constructor() {
     const activatedRoute = inject(ActivatedRoute);
     this.spraywallId = activatedRoute.snapshot.paramMap.get('spraywallId') ?? '';
     this.problemId = activatedRoute.snapshot.paramMap.get('problemId') ?? undefined;
     this.spraywallProblemForEdit = activatedRoute.snapshot.data['spraywallProblem'];
-
-    this.subscription.add(
-      this.colorForm.controls.spraywallHoldType.valueChanges
-        .pipe(startWith(this.colorForm.controls.spraywallHoldType.value))
-        .subscribe({
-          next: (value) => {
-            this.currentHoldColor = this.resolveHoldColor(value).clone();
-          }
-        })
-    );
 
     // this.subscription.add(
     //   this.resetSignal.subscribe({
@@ -87,10 +75,6 @@ export class SpraywallEditor implements OnInit, OnDestroy {
     //     }
     //   })
     // );
-  }
-
-  public ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   public ngOnInit() {
@@ -166,15 +150,6 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   public enumName(type: SpraywallHoldType): string {
     const enumNames = Object.keys(SpraywallHoldType).filter((key) => isNaN(Number(key)));
     return enumNames[type];
-  }
-
-  public onHoldColorChange(event: EventTarget | null): void {
-    const selectElement = event as HTMLSelectElement;
-    const selectedColorType = parseInt(selectElement.value);
-    const selectedColorOption = holdColorOptions.find((option) => option.type === selectedColorType);
-    if (selectedColorOption) {
-      this.currentHoldColor = selectedColorOption.color;
-    }
   }
 
   private resolveHoldColor(type: SpraywallHoldType): THREE.Color {
