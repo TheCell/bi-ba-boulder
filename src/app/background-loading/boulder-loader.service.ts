@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { RESOLUTION_LEVEL, ResolutionLevel } from '../interfaces/resolution-level';
 import { BlocDto } from '@api-net/index';
 import { environment } from '../../environments/environment';
@@ -10,9 +11,29 @@ import { environment } from '../../environments/environment';
 })
 export class BoulderLoaderService {
   private http: HttpClient = inject(HttpClient);
+  private readonly cache = new Map<string, ArrayBuffer>();
 
   public loadBoulder(url: string): Observable<ArrayBuffer> {
-    return this.http.get(`${environment.boulderResourceURL}/${url}`, { responseType: 'arraybuffer' });
+    const cached = this.cache.get(url);
+    if (cached) {
+      return of(cached);
+    }
+    return this.http
+      .get(`${environment.boulderResourceURL}/${url}`, { responseType: 'arraybuffer' })
+      .pipe(tap((data) => this.cache.set(url, data)));
+  }
+
+  public getBestCachedResolution(blocDto: BlocDto): ResolutionLevel | undefined {
+    if (blocDto.blocHighRes && this.cache.has(blocDto.blocHighRes)) {
+      return RESOLUTION_LEVEL.high;
+    }
+    if (blocDto.blocMedRes && this.cache.has(blocDto.blocMedRes)) {
+      return RESOLUTION_LEVEL.medium;
+    }
+    if (blocDto.blocLowRes && this.cache.has(blocDto.blocLowRes)) {
+      return RESOLUTION_LEVEL.low;
+    }
+    return undefined;
   }
 
   public getUrl(
@@ -136,18 +157,22 @@ export class BoulderLoaderService {
   }
 
   public loadTestSpraywall(): Observable<ArrayBuffer> {
-    return this.http.get('./api-test/boulder/spraywall/Spraywall_separated_test_4096.glb', {
-      responseType: 'arraybuffer'
-    });
+    return this.loadWithCache('./api-test/boulder/spraywall/Spraywall_separated_test_4096.glb');
   }
 
   public loadTestSpraywall2(): Observable<ArrayBuffer> {
-    return this.http.get('./api-test/boulder/spraywall2/Bimano_Spraywall_02_LOD0.glb', { responseType: 'arraybuffer' });
+    return this.loadWithCache('./api-test/boulder/spraywall2/Bimano_Spraywall_02_LOD0.glb');
   }
 
   public loadTestSpraywall3(): Observable<ArrayBuffer> {
-    return this.http.get('./api-test/boulder/spraywall2/Bimano_Spraywall_2025_UV_shenanigans_03.glb', {
-      responseType: 'arraybuffer'
-    });
+    return this.loadWithCache('./api-test/boulder/spraywall2/Bimano_Spraywall_2025_UV_shenanigans_03.glb');
+  }
+
+  private loadWithCache(fullUrl: string): Observable<ArrayBuffer> {
+    const cached = this.cache.get(fullUrl);
+    if (cached) {
+      return of(cached);
+    }
+    return this.http.get(fullUrl, { responseType: 'arraybuffer' }).pipe(tap((data) => this.cache.set(fullUrl, data)));
   }
 }

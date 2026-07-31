@@ -69,7 +69,6 @@ export class OutdoorBloc implements OnInit, OnDestroy {
       })
     );
 
-    // todo cache and use cached if exists
     this.subscription.add(
       this.loadNextResolution.subscribe({
         next: () => {
@@ -94,7 +93,8 @@ export class OutdoorBloc implements OnInit, OnDestroy {
       })
     );
 
-    const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc);
+    const bestCached = this.boulderLoaderService.getBestCachedResolution(this.bloc);
+    const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, bestCached);
     this.resolutionToLoad = urlAndInfo.higherResolution;
     this.boulderUrl = urlAndInfo.url;
     this.startLoadingBoulder.next();
