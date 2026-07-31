@@ -142,6 +142,7 @@ export class SpraywallEditor implements OnInit, OnDestroy {
       dialogData.isCircuit = this.spraywallProblemForEdit.isCircuit;
       dialogData.noMatch = this.spraywallProblemForEdit.noMatch;
       dialogData.freeFeet = this.spraywallProblemForEdit.freeFeet;
+      dialogData.isWip = this.spraywallProblemForEdit.isWip;
       dialogData.version = this.spraywallProblemForEdit.version;
     }
     component.initialize!(dialogData);

@@ -36,5 +36,7 @@ public class SpraywallProblem : VersionedEntity, IProblemTags
 
     public bool FreeFeet { get; set; }
 
+    public bool IsWip { get; set; }
+
     public ICollection<BoulderLog> BoulderLogs { get; set; } = [];
 }

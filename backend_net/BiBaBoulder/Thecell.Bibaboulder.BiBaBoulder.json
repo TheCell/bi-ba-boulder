@@ -1514,6 +1514,9 @@
           },
           "freeFeet": {
             "type": "boolean"
+          },
+          "isWip": {
+            "type": "boolean"
           }
         }
       },
@@ -1773,6 +1776,9 @@
           "freeFeet": {
             "type": "boolean"
           },
+          "isWip": {
+            "type": "boolean"
+          },
           "createdById": {
             "type": "string",
             "format": "uuid"
@@ -1976,6 +1982,9 @@
             "type": "boolean"
           },
           "freeFeet": {
+            "type": "boolean"
+          },
+          "isWip": {
             "type": "boolean"
           },
           "version": {

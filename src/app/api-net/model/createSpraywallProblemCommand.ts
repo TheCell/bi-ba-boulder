@@ -17,5 +17,6 @@ export interface CreateSpraywallProblemCommand {
     isCircuit?: boolean;
     noMatch?: boolean;
     freeFeet?: boolean;
+    isWip?: boolean;
 }
 

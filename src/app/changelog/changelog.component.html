@@ -1,0 +1,28 @@
+<section class="changelog-page">
+  <header class="changelog-header">
+    <h1>Release Changelog</h1>
+    <p>
+      This page summarizes what changed in each release to <code>deploy</code>. Every entry maps to a merged pull
+      request from <code>main</code>.
+    </p>
+  </header>
+
+  <div class="release-list">
+    @for (release of visibleReleaseNotes; track release.prNumber) {
+      <article class="release-card">
+        <div class="release-meta">
+          <span class="badge">PR #{{ release.prNumber }}</span>
+          <span class="date">{{ release.releasedOn }}</span>
+        </div>
+
+        <h2>{{ release.headline }}</h2>
+
+        <ul>
+          @for (highlight of release.highlights; track highlight) {
+            <li>{{ highlight }}</li>
+          }
+        </ul>
+      </article>
+    }
+  </div>
+</section>

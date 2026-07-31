@@ -16,4 +16,5 @@ public class CreateSpraywallProblemCommand : CreateCommand
     public bool IsCircuit { get; set; }
     public bool NoMatch { get; set; }
     public bool FreeFeet { get; set; }
+    public bool IsWip { get; set; }
 }

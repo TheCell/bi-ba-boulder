@@ -80,6 +80,18 @@
       <app-icon class="action-button" [icon]="'free-feet-empty'"></app-icon>
       }
     </button>
+
+    <button
+      type="button"
+      class="button action-button wip-button"
+      [class.is-wip]="saveForm.isWip().value()"
+      (click)="saveForm.isWip().value.set(!saveForm.isWip().value())">
+      @if (saveForm.isWip().value()) {
+      <app-icon class="action-button" [icon]="'warning-filled'"></app-icon>
+      } @else {
+      <app-icon class="action-button" [icon]="'warning-empty'"></app-icon>
+      }
+    </button>
     <!-- <label for="isCircuit" class="group-label">circuit</label> -->
   </div>
 

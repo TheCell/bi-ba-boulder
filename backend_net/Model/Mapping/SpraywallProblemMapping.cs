@@ -21,6 +21,7 @@ public static class SpraywallProblemMapping
             IsCircuit = problem.IsCircuit,
             NoMatch = problem.NoMatch,
             FreeFeet = problem.FreeFeet,
+            IsWip = problem.IsWip,
             CreatedByName = createdByName,
             CreatedDate = DateTime.SpecifyKind(problem.CreatedDate, DateTimeKind.Utc).ToString("o", System.Globalization.CultureInfo.InvariantCulture),
             Description = problem.Description,

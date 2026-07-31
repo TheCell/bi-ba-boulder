@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { DaoneTestComponent } from './daone-test/daone-test.component';
 import { SectorsListComponent } from './outdoors/sectors-list/sectors-list.component';
 import { sectorsResolver } from './core/resolvers/sector.resolver';
 import { SectorComponent } from './outdoors/sector/sector.component';
@@ -13,20 +12,14 @@ import { spraywallProblemResolver } from './core/resolvers/spraywall-problem.res
 import { OutdoorBloc } from './outdoors/outdoor-bloc/outdoor-bloc';
 import { OutdoorEditor } from './outdoors/outdoor-editor/outdoor-editor';
 import { lineResolver } from './core/resolvers/line.resolver';
+import { ChangelogComponent } from './changelog/changelog.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
   { path: 'home', component: HomeComponent },
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'terms', component: TermsComponent },
-  {
-    path: 'daone-boulder-test',
-    component: DaoneTestComponent,
-    children: [
-      { path: '', component: DaoneTestComponent, pathMatch: 'full' },
-      { path: ':number', component: DaoneTestComponent }
-    ]
-  },
+  { path: 'changelog', component: ChangelogComponent },
   {
     path: 'sectors',
     pathMatch: 'full',

@@ -31,6 +31,18 @@ export const ICONS = [
   'no-match-empty',
   'no-match-filled',
   'share',
-  'qr-code'
+  'qr-code',
+  'warning-empty',
+  'warning-filled',
+  'sign-in-empty',
+  'sign-in-filled',
+  'sign-out-empty',
+  'sign-out-filled',
+  'profile-empty',
+  'profile-filled',
+  'map-empty',
+  'map-filled',
+  'change-log-empty',
+  'change-log-filled'
 ] as const;
 export type IconType = (typeof ICONS)[number];

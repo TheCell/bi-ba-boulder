@@ -12,7 +12,7 @@ public class UserBuilder : BuilderBase<User>
         _instance.Id = Guid.CreateVersion7();
         _instance.Email = bogus.Internet.Email();
         _instance.Username = bogus.Internet.UserName();
-        _instance.OidcSubject = "1234567890";
+        _instance.OidcSubject = Guid.CreateVersion7().ToString();
         _instance.Roles = "user";
     }
 

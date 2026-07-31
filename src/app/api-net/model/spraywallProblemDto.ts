@@ -18,6 +18,7 @@ export interface SpraywallProblemDto {
     isCircuit?: boolean;
     noMatch?: boolean;
     freeFeet?: boolean;
+    isWip?: boolean;
     createdById: string;
     createdByName: string;
     createdDate: string;

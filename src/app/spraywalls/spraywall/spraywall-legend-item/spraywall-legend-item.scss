@@ -14,6 +14,10 @@
   background-color: rgba($secondary, 1.0);
 }
 
+.item.wip {
+  color: $warning;
+}
+
 .item:hover, .item:focus {
   background-color: rgba($primary, 0.5);
 }
