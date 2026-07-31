@@ -37,9 +37,9 @@ export class OutdoorEditor {
   public revertLastPointCommand = signal(0);
 
   private loadNextResolution = new Subject<void>();
-  private startLoadingBoulder = new Subject<void>();
+  private startLoadingBoulder = new Subject<string>();
   private subscription = new Subscription();
-  private boulderUrl = '';
+  // private boulderUrl = '';
   private resolutionToLoad?: ResolutionLevel;
 
   public constructor() {
@@ -56,12 +56,13 @@ export class OutdoorEditor {
     this.subscription.add(
       this.loadNextResolution.subscribe({
         next: () => {
+          console.log(this.resolutionToLoad);
           if (this.resolutionToLoad !== undefined) {
             const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, this.resolutionToLoad);
             this.resolutionToLoad = urlAndInfo.higherResolution;
-            this.boulderUrl = urlAndInfo.url;
-            if (this.boulderUrl.length > 0) {
-              this.startLoadingBoulder.next();
+            const boulderUrl = urlAndInfo.url;
+            if (boulderUrl.length > 0) {
+              this.startLoadingBoulder.next(boulderUrl);
             }
           }
         }
@@ -69,18 +70,22 @@ export class OutdoorEditor {
     );
 
     this.subscription.add(
-      this.startLoadingBoulder.pipe(switchMap(() => this.boulderLoaderService.loadBoulder(this.boulderUrl))).subscribe({
-        next: (data: ArrayBuffer) => {
-          this.currentRawModel.set(data);
-          this.loadNextResolution.next();
-        }
-      })
+      this.startLoadingBoulder
+        .pipe(switchMap((boulderUrl) => this.boulderLoaderService.loadBoulder(boulderUrl)))
+        .subscribe({
+          next: (data: ArrayBuffer) => {
+            this.loadNextResolution.next();
+            this.currentRawModel.set(data);
+          }
+        })
     );
 
     const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc);
+    console.log(urlAndInfo);
+
     this.resolutionToLoad = urlAndInfo.higherResolution;
-    this.boulderUrl = urlAndInfo.url;
-    this.startLoadingBoulder.next();
+    const boulderUrl = urlAndInfo.url;
+    this.startLoadingBoulder.next(boulderUrl);
   }
 
   public closeModal(closeModalEvent: CloseModalEvent) {

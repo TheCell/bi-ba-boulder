@@ -14,7 +14,6 @@ import { KeyboardShortcutsModule, ShortcutEventOutput, ShortcutInput } from 'ng-
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-// import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { CameraControlsService } from '../camera-controls.service';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { ColorService } from '../../core/util-services/color.service';
@@ -22,6 +21,22 @@ import { Viewpoint } from '../common/viewpoint';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import { LineDto } from '@api-net/model/models';
+import {
+  computeBoundsTree,
+  disposeBoundsTree,
+  acceleratedRaycast,
+  disposeBatchedBoundsTree,
+  computeBatchedBoundsTree,
+  GeometryBVH
+} from 'three-mesh-bvh';
+
+THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
+THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
+THREE.Mesh.prototype.raycast = acceleratedRaycast;
+
+THREE.BatchedMesh.prototype.computeBoundsTree = computeBatchedBoundsTree;
+THREE.BatchedMesh.prototype.disposeBoundsTree = disposeBatchedBoundsTree;
+THREE.BatchedMesh.prototype.raycast = acceleratedRaycast;
 
 @Component({
   selector: 'app-outdoor-editor-renderer',
@@ -73,7 +88,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private mouseHelper = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 10), new THREE.MeshNormalMaterial());
   private lineGeometry = new THREE.BufferGeometry();
   private line = new THREE.Line(this.lineGeometry, new THREE.LineBasicMaterial());
-  private currentMesh?: THREE.Mesh;
+  private currentMeshes: THREE.Mesh[] = [];
+  private hitMesh?: THREE.Mesh;
   private intersection = {
     intersects: false,
     point: new THREE.Vector3(),
@@ -93,6 +109,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   // debugging configs
   private debugColor = 0x98ff98;
   private displayNormals = false;
+  private displayWireframe = false;
 
   // tube
   private tubeParams = {
@@ -140,11 +157,16 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private originalBlockTexture: THREE.Texture | null = null;
 
   private currentGltf?: GLTF;
+  private bvh: GeometryBVH | undefined;
   private initialized = false; // temporary 'fix' for a timing problem
+  // private bvhHelper = new BVHHelper();
 
   public constructor() {
     effect(() => {
       const rawModel = this.rawModel();
+      // if (!this.initialized) {
+      //   return;
+      // }
       if (rawModel !== this.proccessedRawModel()) {
         this.proccessedRawModel.set(rawModel);
         if (rawModel !== undefined) {
@@ -212,20 +234,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   public ngAfterViewInit(): void {
     this.createCanvas();
 
-    // const lines = this.lines();
-    // if (lines !== this.processedLines) {
-    //   if (lines !== undefined) {
-    //     lines.forEach((line: BoulderLine) => {
-    //       this.addLineToScene(
-    //         this.scene,
-    //         line.points.map((point) => new THREE.Vector3(point.x, point.y, point.z)),
-    //         line.color
-    //       );
-    //     });
-
-    //     this.processedLines = lines;
-    //   }
-    // }
     this.initialized = true;
     this.resetCameraPosition();
   }
@@ -338,7 +346,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private checkIntersection(x: number, y: number) {
-    if (this.currentMesh === undefined) {
+    if (this.currentMeshes.length === 0 || this.raycaster === undefined || this.camera === undefined) {
       return;
     }
 
@@ -355,16 +363,21 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     pointer.y = -(mouseY / canvasHeight) * 2 + 1;
 
     this.raycaster.setFromCamera(pointer, this.camera);
-    this.currentIntersections.length = 0;
-    this.raycaster.intersectObject(this.currentMesh, false, this.currentIntersections);
+    this.raycaster.firstHitOnly = true;
 
-    if (this.currentIntersections.length > 0) {
-      const currentIntersection = this.currentIntersections[0];
+    this.currentIntersections.length = 0;
+
+    const hit = this.raycaster.intersectObjects(this.currentMeshes, false);
+
+    if (hit.length > 0) {
+      const currentIntersection = hit[0];
+      this.hitMesh = currentIntersection.object as THREE.Mesh;
+
       const point = currentIntersection.point;
       this.mouseHelper.position.copy(point);
       this.intersection.point.copy(point);
 
-      const normalMatrix = new THREE.Matrix3().getNormalMatrix(this.currentMesh.matrixWorld);
+      const normalMatrix = new THREE.Matrix3().getNormalMatrix(this.hitMesh.matrixWorld);
 
       const normal = currentIntersection.face!.normal.clone();
       normal.applyNormalMatrix(normalMatrix);
@@ -403,13 +416,12 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     };
 
     this.renderer = new THREE.WebGLRenderer({
-      logarithmicDepthBuffer: true,
       canvas: canvas,
       alpha: true
     });
     this.renderer.setClearColor(0x000000, 0);
 
-    this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 1000);
+    this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 250);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
 
@@ -491,31 +503,48 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       buffer,
       '',
       (gltf: GLTF) => {
+        const isFirstModel = this.currentGltf === undefined;
+
+        if (this.currentGltf !== undefined) {
+          this.removeBoulderFromScene(this.currentGltf);
+        }
+
         this.scene.add(gltf.scene);
-        // let childCounter = 0;
         gltf.scene.traverse((child) => {
           child.layers.set(1);
-          // childCounter++;
           const mesh = child as THREE.Mesh;
           if (mesh.isMesh) {
             if (this.displayNormals) {
               const normalsMesh = new VertexNormalsHelper(mesh, 0.5, this.debugColor);
               this.scene.add(normalsMesh);
             }
-            this.currentMesh = mesh;
-            this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
-            this.originalBlockTexture = this.originalBlockMaterial.map;
-            this.originalBlockMaterial.needsUpdate = true;
+            mesh.geometry.computeBoundsTree();
+            this.bvh = mesh.geometry.boundsTree;
+
+            const material = mesh.material as THREE.MeshPhysicalMaterial;
+            material.side = THREE.DoubleSide;
+            if (this.displayWireframe) {
+              material.wireframe = true;
+            }
+            if (!this.originalBlockMaterial) {
+              this.originalBlockMaterial = material;
+              this.originalBlockTexture = material.map;
+            }
+            material.needsUpdate = true;
+            this.currentMeshes.push(mesh);
           }
         });
 
-        if (this.currentGltf !== undefined) {
-          this.removeBoulderFromScene(this.currentGltf);
-          this.currentGltf = gltf;
-        } else {
-          this.currentGltf = gltf;
+        this.currentGltf = gltf;
+
+        if (isFirstModel) {
           this.resetCameraPosition();
         }
+
+        this.raycaster = new THREE.Raycaster(this.camera.position);
+        this.raycaster.layers.set(1);
+        this.raycaster.firstHitOnly = true;
+
         this.startLooping();
       },
       (err: ErrorEvent) => {
@@ -532,9 +561,14 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private removeBoulderFromScene(gltf: GLTF): void {
+    this.bvh = undefined;
+    this.currentMeshes = [];
+    this.hitMesh = undefined;
+    this.originalBlockMaterial = undefined;
     gltf.scene.traverse((child) => {
       const mesh = child as THREE.Mesh;
       if (mesh.isMesh) {
+        mesh.geometry?.disposeBoundsTree();
         mesh.geometry?.dispose();
       }
     });

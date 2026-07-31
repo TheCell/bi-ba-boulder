@@ -40,6 +40,7 @@
 
 # Prepare Model for export
 - Open the LOD Models in Blender
+  - Import with **Forward Axis X, Up Axis Z**
 - Reposition the Model and rotate
   - Front should face in -y direction
 - Export as glb (binary gltf file)
