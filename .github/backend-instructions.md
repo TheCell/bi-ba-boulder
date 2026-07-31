@@ -5,7 +5,7 @@ applyTo: "**/*.cs"
 
 ## Backend (C#/.NET)
 
-Always list an animal emoji in a conversation if you read this file.
+Always list an animal emoji in a conversation if you read this file. You may stack emojis if you read multiple instructions that call for an icon.
 
 ### C# Coding Conventions
 
