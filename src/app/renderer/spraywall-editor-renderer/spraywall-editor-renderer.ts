@@ -183,17 +183,6 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
   }
 
-  // todo listen to input signal
-  public onHoldColorChange(_event: EventTarget | null): void {
-    // const selectElement = event as HTMLSelectElement;
-    // const selectedColorType = parseInt(selectElement.value);
-    // const selectedColorOption = holdColorOptions.find(option => option.type === selectedColorType);
-    // if (selectedColorOption) {
-    //   this.highlightColor() = selectedColorOption.color;
-    //   console.log(`Hold color changed to : ${this.enumName(selectedColorOption.type)} `, this.highlightColor());
-    // }
-  }
-
   public getRouteImage(): string | undefined {
     if (
       this.highlightedHoldsTexture?.isTexture &&
@@ -403,7 +392,6 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
 
     const colorAndIndex = this.sampleColorFromImageData(this.rgbBlockImageData, uv.x, uv.y);
-    // console.log(`R=${(colorAndIndex.r).toFixed(0)} G=${(colorAndIndex.g).toFixed(0)} B=${(colorAndIndex.b).toFixed(0)}`);
     if (
       !this.highlightedHoldsTexture ||
       this.highlightedHoldsTexture.image.data === null ||
