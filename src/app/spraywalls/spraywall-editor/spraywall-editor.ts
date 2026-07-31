@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { SpraywallProblemDto, SpraywallsService } from '@api-net/index';
 import * as THREE from 'three';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NonNullableFormBuilder } from '@angular/forms';
 import { NgClass } from '@angular/common';
-import { Subject, Subscription } from 'rxjs';
+import { startWith, Subject, Subscription } from 'rxjs';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
 import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -52,7 +52,7 @@ export class SpraywallEditor implements OnInit, OnDestroy {
   public colorFormId = ''.appendUniqueId();
 
   public currentRawModel?: ArrayBuffer;
-  public currentHighlightUv?: THREE.Texture<HTMLImageElement>;
+  public currentHighlightUv = signal<THREE.Texture<HTMLImageElement> | undefined>(undefined);
   public currentHoldColor: THREE.Color = null!;
   public resetSignal: Subject<void> = new Subject<void>();
   public undoLastHighlightSignal: Subject<void> = new Subject<void>();
@@ -69,13 +69,15 @@ export class SpraywallEditor implements OnInit, OnDestroy {
     this.problemId = activatedRoute.snapshot.paramMap.get('problemId') ?? undefined;
     this.spraywallProblemForEdit = activatedRoute.snapshot.data['spraywallProblem'];
 
-    this.currentHoldColor = this.holdColorOptions[this.colorForm.controls.spraywallHoldType.value - 1].color;
-
-    this.colorForm.controls.spraywallHoldType.valueChanges.subscribe({
-      next: (value) => {
-        this.currentHoldColor = holdColorOptions[value - 1].color;
-      }
-    });
+    this.subscription.add(
+      this.colorForm.controls.spraywallHoldType.valueChanges
+        .pipe(startWith(this.colorForm.controls.spraywallHoldType.value))
+        .subscribe({
+          next: (value) => {
+            this.currentHoldColor = this.resolveHoldColor(value).clone();
+          }
+        })
+    );
 
     // this.subscription.add(
     //   this.resetSignal.subscribe({
@@ -175,6 +177,11 @@ export class SpraywallEditor implements OnInit, OnDestroy {
     }
   }
 
+  private resolveHoldColor(type: SpraywallHoldType): THREE.Color {
+    const selectedColorOption = this.holdColorOptions.find((option) => option.type === type);
+    return selectedColorOption?.color ?? this.holdColorOptions[0].color;
+  }
+
   private loadCustomUv(uvPath: string): void {
     const loader = new THREE.TextureLoader();
     loader.load(uvPath, (texture: THREE.Texture<HTMLImageElement>) => {
@@ -187,6 +194,6 @@ export class SpraywallEditor implements OnInit, OnDestroy {
     texture.needsUpdate = true;
     texture.minFilter = THREE.NearestFilter;
     texture.magFilter = THREE.NearestFilter;
-    this.currentHighlightUv = texture;
+    this.currentHighlightUv.set(texture);
   }
 }
