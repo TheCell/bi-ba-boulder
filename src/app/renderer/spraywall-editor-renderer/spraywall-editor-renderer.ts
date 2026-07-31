@@ -90,6 +90,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
   private previousLastClickedHold?: ColorAndIndex;
   private previousHighlightedHoldsImageData: THREE.TypedArray | null = null;
+  private initialHighlightedHoldsImageData: Uint8Array | null = null;
 
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
@@ -178,6 +179,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       const texture = new THREE.DataTexture(data, width, height, THREE.RGBAFormat);
       texture.needsUpdate = true;
       this.highlightedHoldsTexture = texture;
+      this.initialHighlightedHoldsImageData = new Uint8Array(data);
     }
   }
 
@@ -219,6 +221,25 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
     }
 
     return undefined;
+  }
+
+  public hasUnsavedChanges(): boolean {
+    if (!this.highlightedHoldsTexture?.image?.data || !this.initialHighlightedHoldsImageData) {
+      return false;
+    }
+
+    const currentImageData = this.highlightedHoldsTexture.image.data;
+    if (currentImageData.length !== this.initialHighlightedHoldsImageData.length) {
+      return true;
+    }
+
+    for (let i = 0; i < currentImageData.length; i++) {
+      if (currentImageData[i] !== this.initialHighlightedHoldsImageData[i]) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private setupHighlightDebugTexture(texture: THREE.Texture<HTMLImageElement>) {
@@ -584,6 +605,9 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
       texture.minFilter = THREE.NearestFilter;
       texture.magFilter = THREE.NearestFilter;
       this.highlightedHoldsTexture = htmlImageElementTextureToDataTexture(texture);
+      if (this.highlightedHoldsTexture.image.data) {
+        this.initialHighlightedHoldsImageData = new Uint8Array(this.highlightedHoldsTexture.image.data);
+      }
     };
     image.onabort = (ev) => {
       console.error('Failed to load highlighted holds texture from base64 data.', ev);

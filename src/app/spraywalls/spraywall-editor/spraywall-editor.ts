@@ -7,7 +7,7 @@ import { NgClass } from '@angular/common';
 import { Subject, Subscription } from 'rxjs';
 import { SpraywallSaveDialog } from '../spraywall-save-dialog/spraywall-save-dialog';
 import { SpraywallSaveData } from '../spraywall-save-dialog/spraywall-save-data.interface';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { ModalService } from '../../core/modal/modal.service';
@@ -30,7 +30,6 @@ interface iHoldColorForm {
     ReactiveFormsModule,
     NgClass,
     Modal,
-    RouterLink,
     CameraControls
   ],
   templateUrl: './spraywall-editor.html',
@@ -116,6 +115,20 @@ export class SpraywallEditor implements OnInit, OnDestroy {
         queryParamsHandling: 'merge'
       });
     }
+  }
+
+  public onBackToSpraywall(): void {
+    const hasUnsavedChanges = this.renderer?.hasUnsavedChanges() ?? false;
+    if (hasUnsavedChanges) {
+      const shouldDropEditing = window.confirm(
+        'Do you really want to drop the current editing? Unsaved changes will be lost.'
+      );
+      if (!shouldDropEditing) {
+        return;
+      }
+    }
+
+    this.router.navigate(['/', 'spraywall', this.spraywallId]);
   }
 
   public openSaveModal(): void {
