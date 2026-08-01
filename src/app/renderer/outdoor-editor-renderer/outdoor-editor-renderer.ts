@@ -211,7 +211,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
     this.destroyRef.onDestroy(() => this.dispose());
 
-    // raycaster things
     this.mouseHelper.visible = false;
     window.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerdown', this.addPointToLoggedPoints);
@@ -253,16 +252,15 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   public removeLastPoint(): void {
     this.loggedPoints.pop();
-    const sphere = this.sphereArray.pop();
+    const sphere: THREE.Mesh | undefined = this.sphereArray.pop();
     if (sphere) {
       this.scene.remove(sphere);
     }
     this.regeneratePath();
   }
 
-  // more debugging stuff
-  private onPointerMove = (event: PointerEvent) => {
     if (!this.renderer || !this.camera || !this.raycaster) {
+  private onPointerMove = (event: PointerEvent): void => {
       return;
     }
 
@@ -294,7 +292,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   };
 
   private generatePoint(uuid: string, point: THREE.Vector3): void {
-    const sphere = new THREE.Mesh(
+    const sphere: THREE.Mesh = new THREE.Mesh(
       new THREE.SphereGeometry(this.pointParams.radius, 16, 16),
       new THREE.MeshNormalMaterial()
     );
@@ -304,7 +302,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       sphere.position.copy(point);
       this.sphereArray.push(sphere);
       this.scene.add(sphere);
-      // this.transformControls?.attach(sphere);
     }
   }
 
@@ -349,8 +346,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.startLooping();
   }
 
-  private checkIntersection(x: number, y: number) {
     if (this.currentMeshes.length === 0 || this.raycaster === undefined || this.camera === undefined) {
+  private checkIntersection(x: number, y: number): void {
       return;
     }
 
@@ -374,14 +371,14 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     const hit = this.raycaster.intersectObjects(this.currentMeshes, false);
 
     if (hit.length > 0) {
-      const currentIntersection = hit[0];
+      const currentIntersection: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>> = hit[0];
       this.hitMesh = currentIntersection.object as THREE.Mesh;
 
-      const point = currentIntersection.point;
+      const point: THREE.Vector3 = currentIntersection.point;
       this.mouseHelper.position.copy(point);
       this.intersection.point.copy(point);
 
-      const normalMatrix = new THREE.Matrix3().getNormalMatrix(this.hitMesh.matrixWorld);
+      const normalMatrix: THREE.Matrix3 = new THREE.Matrix3().getNormalMatrix(this.hitMesh.matrixWorld);
 
       const normal = currentIntersection.face!.normal.clone();
       normal.applyNormalMatrix(normalMatrix);
@@ -394,7 +391,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       const end = point.clone().addScaledVector(normal, lineLength);
 
       this.line.visible = true;
-      const positions = this.line.geometry.attributes['position'];
+      const positions: THREE.BufferAttribute = this.line.geometry.attributes['position'] as THREE.BufferAttribute;
       positions.setXYZ(0, point.x, point.y, point.z);
       positions.setXYZ(1, end.x, end.y, end.z);
       positions.needsUpdate = true;
@@ -406,15 +403,14 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       this.line.visible = false;
     }
   }
-  // more debugging stuff end
 
   private createCanvas(): void {
-    const canvas = this.canvas.nativeElement;
+    const canvas: HTMLCanvasElement = this.canvas.nativeElement;
     if (!canvas) {
       return;
     }
 
-    const canvasSizes = {
+    const canvasSizes: { width: number; height: number } = {
       width: canvas.offsetWidth,
       height: canvas.offsetHeight
     };
@@ -443,7 +439,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       ONE: THREE.TOUCH.PAN,
       TWO: THREE.TOUCH.DOLLY_ROTATE
     };
-    // todo find a solution for this
     this.controls.addEventListener('change', this.startLooping);
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
@@ -454,7 +449,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.scene.add(this.line);
     this.scene.add(this.debugSphere);
 
-    // this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
     this.dragControls = new DragControls(this.sphereArray, this.camera, this.renderer.domElement);
     this.dragControls.addEventListener('dragstart', () => {
       this.isDragging = true;
@@ -507,7 +501,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       buffer,
       '',
       (gltf: GLTF) => {
-        const isFirstModel = this.currentGltf === undefined;
+        const isFirstModel: boolean = this.currentGltf === undefined;
 
         if (this.currentGltf !== undefined) {
           this.removeBoulderFromScene(this.currentGltf);
@@ -516,12 +510,14 @@ export class OutdoorEditorRenderer implements AfterViewInit {
         this.scene.add(gltf.scene);
         gltf.scene.traverse((child) => {
           child.layers.set(1);
-          const mesh = child as THREE.Mesh;
+          const mesh: THREE.Mesh = child as THREE.Mesh;
+
           if (mesh.isMesh) {
             if (this.displayNormals) {
-              const normalsMesh = new VertexNormalsHelper(mesh, 0.5, this.debugColor);
+              const normalsMesh: VertexNormalsHelper = new VertexNormalsHelper(mesh, 0.5, this.debugColor);
               this.scene.add(normalsMesh);
             }
+
             mesh.geometry.computeBoundsTree();
             this.bvh = mesh.geometry.boundsTree;
 
@@ -566,11 +562,11 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   private removeBoulderFromScene(gltf: GLTF): void {
     this.bvh = undefined;
-    this.currentMeshes = [];
+    this.currentMeshes.length = 0;
     this.hitMesh = undefined;
     this.originalBlockMaterial = undefined;
     gltf.scene.traverse((child) => {
-      const mesh = child as THREE.Mesh;
+      const mesh: THREE.Mesh = child as THREE.Mesh;
       if (mesh.isMesh) {
         mesh.geometry?.disposeBoundsTree();
         mesh.geometry?.dispose();
@@ -591,7 +587,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     }
 
     this.scene.traverse((child) => {
-      const mesh = child as THREE.Mesh;
+      const mesh: THREE.Mesh = child as THREE.Mesh;
       if (mesh.isMesh) {
         mesh.geometry?.dispose();
       }
@@ -633,6 +629,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
         material.dispose();
       }
     }
-    this.sphereArray = [];
+    this.sphereArray.length = 0;
   }
 }
