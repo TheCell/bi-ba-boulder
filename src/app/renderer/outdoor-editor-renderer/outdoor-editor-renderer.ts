@@ -4,7 +4,6 @@ import {
   DestroyRef,
   effect,
   ElementRef,
-  HostListener,
   inject,
   input,
   signal,
@@ -38,6 +37,11 @@ THREE.BatchedMesh.prototype.computeBoundsTree = computeBatchedBoundsTree;
 THREE.BatchedMesh.prototype.disposeBoundsTree = disposeBatchedBoundsTree;
 THREE.BatchedMesh.prototype.raycast = acceleratedRaycast;
 
+
+interface LoggedPoint {
+  id: string;
+  position: THREE.Vector3;
+}
 @Component({
   selector: 'app-outdoor-editor-renderer',
   imports: [KeyboardShortcutsModule],
@@ -48,82 +52,76 @@ THREE.BatchedMesh.prototype.raycast = acceleratedRaycast;
   }
 })
 export class OutdoorEditorRenderer implements AfterViewInit {
-  private el: ElementRef = inject(ElementRef);
-  private destroyRef = inject(DestroyRef);
-  private cameraControlsService = inject(CameraControlsService);
-  private colorService = inject(ColorService);
+  private readonly el: ElementRef = inject(ElementRef);
+  private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly cameraControlsService: CameraControlsService = inject(CameraControlsService);
+  private readonly colorService: ColorService = inject(ColorService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
 
-
-  public rawModel = input<ArrayBuffer>();
-  public lineForEdit = input<LineDto | undefined>();
-  public revertLastPointCommand = input(0);
-
-  private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
-  private scene = new THREE.Scene();
-  private loader = new GLTFLoader();
-  private camera: THREE.PerspectiveCamera = null!;
-  private controls: OrbitControls = null!;
-  private renderer: THREE.WebGLRenderer = null!;
-  private ambientLightIntensity = 2.0;
   private ambientLightLowIntensity = 2.0;
-  private directionalLightIntensity = 1.0;
-  private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
-  private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
+  public readonly rawModel = input<ArrayBuffer>();
+  public readonly lineForEdit = input<LineDto | undefined>();
+  public readonly revertLastPointCommand = input(0);
   public shortcuts: ShortcutInput[] = [];
 
-  // all the debugging stuff
-  private raycaster: THREE.Raycaster = null!;
   private mouseHelper = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 10), new THREE.MeshNormalMaterial());
   private lineGeometry = new THREE.BufferGeometry();
   private line = new THREE.Line(this.lineGeometry, new THREE.LineBasicMaterial());
-  private currentMeshes: THREE.Mesh[] = [];
-  private hitMesh?: THREE.Mesh;
   private intersection = {
     intersects: false,
     point: new THREE.Vector3(),
     normal: new THREE.Vector3()
+  private readonly processedRawModel = signal<ArrayBuffer | undefined>(undefined);
+
+  private readonly scene: THREE.Scene = new THREE.Scene();
+  private readonly loader: GLTFLoader = new GLTFLoader();
+  private readonly ambientLightIntensity: number = 2.0;
+  private readonly directionalLightIntensity: number = 1.0;
+  private readonly ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
+  private readonly directionalLight: THREE.DirectionalLight = new THREE.DirectionalLight(
+    0xffffff,
+    this.directionalLightIntensity
+  );
+  private readonly raycaster: THREE.Raycaster = new THREE.Raycaster();
   };
-  private currentIntersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
-
-  private position = new THREE.Vector3();
-  private orientation = new THREE.Euler();
-  private loggedPoints: { id: string; position: THREE.Vector3 }[] = [];
-  private sphereArray: THREE.Mesh[] = [];
-  // private transformControls?: TransformControls;
-  private dragControls?: DragControls;
-  private isDragging = false;
-  private isLooping = false;
-
-  // debugging configs
   private debugColor = 0x98ff98;
-  private displayNormals = false;
-  private displayWireframe = false;
-
-  // tube
-  private tubeParams = {
+  private readonly position: THREE.Vector3 = new THREE.Vector3();
+  private readonly orientation: THREE.Euler = new THREE.Euler();
+  private readonly loggedPoints: LoggedPoint[] = [];
+  private readonly sphereArray: THREE.Mesh[] = [];
+  private readonly currentMeshes: THREE.Mesh[] = [];
+  private readonly currentIntersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
+  private readonly tubeParams = {
     radius: 0.05,
     extrusionSegments: 100,
     radiusSegments: 6
   };
-  // points
-  private pointParams = {
+  private readonly pointParams = {
     radius: 0.1
   };
-  private tubeGeometry?: THREE.TubeGeometry;
-  private tubeMaterial = new THREE.MeshBasicMaterial({
+  private readonly tubeMaterial: THREE.MeshBasicMaterial = new THREE.MeshBasicMaterial({
     color: this.colorService.nextColor(),
     transparent: true,
     opacity: 0.3,
     depthTest: false,
     depthWrite: false
   });
-  private rayVisionMaterial = new THREE.MeshStandardMaterial({
+  private readonly rayVisionMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial({
     color: this.tubeMaterial.color
   });
+  private camera: THREE.PerspectiveCamera = null!;
+  private controls: OrbitControls = null!;
+  private renderer: THREE.WebGLRenderer = null!;
+  private dragControls?: DragControls;
+  private tubeGeometry?: THREE.TubeGeometry;
   private tubeMesh?: THREE.Mesh;
   private rayVisionTubeMesh?: THREE.Mesh;
+  private hitMesh?: THREE.Mesh;
+  private isDragging = false;
+  private isLooping = false;
+  private displayNormals = false;
+  private displayWireframe = false;
 
   private debugSphere = new THREE.Mesh(
     new THREE.SphereGeometry(1, 32, 32),
@@ -181,7 +179,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     });
 
     effect(() => {
-      const line = this.lineForEdit();
+      const line: LineDto | undefined = this.lineForEdit();
       this.clearLoggedPoints();
 
       if (line === undefined || line.data?.positions === undefined) {
@@ -189,8 +187,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       }
 
       for (const positions of line.data?.positions ?? []) {
-        const position = new THREE.Vector3(positions[0], positions[1], positions[2]);
-        const loggedPoint = { id: crypto.randomUUID(), position: position };
+        const position: THREE.Vector3 = new THREE.Vector3(positions[0], positions[1], positions[2]);
+        const loggedPoint: LoggedPoint = { id: crypto.randomUUID(), position };
         this.loggedPoints.push(loggedPoint);
         this.generatePoint(loggedPoint.id, loggedPoint.position);
       }
@@ -201,7 +199,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     });
 
     effect(() => {
-      const commandValue = this.revertLastPointCommand();
+      const commandValue: number = this.revertLastPointCommand();
       if (commandValue === 0) {
         return;
       }
