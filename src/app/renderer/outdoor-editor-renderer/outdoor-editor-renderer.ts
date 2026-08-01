@@ -42,7 +42,10 @@ THREE.BatchedMesh.prototype.raycast = acceleratedRaycast;
   selector: 'app-outdoor-editor-renderer',
   imports: [KeyboardShortcutsModule],
   templateUrl: './outdoor-editor-renderer.html',
-  styleUrl: './outdoor-editor-renderer.scss'
+  styleUrl: './outdoor-editor-renderer.scss',
+  host: {
+    '(window:resize)': 'onResize()'
+  }
 })
 export class OutdoorEditorRenderer implements AfterViewInit {
   private el: ElementRef = inject(ElementRef);
@@ -51,20 +54,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private colorService = inject(ColorService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize') public onResize(): void {
-    if (this.renderer) {
-      const canvasSizes = {
-        width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight
-      };
 
-      this.renderer.setPixelRatio(window.devicePixelRatio);
-      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
-      this.camera.aspect = canvasSizes.width / canvasSizes.height;
-      this.camera.updateProjectionMatrix();
-      this.startLooping();
-    }
-  }
 
   public rawModel = input<ArrayBuffer>();
   public lineForEdit = input<LineDto | undefined>();
@@ -160,6 +150,20 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private bvh: GeometryBVH | undefined;
   private initialized = false; // temporary 'fix' for a timing problem
   // private bvhHelper = new BVHHelper();
+  public onResize(): void {
+    if (this.renderer) {
+      const canvasSizes: { width: number; height: number } = {
+        width: this.el.nativeElement.offsetWidth,
+        height: this.el.nativeElement.offsetHeight
+      };
+
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
+      this.camera.aspect = canvasSizes.width / canvasSizes.height;
+      this.camera.updateProjectionMatrix();
+      this.startLooping();
+    }
+  }
 
   public constructor() {
     effect(() => {
