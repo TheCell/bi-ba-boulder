@@ -42,6 +42,7 @@ model/lineData.ts
 model/lineDto.ts
 model/lineMetadataDto.ts
 model/models.ts
+model/sceneMarking.ts
 model/searchProblemsRequest.ts
 model/sectorDto.ts
 model/sendFeedbackCommand.ts

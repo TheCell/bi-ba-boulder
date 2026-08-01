@@ -120,8 +120,11 @@ export class OutdoorEditor {
       throw new Error('No line data from renderer');
     }
 
+    const sceneMarkings = this.renderer.getSceneMarkings();
+
     const lineData: LineData = {
-      positions: linePoints
+      positions: linePoints,
+      sceneMarkings: sceneMarkings
     };
 
     const dialogData: OutdoorSaveData = {

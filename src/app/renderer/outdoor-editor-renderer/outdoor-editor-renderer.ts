@@ -20,7 +20,7 @@ import { ColorService } from '../../core/util-services/color.service';
 import { Viewpoint } from '../common/viewpoint';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
-import { LineDto } from '@api-net/model/models';
+import { LineDto, SceneMarking } from '@api-net/model/models';
 import { outdoorBlocMarkingColorOptions, OutdoorBlocMarkingsType } from '../common/outdoor-bloc-markings-types';
 import {
   computeBoundsTree,
@@ -51,7 +51,7 @@ THREE.BatchedMesh.prototype.raycast = acceleratedRaycast;
 
 export type InteractionMode = 'line' | 'sphere-marking' | 'box-marking' | 'select-helper';
 export type HelperTransformMode = 'translate' | 'rotate' | 'scale';
-type SceneMarking = SphereSceneMarking | BoxSceneMarking;
+type CustomSceneMarking = SphereSceneMarking | BoxSceneMarking;
 
 interface LoggedPoint {
   id: string;
@@ -146,7 +146,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private readonly orientation: THREE.Euler = new THREE.Euler();
   private readonly loggedPoints: LoggedPoint[] = [];
   private readonly sphereArray: THREE.Mesh[] = [];
-  private readonly helperObjects: SceneMarking[] = [];
+  private readonly helperObjects: CustomSceneMarking[] = [];
   private readonly currentMeshes: THREE.Mesh[] = [];
   private readonly sphereMarkingData: THREE.Vector4[] = Array.from(
     { length: maxSphereMarkings },
@@ -204,7 +204,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private hitMesh?: THREE.Mesh;
   private currentGltf?: GLTF;
   private helperShaderMaterials: THREE.MeshPhysicalMaterial[] = [];
-  private selectedHelper?: SceneMarking;
+  private selectedHelper?: CustomSceneMarking;
   private isDragging = false;
   private isLooping = false;
   private displayNormals = false;
@@ -334,6 +334,14 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     return linePoints;
   }
 
+  public getSceneMarkings(): SceneMarking[] {
+    const markings: SceneMarking[] = [];
+
+    // todo
+
+    return markings;
+  }
+
   public removeLastPoint(): void {
     this.loggedPoints.pop();
     const sphere: THREE.Mesh | undefined = this.sphereArray.pop();
@@ -366,7 +374,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       return;
     }
 
-    const hitHelper: SceneMarking | undefined = this.getHelperAtPointer(event.clientX, event.clientY);
+    const hitHelper: CustomSceneMarking | undefined = this.getHelperAtPointer(event.clientX, event.clientY);
     if (hitHelper) {
       this.selectHelper(hitHelper);
       return;
@@ -832,14 +840,12 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private applyShaderUniformUpdates(): void {
-
     const helperSnapshot: HelperShaderSnapshot = this.updateMarkingShaderUniforms();
     for (const helperShaderMaterial of this.helperShaderMaterials) {
       const shader: MaterialShader | undefined = helperShaderMaterial.userData['shader'] as MaterialShader | undefined;
       if (!shader) {
         continue;
       }
-
 
       shader.uniforms['helperOverlayTexture'].value = this.helperOverlayTexture;
       shader.uniforms['sphereMarkingCount'].value = helperSnapshot.sphereMarkingCount;
@@ -923,7 +929,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     return new THREE.Vector2((mouseX / canvasWidth) * 2 - 1, -(mouseY / canvasHeight) * 2 + 1);
   }
 
-  private getHelperAtPointer(clientX: number, clientY: number): SceneMarking | undefined {
+  private getHelperAtPointer(clientX: number, clientY: number): CustomSceneMarking | undefined {
     if (this.helperObjects.length === 0) {
       return undefined;
     }
@@ -943,7 +949,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     return this.helperObjects.find((helper) => helper.id === helperId);
   }
 
-  private selectHelper(helper: SceneMarking): void {
+  private selectHelper(helper: CustomSceneMarking): void {
     this.selectedHelper = helper;
     this.transformControls?.attach(helper.mesh);
     this.transformControls?.setMode(this.helperTransformMode());
@@ -1021,7 +1027,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.startLooping();
   };
 
-  private disposeHelperMesh(helper: SceneMarking): void {
+  private disposeHelperMesh(helper: CustomSceneMarking): void {
     this.scene.remove(helper.mesh);
     helper.mesh.geometry.dispose();
     const material: THREE.Material | THREE.Material[] = helper.mesh.material;

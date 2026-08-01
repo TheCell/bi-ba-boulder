@@ -7,12 +7,13 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { SceneMarking } from './sceneMarking';
 
 
-export interface LineData { 
-    positions?: Array<Array<number>>;
-    someMoreStuff?: string | null;
-    sceneMarkings?: Array<SceneMarking>;
+export interface SceneMarking { 
+    type?: number;
+    form?: number;
+    position?: Array<number>;
+    scale?: Array<number>;
+    quaternion?: Array<number>;
 }
 

@@ -15,19 +15,6 @@ public static class LineAssertion
         Xunit.Assert.Equal(expected.Description, actual.Description);
         Xunit.Assert.Equal(expected.FontGrade, actual.FontGrade);
         Xunit.Assert.Equal(expected.Version, actual.Version);
-        Assert(expected.Data, actual.Data);
-    }
-
-    public static void Assert(LineData expected, LineData actual)
-    {
-        Xunit.Assert.Equal(expected.Positions.Count, actual.Positions.Count);
-        for (var i = 0; i < expected.Positions.Count; i++)
-        {
-            var expectedPosition = expected.Positions[i];
-            var actualPosition = actual.Positions[i];
-            Xunit.Assert.Equal(expectedPosition[0], actualPosition[0]);
-            Xunit.Assert.Equal(expectedPosition[1], actualPosition[1]);
-            Xunit.Assert.Equal(expectedPosition[2], actualPosition[2]);
-        }
+        LineDataAssertion.Assert(expected.Data, actual.Data);
     }
 }

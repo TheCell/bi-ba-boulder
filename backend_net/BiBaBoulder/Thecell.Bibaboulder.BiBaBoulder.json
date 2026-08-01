@@ -1558,6 +1558,12 @@
               "null",
               "string"
             ]
+          },
+          "sceneMarkings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SceneMarking"
+            }
           }
         }
       },
@@ -1627,6 +1633,44 @@
         }
       },
       "Rating": {
+        "type": "integer"
+      },
+      "SceneMarking": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/SceneMarkingType"
+          },
+          "form": {
+            "$ref": "#/components/schemas/SceneMarkingForm"
+          },
+          "position": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "scale": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "quaternion": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      },
+      "SceneMarkingForm": {
+        "type": "integer"
+      },
+      "SceneMarkingType": {
         "type": "integer"
       },
       "SearchProblemsRequest": {

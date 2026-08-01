@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
+using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
@@ -162,13 +163,47 @@ public class DeleteLineTest
 
     private static LineData CreateLineData()
     {
-        return new LineData
+        var lineData = new LineData
         {
             Positions =
             [
                 [1.0, 1.1, 1.2],
-                [2.0, 2.1, 2.2]
+                [2.0, 2.1, 2.2],
+                [3.0, 3.1, 3.2]
+            ],
+            SceneMarkings = [
+                new SceneMarking{
+                    Position = [1.0, 1.1, 1.2],
+                    Quaternion = [0.12, 0.0, 0.0, 1.0],
+                    Scale = [1.0, 1.0, 1.0],
+                    Type = SceneMarkingType.Start,
+                    Form = SceneMarkingForm.Sphere,
+                },
+                new SceneMarking{
+                    Position = [2.0, 2.1, 2.2],
+                    Quaternion = [0.44, 0.11, 0.22, 1.0],
+                    Scale = [2.0, 2.0, 2.0],
+                    Type = SceneMarkingType.Top,
+                    Form = SceneMarkingForm.Box,
+                },
+                new SceneMarking{
+                    Position = [3.0, 3.1, 3.2],
+                    Quaternion = [0.22, 0.78, 0.53, 1.0],
+                    Scale = [3.0, 3.0, 3.0],
+                    Type = SceneMarkingType.OffLine,
+                    Form = SceneMarkingForm.Sphere,
+                },
+                new SceneMarking{
+                    Position = [4.0, 4.1, 4.2],
+                    Quaternion = [0.12, 0.45, 0.45, 1.0],
+                    Scale = [4.0, 4.0, 4.0],
+                    Type = SceneMarkingType.OffLine,
+                    Form = SceneMarkingForm.Box,
+                }
             ]
         };
+
+
+        return lineData;
     }
 }
