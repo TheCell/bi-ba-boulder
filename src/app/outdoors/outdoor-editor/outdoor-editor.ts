@@ -51,9 +51,9 @@ export class OutdoorEditor {
   public readonly blocMarkingsTypeOptions: OutdoorMarkingTypeAndColor[] = outdoorBlocMarkingColorOptions;
 
   private loadNextResolution = new Subject<void>();
-  private startLoadingBoulder = new Subject<string>();
+  private startLoadingBoulder = new Subject<void>();
   private subscription = new Subscription();
-  // private boulderUrl = '';
+  private boulderUrl = '';
   private resolutionToLoad?: ResolutionLevel;
 
   public constructor() {
@@ -66,17 +66,15 @@ export class OutdoorEditor {
       this.lineId = lineForEdit.id;
     }
 
-    // todo cache and use cached if exists
     this.subscription.add(
       this.loadNextResolution.subscribe({
         next: () => {
-          console.log(this.resolutionToLoad);
           if (this.resolutionToLoad !== undefined) {
             const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, this.resolutionToLoad);
             this.resolutionToLoad = urlAndInfo.higherResolution;
-            const boulderUrl = urlAndInfo.url;
-            if (boulderUrl.length > 0) {
-              this.startLoadingBoulder.next(boulderUrl);
+            this.boulderUrl = urlAndInfo.url;
+            if (this.boulderUrl.length > 0) {
+              this.startLoadingBoulder.next();
             }
           }
         }
@@ -84,22 +82,19 @@ export class OutdoorEditor {
     );
 
     this.subscription.add(
-      this.startLoadingBoulder
-        .pipe(switchMap((boulderUrl) => this.boulderLoaderService.loadBoulder(boulderUrl)))
-        .subscribe({
-          next: (data: ArrayBuffer) => {
-            this.loadNextResolution.next();
-            this.currentRawModel.set(data);
-          }
-        })
+      this.startLoadingBoulder.pipe(switchMap(() => this.boulderLoaderService.loadBoulder(this.boulderUrl))).subscribe({
+        next: (data: ArrayBuffer) => {
+          this.currentRawModel.set(data);
+          this.loadNextResolution.next();
+        }
+      })
     );
 
-    const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc);
-    console.log(urlAndInfo);
-
+    const bestCached = this.boulderLoaderService.getBestCachedResolution(this.bloc);
+    const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, bestCached);
     this.resolutionToLoad = urlAndInfo.higherResolution;
-    const boulderUrl = urlAndInfo.url;
-    this.startLoadingBoulder.next(boulderUrl);
+    this.boulderUrl = urlAndInfo.url;
+    this.startLoadingBoulder.next();
   }
 
   public closeModal(closeModalEvent: CloseModalEvent) {
