@@ -7,6 +7,9 @@
       class="render"
       [rawModel]="currentRawModel()"
       [lineForEdit]="lineForEdit()"
+      [interactionModeSelection]="selectedInteractionMode()"
+      [blocMarkingsTypeSelection]="selectedBlocMarkingsType()"
+      [transformModeSelection]="selectedTransformMode()"
       [revertLastPointCommand]="revertLastPointCommand()"></app-outdoor-editor-renderer>
     } @else {
     <app-loading-image class="render"> </app-loading-image>
@@ -18,7 +21,62 @@
       <button class="button action-button" (click)="sendRevertLastPointSignal()">Revert Last Point</button>
       <button class="button action-button action-end" [routerLink]="['/', 'bloc', bloc.id]">back</button>
     </div>
-    <div class="legend-list"></div>
+    <div class="legend-list">
+      <div class="options-column">
+        <div class="form-group form-input">
+          <select
+            id="interaction-mode-select"
+            [value]="selectedInteractionMode()"
+            (change)="onInteractionModeChanged($event)">
+            <option value="line">Line</option>
+            <option value="sphere-marking">Sphere Marking</option>
+            <option value="box-marking">Box Marking</option>
+            <option value="select-helper">Select Helper</option>
+          </select>
+          <label for="interaction-mode-select" class="group-label">Mode</label>
+        </div>
+
+        <div class="form-group form-input" [class.disabled]="isTransformModeDisabled()">
+          <select
+            id="transform-mode-select"
+            [value]="selectedTransformMode()"
+            [disabled]="isTransformModeDisabled()"
+            (change)="onTransformModeChanged($event)">
+            <option value="translate">Translate</option>
+            <option value="rotate">Rotate</option>
+            <option value="scale">Scale</option>
+          </select>
+          <label for="transform-mode-select" class="group-label">Transform</label>
+        </div>
+
+        <div class="color-selection" [class.disabled]="isBlocMarkingsTypeDisabled()">
+          <div class="hold-color-options">
+            <form>
+              <legend class="form-label">Bloc Markings Type</legend>
+              <div class="form-group form-radio">
+                @for (option of blocMarkingsTypeOptions; track option.type) {
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    [id]="option.type + blocMarkingsTypeFormId"
+                    [value]="option.type.toString()"
+                    [checked]="selectedBlocMarkingsType() === option.type"
+                    [disabled]="isBlocMarkingsTypeDisabled()"
+                    (change)="onBlocMarkingsTypeChanged($event)" />
+                  <label
+                    [for]="option.type + blocMarkingsTypeFormId"
+                    class="radio-label"
+                    [class.selected]="selectedBlocMarkingsType() === option.type"
+                    >{{ enumName(option.type) }}</label
+                  >
+                </div>
+                }
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </div>
 

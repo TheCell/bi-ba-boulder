@@ -5,7 +5,16 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
-import { OutdoorEditorRenderer } from '../../renderer/outdoor-editor-renderer/outdoor-editor-renderer';
+import {
+  HelperTransformMode,
+  InteractionMode,
+  OutdoorEditorRenderer
+} from '../../renderer/outdoor-editor-renderer/outdoor-editor-renderer';
+import {
+  OutdoorBlocMarkingsType,
+  outdoorBlocMarkingColorOptions,
+  OutdoorMarkingTypeAndColor
+} from '../../renderer/common/outdoor-bloc-markings-types';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { Modal } from '../../core/modal/modal/modal';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
@@ -35,6 +44,11 @@ export class OutdoorEditor {
   public lineId? = '';
   public lineForEdit = signal<LineDto | undefined>(undefined);
   public revertLastPointCommand = signal(0);
+  public selectedInteractionMode = signal<InteractionMode>('line');
+  public selectedTransformMode = signal<HelperTransformMode>('rotate');
+  public selectedBlocMarkingsType = signal<OutdoorBlocMarkingsType>(OutdoorBlocMarkingsType.start);
+  public blocMarkingsTypeFormId = ''.appendUniqueId();
+  public readonly blocMarkingsTypeOptions: OutdoorMarkingTypeAndColor[] = outdoorBlocMarkingColorOptions;
 
   private loadNextResolution = new Subject<void>();
   private startLoadingBoulder = new Subject<string>();
@@ -135,5 +149,68 @@ export class OutdoorEditor {
   public sendRevertLastPointSignal(): void {
     this.revertLastPointCommand.update((value) => value + 1);
   }
-}
 
+  public onInteractionModeChanged(event: Event): void {
+    const selectedValue: string | undefined = (event.target as HTMLSelectElement | null)?.value;
+    if (!selectedValue) {
+      return;
+    }
+
+    if (
+      selectedValue === 'line' ||
+      selectedValue === 'sphere-marking' ||
+      selectedValue === 'box-marking' ||
+      selectedValue === 'select-helper'
+    ) {
+      this.selectedInteractionMode.set(selectedValue);
+    }
+  }
+
+  public onTransformModeChanged(event: Event): void {
+    const selectedValue: string | undefined = (event.target as HTMLSelectElement | null)?.value;
+    if (!selectedValue) {
+      return;
+    }
+
+    if (selectedValue === 'translate' || selectedValue === 'rotate' || selectedValue === 'scale') {
+      this.selectedTransformMode.set(selectedValue);
+    }
+  }
+
+  public onBlocMarkingsTypeChanged(event: Event): void {
+    const selectedValue: string | undefined = (event.target as HTMLSelectElement | null)?.value;
+    if (!selectedValue) {
+      return;
+    }
+
+    const parsedType = Number(selectedValue);
+    if (
+      parsedType === OutdoorBlocMarkingsType.start ||
+      parsedType === OutdoorBlocMarkingsType.top ||
+      parsedType === OutdoorBlocMarkingsType.offLineZone
+    ) {
+      this.selectedBlocMarkingsType.set(parsedType);
+    }
+  }
+
+  public isTransformModeDisabled(): boolean {
+    return this.selectedInteractionMode() === 'line';
+  }
+
+  public isBlocMarkingsTypeDisabled(): boolean {
+    return this.selectedInteractionMode() === 'line' || this.selectedInteractionMode() === 'select-helper';
+  }
+
+  public enumName(type: OutdoorBlocMarkingsType): string {
+    switch (type) {
+      case OutdoorBlocMarkingsType.start:
+        return 'Start';
+      case OutdoorBlocMarkingsType.top:
+        return 'Top / Exit';
+      case OutdoorBlocMarkingsType.offLineZone:
+        return 'Off Line Zone';
+      default:
+        return 'Unknown';
+    }
+  }
+}

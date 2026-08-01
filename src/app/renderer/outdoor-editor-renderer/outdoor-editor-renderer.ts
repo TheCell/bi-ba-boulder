@@ -13,6 +13,7 @@ import { KeyboardShortcutsModule, ShortcutEventOutput, ShortcutInput } from 'ng-
 import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js';
 import { CameraControlsService } from '../camera-controls.service';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { ColorService } from '../../core/util-services/color.service';
@@ -20,14 +21,25 @@ import { Viewpoint } from '../common/viewpoint';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import { LineDto } from '@api-net/model/models';
+import { outdoorBlocMarkingColorOptions, OutdoorBlocMarkingsType } from '../common/outdoor-bloc-markings-types';
 import {
   computeBoundsTree,
   disposeBoundsTree,
   acceleratedRaycast,
   disposeBatchedBoundsTree,
-  computeBatchedBoundsTree,
-  GeometryBVH
+  computeBatchedBoundsTree
 } from 'three-mesh-bvh';
+import {
+  boxPlacementDepth,
+  boxPlacementHeight,
+  boxPlacementWidth,
+  fragmentShader,
+  helperLayer,
+  maxBoxMarkings,
+  maxSphereMarkings,
+  spherePlacementRadius,
+  uniforms
+} from '../common/outdoor-shader-code';
 
 THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -37,11 +49,37 @@ THREE.BatchedMesh.prototype.computeBoundsTree = computeBatchedBoundsTree;
 THREE.BatchedMesh.prototype.disposeBoundsTree = disposeBatchedBoundsTree;
 THREE.BatchedMesh.prototype.raycast = acceleratedRaycast;
 
+export type InteractionMode = 'line' | 'sphere-marking' | 'box-marking' | 'select-helper';
+export type HelperTransformMode = 'translate' | 'rotate' | 'scale';
+type SceneMarking = SphereSceneMarking | BoxSceneMarking;
 
 interface LoggedPoint {
   id: string;
   position: THREE.Vector3;
 }
+
+interface HelperShaderSnapshot {
+  sphereMarkingCount: number;
+  boxMarkingCount: number;
+}
+
+type MaterialShader = Parameters<THREE.Material['onBeforeCompile']>[0];
+
+interface BaseSceneMarking {
+  id: string;
+  color: THREE.Color;
+  mesh: THREE.Mesh;
+  type: 'sphere' | 'box';
+}
+
+interface SphereSceneMarking extends BaseSceneMarking {
+  type: 'sphere';
+}
+
+interface BoxSceneMarking extends BaseSceneMarking {
+  type: 'box';
+}
+
 @Component({
   selector: 'app-outdoor-editor-renderer',
   imports: [KeyboardShortcutsModule],
@@ -59,13 +97,18 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
 
-  private ambientLightLowIntensity = 2.0;
   public readonly rawModel = input<ArrayBuffer>();
   public readonly lineForEdit = input<LineDto | undefined>();
+  public readonly interactionModeSelection = input<InteractionMode>('line');
+  public readonly blocMarkingsTypeSelection = input<OutdoorBlocMarkingsType>(OutdoorBlocMarkingsType.start);
+  public readonly transformModeSelection = input<HelperTransformMode>('rotate');
   public readonly revertLastPointCommand = input(0);
   public shortcuts: ShortcutInput[] = [];
 
   private readonly processedRawModel = signal<ArrayBuffer | undefined>(undefined);
+  private readonly interactionMode = signal<InteractionMode>('line');
+  private readonly blocMarkingsType = signal<OutdoorBlocMarkingsType>(OutdoorBlocMarkingsType.start);
+  private readonly helperTransformMode = signal<HelperTransformMode>('rotate');
 
   private readonly scene: THREE.Scene = new THREE.Scene();
   private readonly loader: GLTFLoader = new GLTFLoader();
@@ -77,6 +120,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.directionalLightIntensity
   );
   private readonly raycaster: THREE.Raycaster = new THREE.Raycaster();
+  private readonly helperRaycaster: THREE.Raycaster = new THREE.Raycaster();
   private readonly mouseHelper: THREE.Mesh = new THREE.Mesh(
     new THREE.BoxGeometry(1, 1, 10),
     new THREE.MeshNormalMaterial()
@@ -102,7 +146,32 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private readonly orientation: THREE.Euler = new THREE.Euler();
   private readonly loggedPoints: LoggedPoint[] = [];
   private readonly sphereArray: THREE.Mesh[] = [];
+  private readonly helperObjects: SceneMarking[] = [];
   private readonly currentMeshes: THREE.Mesh[] = [];
+  private readonly sphereMarkingData: THREE.Vector4[] = Array.from(
+    { length: maxSphereMarkings },
+    () => new THREE.Vector4(0, 0, 0, 0)
+  );
+  private readonly sphereMarkingColors: THREE.Color[] = Array.from(
+    { length: maxSphereMarkings },
+    () => new THREE.Color(0x000000)
+  );
+  private readonly boxMarkingPositions: THREE.Vector3[] = Array.from(
+    { length: maxBoxMarkings },
+    () => new THREE.Vector3(0, 0, 0)
+  );
+  private readonly boxMarkingQuaternions: THREE.Vector4[] = Array.from(
+    { length: maxBoxMarkings },
+    () => new THREE.Vector4(0, 0, 0, 1)
+  );
+  private readonly boxMarkingSizes: THREE.Vector3[] = Array.from(
+    { length: maxBoxMarkings },
+    () => new THREE.Vector3(0, 0, 0)
+  );
+  private readonly boxMarkingColors: THREE.Color[] = Array.from(
+    { length: maxBoxMarkings },
+    () => new THREE.Color(0x000000)
+  );
   private readonly currentIntersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
   private readonly tubeParams = {
     radius: 0.05,
@@ -122,15 +191,20 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private readonly rayVisionMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial({
     color: this.tubeMaterial.color
   });
+  private readonly helperOverlayTexture: THREE.DataTexture = this.createHelperOverlayTexture();
+
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
   private renderer: THREE.WebGLRenderer = null!;
+  private transformControls?: TransformControls;
   private dragControls?: DragControls;
   private tubeGeometry?: THREE.TubeGeometry;
   private tubeMesh?: THREE.Mesh;
   private rayVisionTubeMesh?: THREE.Mesh;
   private hitMesh?: THREE.Mesh;
   private currentGltf?: GLTF;
+  private helperShaderMaterials: THREE.MeshPhysicalMaterial[] = [];
+  private selectedHelper?: SceneMarking;
   private isDragging = false;
   private isLooping = false;
   private displayNormals = false;
@@ -142,14 +216,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     point: new THREE.Vector3(),
     normal: new THREE.Vector3()
   };
-  // debugging stuff end
+  private frameRequested = false;
 
-  // Shader material related
-  private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
-  private originalBlockTexture: THREE.Texture | null = null;
-
-  private bvh: GeometryBVH | undefined;
-  // private bvhHelper = new BVHHelper();
   public onResize(): void {
     if (this.renderer) {
       const canvasSizes: { width: number; height: number } = {
@@ -167,14 +235,10 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   public constructor() {
     effect(() => {
-      const rawModel = this.rawModel();
-      // if (!this.initialized) {
-      //   return;
-      // }
-      if (rawModel !== this.proccessedRawModel()) {
-        this.proccessedRawModel.set(rawModel);
+      const rawModel: ArrayBuffer | undefined = this.rawModel();
+      if (rawModel !== this.processedRawModel()) {
+        this.processedRawModel.set(rawModel);
         if (rawModel !== undefined) {
-          // this effect can run through before afterInit is finished. Needs fixing.
           this.removePreviousAndAddBoulderToScene(rawModel);
         }
       }
@@ -209,11 +273,31 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       this.removeLastPoint();
     });
 
+    effect(() => {
+      const mode: InteractionMode = this.interactionModeSelection();
+      if (mode !== this.interactionMode()) {
+        this.setInteractionMode(mode);
+      }
+    });
+
+    effect(() => {
+      const selectedMarkingType: OutdoorBlocMarkingsType = this.blocMarkingsTypeSelection();
+      if (selectedMarkingType !== this.blocMarkingsType()) {
+        this.blocMarkingsType.set(selectedMarkingType);
+      }
+    });
+
+    effect(() => {
+      const mode: HelperTransformMode = this.transformModeSelection();
+      if (mode !== this.helperTransformMode()) {
+        this.setTransformMode(mode);
+      }
+    });
+
     this.destroyRef.onDestroy(() => this.dispose());
 
     this.mouseHelper.visible = false;
     window.addEventListener('pointermove', this.onPointerMove);
-    window.addEventListener('pointerdown', this.addPointToLoggedPoints);
 
     this.shortcuts.push(
       {
@@ -222,14 +306,14 @@ export class OutdoorEditorRenderer implements AfterViewInit {
         command: (_: ShortcutEventOutput) => this.removeLastPoint()
       },
       {
-        key: ['1'],
+        key: ['delete', 'backspace'],
         preventDefault: true,
-        command: (_: ShortcutEventOutput) => this.goToView('overview')
+        command: (_: ShortcutEventOutput) => this.removeSelectedHelper()
       },
       {
-        key: ['2'],
+        key: ['escape'],
         preventDefault: true,
-        command: (_: ShortcutEventOutput) => this.goToView('seitensprung')
+        command: (_: ShortcutEventOutput) => this.clearSelectedHelper()
       }
     );
   }
@@ -259,12 +343,12 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.regeneratePath();
   }
 
-    if (!this.renderer || !this.camera || !this.raycaster) {
   private onPointerMove = (event: PointerEvent): void => {
+    if (!this.renderer || !this.camera) {
       return;
     }
 
-    if (this.isDragging) {
+    if (this.isDragging || !this.canvas.nativeElement.contains(event.target as Node)) {
       return;
     }
 
@@ -273,8 +357,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.startLooping();
   };
 
-  private addPointToLoggedPoints = (event: PointerEvent) => {
-    if (!this.intersection.intersects || event.button === 2) {
+  private handleCanvasPointerDown = (event: PointerEvent): void => {
+    if (event.button === 2 || this.transformControls?.dragging) {
       return;
     }
 
@@ -282,14 +366,118 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       return;
     }
 
+    const hitHelper: SceneMarking | undefined = this.getHelperAtPointer(event.clientX, event.clientY);
+    if (hitHelper) {
+      this.selectHelper(hitHelper);
+      return;
+    }
+
+    if (!this.intersection.intersects) {
+      if (this.interactionMode() === 'select-helper') {
+        this.clearSelectedHelper();
+      }
+
+      return;
+    }
+
     this.position.copy(this.intersection.point);
     this.orientation.copy(this.mouseHelper.rotation);
 
-    const loggedPoint = { id: crypto.randomUUID(), position: this.position.clone() };
+    switch (this.interactionMode()) {
+      case 'line':
+        this.addLinePoint();
+        return;
+      case 'sphere-marking':
+        this.addSphereMarking();
+        return;
+      case 'box-marking':
+        this.addBoxMarking();
+        return;
+      case 'select-helper':
+        this.clearSelectedHelper();
+        return;
+    }
+  };
+
+  private addLinePoint(): void {
+    const loggedPoint: LoggedPoint = { id: crypto.randomUUID(), position: this.position.clone() };
     this.loggedPoints.push(loggedPoint);
     this.generatePoint(loggedPoint.id, loggedPoint.position);
     this.regeneratePath();
-  };
+  }
+
+  private addSphereMarking(): void {
+    const color: THREE.Color = this.resolveHelperColor(this.blocMarkingsType());
+    const mesh: THREE.Mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 24, 24),
+      new THREE.MeshStandardMaterial({
+        color,
+        transparent: true,
+        opacity: 0.75,
+        depthWrite: false
+      })
+    );
+
+    mesh.position.copy(this.position);
+    mesh.scale.setScalar(spherePlacementRadius);
+    mesh.layers.set(helperLayer);
+
+    const helper: SphereSceneMarking = {
+      id: crypto.randomUUID(),
+      color,
+      mesh,
+      type: 'sphere'
+    };
+
+    mesh.userData['helperId'] = helper.id;
+    mesh.userData['helperType'] = helper.type;
+    this.helperObjects.push(helper);
+    this.scene.add(mesh);
+    this.selectHelper(helper);
+    this.updateMarkingShaderUniforms();
+    this.applyShaderUniformUpdates();
+    this.startLooping();
+  }
+
+  private addBoxMarking(): void {
+    const color: THREE.Color = this.resolveHelperColor(this.blocMarkingsType());
+    const mesh: THREE.Mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshStandardMaterial({
+        color,
+        transparent: true,
+        opacity: 0.45,
+        depthWrite: false
+      })
+    );
+
+    const helperNormal: THREE.Vector3 = this.intersection.normal.clone().normalize();
+    const orientation: THREE.Quaternion = new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 0, 1),
+      helperNormal
+    );
+
+    mesh.position.copy(this.position);
+    mesh.quaternion.copy(orientation);
+    mesh.scale.set(boxPlacementWidth, boxPlacementHeight, boxPlacementDepth);
+    mesh.layers.set(helperLayer);
+
+    const helper: BoxSceneMarking = {
+      id: crypto.randomUUID(),
+      color,
+      mesh,
+      type: 'box'
+    };
+
+    mesh.userData['helperId'] = helper.id;
+    mesh.userData['helperType'] = helper.type;
+    this.helperObjects.push(helper);
+    this.scene.add(mesh);
+    this.selectHelper(helper);
+    this.updateMarkingShaderUniforms();
+    this.applyShaderUniformUpdates();
+    this.startLooping();
+  }
 
   private generatePoint(uuid: string, point: THREE.Vector3): void {
     const sphere: THREE.Mesh = new THREE.Mesh(
@@ -346,22 +534,12 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.startLooping();
   }
 
-    if (this.currentMeshes.length === 0 || this.raycaster === undefined || this.camera === undefined) {
   private checkIntersection(x: number, y: number): void {
+    if (this.currentMeshes.length === 0 || this.camera === undefined) {
       return;
     }
 
-    const pointer = new THREE.Vector2();
-    const canvasWidth = this.canvas.nativeElement.offsetWidth;
-    const canvasHeight = this.canvas.nativeElement.offsetHeight;
-    const canvasTop = this.canvas.nativeElement.getBoundingClientRect().top;
-    const canvasLeft = this.canvas.nativeElement.getBoundingClientRect().left;
-
-    const mouseX = x - canvasLeft;
-    const mouseY = y - canvasTop;
-
-    pointer.x = (mouseX / canvasWidth) * 2 - 1;
-    pointer.y = -(mouseY / canvasHeight) * 2 + 1;
+    const pointer: THREE.Vector2 = this.getCanvasPointer(x, y);
 
     this.raycaster.setFromCamera(pointer, this.camera);
     this.raycaster.firstHitOnly = true;
@@ -379,21 +557,18 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       this.intersection.point.copy(point);
 
       const normalMatrix: THREE.Matrix3 = new THREE.Matrix3().getNormalMatrix(this.hitMesh.matrixWorld);
+      const worldNormal: THREE.Vector3 =
+        currentIntersection.face?.normal.clone().applyNormalMatrix(normalMatrix).normalize() ??
+        new THREE.Vector3(0, 0, 1);
+      const normalEnd: THREE.Vector3 = point.clone().addScaledVector(worldNormal, 1.0);
 
-      const normal = currentIntersection.face!.normal.clone();
-      normal.applyNormalMatrix(normalMatrix);
-      normal.multiplyScalar(10);
-      normal.add(point);
-
-      this.intersection.normal.copy(currentIntersection.face!.normal);
-      this.mouseHelper.lookAt(normal);
-      const lineLength = 1.0;
-      const end = point.clone().addScaledVector(normal, lineLength);
+      this.intersection.normal.copy(worldNormal);
+      this.mouseHelper.lookAt(normalEnd);
 
       this.line.visible = true;
       const positions: THREE.BufferAttribute = this.line.geometry.attributes['position'] as THREE.BufferAttribute;
       positions.setXYZ(0, point.x, point.y, point.z);
-      positions.setXYZ(1, end.x, end.y, end.z);
+      positions.setXYZ(1, normalEnd.x, normalEnd.y, normalEnd.z);
       positions.needsUpdate = true;
 
       this.intersection.intersects = true;
@@ -424,6 +599,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.camera = new THREE.PerspectiveCamera(75, canvasSizes.width / canvasSizes.height, 0.001, 250);
     this.camera.layers.enable(0);
     this.camera.layers.enable(1);
+    this.camera.layers.enable(helperLayer);
 
     this.onResize();
     this.scene.add(this.camera);
@@ -441,13 +617,19 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     };
     this.controls.addEventListener('change', this.startLooping);
 
-    this.raycaster = new THREE.Raycaster(this.camera.position);
     this.raycaster.layers.set(1);
+    this.helperRaycaster.layers.set(helperLayer);
 
     this.scene.add(this.mouseHelper);
     this.lineGeometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
     this.scene.add(this.line);
     this.scene.add(this.debugSphere);
+
+    this.transformControls = new TransformControls(this.camera, this.renderer.domElement);
+    this.transformControls.setMode(this.helperTransformMode());
+    this.transformControls.addEventListener('dragging-changed', this.onTransformDraggingChanged);
+    this.transformControls.addEventListener('objectChange', this.onTransformObjectChange);
+    this.scene.add(this.transformControls.getHelper());
 
     this.dragControls = new DragControls(this.sphereArray, this.camera, this.renderer.domElement);
     this.dragControls.addEventListener('dragstart', () => {
@@ -467,6 +649,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       this.cameraControlsService.setCameraInteractable(true);
     });
 
+    canvas.addEventListener('pointerdown', this.handleCanvasPointerDown);
+
     if (this.loggedPoints.length > 0) {
       this.regeneratePath();
     }
@@ -475,6 +659,8 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private loop = () => {
+    this.frameRequested = false;
+
     if (!this.renderer || !this.isLooping) {
       return;
     }
@@ -492,7 +678,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
     this.renderer.render(this.scene, this.camera);
     if (this.isLooping) {
-      window.requestAnimationFrame(this.loop);
+      this.requestNextFrame();
     }
   };
 
@@ -519,18 +705,16 @@ export class OutdoorEditorRenderer implements AfterViewInit {
             }
 
             mesh.geometry.computeBoundsTree();
-            this.bvh = mesh.geometry.boundsTree;
 
-            const material = mesh.material as THREE.MeshPhysicalMaterial;
-            material.side = THREE.DoubleSide;
-            if (this.displayWireframe) {
-              material.wireframe = true;
+            const material: THREE.Material | THREE.Material[] = mesh.material;
+            if (!Array.isArray(material) && material instanceof THREE.MeshPhysicalMaterial) {
+              material.side = THREE.DoubleSide; // important for raycasting
+              if (this.displayWireframe) {
+                material.wireframe = true;
+              }
             }
-            if (!this.originalBlockMaterial) {
-              this.originalBlockMaterial = material;
-              this.originalBlockTexture = material.map;
-            }
-            material.needsUpdate = true;
+
+            mesh.material = this.createHelperShaderMaterial(mesh.material);
             this.currentMeshes.push(mesh);
           }
         });
@@ -541,9 +725,10 @@ export class OutdoorEditorRenderer implements AfterViewInit {
           this.resetCameraPosition();
         }
 
-        this.raycaster = new THREE.Raycaster(this.camera.position);
         this.raycaster.layers.set(1);
         this.raycaster.firstHitOnly = true;
+        this.updateMarkingShaderUniforms();
+        this.applyShaderUniformUpdates();
 
         this.startLooping();
       },
@@ -561,10 +746,13 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private removeBoulderFromScene(gltf: GLTF): void {
-    this.bvh = undefined;
     this.currentMeshes.length = 0;
     this.hitMesh = undefined;
-    this.originalBlockMaterial = undefined;
+    for (const helperShaderMaterial of this.helperShaderMaterials) {
+      helperShaderMaterial.dispose();
+    }
+    this.helperShaderMaterials.length = 0;
+
     gltf.scene.traverse((child) => {
       const mesh: THREE.Mesh = child as THREE.Mesh;
       if (mesh.isMesh) {
@@ -575,15 +763,295 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.scene.remove(gltf.scene);
   }
 
+  private createHelperShaderMaterial(
+    originalMaterial: THREE.Material | THREE.Material[]
+  ): THREE.Material | THREE.Material[] {
+    if (Array.isArray(originalMaterial)) {
+      return originalMaterial.map((material) => this.createHelperShaderMaterialForSingleMaterial(material));
+    }
+
+    return this.createHelperShaderMaterialForSingleMaterial(originalMaterial);
+  }
+
+  private createHelperShaderMaterialForSingleMaterial(originalMaterial: THREE.Material): THREE.Material {
+    if (!(originalMaterial instanceof THREE.MeshPhysicalMaterial)) {
+      return originalMaterial;
+    }
+
+    const material: THREE.MeshPhysicalMaterial = originalMaterial.clone();
+    material.side = THREE.DoubleSide; // important for raycasting
+    material.wireframe = this.displayWireframe;
+    material.needsUpdate = true;
+    this.helperShaderMaterials.push(material);
+
+    material.onBeforeCompile = (shader: MaterialShader): void => {
+      shader.uniforms['helperOverlayTexture'] = { value: this.helperOverlayTexture };
+      shader.uniforms['sphereMarkingCount'] = { value: 0 };
+      shader.uniforms['sphereMarkings'] = { value: this.sphereMarkingData };
+      shader.uniforms['sphereMarkingColors'] = { value: this.sphereMarkingColors };
+      shader.uniforms['boxMarkingCount'] = { value: 0 };
+      shader.uniforms['boxMarkingPositions'] = { value: this.boxMarkingPositions };
+      shader.uniforms['boxMarkingQuaternions'] = { value: this.boxMarkingQuaternions };
+      shader.uniforms['boxMarkingSizes'] = { value: this.boxMarkingSizes };
+      shader.uniforms['boxMarkingColors'] = { value: this.boxMarkingColors };
+      shader.uniforms['helperBlendStrength'] = { value: 0.65 };
+      shader.uniforms['helperEmissiveStrength'] = { value: 0.9 };
+      shader.uniforms['sphereFalloff'] = { value: 0.45 };
+      shader.uniforms['boxEdgeFalloff'] = { value: 0.3 };
+      shader.uniforms['maxSphereMarkings'] = { value: maxSphereMarkings };
+      shader.uniforms['maxBoxMarkings'] = { value: maxBoxMarkings };
+
+      shader.vertexShader = shader.vertexShader.replace(
+        'varying vec3 vViewPosition;',
+        ['varying vec3 vViewPosition;', 'varying vec3 vWorldPosition;'].join('\n')
+      );
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <worldpos_vertex>',
+        ['#include <worldpos_vertex>', 'vWorldPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;'].join('\n')
+      );
+
+      shader.fragmentShader = shader.fragmentShader.replace(
+        'uniform float opacity;',
+        uniforms(maxSphereMarkings, maxBoxMarkings).join('\n')
+      );
+
+      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', fragmentShader.join('\n'));
+
+      material.userData['shader'] = shader;
+    };
+
+    return material;
+  }
+
+  private createHelperOverlayTexture(): THREE.DataTexture {
+    const data: Uint8Array = new Uint8Array([0, 0, 0, 255]);
+    const texture: THREE.DataTexture = new THREE.DataTexture(data, 1, 1, THREE.RGBAFormat);
+    texture.needsUpdate = true;
+    return texture;
+  }
+
+  private applyShaderUniformUpdates(): void {
+
+    const helperSnapshot: HelperShaderSnapshot = this.updateMarkingShaderUniforms();
+    for (const helperShaderMaterial of this.helperShaderMaterials) {
+      const shader: MaterialShader | undefined = helperShaderMaterial.userData['shader'] as MaterialShader | undefined;
+      if (!shader) {
+        continue;
+      }
+
+
+      shader.uniforms['helperOverlayTexture'].value = this.helperOverlayTexture;
+      shader.uniforms['sphereMarkingCount'].value = helperSnapshot.sphereMarkingCount;
+      shader.uniforms['sphereMarkings'].value = this.sphereMarkingData;
+      shader.uniforms['sphereMarkingColors'].value = this.sphereMarkingColors;
+      shader.uniforms['boxMarkingCount'].value = helperSnapshot.boxMarkingCount;
+      shader.uniforms['boxMarkingPositions'].value = this.boxMarkingPositions;
+      shader.uniforms['boxMarkingQuaternions'].value = this.boxMarkingQuaternions;
+      shader.uniforms['boxMarkingSizes'].value = this.boxMarkingSizes;
+      shader.uniforms['boxMarkingColors'].value = this.boxMarkingColors;
+    }
+  }
+
+  private updateMarkingShaderUniforms(): HelperShaderSnapshot {
+    let sphereIndex = 0;
+    let boxIndex = 0;
+
+    this.resetMarkingUniformArrays();
+
+    for (const helper of this.helperObjects) {
+      if (helper.type === 'sphere' && sphereIndex < maxSphereMarkings) {
+        const radius: number = Math.max(helper.mesh.scale.x, 0.05);
+        this.sphereMarkingData[sphereIndex].set(
+          helper.mesh.position.x,
+          helper.mesh.position.y,
+          helper.mesh.position.z,
+          radius
+        );
+        this.sphereMarkingColors[sphereIndex].copy(helper.color);
+        sphereIndex++;
+        continue;
+      }
+
+      if (helper.type === 'box' && boxIndex < maxBoxMarkings) {
+        const normalizedQuaternion: THREE.Quaternion = helper.mesh.quaternion.clone().normalize();
+        this.boxMarkingPositions[boxIndex].copy(helper.mesh.position);
+        this.boxMarkingQuaternions[boxIndex].set(
+          normalizedQuaternion.x,
+          normalizedQuaternion.y,
+          normalizedQuaternion.z,
+          normalizedQuaternion.w
+        );
+        this.boxMarkingSizes[boxIndex].set(
+          Math.max(Math.abs(helper.mesh.scale.x), 0.1),
+          Math.max(Math.abs(helper.mesh.scale.y), 0.1),
+          Math.max(Math.abs(helper.mesh.scale.z), 0.05)
+        );
+        this.boxMarkingColors[boxIndex].copy(helper.color);
+        boxIndex++;
+      }
+    }
+
+    return {
+      sphereMarkingCount: sphereIndex,
+      boxMarkingCount: boxIndex
+    };
+  }
+
+  private resetMarkingUniformArrays(): void {
+    for (let index = 0; index < maxSphereMarkings; index++) {
+      this.sphereMarkingData[index].set(0, 0, 0, 0);
+      this.sphereMarkingColors[index].setRGB(0, 0, 0);
+    }
+
+    for (let index = 0; index < maxBoxMarkings; index++) {
+      this.boxMarkingPositions[index].set(0, 0, 0);
+      this.boxMarkingQuaternions[index].set(0, 0, 0, 1);
+      this.boxMarkingSizes[index].set(0, 0, 0);
+      this.boxMarkingColors[index].setRGB(0, 0, 0);
+    }
+  }
+
+  private getCanvasPointer(clientX: number, clientY: number): THREE.Vector2 {
+    const canvasWidth: number = this.canvas.nativeElement.offsetWidth;
+    const canvasHeight: number = this.canvas.nativeElement.offsetHeight;
+    const canvasTop: number = this.canvas.nativeElement.getBoundingClientRect().top;
+    const canvasLeft: number = this.canvas.nativeElement.getBoundingClientRect().left;
+    const mouseX: number = clientX - canvasLeft;
+    const mouseY: number = clientY - canvasTop;
+
+    return new THREE.Vector2((mouseX / canvasWidth) * 2 - 1, -(mouseY / canvasHeight) * 2 + 1);
+  }
+
+  private getHelperAtPointer(clientX: number, clientY: number): SceneMarking | undefined {
+    if (this.helperObjects.length === 0) {
+      return undefined;
+    }
+
+    const pointer: THREE.Vector2 = this.getCanvasPointer(clientX, clientY);
+    this.helperRaycaster.setFromCamera(pointer, this.camera);
+    const hits: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = this.helperRaycaster.intersectObjects(
+      this.helperObjects.map((helper) => helper.mesh),
+      false
+    );
+    const helperId: string | undefined = hits[0]?.object.userData['helperId'] as string | undefined;
+
+    if (!helperId) {
+      return undefined;
+    }
+
+    return this.helperObjects.find((helper) => helper.id === helperId);
+  }
+
+  private selectHelper(helper: SceneMarking): void {
+    this.selectedHelper = helper;
+    this.transformControls?.attach(helper.mesh);
+    this.transformControls?.setMode(this.helperTransformMode());
+    this.startLooping();
+  }
+
+  private clearSelectedHelper(): void {
+    this.selectedHelper = undefined;
+    this.transformControls?.detach();
+    this.startLooping();
+  }
+
+  private setInteractionMode(mode: InteractionMode): void {
+    this.interactionMode.set(mode);
+    if (mode !== 'select-helper' && this.selectedHelper) {
+      this.transformControls?.attach(this.selectedHelper.mesh);
+    }
+  }
+
+  private setTransformMode(mode: HelperTransformMode): void {
+    this.helperTransformMode.set(mode);
+    this.transformControls?.setMode(mode);
+    this.startLooping();
+  }
+
+  private removeSelectedHelper(): void {
+    if (!this.selectedHelper) {
+      return;
+    }
+
+    const selectedHelperId: string = this.selectedHelper.id;
+    this.disposeHelperMesh(this.selectedHelper);
+    this.clearSelectedHelper();
+
+    const helperIndex: number = this.helperObjects.findIndex((helper) => helper.id === selectedHelperId);
+    if (helperIndex >= 0) {
+      this.helperObjects.splice(helperIndex, 1);
+      this.updateMarkingShaderUniforms();
+      this.applyShaderUniformUpdates();
+      this.startLooping();
+    }
+  }
+
+  private onTransformDraggingChanged = (event: { value: unknown }): void => {
+    const isDragging: boolean = event.value === true;
+    this.isDragging = isDragging;
+    this.controls.enabled = !isDragging;
+    this.cameraControlsService.setCameraInteractable(!isDragging);
+  };
+
+  private onTransformObjectChange = (): void => {
+    if (!this.selectedHelper) {
+      return;
+    }
+
+    if (this.selectedHelper.type === 'sphere') {
+      const uniformScale: number = Math.max(
+        (Math.abs(this.selectedHelper.mesh.scale.x) +
+          Math.abs(this.selectedHelper.mesh.scale.y) +
+          Math.abs(this.selectedHelper.mesh.scale.z)) /
+          3,
+        0.05
+      );
+      this.selectedHelper.mesh.scale.setScalar(uniformScale);
+    } else {
+      this.selectedHelper.mesh.scale.set(
+        Math.max(Math.abs(this.selectedHelper.mesh.scale.x), 0.1),
+        Math.max(Math.abs(this.selectedHelper.mesh.scale.y), 0.1),
+        Math.max(Math.abs(this.selectedHelper.mesh.scale.z), 0.1)
+      );
+    }
+
+    this.updateMarkingShaderUniforms();
+    this.applyShaderUniformUpdates();
+    this.startLooping();
+  };
+
+  private disposeHelperMesh(helper: SceneMarking): void {
+    this.scene.remove(helper.mesh);
+    helper.mesh.geometry.dispose();
+    const material: THREE.Material | THREE.Material[] = helper.mesh.material;
+    if (Array.isArray(material)) {
+      for (const mat of material) {
+        mat.dispose();
+      }
+    } else {
+      material.dispose();
+    }
+  }
+
   private dispose(): void {
     window.removeEventListener('pointermove', this.onPointerMove);
-    window.removeEventListener('pointerdown', this.addPointToLoggedPoints);
+    this.canvas?.nativeElement?.removeEventListener('pointerdown', this.handleCanvasPointerDown);
 
     this.controls?.removeEventListener('change', this.startLooping);
     this.controls?.dispose();
+    this.transformControls?.removeEventListener('dragging-changed', this.onTransformDraggingChanged);
+    this.transformControls?.removeEventListener('objectChange', this.onTransformObjectChange);
+    this.transformControls?.detach();
+    this.transformControls?.dispose();
+    this.dragControls?.dispose();
 
     if (this.currentGltf) {
       this.removeBoulderFromScene(this.currentGltf);
+    }
+
+    for (const helper of this.helperObjects) {
+      this.disposeHelperMesh(helper);
     }
 
     this.scene.traverse((child) => {
@@ -593,6 +1061,12 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       }
     });
 
+    this.helperOverlayTexture.dispose();
+    this.tubeGeometry?.dispose();
+    for (const helperShaderMaterial of this.helperShaderMaterials) {
+      helperShaderMaterial.dispose();
+    }
+    this.helperShaderMaterials.length = 0;
     this.renderer?.dispose();
   }
 
@@ -611,8 +1085,17 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     }
 
     this.isLooping = true;
-    this.loop();
+    this.requestNextFrame();
   };
+
+  private requestNextFrame(): void {
+    if (this.frameRequested) {
+      return;
+    }
+
+    this.frameRequested = true;
+    window.requestAnimationFrame(this.loop);
+  }
 
   private clearLoggedPoints(): void {
     this.loggedPoints.length = 0;
@@ -630,5 +1113,14 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       }
     }
     this.sphereArray.length = 0;
+  }
+
+  private resolveHelperColor(markingsType: OutdoorBlocMarkingsType): THREE.Color {
+    const selectedColor = outdoorBlocMarkingColorOptions.find((option) => option.type === markingsType)?.color;
+    if (selectedColor) {
+      return selectedColor.clone();
+    }
+
+    return outdoorBlocMarkingColorOptions[0].color.clone();
   }
 }
