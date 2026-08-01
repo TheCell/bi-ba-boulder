@@ -65,13 +65,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   public readonly revertLastPointCommand = input(0);
   public shortcuts: ShortcutInput[] = [];
 
-  private mouseHelper = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 10), new THREE.MeshNormalMaterial());
-  private lineGeometry = new THREE.BufferGeometry();
-  private line = new THREE.Line(this.lineGeometry, new THREE.LineBasicMaterial());
-  private intersection = {
-    intersects: false,
-    point: new THREE.Vector3(),
-    normal: new THREE.Vector3()
   private readonly processedRawModel = signal<ArrayBuffer | undefined>(undefined);
 
   private readonly scene: THREE.Scene = new THREE.Scene();
@@ -84,8 +77,27 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.directionalLightIntensity
   );
   private readonly raycaster: THREE.Raycaster = new THREE.Raycaster();
+  private readonly mouseHelper: THREE.Mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 10),
+    new THREE.MeshNormalMaterial()
+  );
+  private readonly lineGeometry: THREE.BufferGeometry = new THREE.BufferGeometry();
+  private readonly line: THREE.Line = new THREE.Line(this.lineGeometry, new THREE.LineBasicMaterial());
+  private readonly debugColor: number = 0x98ff98;
+  private readonly debugSphere: THREE.Mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(1, 32, 32),
+    new THREE.MeshBasicMaterial({ color: this.debugColor })
+  );
+  private readonly viewpoints: Record<string, Viewpoint> = {
+    seitensprung: {
+      position: new THREE.Vector3(-9.44876021135404, 7.320794224154875, 6.724980613386679),
+      target: new THREE.Vector3(-3.0950377146341763, 7.692263096560984, -2.217579333053568)
+    },
+    overview: {
+      position: new THREE.Vector3(-0.0967487267161844, 9.600426820701172, 11.401826642615301),
+      target: new THREE.Vector3(3.710864794256258, 5.128171870749298, -1.8769139834889017)
+    }
   };
-  private debugColor = 0x98ff98;
   private readonly position: THREE.Vector3 = new THREE.Vector3();
   private readonly orientation: THREE.Euler = new THREE.Euler();
   private readonly loggedPoints: LoggedPoint[] = [];
@@ -118,25 +130,17 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private tubeMesh?: THREE.Mesh;
   private rayVisionTubeMesh?: THREE.Mesh;
   private hitMesh?: THREE.Mesh;
+  private currentGltf?: GLTF;
   private isDragging = false;
   private isLooping = false;
   private displayNormals = false;
   private displayWireframe = false;
+  private initialized = false;
 
-  private debugSphere = new THREE.Mesh(
-    new THREE.SphereGeometry(1, 32, 32),
-    new THREE.MeshBasicMaterial({ color: this.debugColor })
-  );
-
-  private viewpoints: Record<string, Viewpoint> = {
-    seitensprung: {
-      position: new THREE.Vector3(-9.44876021135404, 7.320794224154875, 6.724980613386679),
-      target: new THREE.Vector3(-3.0950377146341763, 7.692263096560984, -2.217579333053568)
-    },
-    overview: {
-      position: new THREE.Vector3(-0.0967487267161844, 9.600426820701172, 11.401826642615301),
-      target: new THREE.Vector3(3.710864794256258, 5.128171870749298, -1.8769139834889017)
-    }
+  private readonly intersection = {
+    intersects: false,
+    point: new THREE.Vector3(),
+    normal: new THREE.Vector3()
   };
   // debugging stuff end
 
@@ -144,9 +148,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
   private originalBlockTexture: THREE.Texture | null = null;
 
-  private currentGltf?: GLTF;
   private bvh: GeometryBVH | undefined;
-  private initialized = false; // temporary 'fix' for a timing problem
   // private bvhHelper = new BVHHelper();
   public onResize(): void {
     if (this.renderer) {
