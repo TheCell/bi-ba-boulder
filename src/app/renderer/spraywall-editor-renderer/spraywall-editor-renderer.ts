@@ -17,7 +17,13 @@ import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
-import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
+import {
+  beginVertex,
+  mapFragment,
+  uniforms,
+  vViewPositionReplace,
+  worldposVertex
+} from '../common/spraywall-shader-code';
 import { holdColorOptions, TypeAndColor } from '../common/spraywall-hold-types';
 import { ColorAndIndex } from '../common/spraywall-color-and-index';
 import { getImageDataFromTexture, htmlImageElementTextureToDataTexture } from '../common/util';

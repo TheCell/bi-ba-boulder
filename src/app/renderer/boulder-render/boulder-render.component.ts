@@ -21,7 +21,13 @@ import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { BoulderLine } from '../../interfaces/boulder-line';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
-import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
+import {
+  beginVertex,
+  mapFragment,
+  uniforms,
+  vViewPositionReplace,
+  worldposVertex
+} from '../common/spraywall-shader-code';
 import { ActivatedRoute } from '@angular/router';
 import { SpraywallProblemDto } from '@api-net/index';
 import { CameraControlsService } from '../camera-controls.service';
