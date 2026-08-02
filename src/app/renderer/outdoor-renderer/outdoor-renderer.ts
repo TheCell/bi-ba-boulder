@@ -329,6 +329,7 @@ export class OutdoorRenderer implements AfterViewInit {
       }
 
       for (const marking of selectedLine.line.data?.sceneMarkings ?? []) {
+        // todo check sizes and rotation
         if (marking.form === SceneMarkingForm.Box) {
           this.addBoxMarking(marking);
         } else if (marking.form === SceneMarkingForm.Sphere) {
