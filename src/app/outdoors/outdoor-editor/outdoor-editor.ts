@@ -120,7 +120,9 @@ export class OutdoorEditor {
       throw new Error('No line data from renderer');
     }
 
+    // todo check
     const sceneMarkings = this.renderer.getSceneMarkings();
+    console.log(sceneMarkings);
 
     const lineData: LineData = {
       positions: linePoints,

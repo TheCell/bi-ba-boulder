@@ -344,40 +344,24 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     for (const helper of this.helperObjects) {
       if (helper.type === 'sphere' && sphereIndex < maxSphereMarkings) {
         markings.push({
-          id: helper.id,
           form: SceneMarkingForm.Sphere,
           position: this.sphereMarkingData[sphereIndex].toArray().slice(0, 3) as [number, number, number],
           quaternion: [0, 0, 0, 1],
           scale: [helper.mesh.scale.x, helper.mesh.scale.y, helper.mesh.scale.z],
-          type: 
+          type: this.resolveHelperTypeFromColor(helper.color)
         });
-        // const radius: number = Math.max(helper.mesh.scale.x, 0.05);
-        // this.sphereMarkingData[sphereIndex].set(
-        //   helper.mesh.position.x,
-        //   helper.mesh.position.y,
-        //   helper.mesh.position.z,
-        //   radius
-        // );
-        // this.sphereMarkingColors[sphereIndex].copy(helper.color);
         sphereIndex++;
         continue;
       }
 
       if (helper.type === 'box' && boxIndex < maxBoxMarkings) {
-        const normalizedQuaternion: THREE.Quaternion = helper.mesh.quaternion.clone().normalize();
-        this.boxMarkingPositions[boxIndex].copy(helper.mesh.position);
-        this.boxMarkingQuaternions[boxIndex].set(
-          normalizedQuaternion.x,
-          normalizedQuaternion.y,
-          normalizedQuaternion.z,
-          normalizedQuaternion.w
-        );
-        this.boxMarkingSizes[boxIndex].set(
-          Math.max(Math.abs(helper.mesh.scale.x), 0.1),
-          Math.max(Math.abs(helper.mesh.scale.y), 0.1),
-          Math.max(Math.abs(helper.mesh.scale.z), 0.05)
-        );
-        this.boxMarkingColors[boxIndex].copy(helper.color);
+        markings.push({
+          form: SceneMarkingForm.Box,
+          position: this.boxMarkingPositions[boxIndex].toArray() as [number, number, number],
+          quaternion: this.boxMarkingQuaternions[boxIndex].toArray() as [number, number, number, number],
+          scale: this.boxMarkingSizes[boxIndex].toArray() as [number, number, number],
+          type: this.resolveHelperTypeFromColor(helper.color)
+        });
         boxIndex++;
       }
     }
@@ -1171,5 +1155,9 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     }
 
     return outdoorBlocMarkingColorOptions[0].color.clone();
+  }
+
+  private resolveHelperTypeFromColor(color: THREE.Color): OutdoorBlocMarkingsType | undefined {
+    return outdoorBlocMarkingColorOptions.find((option) => option.color.equals(color))?.type;
   }
 }
