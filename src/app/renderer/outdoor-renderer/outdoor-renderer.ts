@@ -23,7 +23,8 @@ import {
   BoxSceneMarking,
   CustomSceneMarking,
   HelperShaderSnapshot,
-  MaterialShader
+  MaterialShader,
+  SphereSceneMarking
 } from '../outdoor-interfaces/scene-marking';
 import { SceneMarkingForm } from '../../core/enums/scene-marking-form.enum';
 import { createHelperOverlayTexture } from '../common/outdoor-bloc-utils';
@@ -330,6 +331,8 @@ export class OutdoorRenderer implements AfterViewInit {
       for (const marking of selectedLine.line.data?.sceneMarkings ?? []) {
         if (marking.form === SceneMarkingForm.Box) {
           this.addBoxMarking(marking);
+        } else if (marking.form === SceneMarkingForm.Sphere) {
+          this.addSphereMarking(marking);
         }
 
         // this.startLooping();
@@ -390,38 +393,56 @@ export class OutdoorRenderer implements AfterViewInit {
     this.scene.add(tubeMesh);
   }
 
-  // private addSphereMarking(): void {
-  //   const color: THREE.Color = resolveHelperColor(this.blocMarkingsType());
-  //   const mesh: THREE.Mesh = new THREE.Mesh(
-  //     new THREE.SphereGeometry(1, 24, 24),
-  //     new THREE.MeshStandardMaterial({
-  //       color,
-  //       transparent: true,
-  //       opacity: 0.75,
-  //       depthWrite: false
-  //     })
-  //   );
+  private addSphereMarking(sceneMarking: SceneMarking): void {
+    if (
+      sceneMarking.type === undefined ||
+      sceneMarking.scale === undefined ||
+      sceneMarking.quaternion === undefined ||
+      sceneMarking.position === undefined
+    ) {
+      throw new Error('Scene marking is missing required properties: type, scale, quaternion, or position');
+    }
 
-  //   mesh.position.copy(this.position);
-  //   mesh.scale.setScalar(spherePlacementRadius);
-  //   mesh.layers.set(helperLayer);
+    const color: THREE.Color = resolveHelperColor(sceneMarking.type);
+    const mesh: THREE.Mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 24, 24),
+      new THREE.MeshStandardMaterial({
+        color,
+        transparent: true,
+        opacity: 0.75,
+        depthWrite: false
+      })
+    );
+    const orientation: THREE.Quaternion = new THREE.Quaternion(
+      sceneMarking.quaternion[0],
+      sceneMarking.quaternion[1],
+      sceneMarking.quaternion[2],
+      sceneMarking.quaternion[3]
+    );
 
-  //   const helper: SphereSceneMarking = {
-  //     id: crypto.randomUUID(),
-  //     color,
-  //     mesh,
-  //     type: 'sphere'
-  //   };
+    const position = new THREE.Vector3(sceneMarking.position[0], sceneMarking.position[1], sceneMarking.position[2]);
 
-  //   mesh.userData['helperId'] = helper.id;
-  //   mesh.userData['helperType'] = helper.type;
-  //   this.helperObjects.push(helper);
-  //   this.scene.add(mesh);
-  //   this.selectHelper(helper);
-  //   this.updateMarkingShaderUniforms();
-  //   this.applyShaderUniformUpdates();
-  //   this.startLooping();
-  // }
+    mesh.position.copy(position);
+    mesh.quaternion.copy(orientation);
+    mesh.scale.setScalar(sceneMarking.scale[0]);
+    mesh.layers.set(this.helperLayer);
+
+    const helper: SphereSceneMarking = {
+      id: crypto.randomUUID(),
+      color,
+      mesh,
+      type: 'sphere'
+    };
+
+    mesh.userData['helperId'] = helper.id;
+    mesh.userData['helperType'] = helper.type;
+    this.helperObjects.push(helper);
+    this.scene.add(mesh);
+    // this.selectHelper(helper);
+    // this.updateMarkingShaderUniforms();
+    // this.applyShaderUniformUpdates();
+    // this.startLooping();
+  }
 
   private addBoxMarking(sceneMarking: SceneMarking): void {
     if (
