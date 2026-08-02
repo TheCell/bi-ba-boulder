@@ -40,7 +40,6 @@ import {
   spherePlacementRadius,
   uniforms
 } from '../common/outdoor-shader-code';
-import { SceneMarkingType } from '../../core/enums/scene-marking-type.enum';
 import { SceneMarkingForm } from '../../core/enums/scene-marking-form.enum';
 
 THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;

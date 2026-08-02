@@ -4,7 +4,6 @@ import {
   DestroyRef,
   effect,
   ElementRef,
-  HostListener,
   inject,
   input,
   output,
@@ -27,7 +26,10 @@ export interface EnhancedLine extends LineDto {
   selector: 'app-outdoor-renderer',
   imports: [KeyboardShortcutsModule],
   templateUrl: './outdoor-renderer.html',
-  styleUrl: './outdoor-renderer.scss'
+  styleUrl: './outdoor-renderer.scss',
+  host: {
+    '(window:resize)': 'onResize()'
+  }
 })
 export class OutdoorRenderer implements AfterViewInit {
   private el: ElementRef = inject(ElementRef);
@@ -35,20 +37,6 @@ export class OutdoorRenderer implements AfterViewInit {
   private cameraControlsService = inject(CameraControlsService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize') public onResize(): void {
-    if (this.renderer) {
-      const canvasSizes = {
-        width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight
-      };
-
-      this.renderer.setPixelRatio(window.devicePixelRatio);
-      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
-      this.camera.aspect = canvasSizes.width / canvasSizes.height;
-      this.camera.updateProjectionMatrix();
-      this.loop();
-    }
-  }
 
   public rawModel = input<ArrayBuffer>();
   public lines = input<EnhancedLine[]>();
@@ -94,6 +82,21 @@ export class OutdoorRenderer implements AfterViewInit {
 
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
+
+  public onResize(): void {
+    if (this.renderer) {
+      const canvasSizes = {
+        width: this.el.nativeElement.offsetWidth,
+        height: this.el.nativeElement.offsetHeight
+      };
+
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
+      this.camera.aspect = canvasSizes.width / canvasSizes.height;
+      this.camera.updateProjectionMatrix();
+      this.loop();
+    }
+  }
 
   public constructor() {
     effect(() => {

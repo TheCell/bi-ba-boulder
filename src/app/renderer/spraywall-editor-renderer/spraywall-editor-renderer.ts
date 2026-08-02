@@ -1,11 +1,9 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   effect,
   ElementRef,
-  HostListener,
   inject,
   input,
   OnInit,
@@ -36,7 +34,9 @@ import { CameraControlsService } from '../camera-controls.service';
   imports: [KeyboardShortcutsModule, FormsModule, ReactiveFormsModule],
   templateUrl: './spraywall-editor-renderer.html',
   styleUrl: './spraywall-editor-renderer.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  host: {
+    '(window:resize)': 'onResize()'
+  }
 })
 export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private el: ElementRef = inject(ElementRef);
@@ -44,19 +44,6 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private cameraControlsService = inject(CameraControlsService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize') public onResize(): void {
-    if (this.renderer) {
-      const canvasSizes = {
-        width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight
-      };
-
-      this.renderer.setPixelRatio(window.devicePixelRatio);
-      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
-      this.camera.aspect = canvasSizes.width / canvasSizes.height;
-      this.camera.updateProjectionMatrix();
-    }
-  }
 
   public rawModel = input<ArrayBuffer>();
   public highlightUv = input<THREE.Texture<HTMLImageElement>>();
@@ -100,6 +87,20 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
+
+  public onResize(): void {
+    if (this.renderer) {
+      const canvasSizes = {
+        width: this.el.nativeElement.offsetWidth,
+        height: this.el.nativeElement.offsetHeight
+      };
+
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
+      this.camera.aspect = canvasSizes.width / canvasSizes.height;
+      this.camera.updateProjectionMatrix();
+    }
+  }
 
   public constructor() {
     effect(() => {
