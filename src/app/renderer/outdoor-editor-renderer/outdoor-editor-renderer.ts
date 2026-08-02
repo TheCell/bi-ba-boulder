@@ -40,6 +40,8 @@ import {
   spherePlacementRadius,
   uniforms
 } from '../common/outdoor-shader-code';
+import { SceneMarkingType } from '../../core/enums/scene-marking-type.enum';
+import { SceneMarkingForm } from '../../core/enums/scene-marking-form.enum';
 
 THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -337,7 +339,48 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   public getSceneMarkings(): SceneMarking[] {
     const markings: SceneMarking[] = [];
 
-    // todo
+    let sphereIndex = 0;
+    let boxIndex = 0;
+    for (const helper of this.helperObjects) {
+      if (helper.type === 'sphere' && sphereIndex < maxSphereMarkings) {
+        markings.push({
+          id: helper.id,
+          form: SceneMarkingForm.Sphere,
+          position: this.sphereMarkingData[sphereIndex].toArray().slice(0, 3) as [number, number, number],
+          quaternion: [0, 0, 0, 1],
+          scale: [helper.mesh.scale.x, helper.mesh.scale.y, helper.mesh.scale.z],
+          type: 
+        });
+        // const radius: number = Math.max(helper.mesh.scale.x, 0.05);
+        // this.sphereMarkingData[sphereIndex].set(
+        //   helper.mesh.position.x,
+        //   helper.mesh.position.y,
+        //   helper.mesh.position.z,
+        //   radius
+        // );
+        // this.sphereMarkingColors[sphereIndex].copy(helper.color);
+        sphereIndex++;
+        continue;
+      }
+
+      if (helper.type === 'box' && boxIndex < maxBoxMarkings) {
+        const normalizedQuaternion: THREE.Quaternion = helper.mesh.quaternion.clone().normalize();
+        this.boxMarkingPositions[boxIndex].copy(helper.mesh.position);
+        this.boxMarkingQuaternions[boxIndex].set(
+          normalizedQuaternion.x,
+          normalizedQuaternion.y,
+          normalizedQuaternion.z,
+          normalizedQuaternion.w
+        );
+        this.boxMarkingSizes[boxIndex].set(
+          Math.max(Math.abs(helper.mesh.scale.x), 0.1),
+          Math.max(Math.abs(helper.mesh.scale.y), 0.1),
+          Math.max(Math.abs(helper.mesh.scale.z), 0.05)
+        );
+        this.boxMarkingColors[boxIndex].copy(helper.color);
+        boxIndex++;
+      }
+    }
 
     return markings;
   }
