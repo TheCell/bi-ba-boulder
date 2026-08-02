@@ -21,7 +21,11 @@ import { Viewpoint } from '../common/viewpoint';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import { LineDto, SceneMarking } from '@api-net/model/models';
-import { outdoorBlocMarkingColorOptions, OutdoorBlocMarkingsType } from '../common/outdoor-bloc-markings-types';
+import {
+  OutdoorBlocMarkingsType,
+  resolveHelperColor,
+  resolveHelperTypeFromColor
+} from '../common/outdoor-bloc-markings-types';
 import {
   computeBoundsTree,
   disposeBoundsTree,
@@ -41,6 +45,14 @@ import {
   uniforms
 } from '../common/outdoor-shader-code';
 import { SceneMarkingForm } from '../../core/enums/scene-marking-form.enum';
+import {
+  BoxSceneMarking,
+  CustomSceneMarking,
+  HelperShaderSnapshot,
+  MaterialShader,
+  SphereSceneMarking
+} from '../outdoor-interfaces/scene-marking';
+import { createHelperOverlayTexture } from '../common/outdoor-bloc-utils';
 
 THREE.BufferGeometry.prototype.computeBoundsTree = computeBoundsTree;
 THREE.BufferGeometry.prototype.disposeBoundsTree = disposeBoundsTree;
@@ -52,33 +64,10 @@ THREE.BatchedMesh.prototype.raycast = acceleratedRaycast;
 
 export type InteractionMode = 'line' | 'sphere-marking' | 'box-marking' | 'select-helper';
 export type HelperTransformMode = 'translate' | 'rotate' | 'scale';
-type CustomSceneMarking = SphereSceneMarking | BoxSceneMarking;
 
 interface LoggedPoint {
   id: string;
   position: THREE.Vector3;
-}
-
-interface HelperShaderSnapshot {
-  sphereMarkingCount: number;
-  boxMarkingCount: number;
-}
-
-type MaterialShader = Parameters<THREE.Material['onBeforeCompile']>[0];
-
-interface BaseSceneMarking {
-  id: string;
-  color: THREE.Color;
-  mesh: THREE.Mesh;
-  type: 'sphere' | 'box';
-}
-
-interface SphereSceneMarking extends BaseSceneMarking {
-  type: 'sphere';
-}
-
-interface BoxSceneMarking extends BaseSceneMarking {
-  type: 'box';
 }
 
 @Component({
@@ -192,7 +181,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private readonly rayVisionMaterial: THREE.MeshStandardMaterial = new THREE.MeshStandardMaterial({
     color: this.tubeMaterial.color
   });
-  private readonly helperOverlayTexture: THREE.DataTexture = this.createHelperOverlayTexture();
+  private readonly helperOverlayTexture: THREE.DataTexture = createHelperOverlayTexture();
 
   private camera: THREE.PerspectiveCamera = null!;
   private controls: OrbitControls = null!;
@@ -347,7 +336,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
           position: this.sphereMarkingData[sphereIndex].toArray().slice(0, 3) as [number, number, number],
           quaternion: [0, 0, 0, 1],
           scale: [helper.mesh.scale.x, helper.mesh.scale.y, helper.mesh.scale.z],
-          type: this.resolveHelperTypeFromColor(helper.color)
+          type: resolveHelperTypeFromColor(helper.color)
         });
         sphereIndex++;
         continue;
@@ -359,7 +348,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
           position: this.boxMarkingPositions[boxIndex].toArray() as [number, number, number],
           quaternion: this.boxMarkingQuaternions[boxIndex].toArray() as [number, number, number, number],
           scale: this.boxMarkingSizes[boxIndex].toArray() as [number, number, number],
-          type: this.resolveHelperTypeFromColor(helper.color)
+          type: resolveHelperTypeFromColor(helper.color)
         });
         boxIndex++;
       }
@@ -441,7 +430,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private addSphereMarking(): void {
-    const color: THREE.Color = this.resolveHelperColor(this.blocMarkingsType());
+    const color: THREE.Color = resolveHelperColor(this.blocMarkingsType());
     const mesh: THREE.Mesh = new THREE.Mesh(
       new THREE.SphereGeometry(1, 24, 24),
       new THREE.MeshStandardMaterial({
@@ -474,7 +463,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private addBoxMarking(): void {
-    const color: THREE.Color = this.resolveHelperColor(this.blocMarkingsType());
+    const color: THREE.Color = resolveHelperColor(this.blocMarkingsType());
     const mesh: THREE.Mesh = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
       new THREE.MeshStandardMaterial({
@@ -858,13 +847,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     return material;
   }
 
-  private createHelperOverlayTexture(): THREE.DataTexture {
-    const data: Uint8Array = new Uint8Array([0, 0, 0, 255]);
-    const texture: THREE.DataTexture = new THREE.DataTexture(data, 1, 1, THREE.RGBAFormat);
-    texture.needsUpdate = true;
-    return texture;
-  }
-
   private applyShaderUniformUpdates(): void {
     const helperSnapshot: HelperShaderSnapshot = this.updateMarkingShaderUniforms();
     for (const helperShaderMaterial of this.helperShaderMaterials) {
@@ -1145,18 +1127,5 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       }
     }
     this.sphereArray.length = 0;
-  }
-
-  private resolveHelperColor(markingsType: OutdoorBlocMarkingsType): THREE.Color {
-    const selectedColor = outdoorBlocMarkingColorOptions.find((option) => option.type === markingsType)?.color;
-    if (selectedColor) {
-      return selectedColor.clone();
-    }
-
-    return outdoorBlocMarkingColorOptions[0].color.clone();
-  }
-
-  private resolveHelperTypeFromColor(color: THREE.Color): OutdoorBlocMarkingsType | undefined {
-    return outdoorBlocMarkingColorOptions.find((option) => option.color.equals(color))?.type;
   }
 }
