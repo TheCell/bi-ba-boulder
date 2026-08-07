@@ -33,9 +33,10 @@
     <div class="legend-list">
       <div #scrollList class="list-content">
         <ul>
-          @for (line of lines(); track line.id) {
+          @for (line of enhancedLines(); track line.id) {
           <app-bloc-line-item
             class="li-item"
+            [customLineColor]="`#${line.lineColor.getHexString()}`"
             [line]="line"
             [isSelected]="selectedLine()?.line?.id === line.id"
             (selected)="onSelectedLine({ line: $event, setFocus: true })"></app-bloc-line-item>
