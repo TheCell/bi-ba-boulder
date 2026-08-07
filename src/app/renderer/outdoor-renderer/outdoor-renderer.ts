@@ -169,7 +169,12 @@ export class OutdoorRenderer implements AfterViewInit {
       }
 
       if (lineWithInfos.setFocus) {
-        this.cameraControlsService.focusOnObject(lineObject);
+        let middlePoint = new THREE.Vector3(0, 0, 0);
+        if (this.currentMesh) {
+          middlePoint = this.currentMesh.geometry.boundingSphere?.center ?? middlePoint;
+        }
+
+        this.cameraControlsService.focusOnObject(lineObject, middlePoint);
       }
       this.regenerateLines();
     });

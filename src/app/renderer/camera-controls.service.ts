@@ -58,19 +58,20 @@ export class CameraControlsService {
     }
   }
 
-  public focusOnObject(object: THREE.Mesh): void {
+  public focusOnObject(object: THREE.Mesh, blocMiddlePoint: THREE.Vector3): void {
     if (this.orbitControls && this.camera) {
       const box = new THREE.Box3().setFromObject(object);
       const sphere = box.getBoundingSphere(new THREE.Sphere());
-
       const center = sphere.center;
+
       const radius = sphere.radius;
-
       const fov = THREE.MathUtils.degToRad(this.camera instanceof THREE.PerspectiveCamera ? this.camera.fov : 75);
-
       const distance = radius / Math.sin(fov / 2);
-      const direction = new THREE.Vector3(0, 0, 1);
-      this.camera.position.copy(center).add(direction.multiplyScalar(distance));
+
+      const myCenter = new THREE.Vector3(0, 0, 0).copy(center);
+      const myDirection = myCenter.sub(blocMiddlePoint).normalize();
+
+      this.camera.position.copy(center).add(myDirection.multiplyScalar(distance));
       this.camera.lookAt(center);
       this.orbitControls.target.copy(center);
     }
