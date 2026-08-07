@@ -288,6 +288,12 @@ export class OutdoorRenderer implements AfterViewInit {
         }
         // this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
         this.loop();
+
+        // Re-apply uniforms after first render when shaders have compiled
+        window.requestAnimationFrame(() => {
+          this.applyShaderUniformUpdates();
+          this.loop();
+        });
       },
       (err: ErrorEvent) => {
         throw new Error(err.message);

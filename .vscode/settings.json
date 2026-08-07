@@ -16,5 +16,10 @@
         "ConvertFrom-Json": true,
         "npx tsc": true,
         "ng": true
+    },
+    "chat.mcp.serverSampling": {
+        "bi-ba-boulder/.vscode/mcp.json: angular-cli": {
+            "allowedDuringChat": true
+        }
     }
 }

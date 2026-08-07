@@ -249,8 +249,16 @@ export class OutdoorEditorRenderer implements AfterViewInit {
         this.generatePoint(loggedPoint.id, loggedPoint.position);
       }
 
+      if (line.data.sceneMarkings !== undefined) {
+        this.addMarkingsForEdit(line.data.sceneMarkings);
+      }
+
       if (this.initialized) {
         this.regeneratePath();
+
+        this.updateMarkingShaderUniforms();
+        this.applyShaderUniformUpdates();
+        this.startLooping();
       }
     });
 
@@ -376,7 +384,6 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     }
 
     this.checkIntersection(event.clientX, event.clientY);
-    // todo uncommment
     this.startLooping();
   };
 
@@ -422,6 +429,21 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     }
   };
 
+  private addMarkingsForEdit(sceneMarkings: SceneMarking[]) {
+    for (const marking of sceneMarkings) {
+      switch (marking.form) {
+        case SceneMarkingForm.Sphere:
+          this.addSphereMarking(marking);
+          break;
+        case SceneMarkingForm.Box:
+          this.addBoxMarking(marking);
+          break;
+        default:
+          throw new Error(`Unsupported scene marking form: ${marking.form}`);
+      }
+    }
+  }
+
   private addLinePoint(): void {
     const loggedPoint: LoggedPoint = { id: crypto.randomUUID(), position: this.position.clone() };
     this.loggedPoints.push(loggedPoint);
@@ -429,8 +451,22 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.regeneratePath();
   }
 
-  private addSphereMarking(): void {
-    const color: THREE.Color = resolveHelperColor(this.blocMarkingsType());
+  private addSphereMarking(marking?: SceneMarking): void {
+    if (
+      marking !== undefined &&
+      (marking?.type === undefined ||
+        marking?.scale === undefined ||
+        marking?.quaternion === undefined ||
+        marking?.position === undefined)
+    ) {
+      throw new Error('Scene marking is missing required properties: type, scale, quaternion, or position');
+    }
+
+    let type = this.blocMarkingsType();
+    if (marking?.type !== undefined) {
+      type = marking.type;
+    }
+    const color: THREE.Color = resolveHelperColor(type);
     const mesh: THREE.Mesh = new THREE.Mesh(
       new THREE.SphereGeometry(1, 24, 24),
       new THREE.MeshStandardMaterial({
@@ -441,8 +477,17 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       })
     );
 
-    mesh.position.copy(this.position);
-    mesh.scale.setScalar(spherePlacementRadius);
+    if (marking === undefined || marking.position === undefined) {
+      mesh.position.copy(this.position);
+    } else {
+      mesh.position.set(marking.position[0], marking.position[1], marking.position[2]);
+    }
+
+    let scale = spherePlacementRadius;
+    if (marking !== undefined && marking.scale !== undefined) {
+      scale = marking.scale[0];
+    }
+    mesh.scale.setScalar(scale);
     mesh.layers.set(helperLayer);
 
     const helper: SphereSceneMarking = {
@@ -462,8 +507,22 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     this.startLooping();
   }
 
-  private addBoxMarking(): void {
-    const color: THREE.Color = resolveHelperColor(this.blocMarkingsType());
+  private addBoxMarking(marking?: SceneMarking): void {
+    if (
+      marking !== undefined &&
+      (marking?.type === undefined ||
+        marking?.scale === undefined ||
+        marking?.quaternion === undefined ||
+        marking?.position === undefined)
+    ) {
+      throw new Error('Scene marking is missing required properties: type, scale, quaternion, or position');
+    }
+
+    let type = this.blocMarkingsType();
+    if (marking?.type !== undefined) {
+      type = marking.type;
+    }
+    const color: THREE.Color = resolveHelperColor(type);
     const mesh: THREE.Mesh = new THREE.Mesh(
       new THREE.BoxGeometry(1, 1, 1),
       new THREE.MeshStandardMaterial({
@@ -475,14 +534,31 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     );
 
     const helperNormal: THREE.Vector3 = this.intersection.normal.clone().normalize();
-    const orientation: THREE.Quaternion = new THREE.Quaternion().setFromUnitVectors(
+    let orientation: THREE.Quaternion = new THREE.Quaternion().setFromUnitVectors(
       new THREE.Vector3(0, 0, 1),
       helperNormal
     );
+    if (marking?.quaternion !== undefined) {
+      orientation = new THREE.Quaternion(
+        marking.quaternion[0],
+        marking.quaternion[1],
+        marking.quaternion[2],
+        marking.quaternion[3]
+      );
+    }
 
-    mesh.position.copy(this.position);
+    if (marking === undefined || marking.position === undefined) {
+      mesh.position.copy(this.position);
+    } else {
+      mesh.position.set(marking.position[0], marking.position[1], marking.position[2]);
+    }
     mesh.quaternion.copy(orientation);
-    mesh.scale.set(boxPlacementWidth, boxPlacementHeight, boxPlacementDepth);
+
+    let scale = new THREE.Vector3(boxPlacementWidth, boxPlacementHeight, boxPlacementDepth);
+    if (marking !== undefined && marking.scale !== undefined) {
+      scale = new THREE.Vector3(marking.scale[0], marking.scale[1], marking.scale[2]);
+    }
+    mesh.scale.copy(scale);
     mesh.layers.set(helperLayer);
 
     const helper: BoxSceneMarking = {
@@ -496,7 +572,9 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     mesh.userData['helperType'] = helper.type;
     this.helperObjects.push(helper);
     this.scene.add(mesh);
-    this.selectHelper(helper);
+    if (marking === undefined) {
+      this.selectHelper(helper);
+    }
     this.updateMarkingShaderUniforms();
     this.applyShaderUniformUpdates();
     this.startLooping();
@@ -754,6 +832,12 @@ export class OutdoorEditorRenderer implements AfterViewInit {
         this.applyShaderUniformUpdates();
 
         this.startLooping();
+
+        // Re-apply uniforms after first render when shaders have compiled
+        window.requestAnimationFrame(() => {
+          this.applyShaderUniformUpdates();
+          this.startLooping();
+        });
       },
       (err: ErrorEvent) => {
         throw new Error(err.message);
