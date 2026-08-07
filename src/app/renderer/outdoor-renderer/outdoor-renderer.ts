@@ -70,6 +70,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private helperShaderMaterials: THREE.MeshPhysicalMaterial[] = [];
   private raycaster: THREE.Raycaster = null!;
   private LINE_LAYER = 2;
+  private LINE_RAYCAST_LAYER = 4;
   private loopCountSincePointerDown = 0;
   private readonly helperOverlayTexture: THREE.DataTexture = createHelperOverlayTexture();
 
@@ -113,10 +114,16 @@ export class OutdoorRenderer implements AfterViewInit {
     extrusionSegments: 100,
     radiusSegments: 6
   };
+  private raycastTubeParams = {
+    radius: 0.25,
+    extrusionSegments: 100,
+    radiusSegments: 6
+  };
 
   private tubeGeometries: THREE.TubeGeometry[] = [];
   private tubeMeshes: THREE.Mesh[] = [];
   private rayVisionTubeMeshes: THREE.Mesh[] = [];
+  private raycastTubeMeshes: THREE.Mesh[] = [];
 
   // Shader material related
   private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
@@ -237,7 +244,7 @@ export class OutdoorRenderer implements AfterViewInit {
     });
 
     this.raycaster = new THREE.Raycaster(this.camera.position);
-    this.raycaster.layers.set(this.LINE_LAYER);
+    this.raycaster.layers.set(this.LINE_RAYCAST_LAYER);
 
     this.regenerateLines();
 
@@ -322,6 +329,11 @@ export class OutdoorRenderer implements AfterViewInit {
     }
     this.rayVisionTubeMeshes = [];
 
+    for (const raycastTubeMesh of this.raycastTubeMeshes) {
+      this.scene.remove(raycastTubeMesh);
+    }
+    this.raycastTubeMeshes = [];
+
     const lines = this.lines();
     if (lines === undefined) {
       return;
@@ -361,8 +373,6 @@ export class OutdoorRenderer implements AfterViewInit {
       return;
     }
 
-    // todo add additional info (start holds highlight etc.)
-
     const tubeMaterial = new THREE.MeshBasicMaterial({
       color: line.lineColor,
       transparent: true,
@@ -371,6 +381,9 @@ export class OutdoorRenderer implements AfterViewInit {
       depthWrite: false
     });
     const rayVisionMaterial = new THREE.MeshStandardMaterial({
+      color: tubeMaterial.color
+    });
+    const raycastMaterial = new THREE.MeshBasicMaterial({
       color: tubeMaterial.color
     });
 
@@ -399,6 +412,19 @@ export class OutdoorRenderer implements AfterViewInit {
     this.rayVisionTubeMeshes.push(rayVisionTubeMesh);
     this.scene.add(rayVisionTubeMesh);
     this.scene.add(tubeMesh);
+
+    const raycastGeometry = new THREE.TubeGeometry(
+      path,
+      this.raycastTubeParams.extrusionSegments,
+      this.raycastTubeParams.radius,
+      this.raycastTubeParams.radiusSegments,
+      false
+    );
+    const raycastTubeMesh = new THREE.Mesh(raycastGeometry, raycastMaterial);
+    raycastTubeMesh.layers.set(this.LINE_RAYCAST_LAYER);
+    raycastTubeMesh.userData = { id: line.id, identifier: line.identifier };
+    this.raycastTubeMeshes.push(raycastTubeMesh);
+    this.scene.add(raycastTubeMesh);
   }
 
   private addSphereMarking(sceneMarking: SceneMarking): void {
@@ -558,7 +584,7 @@ export class OutdoorRenderer implements AfterViewInit {
 
     this.raycaster.setFromCamera(pointer, this.camera);
     const currentIntersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[] = [];
-    this.raycaster.intersectObjects(this.tubeMeshes, false, currentIntersections);
+    this.raycaster.intersectObjects(this.raycastTubeMeshes, false, currentIntersections);
 
     if (currentIntersections.length > 0) {
       const currentIntersection = currentIntersections[0];
