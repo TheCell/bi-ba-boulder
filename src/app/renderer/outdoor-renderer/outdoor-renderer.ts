@@ -74,13 +74,9 @@ export class OutdoorRenderer implements AfterViewInit {
   private readonly helperOverlayTexture: THREE.DataTexture = createHelperOverlayTexture();
 
   // markings
-
+  private lightmarkingIntensity = 0.5;
   private readonly helperLayer = 3;
-  private readonly position: THREE.Vector3 = new THREE.Vector3();
-  private readonly orientation: THREE.Euler = new THREE.Euler();
-  private readonly sphereArray: THREE.Mesh[] = [];
   private readonly helperObjects: CustomSceneMarking[] = [];
-  private readonly currentMeshes: THREE.Mesh[] = [];
   private readonly sphereMarkingData: THREE.Vector4[] = Array.from(
     { length: maxSphereMarkings },
     () => new THREE.Vector4(0, 0, 0, 0)
@@ -604,8 +600,8 @@ export class OutdoorRenderer implements AfterViewInit {
       shader.uniforms['boxMarkingQuaternions'] = { value: this.boxMarkingQuaternions };
       shader.uniforms['boxMarkingSizes'] = { value: this.boxMarkingSizes };
       shader.uniforms['boxMarkingColors'] = { value: this.boxMarkingColors };
-      shader.uniforms['helperBlendStrength'] = { value: 0.65 };
-      shader.uniforms['helperEmissiveStrength'] = { value: 0.9 };
+      shader.uniforms['helperBlendStrength'] = { value: 0.0 };
+      shader.uniforms['helperEmissiveStrength'] = { value: this.lightmarkingIntensity };
       shader.uniforms['sphereFalloff'] = { value: 0.45 };
       shader.uniforms['boxEdgeFalloff'] = { value: 0.3 };
       shader.uniforms['maxSphereMarkings'] = { value: maxSphereMarkings };
