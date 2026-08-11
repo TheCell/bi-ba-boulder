@@ -15,7 +15,6 @@ import * as THREE from 'three';
 import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CameraControlsService } from '../camera-controls.service';
-import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { LineDto, SceneMarking } from '@api-net/model/models';
 import { fragmentShader, maxBoxMarkings, maxSphereMarkings, uniforms } from '../common/outdoor-shader-code';
 import { resolveHelperColor } from '../common/outdoor-bloc-markings-types';
@@ -28,6 +27,9 @@ import {
 } from '../outdoor-interfaces/scene-marking';
 import { SceneMarkingForm } from '../../core/enums/scene-marking-form.enum';
 import { createHelperOverlayTexture } from '../common/outdoor-bloc-utils';
+import { RawModelInput } from './model-input.interface';
+import { RESOLUTION_LEVEL, ResolutionLevel } from '../../interfaces/resolution-level';
+import { fitCameraToCenteredObject } from '../common/camera-utils';
 
 export interface EnhancedLine extends LineDto {
   lineColor: THREE.Color;
@@ -49,12 +51,12 @@ export class OutdoorRenderer implements AfterViewInit {
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
 
-  public rawModel = input<ArrayBuffer>();
+  public rawModels = input<RawModelInput[]>([]);
   public lines = input<EnhancedLine[]>();
   public selectedLine = input<{ line: LineDto; setFocus: boolean } | undefined>();
   public selected = output<{ line: LineDto; setFocus: boolean } | undefined>();
 
-  private proccessedRawModel = signal<ArrayBuffer | undefined>(undefined);
+  private proccessedRawModels = signal<RawModelInput[]>([]);
   private scene = new THREE.Scene();
   private loader = new GLTFLoader();
   private camera: THREE.PerspectiveCamera = null!;
@@ -125,11 +127,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private rayVisionTubeMeshes: THREE.Mesh[] = [];
   private raycastTubeMeshes: THREE.Mesh[] = [];
 
-  // Shader material related
-  private originalBlockMaterial?: THREE.MeshPhysicalMaterial;
-  private originalBlockTexture: THREE.Texture | null = null;
-
-  private currentGltf?: GLTF;
+  private sceneObjects: { lod: THREE.LOD; blocId: string }[] = [];
   private initialized = false; // temporary 'fix' for a timing problem
 
   public onResize(): void {
@@ -149,12 +147,17 @@ export class OutdoorRenderer implements AfterViewInit {
 
   public constructor() {
     effect(() => {
-      const rawModel = this.rawModel();
-      if (rawModel !== this.proccessedRawModel()) {
-        this.proccessedRawModel.set(rawModel);
-        if (rawModel !== undefined) {
-          // this effect can run through before afterInit is finished. Needs fixing.
-          this.removePreviousAndAddBoulderToScene(rawModel);
+      const rawModels = this.rawModels();
+      const proccessedRawModels = this.proccessedRawModels();
+      const setCameraUp = this.proccessedRawModels().length === 0;
+
+      for (const rawModel of rawModels) {
+        const alreadyProcessed = proccessedRawModels.find(
+          (processed) => processed.blocId === rawModel.blocId && processed.resolution === rawModel.resolution
+        );
+        if (!alreadyProcessed) {
+          this.addBlocOrLodToScene(rawModel.arrayBuffer, rawModel.resolution, rawModel.blocId, setCameraUp);
+          this.proccessedRawModels.set([...proccessedRawModels, rawModel]);
         }
       }
     });
@@ -256,58 +259,101 @@ export class OutdoorRenderer implements AfterViewInit {
       return;
     }
 
+    // const test = this.sceneObjects[0];
+    // if (test !== undefined) {
+    //   console.log(test.lod.getCurrentLevel());
+    // }
+
     this.loopCountSincePointerDown++;
     this.renderer.render(this.scene, this.camera);
     // window.requestAnimationFrame(this.loop); // removed to not rerender on idle
   };
 
-  private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
+  private addBlocOrLodToScene(
+    arrayBuffer: ArrayBuffer,
+    resolution: ResolutionLevel,
+    blocId: string,
+    resetCamera: boolean
+  ): void {
     this.loader.parse(
-      buffer,
+      arrayBuffer,
       '',
       (gltf: GLTF) => {
-        this.scene.add(gltf.scene);
-        // let childCounter = 0;
         gltf.scene.traverse((child) => {
           child.layers.set(1);
-          // childCounter++;
           const mesh = child as THREE.Mesh;
           if (mesh.isMesh) {
-            this.currentMesh = mesh;
-            this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
-            this.originalBlockTexture = this.originalBlockMaterial.map;
-            this.originalBlockMaterial.needsUpdate = true;
-
             mesh.material = this.createHelperShaderMaterial(mesh.material);
-            // this.originalBlockTexture!.needsUpdate = true;
-            // this.originalBlockTexture!.colorSpace = THREE.LinearSRGBColorSpace;
-            // this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-            // // this.originalBlockMaterial.wireframe = true;
-            // this.rgbBlockMaterial = this.setupCustomShaderMaterial();
           }
         });
 
-        if (this.currentGltf !== undefined) {
-          this.removeBoulderFromScene(this.currentGltf);
-          this.currentGltf = gltf;
+        const object = this.sceneObjects.find((sceneObject) => sceneObject.blocId === blocId);
+        if (object !== undefined) {
+          object.lod.addLevel(gltf.scene, this.getLodDistanceForResolution(resolution));
+          // this.scene.add(object.lod);
         } else {
-          this.currentGltf = gltf;
+          const lod = new THREE.LOD();
+          lod.addLevel(gltf.scene, this.getLodDistanceForResolution(resolution));
+          this.sceneObjects.push({ lod: lod, blocId });
+          this.scene.add(lod);
+        }
+
+        if (resetCamera) {
           this.resetCameraPosition();
         }
-        // this.setupHighlightTexture(); // we don't know when the model is loaded, so try to swap here (no-op if model not loaded yet)
         this.loop();
-
-        // Re-apply uniforms after first render when shaders have compiled
         window.requestAnimationFrame(() => {
           this.applyShaderUniformUpdates();
           this.loop();
         });
       },
       (err: ErrorEvent) => {
-        throw new Error(err.message);
+        throw new Error('Error loading GLTF: ' + err.message);
       }
     );
   }
+
+  // private removePreviousAndAddBoulderToScene(buffer: ArrayBuffer): void {
+  //   this.loader.parse(
+  //     buffer,
+  //     '',
+  //     (gltf: GLTF) => {
+  //       this.scene.add(gltf.scene);
+  //       // let childCounter = 0;
+  //       gltf.scene.traverse((child) => {
+  //         child.layers.set(1);
+  //         // childCounter++;
+  //         const mesh = child as THREE.Mesh;
+  //         if (mesh.isMesh) {
+  //           this.currentMesh = mesh;
+  //           // this.originalBlockMaterial = mesh.material as THREE.MeshPhysicalMaterial;
+  //           // this.originalBlockTexture = this.originalBlockMaterial.map;
+  //           // this.originalBlockMaterial.needsUpdate = true;
+
+  //           mesh.material = this.createHelperShaderMaterial(mesh.material);
+  //         }
+  //       });
+
+  //       if (this.currentGltf !== undefined) {
+  //         this.removeBoulderFromScene(this.currentGltf);
+  //         this.currentGltf = gltf;
+  //       } else {
+  //         this.currentGltf = gltf;
+  //         this.resetCameraPosition();
+  //       }
+  //       this.loop();
+
+  //       // Re-apply uniforms after first render when shaders have compiled
+  //       window.requestAnimationFrame(() => {
+  //         this.applyShaderUniformUpdates();
+  //         this.loop();
+  //       });
+  //     },
+  //     (err: ErrorEvent) => {
+  //       throw new Error(err.message);
+  //     }
+  //   );
+  // }
 
   private regenerateLines(): void {
     if (this.scene === undefined) {
@@ -534,8 +580,10 @@ export class OutdoorRenderer implements AfterViewInit {
   }
 
   private resetCameraPosition(): void {
-    if (this.initialized && this.currentGltf) {
-      fitCameraToCenteredObject(this.camera, this.currentGltf.scene, 0, this.controls);
+    if (this.initialized && this.sceneObjects.length > 0) {
+      const model = this.sceneObjects[0].lod;
+      fitCameraToCenteredObject(this.camera, model, 0, this.controls);
+
       this.cameraControlsService.setOrbitControls(this.controls);
     }
   }
@@ -617,7 +665,7 @@ export class OutdoorRenderer implements AfterViewInit {
 
     const material: THREE.MeshPhysicalMaterial = originalMaterial.clone();
     material.side = THREE.DoubleSide; // important for raycasting
-    // material.wireframe = this.displayWireframe;
+    // material.wireframe = true;
     material.needsUpdate = true;
     this.helperShaderMaterials.push(material);
 
@@ -745,8 +793,9 @@ export class OutdoorRenderer implements AfterViewInit {
     this.controls?.dispose();
     this.canvas?.nativeElement?.removeEventListener('pointerdown', this.onPointerClick);
 
-    if (this.currentGltf) {
-      this.removeBoulderFromScene(this.currentGltf);
+    const sceneObjects = this.sceneObjects;
+    for (const object of sceneObjects) {
+      this.scene.remove(object.lod);
     }
 
     this.scene.traverse((child) => {
@@ -757,5 +806,18 @@ export class OutdoorRenderer implements AfterViewInit {
     });
 
     this.renderer?.dispose();
+  }
+
+  private getLodDistanceForResolution(resolution: ResolutionLevel): number {
+    switch (resolution) {
+      case RESOLUTION_LEVEL.low:
+        return 40;
+      case RESOLUTION_LEVEL.medium:
+        return 25;
+      case RESOLUTION_LEVEL.high:
+        return 0;
+      default:
+        return 0;
+    }
   }
 }

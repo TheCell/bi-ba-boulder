@@ -1,6 +1,6 @@
 <div class="grid">
   <section class="renderContainer">
-    @if (currentRawModel()) {
+    @if (currentRawModels()) {
     <!-- @if (authSessionStateService.isLoggedIn() && selectedProblem) {
         <app-problem-log-overlay [spraywallProblemId]="selectedProblem.id" [boulderLog]="boulderLog()">
         </app-problem-log-overlay>
@@ -10,7 +10,7 @@
     <app-socials-overlay [routeUrl]="selectedRouteUrl()"></app-socials-overlay>
     <app-outdoor-renderer
       class="render"
-      [rawModel]="currentRawModel()"
+      [rawModels]="currentRawModels()"
       [lines]="enhancedLines()"
       [selectedLine]="selectedLine()"
       (selected)="onSelectedLine($event)"></app-outdoor-renderer>

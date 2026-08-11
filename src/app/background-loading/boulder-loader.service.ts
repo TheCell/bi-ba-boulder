@@ -39,24 +39,33 @@ export class BoulderLoaderService {
   public getUrl(
     blocDto: BlocDto,
     resolutionLevel?: ResolutionLevel
-  ): { url: string; higherResolution: ResolutionLevel | undefined } {
+  ): { url: string; currentResolution: ResolutionLevel | undefined } {
     if (resolutionLevel === undefined) {
       resolutionLevel = this.getFirstResolution(blocDto);
     }
 
     switch (resolutionLevel) {
       case 'low':
-        return { url: blocDto.blocLowRes!, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.low) };
+        return {
+          url: blocDto.blocLowRes!,
+          currentResolution: RESOLUTION_LEVEL.low
+        };
       case 'medium':
-        return { url: blocDto.blocMedRes!, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.medium) };
+        return {
+          url: blocDto.blocMedRes!,
+          currentResolution: RESOLUTION_LEVEL.medium
+        };
       case 'high':
-        return { url: blocDto.blocHighRes!, higherResolution: this.getNextResolution(blocDto, RESOLUTION_LEVEL.high) };
+        return {
+          url: blocDto.blocHighRes!,
+          currentResolution: RESOLUTION_LEVEL.high
+        };
       default:
-        return { url: '', higherResolution: undefined };
+        return { url: '', currentResolution: undefined };
     }
   }
 
-  private getNextResolution(blocDto: BlocDto, currentResolution?: ResolutionLevel): ResolutionLevel | undefined {
+  public getNextResolution(blocDto: BlocDto, currentResolution?: ResolutionLevel): ResolutionLevel | undefined {
     switch (currentResolution) {
       case RESOLUTION_LEVEL.low:
         if (blocDto.blocMedRes !== undefined) {

@@ -5,7 +5,7 @@ import { LoadingImageComponent } from '../../common/loading-image/loading-image.
 import { BlocDto, LineDto, LinesService } from '@api-net/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, Subscription, switchMap } from 'rxjs';
-import { ResolutionLevel } from '../../interfaces/resolution-level';
+import { RESOLUTION_LEVEL, ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { BlocLineItem } from './bloc-line-item/bloc-line-item';
@@ -16,6 +16,7 @@ import { ConfirmDeleteDialogData } from '../confirm-delete-dialog/confirm-delete
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { ModalService } from '../../core/modal/modal.service';
 import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
+import { RawModelInput } from '../../renderer/outdoor-renderer/model-input.interface';
 
 @Component({
   selector: 'app-outdoor-bloc',
@@ -33,7 +34,7 @@ export class OutdoorBloc implements OnInit, OnDestroy {
   private router = inject(Router);
   private modalService = inject(ModalService);
 
-  public currentRawModel = signal<ArrayBuffer | undefined>(undefined);
+  public currentRawModels = signal<RawModelInput[]>([]);
   public bloc: BlocDto;
   public lines = signal<LineDto[]>([]);
   public enhancedLines = computed<EnhancedLine[]>(() => {
@@ -50,11 +51,11 @@ export class OutdoorBloc implements OnInit, OnDestroy {
   public selectedLine = signal<{ line: LineDto; setFocus: boolean } | undefined>(undefined);
   private selectedLineIdFromQueryParam?: string;
 
-  private loadNextResolution = new Subject<void>();
-  private startLoadingBoulder = new Subject<void>();
+  private loadNextResolution = new Subject<ResolutionLevel>();
+  private startLoadingBoulder = new Subject<{ url: string; resolution: ResolutionLevel }>();
   private subscription = new Subscription();
-  private boulderUrl = '';
-  private resolutionToLoad?: ResolutionLevel;
+  // private boulderUrl = '';
+  // private resolutionToLoad?: ResolutionLevel;
 
   public constructor() {
     const activatedRoute = inject(ActivatedRoute);
@@ -71,13 +72,14 @@ export class OutdoorBloc implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.loadNextResolution.subscribe({
-        next: () => {
-          if (this.resolutionToLoad !== undefined) {
-            const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, this.resolutionToLoad);
-            this.resolutionToLoad = urlAndInfo.higherResolution;
-            this.boulderUrl = urlAndInfo.url;
-            if (this.boulderUrl.length > 0) {
-              this.startLoadingBoulder.next();
+        next: (resolution) => {
+          const nextResolution = this.boulderLoaderService.getNextResolution(this.bloc, resolution);
+          if (nextResolution !== undefined) {
+            const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, nextResolution);
+            if (urlAndInfo.currentResolution !== undefined) {
+              if (urlAndInfo.url.length > 0 && urlAndInfo.currentResolution !== undefined) {
+                this.startLoadingBoulder.next({ url: urlAndInfo.url, resolution: urlAndInfo.currentResolution });
+              }
             }
           }
         }
@@ -85,19 +87,34 @@ export class OutdoorBloc implements OnInit, OnDestroy {
     );
 
     this.subscription.add(
-      this.startLoadingBoulder.pipe(switchMap(() => this.boulderLoaderService.loadBoulder(this.boulderUrl))).subscribe({
-        next: (data: ArrayBuffer) => {
-          this.currentRawModel.set(data);
-          this.loadNextResolution.next();
-        }
-      })
+      this.startLoadingBoulder
+        .pipe(
+          switchMap(({ url, resolution }) =>
+            this.boulderLoaderService.loadBoulder(url).pipe(
+              switchMap((data) => {
+                return [{ data, resolution }];
+              })
+            )
+          )
+        )
+        .subscribe({
+          next: ({ data, resolution }: { data: ArrayBuffer; resolution: ResolutionLevel }) => {
+            const currentModels = [...(this.currentRawModels() ?? [])];
+            currentModels.push({ arrayBuffer: data, resolution: resolution, blocId: this.bloc.id });
+            this.currentRawModels.set(currentModels);
+            this.loadNextResolution.next(resolution);
+          }
+        })
     );
 
-    const bestCached = this.boulderLoaderService.getBestCachedResolution(this.bloc);
-    const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, bestCached);
-    this.resolutionToLoad = urlAndInfo.higherResolution;
-    this.boulderUrl = urlAndInfo.url;
-    this.startLoadingBoulder.next();
+    // const bestCached = this.boulderLoaderService.getBestCachedResolution(this.bloc);
+    // console.log('bestCached: ', bestCached);
+
+    const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, RESOLUTION_LEVEL.low);
+    // this.boulderUrl = urlAndInfo.url;
+    if (urlAndInfo.url.length > 0 && urlAndInfo.currentResolution !== undefined) {
+      this.startLoadingBoulder.next({ url: urlAndInfo.url, resolution: urlAndInfo.currentResolution });
+    }
   }
 
   public ngOnInit(): void {

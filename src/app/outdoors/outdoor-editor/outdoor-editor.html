@@ -1,11 +1,11 @@
 <div class="grid">
   <section class="renderContainer">
-    @if (currentRawModel()) {
+    @if (currentRawModels()) {
     <app-camera-controls> </app-camera-controls>
     <app-outdoor-editor-renderer
       #renderer
       class="render"
-      [rawModel]="currentRawModel()"
+      [rawModels]="currentRawModels()"
       [lineForEdit]="lineForEdit()"
       [interactionModeSelection]="selectedInteractionMode()"
       [blocMarkingsTypeSelection]="selectedBlocMarkingsType()"
