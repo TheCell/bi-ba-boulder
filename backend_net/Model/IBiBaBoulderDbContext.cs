@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Model;
 

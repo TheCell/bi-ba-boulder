@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Thecell.Bibaboulder.Model.Enums;
 
-namespace Thecell.Bibaboulder.Model.Model;
+namespace Thecell.Bibaboulder.Model.Model.Outdoor;
 
 public class LineData
 {

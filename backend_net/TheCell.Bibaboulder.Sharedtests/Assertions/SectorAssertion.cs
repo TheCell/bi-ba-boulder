@@ -1,5 +1,5 @@
 using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests.Extensions;
 

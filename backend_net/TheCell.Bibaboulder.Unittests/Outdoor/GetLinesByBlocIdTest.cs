@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;

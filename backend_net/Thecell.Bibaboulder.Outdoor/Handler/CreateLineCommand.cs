@@ -1,7 +1,7 @@
 using System;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model.Enums;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Outdoor.Handler;
 

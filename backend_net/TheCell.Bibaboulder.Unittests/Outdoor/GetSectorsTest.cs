@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using Thecell.Bibaboulder.Model;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;

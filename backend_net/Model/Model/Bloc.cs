@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Thecell.Bibaboulder.Model.Basics;
 
-namespace Thecell.Bibaboulder.Model.Model;
+namespace Thecell.Bibaboulder.Model.Model.Outdoor;
 
 public class Bloc : VersionedEntity
 {

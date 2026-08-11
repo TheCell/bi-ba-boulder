@@ -1,4 +1,4 @@
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace TheCell.Bibaboulder.Sharedtests.Assertions;
 
