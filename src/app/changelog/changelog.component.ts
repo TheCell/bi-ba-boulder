@@ -31,6 +31,29 @@ export class ChangelogComponent {
 
   public readonly releaseNotes: ReleaseNote[] = [
     {
+      prNumber: 110,
+      releasedOn: '2026-08-07',
+      headline: 'Scene markings, line selection UX, and zoneless groundwork',
+      highlights: [
+        {
+          text: 'Introduced scene marking foundations across backend models and generated frontend API types.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Improved outdoor line selection with tube raycasting, line focus behavior, and line color feedback.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Moved the app setup toward zoneless operation and refactored renderer event handling for better stability.',
+          isOutdoorRelated: false
+        },
+        {
+          text: 'Cleaned up renderer/shader structure and refreshed changelog presentation styling.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
       prNumber: 108,
       releasedOn: '2026-07-31',
       headline: 'Bloc caching, navigation icons, and outdoor editor improvements',
