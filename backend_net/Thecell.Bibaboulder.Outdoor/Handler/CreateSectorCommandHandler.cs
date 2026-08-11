@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.Outdoor.Handler;
