@@ -536,7 +536,7 @@ export class OutdoorRenderer implements AfterViewInit {
 
     const color: THREE.Color = resolveHelperColor(sceneMarking.type);
     const mesh: THREE.Mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(sceneMarking.scale[0], sceneMarking.scale[1], sceneMarking.scale[2]),
+      new THREE.BoxGeometry(1, 1, 1),
       new THREE.MeshStandardMaterial({
         color,
         transparent: true,
@@ -556,7 +556,7 @@ export class OutdoorRenderer implements AfterViewInit {
     const position = new THREE.Vector3(sceneMarking.position[0], sceneMarking.position[1], sceneMarking.position[2]);
     mesh.position.copy(position);
     mesh.quaternion.copy(orientation);
-    // mesh.scale.set(sceneMarking.scale[0], sceneMarking.scale[1], sceneMarking.scale[2]);
+    mesh.scale.set(sceneMarking.scale[0], sceneMarking.scale[1], sceneMarking.scale[2]);
     mesh.layers.set(this.helperLayer);
 
     const helper: BoxSceneMarking = {
