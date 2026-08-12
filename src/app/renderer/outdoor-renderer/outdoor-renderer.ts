@@ -68,7 +68,6 @@ export class OutdoorRenderer implements AfterViewInit {
   private ambientLight: THREE.AmbientLight = new THREE.AmbientLight(0xffffff, this.ambientLightIntensity);
   private directionalLight = new THREE.DirectionalLight(0xffffff, this.directionalLightIntensity); // this is for shadows
 
-  private currentMesh?: THREE.Mesh;
   private helperShaderMaterials: THREE.MeshPhysicalMaterial[] = [];
   private raycaster: THREE.Raycaster = null!;
   private LINE_LAYER = 2;
@@ -180,8 +179,15 @@ export class OutdoorRenderer implements AfterViewInit {
 
       if (lineWithInfos.setFocus) {
         let middlePoint = new THREE.Vector3(0, 0, 0);
-        if (this.currentMesh) {
-          middlePoint = this.currentMesh.geometry.boundingSphere?.center ?? middlePoint;
+        const mainLod = this.sceneObjects[0]?.lod;
+        if (mainLod !== undefined) {
+          mainLod.getCurrentLevel();
+          mainLod.traverse((object) => {
+            if (object instanceof THREE.Mesh) {
+              const mesh = object as THREE.Mesh;
+              middlePoint = mesh.geometry.boundingSphere?.center ?? middlePoint;
+            }
+          });
         }
 
         this.cameraControlsService.focusOnObject(lineObject, middlePoint);
@@ -300,7 +306,30 @@ export class OutdoorRenderer implements AfterViewInit {
 
         if (resetCamera) {
           this.resetCameraPosition();
+          const lineWithInfos = this.selectedLine();
+
+          if (lineWithInfos !== undefined && lineWithInfos.setFocus) {
+            const lineObject = this.tubeMeshes.find((tubeMesh) => tubeMesh.userData['id'] === lineWithInfos.line.id);
+            if (lineObject === undefined) {
+              return;
+            }
+
+            let middlePoint = new THREE.Vector3(0, 0, 0);
+            const mainLod = this.sceneObjects[0]?.lod;
+            if (mainLod !== undefined) {
+              mainLod.getCurrentLevel();
+              mainLod.traverse((object) => {
+                if (object instanceof THREE.Mesh) {
+                  const mesh = object as THREE.Mesh;
+                  middlePoint = mesh.geometry.boundingSphere?.center ?? middlePoint;
+                }
+              });
+            }
+
+            this.cameraControlsService.focusOnObject(lineObject, middlePoint);
+          }
         }
+
         this.loop();
         window.requestAnimationFrame(() => {
           this.applyShaderUniformUpdates();
@@ -581,7 +610,19 @@ export class OutdoorRenderer implements AfterViewInit {
 
   private resetCameraPosition(): void {
     if (this.initialized && this.sceneObjects.length > 0) {
-      const model = this.sceneObjects[0].lod;
+      const lod = this.sceneObjects[0].lod;
+      let mainMesh: THREE.Mesh | undefined = undefined;
+      lod.traverse((object) => {
+        if (mainMesh !== undefined) {
+          return;
+        }
+
+        if (object instanceof THREE.Mesh && !mainMesh) {
+          mainMesh = object;
+        }
+      });
+
+      const model = mainMesh ?? lod.children[0];
       fitCameraToCenteredObject(this.camera, model, 0, this.controls);
 
       this.cameraControlsService.setOrbitControls(this.controls);
@@ -796,6 +837,18 @@ export class OutdoorRenderer implements AfterViewInit {
     const sceneObjects = this.sceneObjects;
     for (const object of sceneObjects) {
       this.scene.remove(object.lod);
+
+      object.lod.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          object.geometry.dispose();
+
+          if (Array.isArray(object.material)) {
+            object.material.forEach((material) => material.dispose());
+          } else {
+            object.material.dispose();
+          }
+        }
+      });
     }
 
     this.scene.traverse((child) => {

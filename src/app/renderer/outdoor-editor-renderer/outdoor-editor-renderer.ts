@@ -926,7 +926,19 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   private resetCameraPosition(): void {
     if (this.initialized && this.sceneObjects.length > 0) {
-      const model = this.sceneObjects[0].lod;
+      const lod = this.sceneObjects[0].lod;
+      let mainMesh: THREE.Mesh | undefined = undefined;
+      lod.traverse((object) => {
+        if (mainMesh !== undefined) {
+          return;
+        }
+
+        if (object instanceof THREE.Mesh && !mainMesh) {
+          mainMesh = object;
+        }
+      });
+
+      const model = mainMesh ?? lod.children[0];
       fitCameraToCenteredObject(this.camera, model, 0, this.controls);
 
       this.cameraControlsService.setOrbitControls(this.controls);
@@ -1228,6 +1240,18 @@ export class OutdoorEditorRenderer implements AfterViewInit {
     const sceneObjects = this.sceneObjects;
     for (const object of sceneObjects) {
       this.scene.remove(object.lod);
+
+      object.lod.traverse((object) => {
+        if (object instanceof THREE.Mesh) {
+          object.geometry.dispose();
+
+          if (Array.isArray(object.material)) {
+            object.material.forEach((material) => material.dispose());
+          } else {
+            object.material.dispose();
+          }
+        }
+      });
     }
 
     for (const helper of this.helperObjects) {

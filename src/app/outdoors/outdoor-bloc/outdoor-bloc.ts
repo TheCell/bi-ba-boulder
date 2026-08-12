@@ -69,7 +69,9 @@ export class OutdoorBloc implements OnInit, OnDestroy {
       activatedRoute.queryParamMap.subscribe({
         next: (queryParams) => {
           this.selectedLineIdFromQueryParam = queryParams.get('routeId') ?? undefined;
-          this.trySelectLineFromQueryParam();
+          if (this.lines().length > 0) {
+            this.trySelectLineFromQueryParam();
+          }
         }
       })
     );
@@ -218,14 +220,16 @@ export class OutdoorBloc implements OnInit, OnDestroy {
 
   private trySelectLineFromQueryParam(): void {
     const routeId = this.selectedLineIdFromQueryParam;
+    const selectedLine = this.selectedLine();
     if (!routeId) {
-      if (this.selectedLine()) {
+      if (selectedLine) {
         this.setSelectedLine(undefined, false);
       }
+
       return;
     }
 
-    if (this.selectedLine()?.line.id === routeId) {
+    if (selectedLine?.line.id === routeId) {
       return;
     }
 
@@ -234,15 +238,6 @@ export class OutdoorBloc implements OnInit, OnDestroy {
       this.setSelectedLine({ line: lineFromList, setFocus: true }, false);
       return;
     }
-
-    this.linesService.getLine(routeId).subscribe({
-      next: (line) => {
-        this.setSelectedLine({ line, setFocus: true }, false);
-      },
-      error: () => {
-        this.setSelectedLine(undefined, false);
-      }
-    });
   }
 
   private updateRouteSelectionInUrl(routeId?: string): void {
