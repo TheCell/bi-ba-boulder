@@ -80,6 +80,28 @@ public class BlocsControllerTest : BaseTest
                 .SetName(_bogus.Lorem.Slug())
                 .SetDescription(_bogus.Lorem.Sentence())
                 .SetSectorId(sector.Id)
+                .SetAdditionalParts([
+                    new BlocBuilder()
+                        .SetName(_bogus.Lorem.Slug())
+                        .SetDescription(_bogus.Lorem.Sentence())
+                        .SetBlocLowRes(_bogus.Internet.UrlWithPath())
+                        .SetBlocMedRes(_bogus.Internet.UrlWithPath())
+                        .SetBlocHighRes(_bogus.Internet.UrlWithPath())
+                        .Build(),
+                    new BlocBuilder()
+                        .SetName(_bogus.Lorem.Slug())
+                        .SetDescription(_bogus.Lorem.Sentence())
+                        .SetBlocLowRes(_bogus.Internet.UrlWithPath())
+                        .SetBlocMedRes(_bogus.Internet.UrlWithPath())
+                        .SetBlocHighRes(_bogus.Internet.UrlWithPath())
+                        .Build(),
+                    new BlocBuilder()
+                        .SetName(_bogus.Lorem.Slug())
+                        .SetDescription(_bogus.Lorem.Sentence())
+                        .SetBlocLowRes(_bogus.Internet.UrlWithPath())
+                        .SetBlocMedRes(_bogus.Internet.UrlWithPath())
+                        .SetBlocHighRes(_bogus.Internet.UrlWithPath())
+                        .Build()])
                 .Build());
         }
         await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(blocs);

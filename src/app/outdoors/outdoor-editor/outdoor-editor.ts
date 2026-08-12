@@ -1,8 +1,8 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, signal, ViewChild } from '@angular/core';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { BlocDto, LineData, LineDto, LinesService } from '@api-net/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { Subject, Subscription, switchMap } from 'rxjs';
+import { forkJoin, map, Subject, Subscription, switchMap } from 'rxjs';
 import { RESOLUTION_LEVEL, ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import {
@@ -23,6 +23,7 @@ import { OutdoorSaveDialog } from '../outdoor-save-dialog/outdoor-save-dialog';
 import { OutdoorSaveData } from '../outdoor-save-dialog/outdoor-save-data.interface';
 import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
 import { RawModelInput } from '../../renderer/outdoor-renderer/model-input.interface';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-outdoor-editor',
@@ -39,6 +40,7 @@ export class OutdoorEditor {
   private toastService = inject(ToastService);
   private router = inject(Router);
   private modalService = inject(ModalService);
+  private destroyRef = inject(DestroyRef);
 
   public currentRawModels = signal<RawModelInput[]>([]);
   public bloc: BlocDto;
@@ -52,10 +54,12 @@ export class OutdoorEditor {
   public readonly blocMarkingsTypeOptions: OutdoorMarkingTypeAndColor[] = outdoorBlocMarkingColorOptions;
 
   private loadNextResolution = new Subject<ResolutionLevel>();
-  private startLoadingBoulder = new Subject<{ url: string; resolution: ResolutionLevel }>();
+  private startLoadingBoulder = new Subject<{
+    urls: string[];
+    blocIds: string[];
+    resolution: ResolutionLevel;
+  }>();
   private subscription = new Subscription();
-  // private boulderUrl = '';
-  // private resolutionToLoad?: ResolutionLevel;
 
   public constructor() {
     const activatedRoute = inject(ActivatedRoute);
@@ -68,15 +72,17 @@ export class OutdoorEditor {
     }
 
     this.subscription.add(
-      this.loadNextResolution.subscribe({
-        next: (resolution) => {
-          const nextResolution = this.boulderLoaderService.getNextResolution(this.bloc, resolution);
+      this.loadNextResolution.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (currentResolution) => {
+          const nextResolution = this.boulderLoaderService.getNextResolution(this.bloc, currentResolution);
           if (nextResolution !== undefined) {
-            const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, nextResolution);
-            if (urlAndInfo.currentResolution !== undefined) {
-              if (urlAndInfo.url.length > 0 && urlAndInfo.currentResolution !== undefined) {
-                this.startLoadingBoulder.next({ url: urlAndInfo.url, resolution: urlAndInfo.currentResolution });
-              }
+            const urlsAndInfo = this.boulderLoaderService.getUrls(this.bloc, nextResolution);
+            if (urlsAndInfo.currentResolution !== undefined && urlsAndInfo.urls.length > 0) {
+              this.startLoadingBoulder.next({
+                urls: urlsAndInfo.urls,
+                blocIds: urlsAndInfo.blocIds,
+                resolution: urlsAndInfo.currentResolution
+              });
             }
           }
         }
@@ -86,31 +92,42 @@ export class OutdoorEditor {
     this.subscription.add(
       this.startLoadingBoulder
         .pipe(
-          switchMap(({ url, resolution }) =>
-            this.boulderLoaderService.loadBoulder(url).pipe(
-              switchMap((data) => {
-                return [{ data, resolution }];
+          takeUntilDestroyed(this.destroyRef),
+          switchMap(({ urls, blocIds, resolution }) =>
+            forkJoin(urls.map((url) => this.boulderLoaderService.loadBoulder(url))).pipe(
+              map((results) => {
+                return { data: results, resolution, blocIds };
               })
             )
           )
         )
         .subscribe({
-          next: ({ data, resolution }: { data: ArrayBuffer; resolution: ResolutionLevel }) => {
+          next: ({
+            data,
+            resolution,
+            blocIds
+          }: {
+            data: ArrayBuffer[];
+            resolution: ResolutionLevel;
+            blocIds: string[];
+          }) => {
             const currentModels = [...(this.currentRawModels() ?? [])];
-            currentModels.push({ arrayBuffer: data, resolution: resolution, blocId: this.bloc.id });
+            for (let i = 0; i < data.length; i++) {
+              currentModels.push({ arrayBuffer: data[i], resolution: resolution, blocId: blocIds[i] });
+            }
             this.currentRawModels.set(currentModels);
             this.loadNextResolution.next(resolution);
           }
         })
     );
 
-    // const bestCached = this.boulderLoaderService.getBestCachedResolution(this.bloc);
-    // console.log('bestCached: ', bestCached);
-
-    const urlAndInfo = this.boulderLoaderService.getUrl(this.bloc, RESOLUTION_LEVEL.low);
-    // this.boulderUrl = urlAndInfo.url;
-    if (urlAndInfo.url.length > 0 && urlAndInfo.currentResolution !== undefined) {
-      this.startLoadingBoulder.next({ url: urlAndInfo.url, resolution: urlAndInfo.currentResolution });
+    const urlsAndInfo = this.boulderLoaderService.getUrls(this.bloc, RESOLUTION_LEVEL.low);
+    if (urlsAndInfo.urls.length > 0 && urlsAndInfo.currentResolution !== undefined) {
+      this.startLoadingBoulder.next({
+        urls: urlsAndInfo.urls,
+        blocIds: urlsAndInfo.blocIds,
+        resolution: urlsAndInfo.currentResolution
+      });
     }
   }
 

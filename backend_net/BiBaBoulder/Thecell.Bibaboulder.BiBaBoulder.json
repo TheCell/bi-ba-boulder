@@ -1312,6 +1312,12 @@
               "null",
               "string"
             ]
+          },
+          "additionalParts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlocDto"
+            }
           }
         }
       },

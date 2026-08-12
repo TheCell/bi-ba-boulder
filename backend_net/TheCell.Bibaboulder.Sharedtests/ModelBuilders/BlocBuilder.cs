@@ -48,4 +48,10 @@ public class BlocBuilder : BuilderBase<Bloc>
         _instance.BlocHighRes = value;
         return this;
     }
+
+    public BlocBuilder SetAdditionalParts(Bloc[] value)
+    {
+        _instance.AdditionalParts = value;
+        return this;
+    }
 }

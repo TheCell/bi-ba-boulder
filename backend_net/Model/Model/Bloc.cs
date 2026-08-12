@@ -26,9 +26,11 @@ public class Bloc : VersionedEntity
     public string? BlocHighRes { get; set; }
 
     [ForeignKey(nameof(Sector))]
-    public required Guid SectorId { get; set; }
+    public Guid? SectorId { get; set; }
 
-    public Sector Sector { get; set; } = null!;
+    public Sector? Sector { get; set; } = null!;
 
     public ICollection<Line> BoulderLines { get; set; } = [];
+
+    public ICollection<Bloc> AdditionalParts { get; set; } = [];
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using Thecell.Bibaboulder.Model.Dto;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using TheCell.Bibaboulder.Sharedtests.Extensions;
@@ -15,5 +16,12 @@ public static class BlocAssertion
         Xunit.Assert.Equal(expected.BlocLowRes, actual.BlocLowRes);
         Xunit.Assert.Equal(expected.BlocMedRes, actual.BlocMedRes);
         Xunit.Assert.Equal(expected.BlocHighRes, actual.BlocHighRes);
+
+        Xunit.Assert.Equal(expected.AdditionalParts.Count, actual.AdditionalParts.Length);
+        foreach (var bloc in actual.AdditionalParts)
+        {
+            var expectedBloc = expected.AdditionalParts.First(b => b.Id == bloc.Id);
+            Assert(expectedBloc, bloc);
+        }
     }
 }

@@ -9,11 +9,11 @@ using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
 namespace TheCell.Bibaboulder.Unittests.Outdoor;
 
-public class BlocsControllerTest
+public class GetBlocTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
 
-    public BlocsControllerTest()
+    public GetBlocTest()
     {
         _dbContext = new DbContextMock().Build();
     }
@@ -33,7 +33,33 @@ public class BlocsControllerTest
         var sector = new SectorBuilder().SetName("Sector").Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
-        var bloc = new BlocBuilder().SetName("TestBloc").SetSectorId(sector.Id).Build();
+        var bloc = new BlocBuilder()
+            .SetName("TestBloc")
+            .SetSectorId(sector.Id)
+            .SetAdditionalParts([
+                new BlocBuilder()
+                    .SetName("part 2)")
+                    .SetDescription("part 2 description")
+                    .SetBlocLowRes("part_2_low_res/newpart.glb")
+                    .SetBlocMedRes("part_2_med_res/newpart.glb")
+                    .SetBlocHighRes("part_2_high_res/newpart.glb")
+                    .Build(),
+                new BlocBuilder()
+                    .SetName("part 3)")
+                    .SetDescription("part 3 description")
+                    .SetBlocLowRes("part_3_low_res/newpart.glb")
+                    .SetBlocMedRes("part_3_med_res/newpart.glb")
+                    .SetBlocHighRes("part_3_high_res/newpart.glb")
+                    .Build(),
+                new BlocBuilder()
+                    .SetName("part 4)")
+                    .SetDescription("part 4 description")
+                    .SetBlocLowRes("part_4_low_res/newpart.glb")
+                    .SetBlocMedRes("part_4_med_res/newpart.glb")
+                    .SetBlocHighRes("part_4_high_res/newpart.glb")
+                    .Build(),
+            ])
+            .Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var handler = new GetBlocQueryHandler(_dbContext);

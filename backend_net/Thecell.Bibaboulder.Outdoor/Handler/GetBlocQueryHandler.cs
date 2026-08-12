@@ -21,6 +21,7 @@ public class GetBlocQueryHandler : IQueryHandler<GetBlocQuery, BlocDto>
     public async Task<BlocDto> HandleAsync(GetBlocQuery query)
     {
         var bloc = await _dbContext.Blocs
+            .Include(b => b.AdditionalParts)
             .AsNoTracking()
             .SingleOrDefaultAsync(b => b.Id == query.Id)
             .ThrowIfNullAsync(query.Id);

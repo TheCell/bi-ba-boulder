@@ -5,6 +5,7 @@ import { tap } from 'rxjs/operators';
 import { RESOLUTION_LEVEL, ResolutionLevel } from '../interfaces/resolution-level';
 import { BlocDto } from '@api-net/index';
 import { environment } from '../../environments/environment';
+import { UrlsAndExtras } from './boulder-loader-url.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -36,49 +37,32 @@ export class BoulderLoaderService {
     return undefined;
   }
 
-  public getUrl(
-    blocDto: BlocDto,
-    resolutionLevel?: ResolutionLevel
-  ): { url: string; currentResolution: ResolutionLevel | undefined } {
+  public getUrls(blocDto: BlocDto, resolutionLevel?: ResolutionLevel): UrlsAndExtras {
     if (resolutionLevel === undefined) {
       resolutionLevel = this.getFirstResolution(blocDto);
     }
 
-    switch (resolutionLevel) {
-      case 'low':
-        return {
-          url: blocDto.blocLowRes!,
-          currentResolution: RESOLUTION_LEVEL.low
-        };
-      case 'medium':
-        return {
-          url: blocDto.blocMedRes!,
-          currentResolution: RESOLUTION_LEVEL.medium
-        };
-      case 'high':
-        return {
-          url: blocDto.blocHighRes!,
-          currentResolution: RESOLUTION_LEVEL.high
-        };
-      default:
-        return { url: '', currentResolution: undefined };
+    if (resolutionLevel === undefined) {
+      return { urls: [], blocIds: [], currentResolution: undefined };
     }
+
+    return this.getUrl(blocDto, resolutionLevel);
   }
 
   public getNextResolution(blocDto: BlocDto, currentResolution?: ResolutionLevel): ResolutionLevel | undefined {
     switch (currentResolution) {
       case RESOLUTION_LEVEL.low:
-        if (blocDto.blocMedRes !== undefined) {
+        if (blocDto.blocMedRes !== undefined && blocDto.blocMedRes !== null) {
           return RESOLUTION_LEVEL.medium;
         }
 
-        if (blocDto.blocHighRes !== undefined) {
+        if (blocDto.blocHighRes !== undefined && blocDto.blocHighRes !== null) {
           return RESOLUTION_LEVEL.high;
         }
 
         return undefined;
       case RESOLUTION_LEVEL.medium:
-        if (blocDto.blocHighRes !== undefined) {
+        if (blocDto.blocHighRes !== undefined && blocDto.blocHighRes !== null) {
           return RESOLUTION_LEVEL.high;
         }
 
@@ -87,6 +71,39 @@ export class BoulderLoaderService {
         return undefined;
       default:
         return undefined;
+    }
+  }
+
+  private getUrl(blocDto: BlocDto, resolutionLevel: ResolutionLevel): UrlsAndExtras {
+    switch (resolutionLevel) {
+      case 'low':
+        return {
+          urls: [blocDto.blocLowRes, ...(blocDto.additionalParts?.map((part) => part.blocLowRes) ?? [])]
+            .flat()
+            .filter((url): url is string => url !== undefined && url !== null),
+          blocIds: [blocDto.id, ...(blocDto.additionalParts?.map((part) => part.id) ?? [])],
+          currentResolution: RESOLUTION_LEVEL.low
+        };
+      case 'medium':
+        return {
+          urls: [blocDto.blocMedRes, ...(blocDto.additionalParts?.map((part) => part.blocMedRes) ?? [])]
+            .flat()
+            .filter((url): url is string => url !== undefined && url !== null),
+          blocIds: [blocDto.id, ...(blocDto.additionalParts?.map((part) => part.id) ?? [])],
+          currentResolution: RESOLUTION_LEVEL.medium
+        };
+      case 'high':
+        return {
+          urls: [
+            blocDto.blocHighRes,
+            ...(blocDto.additionalParts?.map((part) => part.blocHighRes) ?? [])
+            // .filter((part) => part.blocHighRes !== undefined && part.blocHighRes !== null)
+          ]
+            .flat()
+            .filter((url): url is string => url !== undefined && url !== null),
+          blocIds: [blocDto.id, ...(blocDto.additionalParts?.map((part) => part.id) ?? [])],
+          currentResolution: RESOLUTION_LEVEL.high
+        };
     }
   }
 
@@ -105,19 +122,6 @@ export class BoulderLoaderService {
 
     return undefined;
   }
-
-  // public loadBoulder(resolutionLevel: ResolutionLevel): Observable<ArrayBuffer> {
-  //   switch (resolutionLevel) {
-  //     case 'low':
-  //       return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb', { responseType: 'arraybuffer'});
-  //     case 'medium':
-  //       return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.002.glb', { responseType: 'arraybuffer'});
-  //       case 'high':
-  //       return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.001.glb', { responseType: 'arraybuffer'});
-  //       default:
-  //       return this.http.get('./api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb', { responseType: 'arraybuffer'});
-  //   }
-  // }
 
   public loadTestBoulder(): Observable<ArrayBuffer> {
     return this.http.get('./api-test/boulder/bimano/bimano_low_pos_corrected.glb', { responseType: 'arraybuffer' });
