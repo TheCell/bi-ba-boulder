@@ -93,13 +93,16 @@ export class OutdoorEditor {
       this.startLoadingBoulder
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          switchMap(({ urls, blocIds, resolution }) =>
-            forkJoin(urls.map((url) => this.boulderLoaderService.loadBoulder(url))).pipe(
+          switchMap(({ urls, blocIds, resolution }) => {
+            const urlBlocPair = urls.map((url, index) => ({ url, blocId: blocIds[index] }));
+            return forkJoin(
+              urlBlocPair.map(({ url, blocId }) => this.boulderLoaderService.loadBoulder(url, blocId, resolution))
+            ).pipe(
               map((results) => {
                 return { data: results, resolution, blocIds };
               })
-            )
-          )
+            );
+          })
         )
         .subscribe({
           next: ({

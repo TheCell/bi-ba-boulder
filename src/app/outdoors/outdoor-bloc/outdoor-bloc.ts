@@ -98,13 +98,16 @@ export class OutdoorBloc implements OnInit, OnDestroy {
       this.startLoadingBoulder
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          switchMap(({ urls, blocIds, resolution }) =>
-            forkJoin(urls.map((url) => this.boulderLoaderService.loadBoulder(url))).pipe(
+          switchMap(({ urls, blocIds, resolution }) => {
+            const urlBlocPair = urls.map((url, index) => ({ url, blocId: blocIds[index] }));
+            return forkJoin(
+              urlBlocPair.map(({ url, blocId }) => this.boulderLoaderService.loadBoulder(url, blocId, resolution))
+            ).pipe(
               map((results) => {
                 return { data: results, resolution, blocIds };
               })
-            )
-          )
+            );
+          })
         )
         .subscribe({
           next: ({
@@ -126,11 +129,7 @@ export class OutdoorBloc implements OnInit, OnDestroy {
         })
     );
 
-    // const bestCached = this.boulderLoaderService.getBestCachedResolution(this.bloc);
-    // console.log('bestCached: ', bestCached);
-
     const urlsAndInfo = this.boulderLoaderService.getUrls(this.bloc, RESOLUTION_LEVEL.low);
-    // this.boulderUrl = urlAndInfo.url;
     if (urlsAndInfo.urls.length > 0 && urlsAndInfo.currentResolution !== undefined) {
       this.startLoadingBoulder.next({
         urls: urlsAndInfo.urls,
