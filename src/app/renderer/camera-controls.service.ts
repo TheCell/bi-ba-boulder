@@ -16,8 +16,6 @@ export class CameraControlsService {
   private thresholdDistance = 0.005;
 
   public setOrbitControls(orbitControls: OrbitControls): void {
-    console.log('setOrbitControls');
-
     this.orbitControls = orbitControls;
     this.camera = orbitControls.object;
     this.isDefaultPosition.set(true);
