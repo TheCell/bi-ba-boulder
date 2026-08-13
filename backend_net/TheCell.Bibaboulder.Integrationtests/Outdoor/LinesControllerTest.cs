@@ -60,6 +60,34 @@ public class LinesControllerTest : BaseTest
     }
 
     [Fact]
+    public async Task GetLine_NormalUserWithValidSectorAccess_Ok()
+    {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.User)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var (bloc, lines) = await PrepareData();
+        var sector = await BiBaBoulderDbContext.Sectors.SingleAsync(sector => sector.Id == bloc.SectorId, TestContext.Current.CancellationToken);
+        var access = new UserSectorAccessBuilder(user, sector).SetValidUntil(DateTime.UtcNow.AddDays(1)).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(access);
+
+        var line = lines.First();
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var response = await client.GetAsync($"{_baseUrl}/{line.Id}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<LineDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        LineAssertion.Assert(line, result);
+        Assert.False(result.Metadata.CanEdit);
+        Assert.False(result.Metadata.CanDelete);
+    }
+
+    [Fact]
     public async Task GetLine_Admin_Ok()
     {
         var user = new UserBuilder()
@@ -127,6 +155,38 @@ public class LinesControllerTest : BaseTest
         var response = await client.GetAsync($"{_baseUrl}/by-bloc/{bloc.Id}", TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetLinesByBlocId_NormalUserWithValidSectorAccess_Ok()
+    {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.User)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var (bloc, lines) = await PrepareData();
+        var sector = await BiBaBoulderDbContext.Sectors.SingleAsync(sector => sector.Id == bloc.SectorId, TestContext.Current.CancellationToken);
+        var access = new UserSectorAccessBuilder(user, sector).SetValidUntil(DateTime.UtcNow.AddDays(1)).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(access);
+
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var response = await client.GetAsync($"{_baseUrl}/by-bloc/{bloc.Id}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<LineDto>>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Equal(lines.Count, result.Count);
+        foreach (var lineFromDb in lines)
+        {
+            var line = result.Single(resultLine => resultLine.Id == lineFromDb.Id);
+            LineAssertion.Assert(lineFromDb, line);
+            Assert.False(line.Metadata.CanEdit);
+            Assert.False(line.Metadata.CanDelete);
+        }
     }
 
     [Fact]

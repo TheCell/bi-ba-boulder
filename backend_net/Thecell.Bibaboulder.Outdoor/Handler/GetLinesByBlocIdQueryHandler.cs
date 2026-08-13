@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,13 +32,20 @@ public class GetLinesByBlocIdQueryHandler : IQueryHandler<GetLinesByBlocIdQuery,
 
         if (!isAdmin)
         {
-            var isSectorPublic = await _dbContext.Blocs
+            var access = await _dbContext.Blocs
                 .AsNoTracking()
                 .Where(b => b.Id == query.BlocId)
-                .Select(b => b.Sector!.IsPublic)
+                .Select(b => new
+                {
+                    b.Sector!.IsPublic,
+                    HasValidAccess = currentUser != null && _dbContext.UserSectorAccesses.Any(access =>
+                        access.UserId == currentUser.Id &&
+                        access.SectorId == b.SectorId &&
+                        (access.ValidUntil == null || access.ValidUntil > DateTime.UtcNow))
+                })
                 .SingleOrDefaultAsync();
 
-            if (!isSectorPublic)
+            if (access is null || (!access.IsPublic && !access.HasValidAccess))
             {
                 if (currentUser is null)
                 {

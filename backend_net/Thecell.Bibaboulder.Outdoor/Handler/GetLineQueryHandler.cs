@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -36,13 +37,20 @@ public class GetLineQueryHandler : IQueryHandler<GetLineQuery, LineDto>
 
         if (!isAdmin)
         {
-            var isSectorPublic = await _dbContext.Blocs
+            var access = await _dbContext.Blocs
                 .AsNoTracking()
                 .Where(b => b.Id == line.BlocId)
-                .Select(b => b.Sector!.IsPublic)
+                .Select(b => new
+                {
+                    b.Sector!.IsPublic,
+                    HasValidAccess = currentUser != null && _dbContext.UserSectorAccesses.Any(access =>
+                        access.UserId == currentUser.Id &&
+                        access.SectorId == b.SectorId &&
+                        (access.ValidUntil == null || access.ValidUntil > DateTime.UtcNow))
+                })
                 .SingleOrDefaultAsync();
 
-            if (!isSectorPublic)
+            if (access is null || (!access.IsPublic && !access.HasValidAccess))
             {
                 if (currentUser is null)
                 {
