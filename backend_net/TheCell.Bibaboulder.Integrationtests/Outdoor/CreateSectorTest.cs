@@ -9,6 +9,7 @@ using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
@@ -61,7 +62,11 @@ public class SectorsControllerTest : BaseTest
         {
             Id = Guid.NewGuid(),
             Name = "Test Sector",
-            Description = "Integration test sector"
+            Description = "Integration test sector",
+            ImportantInfo = "Test Important Info",
+            IsPublic = true,
+            Coordinates = "46.9914628, 7.5589870",
+            PreviewImageUri = "https://example.com/preview.jpg"
         };
 
         var beforeSend = DateTime.UtcNow;
@@ -130,26 +135,20 @@ public class SectorsControllerTest : BaseTest
                 new SectorBuilder()
                 .SetName(_bogus.Lorem.Slug())
                 .SetDescription(_bogus.Lorem.Sentence())
+                .SetCoordinates("46.9929293, 7.5582829")
+                .SetIsPublic(false)
+                .SetImportantInfo(_bogus.Lorem.Sentence())
+                .SetPreviewImageUri(_bogus.Image.PicsumUrl())
+                .SetImages([new PublicResourceBuilder().SetUri(_bogus.Image.PicsumUrl()).SetResourceType(ResourceType.Image).Build()])
                 .Build());
         }
         await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(sectors);
         return sectors;
     }
 
-    //private async Task<HttpResponseMessage> PutRequestAsync(Guid id, object request)
-    //{
-    //    return await Client().PutAsJsonAsync($"{_baseUrl}/{id}", request);
-    //}
-
     protected async Task<HttpResponseMessage> GetRequestAsync(string route, string query = "", bool authenticated = false)
     {
         var client = authenticated ? AuthenticatedClient(role: AuthorizationRoles.User) : Client();
         return await client.GetAsync($"{_baseUrl}{route}{query}");
     }
-
-    //protected async Task<HttpResponseMessage> PostRequestAsync(string route, object request, bool authenticated = false)
-    //{
-    //    var client = authenticated ? AuthenticatedClient(role: AuthorizationRoles.Admin) : Client();
-    //    return await client.PostAsync($"{_baseUrl}{route}", GetJsonHttpBody(request));
-    //}
 }

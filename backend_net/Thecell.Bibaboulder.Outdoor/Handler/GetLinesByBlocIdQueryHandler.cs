@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
@@ -27,6 +28,25 @@ public class GetLinesByBlocIdQueryHandler : IQueryHandler<GetLinesByBlocIdQuery,
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         var isAdmin = currentUser is not null && currentUser.Roles.Contains(AuthorizationRoles.Admin);
         var hasEditorRole = currentUser is not null && currentUser.Roles.Contains(AuthorizationRoles.Editor);
+
+        if (!isAdmin)
+        {
+            var isSectorPublic = await _dbContext.Blocs
+                .AsNoTracking()
+                .Where(b => b.Id == query.BlocId)
+                .Select(b => b.Sector!.IsPublic)
+                .SingleOrDefaultAsync();
+
+            if (!isSectorPublic)
+            {
+                if (currentUser is null)
+                {
+                    throw new AuthenticationException("Anonymous access requires the sector to be public.");
+                }
+
+                throw new AccessDeniedException("This sector is not public.");
+            }
+        }
 
         var lines = await _dbContext.Lines
             .AsNoTracking()

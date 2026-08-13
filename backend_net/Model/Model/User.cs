@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Thecell.Bibaboulder.Model.Basics;
+using Thecell.Bibaboulder.Model.Model.Access;
 
 namespace Thecell.Bibaboulder.Model.Model;
 
@@ -28,6 +29,8 @@ public class User : VersionedEntity
     public bool IsVerified { get; set; }
 
     public DateTime? VerifyMailSentTime { get; set; }
+
+    public ICollection<UserSectorAccess> UserSectorAccesses { get; set; } = [];
 
     public ICollection<SpraywallProblem> SpraywallProblems { get; set; } = [];
 

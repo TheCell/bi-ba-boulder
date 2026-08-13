@@ -24,4 +24,10 @@ public class SpraywallBuilder : BuilderBase<Spraywall>
         _instance.Description = value;
         return this;
     }
+
+    public SpraywallBuilder SetPreviewImageUri(string? value)
+    {
+        _instance.PreviewImageUri = value;
+        return this;
+    }
 }

@@ -12,6 +12,7 @@ public static class BlocAssertion
         Xunit.Assert.Equal(expected.Id, actual.Id);
         expected.Id.AssertV7();
         Xunit.Assert.Equal(expected.Name, actual.Name);
+        Xunit.Assert.Equal(expected.Coordinates, actual.Coordinates);
         Xunit.Assert.Equal(expected.Description, actual.Description);
         Xunit.Assert.Equal(expected.BlocLowRes, actual.BlocLowRes);
         Xunit.Assert.Equal(expected.BlocMedRes, actual.BlocMedRes);

@@ -8,6 +8,8 @@ export * from './deleteBoulderLogCommand';
 export * from './lineData';
 export * from './lineDto';
 export * from './lineMetadataDto';
+export * from './outdoorAreaDto';
+export * from './publicResourceDto';
 export * from './sceneMarking';
 export * from './searchProblemsRequest';
 export * from './sectorDto';

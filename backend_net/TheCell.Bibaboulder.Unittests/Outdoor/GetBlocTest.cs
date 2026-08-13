@@ -30,16 +30,21 @@ public class GetBlocTest
     [Fact]
     public async Task GetBloc_Ok()
     {
-        var sector = new SectorBuilder().SetName("Sector").Build();
+        var sector = new SectorBuilder()
+            .SetName("Sector")
+            .SetCoordinates("46.9929293, 7.5582829")
+            .Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var bloc = new BlocBuilder()
             .SetName("TestBloc")
+            .SetCoordinates("46.9929293, 7.5582829")
             .SetSectorId(sector.Id)
             .SetAdditionalParts([
                 new BlocBuilder()
                     .SetName("part 2)")
                     .SetDescription("part 2 description")
+                    .SetCoordinates("46.9929293, 7.5582829")
                     .SetBlocLowRes("part_2_low_res/newpart.glb")
                     .SetBlocMedRes("part_2_med_res/newpart.glb")
                     .SetBlocHighRes("part_2_high_res/newpart.glb")
@@ -47,6 +52,7 @@ public class GetBlocTest
                 new BlocBuilder()
                     .SetName("part 3)")
                     .SetDescription("part 3 description")
+                    .SetCoordinates("46.9929293, 7.5582829")
                     .SetBlocLowRes("part_3_low_res/newpart.glb")
                     .SetBlocMedRes("part_3_med_res/newpart.glb")
                     .SetBlocHighRes("part_3_high_res/newpart.glb")
@@ -54,6 +60,7 @@ public class GetBlocTest
                 new BlocBuilder()
                     .SetName("part 4)")
                     .SetDescription("part 4 description")
+                    .SetCoordinates("46.9929293, 7.5582829")
                     .SetBlocLowRes("part_4_low_res/newpart.glb")
                     .SetBlocMedRes("part_4_med_res/newpart.glb")
                     .SetBlocHighRes("part_4_high_res/newpart.glb")
@@ -71,7 +78,10 @@ public class GetBlocTest
     [Fact]
     public async Task GetBlocsBySector_NoBlocs_Ok()
     {
-        var sector = new SectorBuilder().SetName("Sector").Build();
+        var sector = new SectorBuilder()
+            .SetName("Sector")
+            .SetCoordinates("46.9929293, 7.5582829")
+            .Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var handler = new GetBlocsBySectorIdQueryHandler(_dbContext);
@@ -83,11 +93,22 @@ public class GetBlocTest
     [Fact]
     public async Task GetBlocsBySector_Ok()
     {
-        var sector = new SectorBuilder().SetName("Sector").Build();
+        var sector = new SectorBuilder()
+            .SetName("Sector")
+            .SetCoordinates("46.9929293, 7.5582829")
+            .Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
-        var bloc1 = new BlocBuilder().SetName("TestBloc 1").SetSectorId(sector.Id).Build();
-        var bloc2 = new BlocBuilder().SetName("TestBloc 2").SetSectorId(sector.Id).Build();
+        var bloc1 = new BlocBuilder()
+            .SetName("TestBloc 1")
+            .SetCoordinates("46.9929293, 7.5582829")
+            .SetSectorId(sector.Id)
+            .Build();
+        var bloc2 = new BlocBuilder()
+            .SetName("TestBloc 2")
+            .SetCoordinates("46.9929293, 7.5582829")
+            .SetSectorId(sector.Id)
+            .Build();
         await _dbContext.InsertEntitiesAndSaveChangesAsync([bloc1, bloc2]);
 
         var handler = new GetBlocsBySectorIdQueryHandler(_dbContext);

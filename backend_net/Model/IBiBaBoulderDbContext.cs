@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Access;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Model;
@@ -23,6 +24,8 @@ public interface IBiBaBoulderDbContext : IDisposable
     DbSet<Bloc> Blocs { get; set; }
     DbSet<Line> Lines { get; set; }
     DbSet<Email> Emails { get; set; }
+    DbSet<OutdoorArea> OutdoorAreas { get; set; }
+    DbSet<UserSectorAccess> UserSectorAccesses { get; set; }
 
     Task InsertEntityAndSaveChangesAsync(VersionedEntity entity);
 

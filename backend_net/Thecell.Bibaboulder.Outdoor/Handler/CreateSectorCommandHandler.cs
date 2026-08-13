@@ -29,6 +29,10 @@ public class CreateSectorCommandHandler : ICommandHandler<CreateSectorCommand>
             Id = Guid.CreateVersion7(),
             Name = command.Name,
             Description = command.Description,
+            ImportantInfo = command.ImportantInfo,
+            IsPublic = command.IsPublic,
+            Coordinates = command.Coordinates,
+            PreviewImageUri = command.PreviewImageUri,
             CreatedUserId = currentUser.Id
         };
 

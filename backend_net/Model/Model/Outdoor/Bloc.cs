@@ -16,6 +16,8 @@ public class Bloc : VersionedEntity
 
     public string? Description { get; set; }
 
+    public string? Coordinates { get; set; }
+
     [MaxLength(2048)]
     public string? BlocLowRes { get; set; }
 
@@ -28,7 +30,7 @@ public class Bloc : VersionedEntity
     [ForeignKey(nameof(Sector))]
     public Guid? SectorId { get; set; }
 
-    public Sector? Sector { get; set; } = null!;
+    public Sector? Sector { get; set; }
 
     public ICollection<Line> BoulderLines { get; set; } = [];
 

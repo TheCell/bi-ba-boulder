@@ -28,8 +28,14 @@ public class GetSpraywallsTest
     [Fact]
     public async Task GetSpraywalls_Ok()
     {
-        var spraywall1 = new SpraywallBuilder().SetName("Wall A").Build();
-        var spraywall2 = new SpraywallBuilder().SetName("Wall B").Build();
+        var spraywall1 = new SpraywallBuilder()
+            .SetName("Wall A")
+            .SetPreviewImageUri("https://example.com/wall-a.jpg")
+            .Build();
+        var spraywall2 = new SpraywallBuilder()
+            .SetName("Wall B")
+            .SetPreviewImageUri("https://example.com/wall-b.jpg")
+            .Build();
         await _dbContext.InsertEntitiesAndSaveChangesAsync([spraywall1, spraywall2]);
 
         var handler = new GetSpraywallsQueryHandler(_dbContext);

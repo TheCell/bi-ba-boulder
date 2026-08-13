@@ -16,6 +16,7 @@ public static class BlocMapping
             BlocLowRes = bloc.BlocLowRes,
             BlocMedRes = bloc.BlocMedRes,
             BlocHighRes = bloc.BlocHighRes,
+            Coordinates = bloc.Coordinates,
             AdditionalParts = [.. bloc.AdditionalParts.Select(MapToBlocDto)]
         };
     }

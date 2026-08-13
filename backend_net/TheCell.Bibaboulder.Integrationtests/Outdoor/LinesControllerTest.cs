@@ -87,6 +87,21 @@ public class LinesControllerTest : BaseTest
     }
 
     [Fact]
+    public async Task GetLine_PublicSector_Anonymous_Ok()
+    {
+        var (_, lines) = await PrepareData(isSectorPublic: true);
+        var line = lines.First();
+
+        var response = await Client().GetAsync($"{_baseUrl}/{line.Id}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<LineDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        LineAssertion.Assert(line, result);
+    }
+
+    [Fact]
     public async Task GetLinesByBlocId_Anonymous_Unauthorized()
     {
         var (bloc, _) = await PrepareData();
@@ -162,6 +177,20 @@ public class LinesControllerTest : BaseTest
 
         Assert.NotNull(result);
         Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetLinesByBlocId_PublicSector_Anonymous_Ok()
+    {
+        var (bloc, lines) = await PrepareData(isSectorPublic: true);
+
+        var response = await Client().GetAsync($"{_baseUrl}/by-bloc/{bloc.Id}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<LineDto>>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Equal(lines.Count, result.Count);
     }
 
     [Fact]
@@ -415,10 +444,11 @@ public class LinesControllerTest : BaseTest
         Assert.False(exists);
     }
 
-    private async Task<(Bloc Bloc, List<Line> Lines)> PrepareData()
+    private async Task<(Bloc Bloc, List<Line> Lines)> PrepareData(bool isSectorPublic = false)
     {
         var sector = new SectorBuilder()
             .SetName(_bogus.Lorem.Slug())
+            .SetIsPublic(isSectorPublic)
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
@@ -459,10 +489,11 @@ public class LinesControllerTest : BaseTest
         return (bloc, lines);
     }
 
-    private async Task<Bloc> PrepareBloc()
+    private async Task<Bloc> PrepareBloc(bool isSectorPublic = false)
     {
         var sector = new SectorBuilder()
             .SetName(_bogus.Lorem.Slug())
+            .SetIsPublic(isSectorPublic)
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
@@ -475,9 +506,9 @@ public class LinesControllerTest : BaseTest
         return bloc;
     }
 
-    private async Task<Line> PrepareLine()
+    private async Task<Line> PrepareLine(bool isSectorPublic = false)
     {
-        var bloc = await PrepareBloc();
+        var bloc = await PrepareBloc(isSectorPublic);
 
         var line = new LineBuilder()
             .SetIdentifier("L-001")

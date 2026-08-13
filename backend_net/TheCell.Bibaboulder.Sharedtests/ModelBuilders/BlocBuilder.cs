@@ -25,6 +25,12 @@ public class BlocBuilder : BuilderBase<Bloc>
         return this;
     }
 
+    public BlocBuilder SetCoordinates(string? value)
+    {
+        _instance.Coordinates = value;
+        return this;
+    }
+
     public BlocBuilder SetSectorId(Guid value)
     {
         _instance.SectorId = value;

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
@@ -48,6 +49,11 @@ public class GetSectorsTest
             var sector = new SectorBuilder()
                 .SetName(_bogus.Company.CompanyName())
                 .SetDescription(_bogus.Lorem.Sentence())
+                .SetImportantInfo(_bogus.Lorem.Sentence())
+                .SetIsPublic(_bogus.Random.Bool())
+                .SetCoordinates("46.9914628, 7.5589870")
+                .SetPreviewImageUri(_bogus.Internet.Url())
+                .SetImages([new PublicResourceBuilder().SetUri(_bogus.Internet.Url()).SetResourceType(ResourceType.Image).Build()])
                 .Build();
             sectors.Add(sector);
             await _dbContext.InsertEntityAndSaveChangesAsync(sector);

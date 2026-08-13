@@ -757,6 +757,86 @@
         }
       }
     },
+    "/api/OutdoorAreas": {
+      "get": {
+        "tags": [
+          "OutdoorAreas"
+        ],
+        "operationId": "getOutdoorAreas",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutdoorAreaDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutdoorAreaDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutdoorAreaDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/OutdoorAreas/{id}": {
+      "get": {
+        "tags": [
+          "OutdoorAreas"
+        ],
+        "operationId": "getOutdoorArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Sectors": {
       "get": {
         "tags": [
@@ -1295,6 +1375,12 @@
               "string"
             ]
           },
+          "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "blocLowRes": {
             "type": [
               "null",
@@ -1480,6 +1566,27 @@
               "null",
               "string"
             ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -1638,7 +1745,70 @@
           }
         }
       },
+      "OutdoorAreaDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicResourceDto"
+            }
+          },
+          "sectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SectorDto"
+            }
+          }
+        }
+      },
+      "PublicResourceDto": {
+        "required": [
+          "resourceType",
+          "uri"
+        ],
+        "type": "object",
+        "properties": {
+          "resourceType": {
+            "$ref": "#/components/schemas/ResourceType"
+          },
+          "uri": {
+            "type": "string"
+          }
+        }
+      },
       "Rating": {
+        "type": "integer"
+      },
+      "ResourceType": {
         "type": "integer"
       },
       "SceneMarking": {
@@ -1748,6 +1918,39 @@
               "null",
               "string"
             ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicResourceDto"
+            }
+          },
+          "outdoorAreas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutdoorAreaDto"
+            }
           }
         }
       },
@@ -1777,6 +1980,12 @@
             "type": "string"
           },
           "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
             "type": [
               "null",
               "string"
@@ -2089,6 +2298,9 @@
     },
     {
       "name": "Lines"
+    },
+    {
+      "name": "OutdoorAreas"
     },
     {
       "name": "Sectors"
