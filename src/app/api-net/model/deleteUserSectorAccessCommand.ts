@@ -9,10 +9,9 @@
  */
 
 
-export interface SpraywallDto { 
-    id: string;
-    name: string;
-    description?: string | null;
-    previewImageUri?: string | null;
+export interface DeleteUserSectorAccessCommand { 
+    userId: string;
+    sectorId: string;
+    version: number;
 }
 

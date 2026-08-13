@@ -9,10 +9,11 @@
  */
 
 
-export interface SpraywallDto { 
-    id: string;
-    name: string;
-    description?: string | null;
-    previewImageUri?: string | null;
+export interface UpdateUserSectorAccessCommand { 
+    userId: string;
+    sectorId: string;
+    accessSourceType: number;
+    validUntil?: string | null;
+    version: number;
 }
 

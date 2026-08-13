@@ -17,6 +17,8 @@ api/feedbacks.service.ts
 api/feedbacks.serviceInterface.ts
 api/lines.service.ts
 api/lines.serviceInterface.ts
+api/outdoorAreas.service.ts
+api/outdoorAreas.serviceInterface.ts
 api/sectors.service.ts
 api/sectors.serviceInterface.ts
 api/spraywallProblems.service.ts
@@ -25,6 +27,8 @@ api/spraywalls.service.ts
 api/spraywalls.serviceInterface.ts
 api/test.service.ts
 api/test.serviceInterface.ts
+api/userSectorAccesses.service.ts
+api/userSectorAccesses.serviceInterface.ts
 api/users.service.ts
 api/users.serviceInterface.ts
 configuration.ts
@@ -37,7 +41,9 @@ model/createBoulderLogCommand.ts
 model/createLineCommand.ts
 model/createSectorCommand.ts
 model/createSpraywallProblemCommand.ts
+model/createUserSectorAccessCommand.ts
 model/deleteBoulderLogCommand.ts
+model/deleteUserSectorAccessCommand.ts
 model/lineData.ts
 model/lineDto.ts
 model/lineMetadataDto.ts
@@ -56,6 +62,8 @@ model/testDto.ts
 model/updateBoulderLogCommand.ts
 model/updateLineCommand.ts
 model/updateSpraywallProblemCommand.ts
+model/updateUserSectorAccessCommand.ts
 model/userDto.ts
+model/userSectorAccessDto.ts
 param.ts
 variables.ts
