@@ -1,23 +1,35 @@
 <h1>Spraywalls</h1>
 <section>
   <div class="tile-container">
-    <div class="big-tile" [routerLink]="['/', 'spraywall', 'e4b5991c-54c8-f011-9457-71a4df1b7093']">
-      <div class="tile-background"></div>
-      <div class="tile-content">
-        <h2>Spraywall Bimano</h2>
+    @for (spraywall of this.spraywalls(); track spraywall.id) {
+      <div
+        class="big-tile"
+        [style.backgroundImage]="`url(/tiles/pattern_${spraywallTileNumber}.png)`"
+        [routerLink]="['/', 'spraywall', spraywall.id]">
+        <!-- <div class="tile-background" aria-hidden="true">
+        </div> -->
+        <div class="tile-content">
+          <h2>{{ spraywall.name }}</h2>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </section>
 <h1>Outdoor</h1>
 <section>
   <div class="tile-container">
-    <div class="big-tile" [routerLink]="['/', 'spraywall', 'e4b5991c-54c8-f011-9457-71a4df1b7093']">
-      <div class="tile-background"></div>
-      <div class="tile-content">
-        <h2>Spraywall Bimano</h2>
+    @for (outdoorArea of this.outdoorAreas(); track outdoorArea.id) {
+      <div
+        class="big-tile"
+        [style.backgroundImage]="`url(/tiles/pattern_${outdoorAreaTileNumber}.png)`"
+        [routerLink]="['/', 'outdoor-area', outdoorArea.id]">
+        <!-- <div class="tile-background" aria-hidden="true">
+        </div> -->
+        <div class="tile-content">
+          <h2>{{ outdoorArea.name }}</h2>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </section>
 

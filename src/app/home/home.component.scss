@@ -23,12 +23,12 @@ h1 {
 .big-tile {
   height: 200px;
   width: 400px;
-  background-color: $primary;
-  background-image: linear-gradient(rgba($primary, 1.0) 20%, rgba($primary, 0.0) 40%), url('/test-images/spraywall.webp');
-  background-size: cover;
-  background-position: center;
-  color: $fontColor;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  background-color: $darkDark;
+  background-size: 56px 56px;
+  background-repeat: repeat;
+  background-image: url('/tiles/pattern_007.png');
+  background-blend-mode: multiply;
+  // background-blend-mode: screen;
   border: 1px solid $primary;
   border-radius: 5px;
   cursor: pointer;
@@ -41,7 +41,12 @@ h1 {
 }
 
 .tile-content {
-  padding: 5px;
+  padding: 25px 25px 0px 25px;
+  background-image: linear-gradient(rgba($primary, 1.0) 50%, rgba($primary, 0.0) 90%);
+  padding-bottom: 25px;
+  margin-bottom: 0px;
+  color: $fontColor;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .tile-content h2 {
