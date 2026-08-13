@@ -11,13 +11,13 @@ import { ToastService } from '../../core/toast-container/toast.service';
 import { BlocLineItem } from './bloc-line-item/bloc-line-item';
 import { ColorService } from '../../core/util-services/color.service';
 import { Modal } from '../../core/modal/modal/modal';
-import { ConfirmDeleteDialog } from '../confirm-delete-dialog/confirm-delete-dialog';
-import { ConfirmDeleteDialogData } from '../confirm-delete-dialog/confirm-delete-dialog-data';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { ModalService } from '../../core/modal/modal.service';
 import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
 import { RawModelInput } from '../../renderer/outdoor-renderer/model-input.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ConfirmDeleteOutdoorsDialog } from '../confirm-delete-outdoors-dialog/confirm-delete-outdoors-dialog';
+import { ConfirmDeleteOutdoorsDialogData } from '../confirm-delete-outdoors-dialog/confirm-delete-outdoors-dialog-data';
 
 @Component({
   selector: 'app-outdoor-bloc',
@@ -160,9 +160,9 @@ export class OutdoorBloc implements OnInit, OnDestroy {
 
   public onDeleteLine(): void {
     if (this.selectedLine()?.line) {
-      const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteDialog);
+      const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteOutdoorsDialog);
       if (modal && modal.initialize) {
-        const data: ConfirmDeleteDialogData = {
+        const data: ConfirmDeleteOutdoorsDialogData = {
           line: this.selectedLine()!.line
         };
         modal.initialize(data);

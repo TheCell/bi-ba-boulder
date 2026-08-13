@@ -1,5 +1,5 @@
 import { LineDto } from '@api-net/index';
 
-export interface ConfirmDeleteDialogData {
+export interface ConfirmDeleteOutdoorsDialogData {
   line: LineDto;
 }

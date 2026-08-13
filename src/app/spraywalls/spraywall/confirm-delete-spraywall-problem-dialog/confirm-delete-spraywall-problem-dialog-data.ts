@@ -1,5 +1,5 @@
 import { SpraywallProblemDto } from '@api-net/index';
 
-export interface ConfirmDeleteDialogData {
+export interface ConfirmDeleteSpraywallProblemDialogData {
   spraywallProblem: SpraywallProblemDto;
 }
