@@ -4,7 +4,7 @@
     @for (spraywall of this.spraywalls(); track spraywall.id) {
       <div
         class="big-tile"
-        [style.backgroundImage]="`url(/tiles/pattern_${spraywallTileNumber}.png)`"
+        [style.backgroundImage]="`url(/tiles/bricks.png)`"
         [routerLink]="['/', 'spraywall', spraywall.id]">
         <!-- <div class="tile-background" aria-hidden="true">
         </div> -->
@@ -21,7 +21,7 @@
     @for (outdoorArea of this.outdoorAreas(); track outdoorArea.id) {
       <div
         class="big-tile"
-        [style.backgroundImage]="`url(/tiles/pattern_${outdoorAreaTileNumber}.png)`"
+        [style.backgroundImage]="`url(/tiles/flowers.png)`"
         [routerLink]="['/', 'outdoor-area', outdoorArea.id]">
         <!-- <div class="tile-background" aria-hidden="true">
         </div> -->
