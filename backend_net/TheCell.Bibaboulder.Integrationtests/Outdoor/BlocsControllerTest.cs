@@ -84,6 +84,7 @@ public class BlocsControllerTest : BaseTest
                 .SetName(_bogus.Lorem.Slug())
                 .SetDescription(_bogus.Lorem.Sentence())
                 .SetCoordinates("46.9914628, 7.5589870")
+                .SetPreviewImageUri(_bogus.Internet.UrlWithPath())
                 .SetSectorId(sector.Id)
                 .SetAdditionalParts([
                     new BlocBuilder()
@@ -93,6 +94,7 @@ public class BlocsControllerTest : BaseTest
                         .SetBlocLowRes(_bogus.Internet.UrlWithPath())
                         .SetBlocMedRes(_bogus.Internet.UrlWithPath())
                         .SetBlocHighRes(_bogus.Internet.UrlWithPath())
+                        .SetPreviewImageUri(_bogus.Internet.UrlWithPath())
                         .Build(),
                     new BlocBuilder()
                         .SetName(_bogus.Lorem.Slug())

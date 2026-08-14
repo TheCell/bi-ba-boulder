@@ -17,6 +17,7 @@ public static class BlocAssertion
         Xunit.Assert.Equal(expected.BlocLowRes, actual.BlocLowRes);
         Xunit.Assert.Equal(expected.BlocMedRes, actual.BlocMedRes);
         Xunit.Assert.Equal(expected.BlocHighRes, actual.BlocHighRes);
+        Xunit.Assert.Equal(expected.PreviewImageUri, actual.PreviewImageUri);
 
         Xunit.Assert.Equal(expected.AdditionalParts.Count, actual.AdditionalParts.Length);
         foreach (var bloc in actual.AdditionalParts)

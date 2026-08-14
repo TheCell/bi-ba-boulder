@@ -2,9 +2,13 @@
 <section>
   <div class="tile-container">
     @for (spraywall of this.spraywalls(); track spraywall.id) {
+      @let backgroundImage = spraywall.previewImageUri ? `url(${spraywall.previewImageUri})` : `url(/tiles/bricks.png)`;
       <div
         class="big-tile"
-        [style.backgroundImage]="`url(/tiles/bricks.png)`"
+        [ngClass]="{
+          'is-generic-background': (spraywall.previewImageUri?.length ?? 0) === 0
+        }"
+        [style.backgroundImage]="backgroundImage"
         [routerLink]="['/', 'spraywall', spraywall.id]">
         <div class="tile-content">
           <h2>{{ spraywall.name }}</h2>
@@ -17,9 +21,14 @@
 <section>
   <div class="tile-container">
     @for (outdoorArea of this.outdoorAreas(); track outdoorArea.id) {
+      @let backgroundImage =
+        outdoorArea.previewImageUri ? `url(${outdoorArea.previewImageUri})` : `url(/tiles/flowers.png)`;
       <div
         class="big-tile"
-        [style.backgroundImage]="`url(/tiles/flowers.png)`"
+        [ngClass]="{
+          'is-generic-background': (outdoorArea.previewImageUri?.length ?? 0) === 0
+        }"
+        [style.backgroundImage]="backgroundImage"
         [routerLink]="['/', 'outdoor-area', outdoorArea.id]">
         <div class="tile-content">
           <h2>{{ outdoorArea.name }}</h2>

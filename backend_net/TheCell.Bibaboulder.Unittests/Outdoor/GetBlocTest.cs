@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Bogus;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Outdoor.Handler;
@@ -12,10 +13,12 @@ namespace TheCell.Bibaboulder.Unittests.Outdoor;
 public class GetBlocTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
+    private readonly Faker _bogus;
 
     public GetBlocTest()
     {
         _dbContext = new DbContextMock().Build();
+        _bogus = new Faker("de_CH");
     }
 
     [Fact]
@@ -40,6 +43,7 @@ public class GetBlocTest
             .SetName("TestBloc")
             .SetCoordinates("46.9929293, 7.5582829")
             .SetSectorId(sector.Id)
+            .SetPreviewImageUri(_bogus.Internet.UrlWithPath())
             .SetAdditionalParts([
                 new BlocBuilder()
                     .SetName("part 2)")

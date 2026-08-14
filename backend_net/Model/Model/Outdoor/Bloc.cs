@@ -27,6 +27,8 @@ public class Bloc : VersionedEntity
     [MaxLength(2048)]
     public string? BlocHighRes { get; set; }
 
+    public string? PreviewImageUri { get; set; }
+
     [ForeignKey(nameof(Sector))]
     public Guid? SectorId { get; set; }
 

@@ -2,10 +2,11 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FeedbackOverlay } from '../core/feedback-overlay/feedback-overlay';
 import { OutdoorAreasService, SpraywallsService, OutdoorAreaDto, SpraywallDto } from '@api-net/index';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, FeedbackOverlay],
+  imports: [RouterLink, FeedbackOverlay, NgClass],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

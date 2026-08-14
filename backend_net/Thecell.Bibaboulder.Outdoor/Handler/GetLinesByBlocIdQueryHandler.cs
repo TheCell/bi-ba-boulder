@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
@@ -47,12 +46,7 @@ public class GetLinesByBlocIdQueryHandler : IQueryHandler<GetLinesByBlocIdQuery,
 
             if (access is null || (!access.IsPublic && !access.HasValidAccess))
             {
-                if (currentUser is null)
-                {
-                    throw new AuthenticationException("Anonymous access requires the sector to be public.");
-                }
-
-                throw new AccessDeniedException("This sector is not public.");
+                return [];
             }
         }
 

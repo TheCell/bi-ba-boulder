@@ -11,5 +11,6 @@ public class BlocDto
     public string? BlocLowRes { get; set; }
     public string? BlocMedRes { get; set; }
     public string? BlocHighRes { get; set; }
+    public string? PreviewImageUri { get; set; }
     public BlocDto[] AdditionalParts { get; set; } = [];
 }

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { SectorsListComponent } from './outdoors/sectors-list/sectors-list.component';
-import { sectorsResolver } from './core/resolvers/sector.resolver';
+import { sectorResolver, sectorsResolver } from './core/resolvers/sector.resolver';
 import { SectorComponent } from './outdoors/sector/sector.component';
 import { blocResolver, blocsOfSectorResolver } from './core/resolvers/bloc.resolver';
 import { SpraywallComponent } from './spraywalls/spraywall/spraywall.component';
@@ -13,6 +13,8 @@ import { OutdoorBloc } from './outdoors/outdoor-bloc/outdoor-bloc';
 import { OutdoorEditor } from './outdoors/outdoor-editor/outdoor-editor';
 import { lineResolver } from './core/resolvers/line.resolver';
 import { ChangelogComponent } from './changelog/changelog.component';
+import { OutdoorAreaOverview } from './outdoors/outdoor-area-overview/outdoor-area-overview';
+import { outdoorAreaResolver } from './core/resolvers/outdoor-area.resolver';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -29,10 +31,18 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'outdoor-area/:outdoorAreaId',
+    component: OutdoorAreaOverview,
+    resolve: {
+      outdoorArea: outdoorAreaResolver
+    }
+  },
+  {
     path: 'sectors/:sectorId',
     component: SectorComponent,
     resolve: {
-      blocs: blocsOfSectorResolver
+      blocs: blocsOfSectorResolver,
+      sector: sectorResolver
     }
   },
   {

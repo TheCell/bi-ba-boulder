@@ -1658,6 +1658,12 @@
               "string"
             ]
           },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "additionalParts": {
             "type": "array",
             "items": {

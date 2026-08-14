@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
+using Thecell.Bibaboulder.Model.Dto;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
@@ -177,7 +178,7 @@ public class GetLinesByBlocIdTest
     }
 
     [Fact]
-    public async Task GetLinesByBlocId_NoLines_ThrowsAccessDeniedException()
+    public async Task GetLinesByBlocId_NoLines_Ok()
     {
         var user = new UserBuilder().SetRoles(AuthorizationRoles.User).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(user);
@@ -185,8 +186,10 @@ public class GetLinesByBlocIdTest
 
         var handler = new GetLinesByBlocIdQueryHandler(_dbContext, _currentUserServiceMock);
 
-        await Assert.ThrowsAsync<AccessDeniedException>(async () =>
-            await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = Guid.CreateVersion7() }));
+        var result = await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = Guid.CreateVersion7() });
+
+        Assert.NotNull(result);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -209,7 +212,7 @@ public class GetLinesByBlocIdTest
     }
 
     [Fact]
-    public async Task GetLinesByBlocId_PrivateSectorAsAnonymous_ThrowsAuthenticationException()
+    public async Task GetLinesByBlocId_PrivateSectorAsAnonymous_Ok()
     {
         var sector = new SectorBuilder().SetName("Sector").SetIsPublic(false).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
@@ -219,8 +222,10 @@ public class GetLinesByBlocIdTest
 
         var handler = new GetLinesByBlocIdQueryHandler(_dbContext, _currentUserServiceMock);
 
-        await Assert.ThrowsAsync<AuthenticationException>(async () =>
-            await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = bloc.Id }));
+        var result = await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = bloc.Id });
+
+        Assert.NotNull(result);
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -238,8 +243,10 @@ public class GetLinesByBlocIdTest
 
         var handler = new GetLinesByBlocIdQueryHandler(_dbContext, _currentUserServiceMock);
 
-        await Assert.ThrowsAsync<AccessDeniedException>(async () =>
-            await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = bloc.Id }));
+        var result = await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = bloc.Id });
+
+        Assert.NotNull(result);
+        Assert.Empty(result);
     }
 
     [Fact]

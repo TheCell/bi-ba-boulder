@@ -17,6 +17,7 @@ export interface BlocDto {
     blocLowRes?: string | null;
     blocMedRes?: string | null;
     blocHighRes?: string | null;
+    previewImageUri?: string | null;
     additionalParts?: Array<BlocDto>;
 }
 

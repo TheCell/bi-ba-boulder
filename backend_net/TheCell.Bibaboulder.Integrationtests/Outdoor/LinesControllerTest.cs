@@ -130,17 +130,21 @@ public class LinesControllerTest : BaseTest
     }
 
     [Fact]
-    public async Task GetLinesByBlocId_Anonymous_Unauthorized()
+    public async Task GetLinesByBlocId_Anonymous_Ok()
     {
         var (bloc, _) = await PrepareData();
 
         var response = await Client().GetAsync($"{_baseUrl}/by-bloc/{bloc.Id}", TestContext.Current.CancellationToken);
 
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<LineDto>>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Empty(result);
     }
 
     [Fact]
-    public async Task GetLinesByBlocId_NormalUser_Forbidden()
+    public async Task GetLinesByBlocId_NormalUser_Ok()
     {
         var user = new UserBuilder()
             .SetUsername(_bogus.Internet.UserName())
@@ -154,7 +158,11 @@ public class LinesControllerTest : BaseTest
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
         var response = await client.GetAsync($"{_baseUrl}/by-bloc/{bloc.Id}", TestContext.Current.CancellationToken);
 
-        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<LineDto>>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Empty(result);
     }
 
     [Fact]

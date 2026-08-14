@@ -55,6 +55,12 @@ public class BlocBuilder : BuilderBase<Bloc>
         return this;
     }
 
+    public BlocBuilder SetPreviewImageUri(string? value)
+    {
+        _instance.PreviewImageUri = value;
+        return this;
+    }
+
     public BlocBuilder SetAdditionalParts(Bloc[] value)
     {
         _instance.AdditionalParts = value;
