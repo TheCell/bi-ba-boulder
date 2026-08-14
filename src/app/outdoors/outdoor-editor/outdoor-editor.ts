@@ -147,14 +147,15 @@ export class OutdoorEditor {
   }
 
   public openSaveModal(): void {
-    const component = this.modalService.open(this.modal.id, OutdoorSaveDialog);
-    if (!component) {
-      throw new Error('Modal component not found');
-    }
     const linePoints = this.renderer.getLinePoints();
     if (!linePoints) {
       this.toastService.showDanger('Debug Save', 'No line data from renderer. Cannot save route.');
       throw new Error('No line data from renderer');
+    }
+
+    const component = this.modalService.open(this.modal.id, OutdoorSaveDialog);
+    if (!component) {
+      throw new Error('Modal component not found');
     }
 
     const sceneMarkings = this.renderer.getSceneMarkings();
