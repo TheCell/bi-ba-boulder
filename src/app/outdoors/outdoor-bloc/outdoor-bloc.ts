@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnDestroy, signal, ViewChild } from '@angular/core';
 import { SocialsOverlay } from '../../render-overlays/socials-overlay/socials-overlay';
 import { EnhancedLine, OutdoorRenderer } from '../../renderer/outdoor-renderer/outdoor-renderer';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
@@ -18,14 +18,24 @@ import { RawModelInput } from '../../renderer/outdoor-renderer/model-input.inter
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmDeleteOutdoorsDialog } from '../confirm-delete-outdoors-dialog/confirm-delete-outdoors-dialog';
 import { ConfirmDeleteOutdoorsDialogData } from '../confirm-delete-outdoors-dialog/confirm-delete-outdoors-dialog-data';
+import { Icon } from '../../core/icon/icon';
 
 @Component({
   selector: 'app-outdoor-bloc',
-  imports: [OutdoorRenderer, LoadingImageComponent, CameraControls, RouterLink, BlocLineItem, Modal, SocialsOverlay],
+  imports: [
+    OutdoorRenderer,
+    LoadingImageComponent,
+    CameraControls,
+    RouterLink,
+    BlocLineItem,
+    Modal,
+    SocialsOverlay,
+    Icon
+  ],
   templateUrl: './outdoor-bloc.html',
   styleUrl: './outdoor-bloc.scss'
 })
-export class OutdoorBloc implements OnInit, OnDestroy {
+export class OutdoorBloc implements OnDestroy {
   @ViewChild('confirmDelete') private confirmDeleteModal!: Modal;
 
   private boulderLoaderService = inject(BoulderLoaderService);
@@ -35,9 +45,12 @@ export class OutdoorBloc implements OnInit, OnDestroy {
   private router = inject(Router);
   private modalService = inject(ModalService);
   private destroyRef = inject(DestroyRef);
+  private activatedRoute = inject(ActivatedRoute);
 
   public currentRawModels = signal<RawModelInput[]>([]);
   public bloc: BlocDto;
+  public previousBloc?: BlocDto;
+  public nextBloc?: BlocDto;
   public lines = signal<LineDto[]>([]);
   public enhancedLines = computed<EnhancedLine[]>(() => {
     const lines = this.lines();
@@ -59,19 +72,28 @@ export class OutdoorBloc implements OnInit, OnDestroy {
     blocIds: string[];
     resolution: ResolutionLevel;
   }>();
+  private blocChanged = new Subject<BlocDto>();
   private subscription = new Subscription();
 
   public constructor() {
-    const activatedRoute = inject(ActivatedRoute);
-    this.bloc = activatedRoute.snapshot.data['bloc'];
+    this.bloc = this.activatedRoute.snapshot.data['bloc'];
 
     this.subscription.add(
-      activatedRoute.queryParamMap.subscribe({
+      this.activatedRoute.queryParamMap.subscribe({
         next: (queryParams) => {
           this.selectedLineIdFromQueryParam = queryParams.get('routeId') ?? undefined;
           if (this.lines().length > 0) {
             this.trySelectLineFromQueryParam();
           }
+        }
+      })
+    );
+
+    this.subscription.add(
+      this.blocChanged.pipe(switchMap((bloc: BlocDto) => this.linesService.getLinesByBlocId(bloc.id))).subscribe({
+        next: (lines: LineDto[]) => {
+          this.lines.set(lines);
+          this.trySelectLineFromQueryParam();
         }
       })
     );
@@ -129,23 +151,15 @@ export class OutdoorBloc implements OnInit, OnDestroy {
         })
     );
 
-    const urlsAndInfo = this.boulderLoaderService.getUrls(this.bloc, RESOLUTION_LEVEL.low);
-    if (urlsAndInfo.urls.length > 0 && urlsAndInfo.currentResolution !== undefined) {
-      this.startLoadingBoulder.next({
-        urls: urlsAndInfo.urls,
-        blocIds: urlsAndInfo.blocIds,
-        resolution: urlsAndInfo.currentResolution
-      });
-    }
-  }
-
-  public ngOnInit(): void {
-    this.linesService.getLinesByBlocId(this.bloc.id).subscribe({
-      next: (lines) => {
-        this.lines.set(lines);
-        this.trySelectLineFromQueryParam();
-      }
-    });
+    this.subscription.add(
+      this.activatedRoute.data.subscribe({
+        next: (data) => {
+          const bloc = data['bloc'] as BlocDto;
+          const blocs = (data['blocs'] as BlocDto[] | undefined) ?? [];
+          this.loadBloc(bloc, blocs);
+        }
+      })
+    );
   }
 
   public ngOnDestroy(): void {
@@ -203,11 +217,24 @@ export class OutdoorBloc implements OnInit, OnDestroy {
       return undefined;
     }
 
-    const urlTree = this.router.createUrlTree(['/', 'bloc', this.bloc.id], {
-      queryParams: { routeId: selectedLine.line.id }
+    const urlTree = this.router.createUrlTree([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { routeId: selectedLine.line.id },
+      queryParamsHandling: 'merge'
     });
 
     return new URL(this.router.serializeUrl(urlTree), window.location.origin).toString();
+  }
+
+  public blocRouterLink(blocId: string): readonly string[] {
+    const outdoorAreaId = this.activatedRoute.snapshot.paramMap.get('outdoorAreaId');
+    const sectorId = this.activatedRoute.snapshot.paramMap.get('sectorId');
+
+    if (outdoorAreaId && sectorId) {
+      return ['/', 'outdoor-area', outdoorAreaId, 'sector', sectorId, 'bloc', blocId];
+    }
+
+    return ['/', 'bloc', blocId];
   }
 
   private setSelectedLine(selectedLine: { line: LineDto; setFocus: boolean } | undefined, updateUrl = true): void {
@@ -245,5 +272,38 @@ export class OutdoorBloc implements OnInit, OnDestroy {
       queryParamsHandling: 'merge',
       replaceUrl: true
     });
+  }
+
+  private loadBloc(bloc: BlocDto, blocs: BlocDto[]): void {
+    this.bloc = bloc;
+    this.currentRawModels.set([]);
+    this.lines.set([]);
+    this.selectedLine.set(undefined);
+
+    setTimeout(() => {
+      this.configureBlocNavigation(blocs);
+      this.blocChanged.next(bloc);
+
+      const urlsAndInfo = this.boulderLoaderService.getUrls(bloc, RESOLUTION_LEVEL.low);
+      if (urlsAndInfo.urls.length > 0 && urlsAndInfo.currentResolution !== undefined) {
+        this.startLoadingBoulder.next({
+          urls: urlsAndInfo.urls,
+          blocIds: urlsAndInfo.blocIds,
+          resolution: urlsAndInfo.currentResolution
+        });
+      }
+    });
+  }
+
+  private configureBlocNavigation(blocs: BlocDto[]): void {
+    const currentIndex = blocs.findIndex((bloc: BlocDto): boolean => bloc.id === this.bloc.id);
+    if (blocs.length < 2 || currentIndex < 0) {
+      this.previousBloc = undefined;
+      this.nextBloc = undefined;
+      return;
+    }
+
+    this.previousBloc = blocs[(currentIndex - 1 + blocs.length) % blocs.length];
+    this.nextBloc = blocs[(currentIndex + 1) % blocs.length];
   }
 }

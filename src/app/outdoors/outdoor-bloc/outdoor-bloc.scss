@@ -40,6 +40,11 @@ ul {
   overflow-x: auto;
 }
 
+.bloc-navigation {
+  display: inline-block;
+  text-decoration: none;
+}
+
 .legend-list {
   height: calc(100% - 2em);
   width: 100%;

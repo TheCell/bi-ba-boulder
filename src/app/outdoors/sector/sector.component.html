@@ -1,10 +1,3 @@
-<!-- <ul>
-  @for (bloc of blocs; track bloc.id) {
-    <li>
-      <a [routerLink]="['/', 'bloc', bloc.id]" routerLinkActive="router-link-active">{{ bloc.name }}</a>
-    </li>
-  }
-</ul> -->
 <main class="outdoor-area">
   <h1>{{ sector.name }}</h1>
 
@@ -45,7 +38,11 @@
             class="sector-tile"
             [class.is-generic-background]="!bloc.previewImageUri"
             [style.backgroundImage]="backgroundImage"
-            [routerLink]="['/', 'bloc', bloc.id]">
+            [routerLink]="
+              outdoorAreaId
+                ? ['/', 'outdoor-area', outdoorAreaId, 'sector', sector.id, 'bloc', bloc.id]
+                : ['/', 'bloc', bloc.id]
+            ">
             <span class="tile-content">
               <span class="sector-name">{{ bloc.name }}</span>
               <!-- I could have the name of a famous line here -->

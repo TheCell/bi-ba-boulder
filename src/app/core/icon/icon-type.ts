@@ -42,7 +42,11 @@ export const ICONS = [
   'profile-filled',
   'map-empty',
   'map-filled',
+  'map-marked-empty',
+  'map-marked-filled',
   'change-log-empty',
-  'change-log-filled'
+  'change-log-filled',
+  'arrow-left',
+  'arrow-right'
 ] as const;
 export type IconType = (typeof ICONS)[number];

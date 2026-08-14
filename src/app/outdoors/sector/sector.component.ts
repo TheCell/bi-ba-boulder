@@ -16,11 +16,13 @@ export class SectorComponent {
   public sector: SectorDto;
   public blocs: BlocDto[] = [];
   public readonly imageUris: readonly string[];
+  public readonly outdoorAreaId: string | null;
 
   public constructor() {
     this.blocs = this.activatedRoute.snapshot.data['blocs'];
     this.sector = this.activatedRoute.snapshot.data['sector'];
     this.imageUris = this.getImageUris(this.sector);
+    this.outdoorAreaId = this.activatedRoute.snapshot.paramMap.get('outdoorAreaId');
   }
 
   private getImageUris(sector: SectorDto): readonly string[] {

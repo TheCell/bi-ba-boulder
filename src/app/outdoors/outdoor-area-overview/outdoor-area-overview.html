@@ -35,7 +35,7 @@
         class="sector-tile"
         [class.is-generic-background]="!sector.previewImageUri"
         [style.backgroundImage]="backgroundImage"
-        [routerLink]="['/', 'sectors', sector.id]">
+        [routerLink]="['/', 'outdoor-area', outdoorArea.id, 'sector', sector.id]">
         <span class="tile-content">
           <span class="sector-name">{{ sector.name }}</span>
         </span>

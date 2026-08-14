@@ -53,6 +53,6 @@ describe('OutdoorAreaOverview', (): void => {
     const sectorLink: HTMLAnchorElement | null = element.querySelector<HTMLAnchorElement>('.sector-tile');
 
     expect(sectorLink?.textContent).toContain('Riverbed');
-    expect(sectorLink?.getAttribute('href')).toBe('/sectors/sector-1');
+    expect(sectorLink?.getAttribute('href')).toBe('/outdoor-area/area-1/sector/sector-1');
   });
 });

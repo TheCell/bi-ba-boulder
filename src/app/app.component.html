@@ -1,19 +1,22 @@
 <nav>
   <ul>
     <li><a [routerLink]="['home']" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a></li>
-    @if (authSessionStateService.isLoggedIn()) {
-      @if (authSessionStateService.isAdmin()) {
-        <li>
-          <a
-            #rlaMap="routerLinkActive"
-            [routerLink]="['sectors']"
-            routerLinkActive="active"
-            ariaCurrentWhenActive="page">
+    @for (navigationItem of outdoorNavigationItems(); track navigationItem.routerLink.join('/')) {
+      <li>
+        <a
+          #rlaMap="routerLinkActive"
+          [routerLink]="navigationItem.routerLink"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page">
+          {{ navigationItem.label }}
+          @if (navigationItem.isArea) {
             <app-icon [icon]="rlaMap.isActive ? 'map-filled' : 'map-empty'" [isFocused]="true"></app-icon>
-            Sectors
-          </a>
-        </li>
-      }
+          } @else if (navigationItem.isSector) {
+            <app-icon [icon]="rlaMap.isActive ? 'map-marked-filled' : 'map-marked-empty'" [isFocused]="true"></app-icon>
+          }
+        </a>
+      </li>
     }
     <li class="nav-right">
       <a

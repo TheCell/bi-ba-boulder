@@ -1,6 +1,6 @@
 <div class="grid">
   <section class="renderContainer">
-    @if (currentRawModels()) {
+    @if (currentRawModels().length > 0) {
     <!-- @if (authSessionStateService.isLoggedIn() && selectedProblem) {
         <app-problem-log-overlay [spraywallProblemId]="selectedProblem.id" [boulderLog]="boulderLog()">
         </app-problem-log-overlay>
@@ -20,7 +20,21 @@
   </section>
   <section class="legend">
     <div class="actions">
-      @if (selectedLine()?.line?.metadata?.canEdit) {
+      @if (previousBloc) {
+      <a
+        class="button action-button bloc-navigation"
+        [routerLink]="blocRouterLink(previousBloc.id)"
+        [attr.aria-label]="'Previous bloc: ' + previousBloc.name">
+        <app-icon [icon]="'arrow-left'"></app-icon> {{ previousBloc.name }}
+      </a>
+      } @if (nextBloc) {
+      <a
+        class="button action-button bloc-navigation"
+        [routerLink]="blocRouterLink(nextBloc.id)"
+        [attr.aria-label]="'Next bloc: ' + nextBloc.name">
+        {{ nextBloc.name }} <app-icon [icon]="'arrow-right'"></app-icon>
+      </a>
+      } @if (selectedLine()?.line?.metadata?.canEdit) {
       <button class="button action-button warning" (click)="onEditLine()">Edit</button>
       } @if (selectedLine()?.line?.metadata?.canDelete) {
       <button class="button action-button danger" (click)="onDeleteLine()">Delete</button>

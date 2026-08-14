@@ -38,6 +38,25 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'outdoor-area/:outdoorAreaId/sector/:sectorId',
+    component: SectorComponent,
+    resolve: {
+      outdoorArea: outdoorAreaResolver,
+      blocs: blocsOfSectorResolver,
+      sector: sectorResolver
+    }
+  },
+  {
+    path: 'outdoor-area/:outdoorAreaId/sector/:sectorId/bloc/:id',
+    component: OutdoorBloc,
+    resolve: {
+      outdoorArea: outdoorAreaResolver,
+      blocs: blocsOfSectorResolver,
+      sector: sectorResolver,
+      bloc: blocResolver
+    }
+  },
+  {
     path: 'sectors/:sectorId',
     component: SectorComponent,
     resolve: {
