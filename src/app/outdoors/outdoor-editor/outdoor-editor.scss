@@ -59,6 +59,19 @@ ul {
   width: calc(100% - 15px); // adjust for scrollbar
 }
 
+.options-column {
+  padding: 15px;
+  width: 30%;
+}
+
+.color-selection {
+  padding-top: 10px;
+}
+
+.disabled {
+  opacity: 0.6;
+}
+
 @media (max-width: 600px) {
   .list-header {
     grid-template: 'header header header';

@@ -21,6 +21,7 @@ public class GetBlocsBySectorIdQueryHandler : IQueryHandler<GetBlocsBySectorIdQu
     public async Task<ICollection<BlocDto>> HandleAsync(GetBlocsBySectorIdQuery query)
     {
         var blocs = await _dbContext.Blocs
+            .Include(b => b.AdditionalParts)
             .AsNoTracking()
             .Where(b => b.SectorId == query.SectorId)
             .ToListAsync();

@@ -12,5 +12,9 @@
 export interface CreateSectorCommand { 
     name: string;
     description?: string | null;
+    importantInfo?: string | null;
+    isPublic?: boolean;
+    coordinates?: string | null;
+    previewImageUri?: string | null;
 }
 

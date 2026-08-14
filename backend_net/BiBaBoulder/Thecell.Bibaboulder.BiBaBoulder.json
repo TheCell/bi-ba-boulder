@@ -757,6 +757,86 @@
         }
       }
     },
+    "/api/OutdoorAreas": {
+      "get": {
+        "tags": [
+          "OutdoorAreas"
+        ],
+        "operationId": "getOutdoorAreas",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutdoorAreaDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutdoorAreaDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutdoorAreaDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/OutdoorAreas/{id}": {
+      "get": {
+        "tags": [
+          "OutdoorAreas"
+        ],
+        "operationId": "getOutdoorArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Sectors": {
       "get": {
         "tags": [
@@ -1271,10 +1351,269 @@
           }
         }
       }
+    },
+    "/api/UserSectorAccesses": {
+      "get": {
+        "tags": [
+          "UserSectorAccesses"
+        ],
+        "operationId": "getUserSectorAccesses",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserSectorAccessDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserSectorAccessDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserSectorAccessDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserSectorAccesses"
+        ],
+        "operationId": "createUserSectorAccess",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserSectorAccessCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserSectorAccessCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserSectorAccessCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/UserSectorAccesses/users/{userId}/sectors/{sectorId}": {
+      "get": {
+        "tags": [
+          "UserSectorAccesses"
+        ],
+        "operationId": "getUserSectorAccess",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sectorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserSectorAccesses"
+        ],
+        "operationId": "updateUserSectorAccess",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sectorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserSectorAccessCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserSectorAccessCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserSectorAccessCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSectorAccessDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "UserSectorAccesses"
+        ],
+        "operationId": "deleteUserSectorAccess",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sectorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserSectorAccessCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserSectorAccessCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserSectorAccessCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AccessSourceType": {
+        "type": "integer"
+      },
       "BlocDto": {
         "required": [
           "id",
@@ -1290,6 +1629,12 @@
             "type": "string"
           },
           "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "coordinates": {
             "type": [
               "null",
               "string"
@@ -1312,6 +1657,18 @@
               "null",
               "string"
             ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "additionalParts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlocDto"
+            }
           }
         }
       },
@@ -1474,6 +1831,27 @@
               "null",
               "string"
             ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -1520,6 +1898,34 @@
           }
         }
       },
+      "CreateUserSectorAccessCommand": {
+        "required": [
+          "userId",
+          "sectorId",
+          "accessSourceType"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accessSourceType": {
+            "$ref": "#/components/schemas/AccessSourceType"
+          },
+          "validUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "DeleteBoulderLogCommand": {
         "required": [
           "id",
@@ -1528,6 +1934,28 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "DeleteUserSectorAccessCommand": {
+        "required": [
+          "userId",
+          "sectorId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sectorId": {
             "type": "string",
             "format": "uuid"
           },
@@ -1558,6 +1986,12 @@
               "null",
               "string"
             ]
+          },
+          "sceneMarkings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SceneMarking"
+            }
           }
         }
       },
@@ -1626,7 +2060,108 @@
           }
         }
       },
+      "OutdoorAreaDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicResourceDto"
+            }
+          },
+          "sectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SectorDto"
+            }
+          }
+        }
+      },
+      "PublicResourceDto": {
+        "required": [
+          "resourceType",
+          "uri"
+        ],
+        "type": "object",
+        "properties": {
+          "resourceType": {
+            "$ref": "#/components/schemas/ResourceType"
+          },
+          "uri": {
+            "type": "string"
+          }
+        }
+      },
       "Rating": {
+        "type": "integer"
+      },
+      "ResourceType": {
+        "type": "integer"
+      },
+      "SceneMarking": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/SceneMarkingType"
+          },
+          "form": {
+            "$ref": "#/components/schemas/SceneMarkingForm"
+          },
+          "position": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "scale": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "quaternion": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      },
+      "SceneMarkingForm": {
+        "type": "integer"
+      },
+      "SceneMarkingType": {
         "type": "integer"
       },
       "SearchProblemsRequest": {
@@ -1698,6 +2233,39 @@
               "null",
               "string"
             ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isPublic": {
+            "type": "boolean"
+          },
+          "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicResourceDto"
+            }
+          },
+          "outdoorAreas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutdoorAreaDto"
+            }
           }
         }
       },
@@ -1727,6 +2295,12 @@
             "type": "string"
           },
           "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
             "type": [
               "null",
               "string"
@@ -1993,6 +2567,39 @@
           }
         }
       },
+      "UpdateUserSectorAccessCommand": {
+        "required": [
+          "userId",
+          "sectorId",
+          "version",
+          "accessSourceType"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "accessSourceType": {
+            "$ref": "#/components/schemas/AccessSourceType"
+          },
+          "validUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "UserDto": {
         "required": [
           "id",
@@ -2013,6 +2620,39 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "UserSectorAccessDto": {
+        "required": [
+          "userId",
+          "sectorId",
+          "accessSourceType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accessSourceType": {
+            "$ref": "#/components/schemas/AccessSourceType"
+          },
+          "validUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       }
@@ -2041,6 +2681,9 @@
       "name": "Lines"
     },
     {
+      "name": "OutdoorAreas"
+    },
+    {
       "name": "Sectors"
     },
     {
@@ -2054,6 +2697,9 @@
     },
     {
       "name": "Users"
+    },
+    {
+      "name": "UserSectorAccesses"
     }
   ]
 }

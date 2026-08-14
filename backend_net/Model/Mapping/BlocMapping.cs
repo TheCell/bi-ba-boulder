@@ -1,5 +1,6 @@
+using System.Linq;
 using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Model.Mapping;
 
@@ -14,7 +15,10 @@ public static class BlocMapping
             Description = bloc.Description,
             BlocLowRes = bloc.BlocLowRes,
             BlocMedRes = bloc.BlocMedRes,
-            BlocHighRes = bloc.BlocHighRes
+            BlocHighRes = bloc.BlocHighRes,
+            Coordinates = bloc.Coordinates,
+            PreviewImageUri = bloc.PreviewImageUri,
+            AdditionalParts = [.. bloc.AdditionalParts.Select(MapToBlocDto)]
         };
     }
 }

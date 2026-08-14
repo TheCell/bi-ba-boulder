@@ -56,7 +56,11 @@ public class CreateSectorTest
         var command = new CreateSectorCommand
         {
             Name = _bogus.Lorem.Slug(),
-            Description = _bogus.Lorem.Paragraph()
+            Description = _bogus.Lorem.Paragraph(),
+            ImportantInfo = _bogus.Lorem.Sentence(),
+            IsPublic = _bogus.Random.Bool(),
+            Coordinates = "46.9914628, 7.5589870",
+            PreviewImageUri = _bogus.Internet.Url()
         };
 
         _currentUserServiceMock.WithUser(user);

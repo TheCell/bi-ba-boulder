@@ -2,6 +2,7 @@ using System;
 using Bogus;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 

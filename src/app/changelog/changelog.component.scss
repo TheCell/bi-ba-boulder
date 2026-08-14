@@ -36,9 +36,8 @@
   background: color-mix(in srgb, $lightDark 88%, $dark 12%);
   padding: 1rem;
 
-  h2 {
+  h3 {
     margin: 0.75rem 0;
-    font-size: 1.1rem;
   }
 
   ul {
@@ -62,10 +61,9 @@
   border-radius: 999px;
   padding: 0.2rem 0.65rem;
   font-size: 0.85rem;
-  font-weight: 600;
 }
 
 .date {
-  color: color-mix(in srgb, $fontColor 70%, $light 30%);
+  color: $primary;
   font-size: 0.9rem;
 }

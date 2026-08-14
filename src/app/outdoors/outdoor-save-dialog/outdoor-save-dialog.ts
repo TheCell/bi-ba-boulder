@@ -50,8 +50,7 @@ export class OutdoorSaveDialog implements IModal {
     disabled(schemaPath.fontGrade, { when: () => this.isDisabled() });
     disabled(schemaPath.identifier, { when: () => this.isDisabled() });
     required(schemaPath.name);
-    minLength(schemaPath.name, 5);
-    required(schemaPath.fontGrade);
+    minLength(schemaPath.name, 2);
     required(schemaPath.identifier);
     minLength(schemaPath.identifier, 1);
   });
@@ -68,8 +67,6 @@ export class OutdoorSaveDialog implements IModal {
     this.lineData = data.lineData;
     this.blocId = data.blocId;
 
-    console.log('initialize', data);
-
     this.saveModel.set({
       name: data.name ?? '',
       description: data.description ?? '',
@@ -78,8 +75,6 @@ export class OutdoorSaveDialog implements IModal {
       lineId: data.existingId,
       version: data.version
     });
-
-    console.log(data);
   }
 
   public onSubmit(): void {

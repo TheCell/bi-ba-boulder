@@ -256,6 +256,16 @@
   mask-image: url("data:image/svg+xml;utf8,#{$map-filled-svg}");
 }
 
+.map-marked-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$map-marked-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$map-marked-empty-svg}");
+}
+
+.map-marked-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$map-marked-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$map-marked-filled-svg}");
+}
+
 .change-log-empty {
   -webkit-mask-image: url("data:image/svg+xml;utf8,#{$change-log-empty-svg}");
   mask-image: url("data:image/svg+xml;utf8,#{$change-log-empty-svg}");
@@ -264,6 +274,16 @@
 .change-log-filled {
   -webkit-mask-image: url("data:image/svg+xml;utf8,#{$change-log-filled-svg}");
   mask-image: url("data:image/svg+xml;utf8,#{$change-log-filled-svg}");
+}
+
+.arrow-left {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$arrow-left-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$arrow-left-svg}");
+}
+
+.arrow-right {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$arrow-right-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$arrow-right-svg}");
 }
 
 .focus {

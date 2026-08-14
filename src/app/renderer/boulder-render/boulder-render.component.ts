@@ -1,11 +1,9 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   effect,
   ElementRef,
-  HostListener,
   inject,
   input,
   OnInit,
@@ -21,7 +19,13 @@ import { GLTF, GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { BoulderLine } from '../../interfaces/boulder-line';
 import { fitCameraToCenteredObject } from '../common/camera-utils';
 import { HSLToHex } from '../../utils/color-util';
-import { beginVertex, mapFragment, uniforms, vViewPositionReplace, worldposVertex } from '../common/shader-code';
+import {
+  beginVertex,
+  mapFragment,
+  uniforms,
+  vViewPositionReplace,
+  worldposVertex
+} from '../common/spraywall-shader-code';
 import { ActivatedRoute } from '@angular/router';
 import { SpraywallProblemDto } from '@api-net/index';
 import { CameraControlsService } from '../camera-controls.service';
@@ -31,7 +35,9 @@ import { CameraControlsService } from '../camera-controls.service';
   imports: [KeyboardShortcutsModule],
   templateUrl: './boulder-render.component.html',
   styleUrl: './boulder-render.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  host: {
+    '(window:resize)': 'onResize()'
+  }
 })
 export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private el: ElementRef = inject(ElementRef);
@@ -39,20 +45,6 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private cameraControlsService = inject(CameraControlsService);
 
   @ViewChild('canvas') public canvas: ElementRef = null!;
-  @HostListener('window:resize') public onResize(): void {
-    if (this.renderer) {
-      const canvasSizes = {
-        width: this.el.nativeElement.offsetWidth,
-        height: this.el.nativeElement.offsetHeight
-      };
-
-      this.renderer.setPixelRatio(window.devicePixelRatio);
-      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
-      this.camera.aspect = canvasSizes.width / canvasSizes.height;
-      this.camera.updateProjectionMatrix();
-      this.loop();
-    }
-  }
 
   public shortcuts: ShortcutInput[] = [];
   public rawModel = input<ArrayBuffer>();
@@ -86,6 +78,21 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
 
   private currentGltf?: GLTF;
   private initialized = false; // temporary 'fix' for a timing problem
+
+  public onResize(): void {
+    if (this.renderer) {
+      const canvasSizes = {
+        width: this.el.nativeElement.offsetWidth,
+        height: this.el.nativeElement.offsetHeight
+      };
+
+      this.renderer.setPixelRatio(window.devicePixelRatio);
+      this.renderer.setSize(canvasSizes.width, canvasSizes.height);
+      this.camera.aspect = canvasSizes.width / canvasSizes.height;
+      this.camera.updateProjectionMatrix();
+      this.loop();
+    }
+  }
 
   public constructor() {
     effect(() => {

@@ -7,7 +7,9 @@
   (keypress)="selectLine()"
   [id]="line().id">
   <div class="item-row">
-    <span class="identifier">{{ line().identifier }}</span>
+    <span class="identifier" [ngStyle]="{ color: customLineColor() !== undefined ? customLineColor() : null }"
+      >{{ line().identifier }}</span
+    >
     <span class="name">{{ line().name }}</span>
     <span class="fontGrade">{{ line().fontGrade ?? undefined | appFontGradePipe }}</span>
   </div>

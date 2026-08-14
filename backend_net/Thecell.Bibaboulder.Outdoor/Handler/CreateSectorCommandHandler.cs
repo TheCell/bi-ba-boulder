@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.Outdoor.Handler;
@@ -29,6 +29,10 @@ public class CreateSectorCommandHandler : ICommandHandler<CreateSectorCommand>
             Id = Guid.CreateVersion7(),
             Name = command.Name,
             Description = command.Description,
+            ImportantInfo = command.ImportantInfo,
+            IsPublic = command.IsPublic,
+            Coordinates = command.Coordinates,
+            PreviewImageUri = command.PreviewImageUri,
             CreatedUserId = currentUser.Id
         };
 

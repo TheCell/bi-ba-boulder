@@ -15,5 +15,7 @@ public class Spraywall : VersionedEntity
 
     public string? Description { get; set; }
 
+    public string? PreviewImageUri { get; set; }
+
     public ICollection<SpraywallProblem> SpraywallProblems { get; set; } = [];
 }

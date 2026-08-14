@@ -13,6 +13,7 @@ public static class SpraywallAssertion
         expected.Id.AssertV7();
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Description, actual.Description);
+        Xunit.Assert.Equal(expected.PreviewImageUri, actual.PreviewImageUri);
     }
 
     public static void Assert(CreateSpraywallProblemCommand expected, SpraywallProblem actual)

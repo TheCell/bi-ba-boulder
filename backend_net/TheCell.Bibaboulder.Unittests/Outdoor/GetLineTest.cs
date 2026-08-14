@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
@@ -29,7 +29,7 @@ public class GetLineTest
         await _dbContext.InsertEntityAndSaveChangesAsync(user);
         _currentUserServiceMock.WithUser(user);
 
-        var sector = new SectorBuilder().SetName("Sector").Build();
+        var sector = new SectorBuilder().SetName("Sector").SetIsPublic(true).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var bloc = new BlocBuilder().SetName("Bloc").SetSectorId(sector.Id).Build();
@@ -55,7 +55,7 @@ public class GetLineTest
         await _dbContext.InsertEntityAndSaveChangesAsync(user);
         _currentUserServiceMock.WithUser(user);
 
-        var sector = new SectorBuilder().SetName("Sector").Build();
+        var sector = new SectorBuilder().SetName("Sector").SetIsPublic(false).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var bloc = new BlocBuilder().SetName("Bloc").SetSectorId(sector.Id).Build();
@@ -81,7 +81,7 @@ public class GetLineTest
         await _dbContext.InsertEntityAndSaveChangesAsync(user);
         _currentUserServiceMock.WithUser(user);
 
-        var sector = new SectorBuilder().SetName("Sector").Build();
+        var sector = new SectorBuilder().SetName("Sector").SetIsPublic(false).Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var bloc = new BlocBuilder().SetName("Bloc").SetSectorId(sector.Id).Build();
@@ -107,5 +107,92 @@ public class GetLineTest
 
         await Assert.ThrowsAsync<NotFoundException>(async () =>
             await handler.HandleAsync(new GetLineQuery { Id = Guid.CreateVersion7() }));
+    }
+
+    [Fact]
+    public async Task GetLine_PublicSectorAsAnonymous_ReturnsMatchingLine()
+    {
+        var sector = new SectorBuilder().SetName("Sector").SetIsPublic(true).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
+
+        var bloc = new BlocBuilder().SetName("Bloc").SetSectorId(sector.Id).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
+
+        var line = new LineBuilder().SetIdentifier("L-001").SetData(new LineData { Positions = [[1.0, 1.1, 1.2], [2.0, 2.1, 2.2]] }).SetBlocId(bloc.Id).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(line);
+
+        var handler = new GetLineQueryHandler(_dbContext, _currentUserServiceMock);
+        var result = await handler.HandleAsync(new GetLineQuery { Id = line.Id });
+
+        LineAssertion.Assert(line, result);
+        Assert.False(result.Metadata.CanEdit);
+        Assert.False(result.Metadata.CanDelete);
+    }
+
+    [Fact]
+    public async Task GetLine_PrivateSectorAsAnonymous_ThrowsAuthenticationException()
+    {
+        var sector = new SectorBuilder().SetName("Sector").SetIsPublic(false).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
+
+        var bloc = new BlocBuilder().SetName("Bloc").SetSectorId(sector.Id).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
+
+        var line = new LineBuilder().SetIdentifier("L-001").SetData(new LineData { Positions = [[1.0, 1.1, 1.2], [2.0, 2.1, 2.2]] }).SetBlocId(bloc.Id).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(line);
+
+        var handler = new GetLineQueryHandler(_dbContext, _currentUserServiceMock);
+
+        await Assert.ThrowsAsync<AuthenticationException>(async () =>
+            await handler.HandleAsync(new GetLineQuery { Id = line.Id }));
+    }
+
+    [Fact]
+    public async Task GetLine_PrivateSectorAsNormalUser_ThrowsAccessDeniedException()
+    {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.User).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
+        var sector = new SectorBuilder().SetName("Sector").SetIsPublic(false).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
+
+        var bloc = new BlocBuilder().SetName("Bloc").SetSectorId(sector.Id).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
+
+        var line = new LineBuilder().SetIdentifier("L-001").SetData(new LineData { Positions = [[1.0, 1.1, 1.2], [2.0, 2.1, 2.2]] }).SetBlocId(bloc.Id).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(line);
+
+        var handler = new GetLineQueryHandler(_dbContext, _currentUserServiceMock);
+
+        await Assert.ThrowsAsync<AccessDeniedException>(async () =>
+            await handler.HandleAsync(new GetLineQuery { Id = line.Id }));
+    }
+
+    [Fact]
+    public async Task GetLine_PrivateSectorWithValidAccess_ReturnsMatchingLine()
+    {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.User).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
+        var sector = new SectorBuilder().SetName("Sector").SetIsPublic(false).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
+
+        var bloc = new BlocBuilder().SetName("Bloc").SetSectorId(sector.Id).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
+
+        var line = new LineBuilder().SetIdentifier("L-001").SetData(new LineData { Positions = [[1.0, 1.1, 1.2], [2.0, 2.1, 2.2]] }).SetBlocId(bloc.Id).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(line);
+
+        var access = new UserSectorAccessBuilder(user, sector).SetValidUntil(DateTime.UtcNow.AddDays(1)).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(access);
+
+        var handler = new GetLineQueryHandler(_dbContext, _currentUserServiceMock);
+        var result = await handler.HandleAsync(new GetLineQuery { Id = line.Id });
+
+        LineAssertion.Assert(line, result);
+        Assert.False(result.Metadata.CanEdit);
+        Assert.False(result.Metadata.CanDelete);
     }
 }

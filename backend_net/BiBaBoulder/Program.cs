@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
 using Microsoft.OpenApi;
 using Thecell.Bibaboulder.Common.Appsettings;
+using Microsoft.Extensions.Primitives;
 
 namespace Thecell.Bibaboulder.BiBaBoulder;
 
@@ -78,13 +80,25 @@ public class Program
         builder.Services.RegisterCqrsAndControllerAssemblies();
         builder.Services.AddHealthChecks();
 
-        var frontendOrigin = builder.Configuration["FrontendOrigin"]?.TrimEnd('/')
-            ?? throw new InvalidOperationException("FrontendOrigin is not configured in appsettings.");
+        var frontendOrigins = builder.Configuration.GetSection("FrontendOrigins").Get<string[]>()?
+            .Select(origin => origin.Trim().TrimEnd('/'))
+            .Where(origin => !string.IsNullOrWhiteSpace(origin))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (frontendOrigins is null || frontendOrigins.Length == 0)
+        {
+            var frontendOrigin = builder.Configuration["FrontendOrigin"]?.Trim().TrimEnd('/');
+            frontendOrigins = string.IsNullOrWhiteSpace(frontendOrigin)
+                ? throw new InvalidOperationException("FrontendOrigin or FrontendOrigins must be configured in appsettings.")
+                : [frontendOrigin];
+        }
+
         builder.Services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
             {
-                policy.WithOrigins(frontendOrigin)
+                policy.WithOrigins(frontendOrigins)
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
@@ -233,6 +247,19 @@ public class Program
 
         var app = builder.Build();
 
+        static void ApplyStaticFileCorsHeaders(StaticFileResponseContext context, string[] allowedOrigins)
+        {
+            var origin = context.Context.Request.Headers.Origin.ToString().TrimEnd('/');
+            if (string.IsNullOrWhiteSpace(origin) || !allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            context.Context.Response.Headers.AccessControlAllowOrigin = origin;
+            context.Context.Response.Headers.AccessControlAllowCredentials = "true";
+            context.Context.Response.Headers.Vary = new StringValues("Origin");
+        }
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -258,7 +285,8 @@ public class Program
                 FileProvider = new PhysicalFileProvider(backendAssetsPath),
                 RequestPath = "/fileshare",
                 ServeUnknownFileTypes = true,
-                DefaultContentType = "application/octet-stream"
+                DefaultContentType = "application/octet-stream",
+                OnPrepareResponse = context => ApplyStaticFileCorsHeaders(context, frontendOrigins)
             });
         }
 
@@ -271,7 +299,8 @@ public class Program
                 FileProvider = new PhysicalFileProvider(userContentPath),
                 RequestPath = "/user-content",
                 ServeUnknownFileTypes = true,
-                DefaultContentType = "application/octet-stream"
+                DefaultContentType = "application/octet-stream",
+                OnPrepareResponse = context => ApplyStaticFileCorsHeaders(context, frontendOrigins)
             });
         }
 

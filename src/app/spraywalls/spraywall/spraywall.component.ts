@@ -30,8 +30,8 @@ import { SpraywallLegendItemPlaceholder } from './spraywall-legend-item-placehol
 import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-close-data';
 import { SpraywallGradeFilterDialogData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-data';
 import { SpraywallInfoDialog } from './spraywall-info-dialog/spraywall-info-dialog';
-import { ConfirmDeleteDialog } from './confirm-delete-dialog/confirm-delete-dialog';
-import { ConfirmDeleteDialogData } from './confirm-delete-dialog/confirm-delete-dialog-data';
+import { ConfirmDeleteDialog } from './confirm-delete-spraywall-problem-dialog/confirm-delete-spraywall-problem-dialog';
+import { ConfirmDeleteSpraywallProblemDialogData } from './confirm-delete-spraywall-problem-dialog/confirm-delete-spraywall-problem-dialog-data';
 import { ProblemLogOverlay } from './problem-log-overlay/problem-log-overlay';
 import { Icon } from '../../core/icon/icon';
 import { Modal } from '../../core/modal/modal/modal';
@@ -240,7 +240,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.selectedProblem) {
       const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteDialog);
       if (modal && modal.initialize) {
-        const data: ConfirmDeleteDialogData = {
+        const data: ConfirmDeleteSpraywallProblemDialogData = {
           spraywallProblem: this.selectedProblem
         };
         modal.initialize(data);

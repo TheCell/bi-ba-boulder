@@ -1,6 +1,6 @@
 using System;
 using Bogus;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -25,6 +25,12 @@ public class BlocBuilder : BuilderBase<Bloc>
         return this;
     }
 
+    public BlocBuilder SetCoordinates(string? value)
+    {
+        _instance.Coordinates = value;
+        return this;
+    }
+
     public BlocBuilder SetSectorId(Guid value)
     {
         _instance.SectorId = value;
@@ -46,6 +52,18 @@ public class BlocBuilder : BuilderBase<Bloc>
     public BlocBuilder SetBlocHighRes(string? value)
     {
         _instance.BlocHighRes = value;
+        return this;
+    }
+
+    public BlocBuilder SetPreviewImageUri(string? value)
+    {
+        _instance.PreviewImageUri = value;
+        return this;
+    }
+
+    public BlocBuilder SetAdditionalParts(Bloc[] value)
+    {
+        _instance.AdditionalParts = value;
         return this;
     }
 }

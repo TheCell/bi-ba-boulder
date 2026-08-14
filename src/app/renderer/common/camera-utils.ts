@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // source: https://wejn.org/2020/12/cracking-the-threejs-object-fitting-nut/
 export function fitCameraToCenteredObject(
   camera: THREE.PerspectiveCamera,
-  object: THREE.Group<THREE.Object3DEventMap>,
+  object: THREE.Group<THREE.Object3DEventMap> | THREE.Object3D<THREE.Object3DEventMap>,
   offset?: number,
   orbitControls?: OrbitControls
 ): void {

@@ -66,15 +66,6 @@ export class SpraywallEditor implements OnInit {
     this.spraywallId = activatedRoute.snapshot.paramMap.get('spraywallId') ?? '';
     this.problemId = activatedRoute.snapshot.paramMap.get('problemId') ?? undefined;
     this.spraywallProblemForEdit = activatedRoute.snapshot.data['spraywallProblem'];
-
-    // this.subscription.add(
-    //   this.resetSignal.subscribe({
-    //     next: () => {
-    //       this.problemId = undefined;
-    //       this.spraywallProblemForEdit = undefined;
-    //     }
-    //   })
-    // );
   }
 
   public ngOnInit() {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,6 +28,27 @@ public class GetLinesByBlocIdQueryHandler : IQueryHandler<GetLinesByBlocIdQuery,
         var currentUser = await _currentUserService.GetCurrentUserAsync();
         var isAdmin = currentUser is not null && currentUser.Roles.Contains(AuthorizationRoles.Admin);
         var hasEditorRole = currentUser is not null && currentUser.Roles.Contains(AuthorizationRoles.Editor);
+
+        if (!isAdmin)
+        {
+            var access = await _dbContext.Blocs
+                .AsNoTracking()
+                .Where(b => b.Id == query.BlocId)
+                .Select(b => new
+                {
+                    b.Sector!.IsPublic,
+                    HasValidAccess = currentUser != null && _dbContext.UserSectorAccesses.Any(access =>
+                        access.UserId == currentUser.Id &&
+                        access.SectorId == b.SectorId &&
+                        (access.ValidUntil == null || access.ValidUntil > DateTime.UtcNow))
+                })
+                .SingleOrDefaultAsync();
+
+            if (access is null || (!access.IsPublic && !access.HasValidAccess))
+            {
+                return [];
+            }
+        }
 
         var lines = await _dbContext.Lines
             .AsNoTracking()

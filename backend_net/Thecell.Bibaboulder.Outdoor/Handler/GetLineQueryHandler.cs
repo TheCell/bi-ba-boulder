@@ -1,5 +1,8 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
@@ -31,6 +34,32 @@ public class GetLineQueryHandler : IQueryHandler<GetLineQuery, LineDto>
             .AsNoTracking()
             .SingleOrDefaultAsync(l => l.Id == query.Id)
             .ThrowIfNullAsync(query.Id);
+
+        if (!isAdmin)
+        {
+            var access = await _dbContext.Blocs
+                .AsNoTracking()
+                .Where(b => b.Id == line.BlocId)
+                .Select(b => new
+                {
+                    b.Sector!.IsPublic,
+                    HasValidAccess = currentUser != null && _dbContext.UserSectorAccesses.Any(access =>
+                        access.UserId == currentUser.Id &&
+                        access.SectorId == b.SectorId &&
+                        (access.ValidUntil == null || access.ValidUntil > DateTime.UtcNow))
+                })
+                .SingleOrDefaultAsync();
+
+            if (access is null || (!access.IsPublic && !access.HasValidAccess))
+            {
+                if (currentUser is null)
+                {
+                    throw new AuthenticationException("Anonymous access requires the sector to be public.");
+                }
+
+                throw new AccessDeniedException("This sector is not public.");
+            }
+        }
 
         var lineDto = line.MapToLineDto();
 

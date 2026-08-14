@@ -6,32 +6,44 @@
 
 h1 {
   text-align: center;
-  height: 35px;
+  // height: 35px;
   margin: 0;
-  color: $warning;
+  // color: $warning;
+  color: $primary;
   padding: 20px 0px;
 }
 
 .tile-container {
   display: flex;
-  align-content: center;
-  height: calc(80vh - 35px);
+  flex-wrap: wrap;
+  justify-content: start;
+  align-content: flex-start;
+  height: calc(50vh - 75px - 45px); // 75px title
   gap: 10px;
   padding: 10px;
+  overflow-y: scroll;
+  scrollbar-width: none;
 }
 
 .big-tile {
   height: 200px;
   width: 400px;
-  background-color: $primary;
-  background-image: linear-gradient(rgba($primary, 1.0) 20%, rgba($primary, 0.0) 40%), url('/test-images/spraywall.webp');
   background-size: cover;
   background-position: center;
-  color: $fontColor;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+
   border: 1px solid $primary;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.big-tile.is-generic-background {
+  background-position: unset;
+  background-color: $darkDark;
+  background-size: 56px 56px;
+  background-repeat: repeat;
+  background-image: url('/tiles/pattern_007.png');
+  background-blend-mode: multiply;
+  // background-blend-mode: screen;
 }
 
 @media (max-width: 600px) {
@@ -41,7 +53,13 @@ h1 {
 }
 
 .tile-content {
-  padding: 5px;
+  padding: 25px 25px 25px 25px;
+  // background-image: linear-gradient(rgba($primary, 1.0) 50%, rgba($primary, 0.0) 90%);
+  background-image: linear-gradient(rgba($dark, 1.0) 50%, rgba($dark, 0.0) 90%);
+  margin-bottom: 0px;
+  border-radius: 5px;
+  color: $fontColor;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .tile-content h2 {

@@ -1,7 +1,55 @@
-<ul>
-  @for (bloc of blocs; track bloc.id) {
-    <li>
-      <a [routerLink]="['/', 'bloc', bloc.id]" routerLinkActive="router-link-active">{{ bloc.name }}</a>
-    </li>
+<main class="outdoor-area">
+  <h1>{{ sector.name }}</h1>
+
+  @if (imageUris.length > 0) {
+    <section class="gallery-section" aria-labelledby="gallery-heading">
+      <h2 id="gallery-heading" class="visually-hidden">Images of {{ sector.name }}</h2>
+      <div class="image-carousel" tabindex="0">
+        @for (imageUri of imageUris; track imageUri) {
+          <img
+            class="area-image"
+            [ngSrc]="imageUri"
+            [alt]="sector.name + ', image ' + ($index + 1)"
+            width="540"
+            height="360" />
+        }
+      </div>
+    </section>
   }
-</ul>
+  @if (sector.importantInfo) {
+    <aside class="important-info" aria-labelledby="important-info-heading">
+      <h2 id="important-info-heading">Important information</h2>
+      <p>{{ sector.importantInfo }}</p>
+    </aside>
+  }
+  @if (sector.description) {
+    <section class="description" aria-labelledby="description-heading">
+      <h2 id="description-heading">Description</h2>
+      <p>{{ sector.description }}</p>
+    </section>
+  }
+  @if (blocs.length > 0) {
+    <section class="sectors" aria-labelledby="sectors-heading">
+      <h2 id="sectors-heading">Sectors</h2>
+      <div class="sector-list">
+        @for (bloc of blocs; track bloc.id) {
+          @let backgroundImage = bloc.previewImageUri ? `url(${bloc.previewImageUri})` : `url(/tiles/flowers.png)`;
+          <a
+            class="sector-tile"
+            [class.is-generic-background]="!bloc.previewImageUri"
+            [style.backgroundImage]="backgroundImage"
+            [routerLink]="
+              outdoorAreaId
+                ? ['/', 'outdoor-area', outdoorAreaId, 'sector', sector.id, 'bloc', bloc.id]
+                : ['/', 'bloc', bloc.id]
+            ">
+            <span class="tile-content">
+              <span class="sector-name">{{ bloc.name }}</span>
+              <!-- I could have the name of a famous line here -->
+            </span>
+          </a>
+        }
+      </div>
+    </section>
+  }
+</main>

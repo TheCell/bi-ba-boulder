@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Access;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Model;
 
@@ -32,6 +34,8 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
     public DbSet<Bloc> Blocs { get; set; }
     public DbSet<Line> Lines { get; set; }
     public DbSet<Email> Emails { get; set; }
+    public DbSet<OutdoorArea> OutdoorAreas { get; set; }
+    public DbSet<UserSectorAccess> UserSectorAccesses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -48,6 +52,41 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
                 data => JsonSerializer.Serialize(data, options),
                 json => JsonSerializer.Deserialize<LineData>(json, options)!
             );
+
+        modelBuilder.Entity<UserSectorAccess>()
+            .HasKey(usa => new { usa.UserId, usa.SectorId });
+
+        modelBuilder.Entity<UserSectorAccess>()
+            .HasOne(usa => usa.User)
+            .WithMany(user => user.UserSectorAccesses)
+            .HasForeignKey(usa => usa.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserSectorAccess>()
+            .HasOne(usa => usa.Sector)
+            .WithMany()
+            .HasForeignKey(usa => usa.SectorId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Sector>()
+            .OwnsMany(sector => sector.Media, media =>
+            {
+                media.ToTable("SectorImages");
+                media.WithOwner().HasForeignKey("SectorId");
+                media.Property(resource => resource.Uri).HasMaxLength(2048);
+                media.Property(resource => resource.ResourceType).IsRequired();
+                media.HasKey("SectorId", "Uri", "ResourceType");
+            });
+
+        modelBuilder.Entity<OutdoorArea>()
+            .OwnsMany(outdoorArea => outdoorArea.Media, media =>
+            {
+                media.ToTable("OutdoorAreaImages");
+                media.WithOwner().HasForeignKey("OutdoorAreaId");
+                media.Property(resource => resource.Uri).HasMaxLength(2048);
+                media.Property(resource => resource.ResourceType).IsRequired();
+                media.HasKey("OutdoorAreaId", "Uri", "ResourceType");
+            });
     }
 
     public async Task InsertEntityAndSaveChangesAsync(VersionedEntity entity)

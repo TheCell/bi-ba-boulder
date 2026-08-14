@@ -54,11 +54,7 @@
 
   <div class="form-group form-action">
     <div class="container">
-      <button
-        type="submit"
-        class="button"
-        [class.disabled]="isSubmitDisabled()"
-        [disabled]="isSubmitDisabled()">
+      <button type="submit" class="button" [class.disabled]="isSubmitDisabled()" [disabled]="isSubmitDisabled()">
         @if (isLoading) {
         <span class="loading-spinner"><app-icon [icon]="'loading'"></app-icon></span>
         } @else { Save }

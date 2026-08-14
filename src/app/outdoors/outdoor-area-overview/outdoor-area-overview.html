@@ -1,0 +1,48 @@
+<main class="outdoor-area">
+  <h1>{{ outdoorArea.name }}</h1>
+
+  @if (imageUris.length > 0) {
+  <section class="gallery-section" aria-labelledby="gallery-heading">
+    <h2 id="gallery-heading" class="visually-hidden">Images of {{ outdoorArea.name }}</h2>
+    <div class="image-carousel" tabindex="0">
+      @for (imageUri of imageUris; track imageUri) {
+      <img
+        class="area-image"
+        [ngSrc]="imageUri"
+        [alt]="outdoorArea.name + ', image ' + ($index + 1)"
+        width="540"
+        height="360" />
+      }
+    </div>
+  </section>
+  } @if (outdoorArea.importantInfo) {
+  <aside class="important-info" aria-labelledby="important-info-heading">
+    <h2 id="important-info-heading">Important information</h2>
+    <p>{{ outdoorArea.importantInfo }}</p>
+  </aside>
+  } @if (outdoorArea.description) {
+  <section class="description" aria-labelledby="description-heading">
+    <h2 id="description-heading">Description</h2>
+    <p>{{ outdoorArea.description }}</p>
+  </section>
+  } @if (outdoorArea.sectors?.length) {
+  <section class="sectors" aria-labelledby="sectors-heading">
+    <h2 id="sectors-heading">Sectors</h2>
+    <div class="sector-list">
+      @for (sector of outdoorArea.sectors; track sector.id) { @let backgroundImage = sector.previewImageUri ?
+      `url(${sector.previewImageUri})` : `url(/tiles/flowers.png)`;
+      <a
+        class="sector-tile"
+        [class.is-generic-background]="!sector.previewImageUri"
+        [style.backgroundImage]="backgroundImage"
+        [routerLink]="['/', 'outdoor-area', outdoorArea.id, 'sector', sector.id]">
+        <span class="tile-content">
+          <span class="sector-name">{{ sector.name }}</span>
+        </span>
+      </a>
+      }
+    </div>
+  </section>
+  }
+</main>
+

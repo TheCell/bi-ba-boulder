@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
@@ -38,6 +39,11 @@ public class GetSectorTest
         var sector = new SectorBuilder()
             .SetName("Test Sector")
             .SetDescription("Test Description")
+            .SetImportantInfo("Test Important Info")
+            .SetIsPublic(true)
+            .SetCoordinates("46.9914628, 7.5589870")
+            .SetPreviewImageUri("https://example.com/preview.jpg")
+            .SetImages([new PublicResourceBuilder().SetUri("https://example.com/image.jpg").SetResourceType(ResourceType.Image).Build()])
             .Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
 

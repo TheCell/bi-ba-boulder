@@ -17,28 +17,36 @@ namespace BiBaBoulder.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.9")
+                .HasAnnotation("ProductVersion", "10.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Bloc", b =>
+            modelBuilder.Entity("OutdoorAreaSector", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("OutdoorAreasId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BlocHighRes")
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                    b.Property<Guid>("SectorsId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BlocLowRes")
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                    b.HasKey("OutdoorAreasId", "SectorsId");
 
-                    b.Property<string>("BlocMedRes")
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                    b.HasIndex("SectorsId");
+
+                    b.ToTable("OutdoorAreaSector");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Access.UserSectorAccess", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AccessSourceType")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -52,32 +60,24 @@ namespace BiBaBoulder.Migrations
                     b.Property<Guid?>("DeletedUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("SectorId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UpdatedUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("ValidUntil")
+                        .HasColumnType("datetime2");
+
                     b.Property<long>("Version")
                         .IsConcurrencyToken()
                         .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "SectorId");
 
                     b.HasIndex("SectorId");
 
-                    b.ToTable("Blocs");
+                    b.ToTable("UserSectorAccesses");
                 });
 
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.BoulderLog", b =>
@@ -193,7 +193,123 @@ namespace BiBaBoulder.Migrations
                     b.ToTable("Emails");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Line", b =>
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.LogEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BoulderLogId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsAttempt")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSend")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoulderLogId");
+
+                    b.ToTable("LogEntries");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Bloc", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BlocHighRes")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<Guid?>("BlocId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BlocLowRes")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<string>("BlocMedRes")
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<string>("Coordinates")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PreviewImageUri")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("SectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlocId");
+
+                    b.HasIndex("SectorId");
+
+                    b.ToTable("Blocs");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Line", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -250,54 +366,7 @@ namespace BiBaBoulder.Migrations
                     b.ToTable("Lines");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.LogEntry", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("BoulderLogId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("CreatedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("DeletedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsAttempt")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsSend")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid?>("UpdatedUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BoulderLogId");
-
-                    b.ToTable("LogEntries");
-                });
-
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Sector", b =>
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.OutdoorArea", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -318,10 +387,69 @@ namespace BiBaBoulder.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImportantInfo")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PreviewImageUri")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("UpdatedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutdoorAreas");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Sector", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Coordinates")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImportantInfo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("PreviewImageUri")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -363,6 +491,9 @@ namespace BiBaBoulder.Migrations
                         .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("PreviewImageUri")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
@@ -503,15 +634,38 @@ namespace BiBaBoulder.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Bloc", b =>
+            modelBuilder.Entity("OutdoorAreaSector", b =>
                 {
-                    b.HasOne("Thecell.Bibaboulder.Model.Model.Sector", "Sector")
-                        .WithMany("Blocs")
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.Outdoor.OutdoorArea", null)
+                        .WithMany()
+                        .HasForeignKey("OutdoorAreasId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.Outdoor.Sector", null)
+                        .WithMany()
+                        .HasForeignKey("SectorsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Access.UserSectorAccess", b =>
+                {
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.Outdoor.Sector", "Sector")
+                        .WithMany()
                         .HasForeignKey("SectorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.User", "User")
+                        .WithMany("UserSectorAccesses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Sector");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.BoulderLog", b =>
@@ -531,9 +685,31 @@ namespace BiBaBoulder.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Line", b =>
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.LogEntry", b =>
                 {
-                    b.HasOne("Thecell.Bibaboulder.Model.Model.Bloc", "Bloc")
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.BoulderLog", "BoulderLog")
+                        .WithMany("LogEntries")
+                        .HasForeignKey("BoulderLogId");
+
+                    b.Navigation("BoulderLog");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Bloc", b =>
+                {
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.Outdoor.Bloc", null)
+                        .WithMany("AdditionalParts")
+                        .HasForeignKey("BlocId");
+
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.Outdoor.Sector", "Sector")
+                        .WithMany("Blocs")
+                        .HasForeignKey("SectorId");
+
+                    b.Navigation("Sector");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Line", b =>
+                {
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.Outdoor.Bloc", "Bloc")
                         .WithMany("BoulderLines")
                         .HasForeignKey("BlocId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -542,13 +718,54 @@ namespace BiBaBoulder.Migrations
                     b.Navigation("Bloc");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.LogEntry", b =>
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.OutdoorArea", b =>
                 {
-                    b.HasOne("Thecell.Bibaboulder.Model.Model.BoulderLog", "BoulderLog")
-                        .WithMany("LogEntries")
-                        .HasForeignKey("BoulderLogId");
+                    b.OwnsMany("Thecell.Bibaboulder.Model.Model.Outdoor.PublicResource", "Media", b1 =>
+                        {
+                            b1.Property<Guid>("OutdoorAreaId")
+                                .HasColumnType("uniqueidentifier");
 
-                    b.Navigation("BoulderLog");
+                            b1.Property<string>("Uri")
+                                .HasMaxLength(2048)
+                                .HasColumnType("nvarchar(2048)");
+
+                            b1.Property<int>("ResourceType")
+                                .HasColumnType("int");
+
+                            b1.HasKey("OutdoorAreaId", "Uri", "ResourceType");
+
+                            b1.ToTable("OutdoorAreaImages", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("OutdoorAreaId");
+                        });
+
+                    b.Navigation("Media");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Sector", b =>
+                {
+                    b.OwnsMany("Thecell.Bibaboulder.Model.Model.Outdoor.PublicResource", "Media", b1 =>
+                        {
+                            b1.Property<Guid>("SectorId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Uri")
+                                .HasMaxLength(2048)
+                                .HasColumnType("nvarchar(2048)");
+
+                            b1.Property<int>("ResourceType")
+                                .HasColumnType("int");
+
+                            b1.HasKey("SectorId", "Uri", "ResourceType");
+
+                            b1.ToTable("SectorImages", (string)null);
+
+                            b1.WithOwner()
+                                .HasForeignKey("SectorId");
+                        });
+
+                    b.Navigation("Media");
                 });
 
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.SpraywallProblem", b =>
@@ -570,17 +787,19 @@ namespace BiBaBoulder.Migrations
                     b.Navigation("Spraywall");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Bloc", b =>
-                {
-                    b.Navigation("BoulderLines");
-                });
-
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.BoulderLog", b =>
                 {
                     b.Navigation("LogEntries");
                 });
 
-            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Sector", b =>
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Bloc", b =>
+                {
+                    b.Navigation("AdditionalParts");
+
+                    b.Navigation("BoulderLines");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Sector", b =>
                 {
                     b.Navigation("Blocs");
                 });
@@ -600,6 +819,8 @@ namespace BiBaBoulder.Migrations
                     b.Navigation("BoulderLogs");
 
                     b.Navigation("SpraywallProblems");
+
+                    b.Navigation("UserSectorAccesses");
                 });
 #pragma warning restore 612, 618
         }

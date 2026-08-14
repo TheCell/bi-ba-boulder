@@ -37,7 +37,7 @@ public class LinesController : ControllerBase
     }
 
     [HttpGet("{lineId}")]
-    [Authorize(Roles = AuthorizationRoles.Admin)]
+    [AllowAnonymous]
     public async Task<LineDto> GetLine(Guid lineId)
     {
         return await _getLineQueryHandler.HandleAsync(
@@ -45,7 +45,7 @@ public class LinesController : ControllerBase
     }
 
     [HttpGet("by-bloc/{blocId}")]
-    [Authorize(Roles = AuthorizationRoles.Admin)]
+    [AllowAnonymous]
     public async Task<ICollection<LineDto>> GetLinesByBlocId(Guid blocId)
     {
         return await _getLinesByBlocIdQueryHandler.HandleAsync(

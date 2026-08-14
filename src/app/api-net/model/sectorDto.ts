@@ -7,11 +7,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { PublicResourceDto } from './publicResourceDto';
+import { OutdoorAreaDto } from './outdoorAreaDto';
 
 
 export interface SectorDto { 
     id: string;
     name: string;
     description?: string | null;
+    importantInfo?: string | null;
+    isPublic?: boolean;
+    coordinates?: string | null;
+    previewImageUri?: string | null;
+    images?: Array<PublicResourceDto>;
+    outdoorAreas?: Array<OutdoorAreaDto>;
 }
 
