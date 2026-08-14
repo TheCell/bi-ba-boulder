@@ -31,6 +31,33 @@ export class ChangelogComponent {
 
   public readonly releaseNotes: ReleaseNote[] = [
     {
+      prNumber: 111,
+      releasedOn: '2026-08-14',
+      headline: 'Outdoor area release, access control, and scene markings',
+      highlights: [
+        {
+          text: 'Released the outdoor area experience with areas, sectors, multiple bloc parts, previews, and public content access.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Added sector access control so private outdoor content can be shared with authorized users.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Added scene markings for route starts, tops, and off-line holds with editable sphere and box shapes.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Improved outdoor rendering with level-of-detail models, line colors, line focus, and easier line selection.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Added IndexedDB model caching and continued the frontend migration to zoneless Angular operation.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
       prNumber: 110,
       releasedOn: '2026-08-07',
       headline: 'Scene markings, line selection UX, and zoneless groundwork',
