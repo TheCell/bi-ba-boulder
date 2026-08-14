@@ -156,9 +156,10 @@ export class ChangelogComponent {
   public get visibleReleaseNotes(): VisibleReleaseNote[] {
     return this.releaseNotes
       .map((releaseNote) => {
-        const visibleHighlights = this.authSessionStateService.isAdmin()
-          ? releaseNote.highlights
-          : releaseNote.highlights.filter((highlight) => !highlight.isOutdoorRelated);
+        const visibleHighlights = releaseNote.highlights;
+        // const visibleHighlights = this.authSessionStateService.isAdmin()
+        //   ? releaseNote.highlights
+        //   : releaseNote.highlights.filter((highlight) => !highlight.isOutdoorRelated);
 
         return {
           prNumber: releaseNote.prNumber,
