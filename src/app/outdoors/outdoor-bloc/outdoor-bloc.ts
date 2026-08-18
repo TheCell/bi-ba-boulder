@@ -4,7 +4,7 @@ import { EnhancedLine, OutdoorRenderer } from '../../renderer/outdoor-renderer/o
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { BlocDto, LineDto, LinesService } from '@api-net/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { forkJoin, map, Subject, Subscription, switchMap } from 'rxjs';
+import { map, merge, Subject, Subscription, switchMap, tap, toArray } from 'rxjs';
 import { RESOLUTION_LEVEL, ResolutionLevel } from '../../interfaces/resolution-level';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { ToastService } from '../../core/toast-container/toast.service';
@@ -116,39 +116,95 @@ export class OutdoorBloc implements OnDestroy {
       })
     );
 
+    // this.subscription.add(
+    //   this.startLoadingBoulder
+    //     .pipe(
+    //       takeUntilDestroyed(this.destroyRef),
+    //       switchMap(({ urls, blocIds, resolution }) => {
+    //         const urlBlocPair = urls.map((url, index) => ({ url, blocId: blocIds[index] }));
+    //         // todo load the first part without waiting for the additional parts
+    //         return forkJoin(
+    //           urlBlocPair.map(({ url, blocId }) => this.boulderLoaderService.loadBoulder(url, blocId, resolution))
+    //         ).pipe(
+    //           map((results) => {
+    //             return { data: results, resolution, blocIds };
+    //           })
+    //         );
+    //       })
+    //     )
+    //     .subscribe({
+    //       next: ({
+    //         data,
+    //         resolution,
+    //         blocIds
+    //       }: {
+    //         data: ArrayBuffer[];
+    //         resolution: ResolutionLevel;
+    //         blocIds: string[];
+    //       }) => {
+    //         const currentModels = [...(this.currentRawModels() ?? [])];
+    //         for (let i = 0; i < data.length; i++) {
+    //           currentModels.push({ arrayBuffer: data[i], resolution: resolution, blocId: blocIds[i] });
+    //         }
+    //         this.currentRawModels.set(currentModels);
+    //         this.loadNextResolution.next(resolution);
+    //       }
+    //     })
+    // );
+
     this.subscription.add(
       this.startLoadingBoulder
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           switchMap(({ urls, blocIds, resolution }) => {
             const urlBlocPair = urls.map((url, index) => ({ url, blocId: blocIds[index] }));
-            return forkJoin(
-              urlBlocPair.map(({ url, blocId }) => this.boulderLoaderService.loadBoulder(url, blocId, resolution))
+
+            return merge(
+              ...urlBlocPair.map(({ url, blocId }) =>
+                this.boulderLoaderService
+                  .loadBoulder(url, blocId, resolution)
+                  .pipe(map((result) => ({ result, blocId, resolution })))
+              )
             ).pipe(
+              tap(({ result, blocId, resolution }) => {
+                // console.log(result);
+                const currentModels = [...(this.currentRawModels() ?? [])];
+                currentModels.push({ arrayBuffer: result, resolution: resolution, blocId: blocId });
+                this.currentRawModels.set(currentModels);
+              }),
+              toArray(),
               map((results) => {
-                return { data: results, resolution, blocIds };
+                return results[0].resolution;
               })
             );
+            // .pipe(
+            //   map((results) => {
+            //     return results;
+            //     // return { data: results, resolution, blocIds };
+            //   })
+            // );
           })
         )
         .subscribe({
-          next: ({
-            data,
-            resolution,
-            blocIds
-          }: {
-            data: ArrayBuffer[];
-            resolution: ResolutionLevel;
-            blocIds: string[];
-          }) => {
-            const currentModels = [...(this.currentRawModels() ?? [])];
-            for (let i = 0; i < data.length; i++) {
-              currentModels.push({ arrayBuffer: data[i], resolution: resolution, blocId: blocIds[i] });
-            }
-            this.currentRawModels.set(currentModels);
+          next: (resolution) => {
+            // console.log('ye done', resolution);
             this.loadNextResolution.next(resolution);
           }
         })
+      // .subscribe({
+      //   next: ({
+      //     data,
+      //     resolution,
+      //     blocIds
+      //   }: {
+      //     data: ArrayBuffer[];
+      //     resolution: ResolutionLevel;
+      //     blocIds: string[];
+      //   }) => {
+      //     console.log('ye done', blocIds);
+      //     this.loadNextResolution.next(resolution);
+      //   }
+      // })
     );
 
     this.subscription.add(
