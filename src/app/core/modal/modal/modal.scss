@@ -21,11 +21,12 @@
 .modal-content {
   overflow: hidden;
   background-color: $backgroundColor;
-  width: max(50%, 500px);
+  // width: min(50%, 500px);
+  width: min(50%, 500px);
   min-width: 300px;
-  max-width: 800px;
+  max-width: 80vw;
   // height: max(50%, 500px);
-  // max-height: 800px;
+  max-height: 80vh;
   border: 1px solid $lightDark;
   border-radius: 5px;
 }
@@ -50,6 +51,10 @@
   width: max(30%, 200px);
   min-width: 300px;
   max-width: 400px;
+}
+
+.variable-width {
+  width: unset;
 }
 
 @media (max-width: 600px) {

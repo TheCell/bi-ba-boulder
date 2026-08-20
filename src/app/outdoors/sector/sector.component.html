@@ -7,11 +7,13 @@
       <div class="image-carousel" tabindex="0">
         @for (imageUri of imageUris; track imageUri) {
           <img
+            #img
+            role="button"
+            tabindex="0"
             class="area-image"
-            [ngSrc]="imageUri"
-            [alt]="sector.name + ', image ' + ($index + 1)"
-            width="540"
-            height="360" />
+            (click)="openImageModal(imageUri)"
+            [src]="imageUri"
+            [alt]="sector.name + ', image ' + ($index + 1)" />
         }
       </div>
     </section>
@@ -53,3 +55,5 @@
     </section>
   }
 </main>
+
+<app-modal [variableWidth]="true" #imageModal></app-modal>

@@ -8,7 +8,7 @@
   <div
     role="dialog"
     class="modal-content"
-    [ngClass]="{ 'small-modal': isSmall() }"
+    [ngClass]="{ 'small-modal': isSmall(), 'variable-width': variableWidth() }"
     (click)="$event.stopPropagation()"
     (keyup)="$event.stopPropagation()">
     <div class="modal-taskbar">

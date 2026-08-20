@@ -43,27 +43,26 @@ h2 {
 }
 
 .image-carousel {
+  cursor: pointer;
   display: flex;
-  gap: 16px;
+  gap: 2px;
   overflow-x: auto;
   padding: 0 0 6px;
   scroll-snap-type: x mandatory;
   scrollbar-color: $primary $darkDark;
 }
 
-// .image-carousel:focus-visible {
-//   outline: 3px solid $warning;
-//   outline-offset: 4px;
-// }
+.area-image:focus {
+  outline: 2px solid $primary;
+  outline-offset: 2px;
+}
 
 .area-image {
-  flex: 0 0 min(80vw, 540px);
-  width: min(80vw, 540px);
+  flex: 0 0 min(80vw, 200px);
+  max-width: min(80vw, 540px);
   height: clamp(220px, 30vw, 360px);
   object-fit: cover;
   object-position: 50% 50%;
-  border: 1px solid $primary;
-  border-radius: 5px;
   scroll-snap-align: start;
 }
 

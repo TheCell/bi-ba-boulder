@@ -33,6 +33,7 @@ export class Modal implements OnInit, OnDestroy {
   private changeDetectorRef = inject(ChangeDetectorRef);
 
   public isSmall = input<boolean>(false);
+  public variableWidth = input<boolean>(false);
   public closed = output<CloseModalEvent>();
 
   public id: string = 'modal'.appendUniqueId();
