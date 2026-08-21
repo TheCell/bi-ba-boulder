@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 
@@ -20,11 +21,13 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 public class BffController : ControllerBase
 {
     private readonly string _frontendOrigin;
+    private readonly ILogger<BffController> _logger;
 
-    public BffController(IConfiguration configuration)
+    public BffController(IConfiguration configuration, ILogger<BffController> logger)
     {
         _frontendOrigin = configuration["FrontendOrigin"]?.TrimEnd('/')
             ?? throw new InvalidOperationException("FrontendOrigin is not configured in appsettings.");
+        _logger = logger;
     }
 
     /// <summary>
@@ -81,8 +84,15 @@ public class BffController : ControllerBase
 
         if (authResult.Succeeded)
         {
-            // User logged in via OIDC - sign out from both
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            try
+            {
+                // User logged in via OIDC - sign out from both
+                await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            }
+            catch (InvalidOperationException exception)
+            {
+                _logger.LogWarning(exception, "OIDC end-session endpoint is unavailable. Continuing with local cookie signout only.");
+            }
         }
 
         // Always sign out from the cookie session

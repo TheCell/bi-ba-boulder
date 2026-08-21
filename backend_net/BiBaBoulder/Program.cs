@@ -68,7 +68,6 @@ public class Program
         builder.Services.AddDbContext<BiBaBoulderDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("BiBaBoulderDatabase")));
         builder.Services.AddScoped<IBiBaBoulderDbContext>(provider => provider.GetRequiredService<BiBaBoulderDbContext>());
 
-        builder.Services.AddControllers();
         builder.Services.ConfigureHttpJsonOptions(options =>
             options.SerializerOptions.NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.Strict);
         builder.Services.AddHttpContextAccessor();
