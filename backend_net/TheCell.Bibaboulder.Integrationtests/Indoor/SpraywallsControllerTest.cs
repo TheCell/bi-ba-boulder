@@ -15,7 +15,7 @@ using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
-namespace TheCell.Bibaboulder.Integrationtests.Spraywall;
+namespace TheCell.Bibaboulder.Integrationtests.Indoor;
 
 [Collection(nameof(CollectionForIntegrationTests))]
 public class SpraywallsControllerTest : BaseTest

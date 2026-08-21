@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Thecell.Bibaboulder.Model.Authorization;
 using TheCell.Bibaboulder.Sharedtests;
 
-namespace TheCell.Bibaboulder.Integrationtests.Spraywall;
+namespace TheCell.Bibaboulder.Integrationtests.Indoor;
 
 [Collection(nameof(CollectionForIntegrationTests))]
 public class AdministrationControllerTest : BaseTest
