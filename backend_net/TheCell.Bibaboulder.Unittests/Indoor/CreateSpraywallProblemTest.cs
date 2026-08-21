@@ -13,7 +13,7 @@ using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
-namespace TheCell.Bibaboulder.Unittests.Spraywall;
+namespace TheCell.Bibaboulder.Unittests.Indoor;
 
 public class CreateSpraywallProblemTest
 {
