@@ -837,20 +837,27 @@
         }
       }
     },
-    "/api/Medias/{id}": {
+    "/api/Medias/{alias}/{type}": {
       "get": {
         "tags": [
           "Medias"
         ],
-        "operationId": "getBoulderGym",
+        "operationId": "getUriAlias",
         "parameters": [
           {
-            "name": "id",
+            "name": "alias",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UriType"
             }
           }
         ],
@@ -860,17 +867,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/BoulderGymDto"
+                  "$ref": "#/components/schemas/UriAliasDto"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BoulderGymDto"
+                  "$ref": "#/components/schemas/UriAliasDto"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BoulderGymDto"
+                  "$ref": "#/components/schemas/UriAliasDto"
                 }
               }
             }
@@ -2781,6 +2788,18 @@
             "format": "date-time"
           }
         }
+      },
+      "UriAliasDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "UriType": {
+        "type": "integer"
       },
       "UserDto": {
         "required": [

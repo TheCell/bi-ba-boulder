@@ -12,12 +12,12 @@ using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 namespace TheCell.Bibaboulder.Integrationtests.Spraywall;
 
 [Collection(nameof(CollectionForIntegrationTests))]
-public class BoulderGymControllerTest : BaseTest
+public class MediaControllerTest : BaseTest
 {
     private readonly string _baseUrl = "/api/bouldergym";
     private readonly Faker _bogus;
 
-    public BoulderGymControllerTest(IntegrationTestFactory factory) : base(factory)
+    public MediaControllerTest(IntegrationTestFactory factory) : base(factory)
     {
         _bogus = new Faker("de_CH");
     }

@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Dto.Media;
-using Thecell.Bibaboulder.Model.Model.Media;
 using Thecell.Bibaboulder.Model.Extensions;
 
 namespace TheCell.Bibaboulder.Media.Handler;
@@ -21,10 +19,8 @@ public class GetUriAliasQueryHandler : IQueryHandler<GetUriAliasQuery, UriAliasD
     {
         var uriAlias = await _dbContext.UriAliases
             .AsNoTracking()
-            .SingleOrDefaultAsync(alias => alias.Alias == query.Name && alias.Type == query.Type)
-            .ThrowIfNullAsync(null);
-
-        NotFoundException.ThrowIfNull(uriAlias, nameof(UriAlias), uriAlias?.Id);
+            .SingleOrDefaultAsync(alias => alias.Alias == query.Alias && alias.Type == query.Type)
+            .ThrowIfNullAsync();
 
         return new UriAliasDto { Id = uriAlias.Id };
     }

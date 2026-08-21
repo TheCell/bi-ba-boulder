@@ -1,10 +1,10 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Thecell.Bibaboulder.Common.Queries;
-using Thecell.Bibaboulder.Indoor.Handler;
-using Thecell.Bibaboulder.Model.Dto.Indoor;
+using Thecell.Bibaboulder.Model.Dto.Media;
+using Thecell.Bibaboulder.Model.Enums;
+using TheCell.Bibaboulder.Media.Handler;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 
@@ -13,19 +13,17 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 [Route("api/[controller]")]
 public class MediasController : ControllerBase
 {
-    private readonly IQueryHandler<GetBoulderGymQuery, BoulderGymDto> _getBoulderGymQueryHandler;
+    private readonly IQueryHandler<GetUriAliasQuery, UriAliasDto> _getUriAliasQueryHandler;
 
-    public MediasController(
-        IQueryHandler<GetBoulderGymQuery, BoulderGymDto> getBoulderGymQueryHandler
-    )
+    public MediasController(IQueryHandler<GetUriAliasQuery, UriAliasDto> getUriAliasQueryHandler)
     {
-        _getBoulderGymQueryHandler = getBoulderGymQueryHandler;
+        _getUriAliasQueryHandler = getUriAliasQueryHandler;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{alias}/{type}")]
     [AllowAnonymous]
-    public async Task<BoulderGymDto> GetBoulderGym(Guid id)
+    public async Task<UriAliasDto> GetUriAlias(string alias, UriType type)
     {
-        return await _getBoulderGymQueryHandler.HandleAsync(new GetBoulderGymQuery { Id = id });
+        return await _getUriAliasQueryHandler.HandleAsync(new GetUriAliasQuery { Alias = alias, Type = type });
     }
 }
