@@ -11,7 +11,7 @@ using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Mapping;
 using Thecell.Bibaboulder.Model.Services;
 
-namespace Thecell.Bibaboulder.Spraywall.Handler;
+namespace Thecell.Bibaboulder.Indoor.Handler;
 
 public class SearchSpraywallProblemsQueryHandler : IQueryHandler<SearchSpraywallProblemsQuery, SpraywallProblemListDto>
 {

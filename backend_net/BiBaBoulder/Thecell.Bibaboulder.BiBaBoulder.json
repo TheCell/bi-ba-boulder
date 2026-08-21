@@ -167,6 +167,86 @@
         }
       }
     },
+    "/api/BoulderGym": {
+      "get": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "getBoulderGyms",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BoulderGymDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BoulderGymDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BoulderGymDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BoulderGym/{id}": {
+      "get": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "getBoulderGym",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/BoulderLogs": {
       "get": {
         "tags": [
@@ -753,6 +833,47 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Medias/{id}": {
+      "get": {
+        "tags": [
+          "Medias"
+        ],
+        "operationId": "getBoulderGym",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              }
+            }
           }
         }
       }
@@ -1681,6 +1802,51 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BlocDto"
+            }
+          }
+        }
+      },
+      "BoulderGymDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicResourceDto"
+            }
+          },
+          "spraywalls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpraywallDto"
             }
           }
         }
@@ -2685,6 +2851,9 @@
       "name": "Blocs"
     },
     {
+      "name": "BoulderGym"
+    },
+    {
       "name": "BoulderLogs"
     },
     {
@@ -2695,6 +2864,9 @@
     },
     {
       "name": "Lines"
+    },
+    {
+      "name": "Medias"
     },
     {
       "name": "OutdoorAreas"

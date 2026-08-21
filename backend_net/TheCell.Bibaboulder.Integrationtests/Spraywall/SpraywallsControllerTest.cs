@@ -10,7 +10,7 @@ using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Model.Indoor;
-using Thecell.Bibaboulder.Spraywall.Handler;
+using Thecell.Bibaboulder.Indoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;

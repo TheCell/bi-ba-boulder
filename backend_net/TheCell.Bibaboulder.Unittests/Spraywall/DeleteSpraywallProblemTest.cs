@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Thecell.Bibaboulder.Common.Exceptions;
+using Thecell.Bibaboulder.Indoor.Handler;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Services;
-using Thecell.Bibaboulder.Spraywall.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 

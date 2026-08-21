@@ -31,6 +31,12 @@ public class SpraywallBuilder : BuilderBase<Spraywall>
         return this;
     }
 
+    public SpraywallBuilder SetCreatedDate(DateTime value)
+    {
+        _instance.CreatedDate = value;
+        return this;
+    }
+
     public SpraywallBuilder SetPreviewImageUri(string? value)
     {
         _instance.PreviewImageUri = value;

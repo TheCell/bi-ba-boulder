@@ -9,7 +9,7 @@ using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Model.Indoor;
 using Thecell.Bibaboulder.Model.Services;
 
-namespace Thecell.Bibaboulder.Spraywall.Handler;
+namespace Thecell.Bibaboulder.Indoor.Handler;
 
 public class DeleteSpraywallProblemCommandHandler : ICommandHandlerWithExtraTransaction<DeleteSpraywallProblemCommand>
 {

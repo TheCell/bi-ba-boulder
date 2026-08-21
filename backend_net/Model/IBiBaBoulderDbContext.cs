@@ -8,6 +8,7 @@ using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Model.Access;
 using Thecell.Bibaboulder.Model.Model.Indoor;
+using Thecell.Bibaboulder.Model.Model.Media;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Model;
@@ -26,6 +27,8 @@ public interface IBiBaBoulderDbContext : IDisposable
     DbSet<Line> Lines { get; set; }
     DbSet<Email> Emails { get; set; }
     DbSet<OutdoorArea> OutdoorAreas { get; set; }
+    DbSet<BoulderGym> BoulderGyms { get; set; }
+    DbSet<UriAlias> UriAliases { get; set; }
     DbSet<UserSectorAccess> UserSectorAccesses { get; set; }
 
     Task InsertEntityAndSaveChangesAsync(VersionedEntity entity);

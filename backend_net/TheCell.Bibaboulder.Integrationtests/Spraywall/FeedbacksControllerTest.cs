@@ -4,8 +4,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
+using Thecell.Bibaboulder.Indoor.Handler;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Spraywall.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 

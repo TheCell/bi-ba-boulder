@@ -20,6 +20,12 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 [Route("[controller]")]
 public class BffController : ControllerBase
 {
+    private static readonly Action<ILogger, Exception?> _oidcEndSessionUnavailable =
+        LoggerMessage.Define(
+            LogLevel.Warning,
+            new EventId(1001, nameof(_oidcEndSessionUnavailable)),
+            "OIDC end-session endpoint is unavailable. Continuing with local cookie signout only.");
+
     private readonly string _frontendOrigin;
     private readonly ILogger<BffController> _logger;
 
@@ -91,7 +97,7 @@ public class BffController : ControllerBase
             }
             catch (InvalidOperationException exception)
             {
-                _logger.LogWarning(exception, "OIDC end-session endpoint is unavailable. Continuing with local cookie signout only.");
+                _oidcEndSessionUnavailable(_logger, exception);
             }
         }
 

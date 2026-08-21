@@ -10,7 +10,7 @@ using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Mapping;
 using Thecell.Bibaboulder.Model.Services;
 
-namespace Thecell.Bibaboulder.Spraywall.Handler;
+namespace Thecell.Bibaboulder.Indoor.Handler;
 
 public class GetSpraywallProblemQueryHandler : IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto>
 {

@@ -5,8 +5,9 @@ using Thecell.Bibaboulder.BoulderLog.Handler;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Outdoor.Handler;
-using Thecell.Bibaboulder.Spraywall.Handler;
-using Thecell.Bibaboulder.Spraywall.Testing;
+using Thecell.Bibaboulder.Indoor.Handler;
+using Thecell.Bibaboulder.Indoor.Testing;
+using TheCell.Bibaboulder.Media.Handler;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Extensions;
 
@@ -21,7 +22,8 @@ public static class RegisterHandlersExtensions
             typeof(GetTestingQueryHandler).Assembly,
             typeof(GetSectorQueryHandler).Assembly,
             typeof(GetSpraywallsQueryHandler).Assembly,
-            typeof(GetBoulderLogQueryHandler).Assembly
+            typeof(GetBoulderLogQueryHandler).Assembly,
+            typeof(GetUriAliasQueryHandler).Assembly
         ]);
     }
 

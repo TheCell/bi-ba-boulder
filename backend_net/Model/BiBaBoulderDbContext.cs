@@ -10,6 +10,7 @@ using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Model.Access;
 using Thecell.Bibaboulder.Model.Model.Indoor;
+using Thecell.Bibaboulder.Model.Model.Media;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Model;
@@ -36,6 +37,8 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
     public DbSet<Line> Lines { get; set; }
     public DbSet<Email> Emails { get; set; }
     public DbSet<OutdoorArea> OutdoorAreas { get; set; }
+    public DbSet<BoulderGym> BoulderGyms { get; set; }
+    public DbSet<UriAlias> UriAliases { get; set; }
     public DbSet<UserSectorAccess> UserSectorAccesses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -88,6 +91,21 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
                 media.Property(resource => resource.ResourceType).IsRequired();
                 media.HasKey("OutdoorAreaId", "Uri", "ResourceType");
             });
+
+        modelBuilder.Entity<BoulderGym>()
+            .OwnsMany(boulderGym => boulderGym.Media, media =>
+            {
+                media.ToTable("BoulderGymImages");
+                media.WithOwner().HasForeignKey("BoulderGymId");
+                media.Property(resource => resource.Uri).HasMaxLength(2048);
+                media.Property(resource => resource.ResourceType).IsRequired();
+                media.HasKey("BoulderGymId", "Uri", "ResourceType");
+            });
+
+        modelBuilder.Entity<UriAlias>()
+            .ToTable(t => t.HasCheckConstraint("CK_UriAlias_OnlyOneForeignKey",
+                "([BoulderGymId] IS NOT NULL AND [OutdoorAreaId] IS NULL) OR " +
+                "([BoulderGymId] IS NULL AND [OutdoorAreaId] IS NOT NULL)"));
     }
 
     public async Task InsertEntityAndSaveChangesAsync(VersionedEntity entity)

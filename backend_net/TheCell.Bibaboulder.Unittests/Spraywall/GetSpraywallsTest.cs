@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Thecell.Bibaboulder.Indoor.Handler;
 using Thecell.Bibaboulder.Model;
-using Thecell.Bibaboulder.Spraywall.Handler;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 

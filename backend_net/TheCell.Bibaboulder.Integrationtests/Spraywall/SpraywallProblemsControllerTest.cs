@@ -9,7 +9,7 @@ using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Model.Indoor;
-using Thecell.Bibaboulder.Spraywall.Handler;
+using Thecell.Bibaboulder.Indoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
@@ -19,7 +19,7 @@ namespace TheCell.Bibaboulder.Integrationtests.Spraywall;
 [Collection(nameof(CollectionForIntegrationTests))]
 public class SpraywallProblemsControllerTest : BaseTest
 {
-    private readonly string _baseUrl = "/api/SpraywallProblems";
+    private readonly string _baseUrl = "/api/spraywallproblems";
     private readonly Faker _bogus;
 
     private const string ImageData = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
