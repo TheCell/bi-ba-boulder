@@ -35,4 +35,10 @@ export interface UsersServiceInterface {
      */
     getUserById(id: string, extraHttpRequestParams?: any): Observable<UserDto>;
 
+    /**
+     * 
+     * 
+     */
+    keepAlive(extraHttpRequestParams?: any): Observable<{}>;
+
 }

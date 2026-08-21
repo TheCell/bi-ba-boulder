@@ -1352,6 +1352,19 @@
         }
       }
     },
+    "/api/Users/keepalive": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "keepAlive",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/UserSectorAccesses": {
       "get": {
         "tags": [

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model.Authorization;
@@ -39,5 +40,13 @@ public class UsersController : ControllerBase
     {
         return await _getUserByIdQueryHandler.HandleAsync(
             new GetUserByIdQuery { Id = id });
+    }
+
+    [HttpGet("keepalive")]
+    [Authorize(Roles = AuthorizationRoles.User)]
+    public async Task<IActionResult> KeepAlive()
+    {
+        await Task.CompletedTask;
+        return Ok(new { Message = "Still alive" });
     }
 }
