@@ -18,7 +18,7 @@ h1 {
   flex-wrap: wrap;
   justify-content: start;
   align-content: flex-start;
-  height: calc(50vh - 75px - 45px); // 75px title
+  height: calc(50svh - 75px - 45px); // 75px title
   gap: 10px;
   padding: 10px;
   overflow-y: scroll;
