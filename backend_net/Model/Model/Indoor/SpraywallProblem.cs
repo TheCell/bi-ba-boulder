@@ -6,7 +6,7 @@ using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.ProblemInterfaces;
 
-namespace Thecell.Bibaboulder.Model.Model;
+namespace Thecell.Bibaboulder.Model.Model.Indoor;
 
 public class SpraywallProblem : VersionedEntity, IProblemTags
 {

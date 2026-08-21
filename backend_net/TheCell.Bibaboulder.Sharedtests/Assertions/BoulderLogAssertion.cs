@@ -1,6 +1,6 @@
 using Thecell.Bibaboulder.BoulderLog.Handler;
-using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 
 namespace TheCell.Bibaboulder.Sharedtests.Assertions;
 

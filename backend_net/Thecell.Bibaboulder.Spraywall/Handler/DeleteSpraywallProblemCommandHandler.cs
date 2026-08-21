@@ -6,6 +6,7 @@ using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Extensions;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.Spraywall.Handler;
@@ -30,7 +31,7 @@ public class DeleteSpraywallProblemCommandHandler : ICommandHandlerWithExtraTran
     {
         var problem = await _dbContext.SpraywallProblems
             .SingleOrDefaultAsync(p => p.Id == command.Id);
-        NotFoundException.ThrowIfNull(problem, nameof(Model.Model.SpraywallProblem), command.Id);
+        NotFoundException.ThrowIfNull(problem, nameof(SpraywallProblem), command.Id);
 
         var currentUser = await _currentUserService.GetCurrentUserOrThrowAsync();
         var isCreator = currentUser.Id == problem.CreatorId;

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Enums;
 
-namespace Thecell.Bibaboulder.Model.Model;
+namespace Thecell.Bibaboulder.Model.Model.Indoor;
 
 public class BoulderLog : VersionedEntity
 {

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Mapping;
 
 namespace Thecell.Bibaboulder.Spraywall.Handler;

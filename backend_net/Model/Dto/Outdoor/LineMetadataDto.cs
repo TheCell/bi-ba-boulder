@@ -1,6 +1,6 @@
-namespace Thecell.Bibaboulder.Model.Dto;
+namespace Thecell.Bibaboulder.Model.Dto.Outdoor;
 
-public class SpraywallProblemMetadataDto
+public class LineMetadataDto
 {
     public required bool CanEdit { get; set; }
     public required bool CanDelete { get; set; }

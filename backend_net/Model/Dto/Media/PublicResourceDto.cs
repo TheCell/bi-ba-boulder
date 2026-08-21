@@ -1,6 +1,6 @@
 using Thecell.Bibaboulder.Model.Enums;
 
-namespace Thecell.Bibaboulder.Model.Dto;
+namespace Thecell.Bibaboulder.Model.Dto.Media;
 
 public class PublicResourceDto
 {

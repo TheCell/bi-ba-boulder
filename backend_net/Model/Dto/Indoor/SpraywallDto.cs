@@ -1,6 +1,6 @@
 using System;
 
-namespace Thecell.Bibaboulder.Model.Dto;
+namespace Thecell.Bibaboulder.Model.Dto.Indoor;
 
 public class SpraywallDto
 {

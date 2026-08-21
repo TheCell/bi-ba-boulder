@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Model.Access;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Model;

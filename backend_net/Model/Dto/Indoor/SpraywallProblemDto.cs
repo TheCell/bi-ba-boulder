@@ -2,7 +2,7 @@ using System;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.ProblemInterfaces;
 
-namespace Thecell.Bibaboulder.Model.Dto;
+namespace Thecell.Bibaboulder.Model.Dto.Indoor;
 
 public class SpraywallProblemDto : IProblemTags
 {

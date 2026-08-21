@@ -8,6 +8,7 @@ using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 using Thecell.Bibaboulder.Spraywall.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
@@ -199,7 +200,7 @@ public class SearchSpraywallProblemsTest
         Assert.Equal("Description_10", problem4.Description);
     }
 
-    private async Task<(Thecell.Bibaboulder.Model.Model.Spraywall spraywall, List<User> users, List<SpraywallProblem> problems)> PrepareProblems()
+    private async Task<(Thecell.Bibaboulder.Model.Model.Indoor.Spraywall spraywall, List<User> users, List<SpraywallProblem> problems)> PrepareProblems()
     {
         var user1 = new UserBuilder()
             .SetUsername(_bogus.Internet.UserName())

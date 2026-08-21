@@ -6,9 +6,10 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Bogus;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 using Thecell.Bibaboulder.Spraywall.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
@@ -198,9 +199,9 @@ public class SpraywallsControllerTest : BaseTest
         Assert.DoesNotContain(result.Problems, p => p.Id == wipProblem.Id);
     }
 
-    private async Task<List<Thecell.Bibaboulder.Model.Model.Spraywall>> PrepareSpraywalls()
+    private async Task<List<Thecell.Bibaboulder.Model.Model.Indoor.Spraywall>> PrepareSpraywalls()
     {
-        var spraywalls = new List<Thecell.Bibaboulder.Model.Model.Spraywall>();
+        var spraywalls = new List<Thecell.Bibaboulder.Model.Model.Indoor.Spraywall>();
         for (var i = 0; i < 3; i++)
         {
             spraywalls.Add(new SpraywallBuilder()
@@ -213,7 +214,7 @@ public class SpraywallsControllerTest : BaseTest
         return spraywalls;
     }
 
-    private async Task<(Thecell.Bibaboulder.Model.Model.Spraywall Spraywall, User User, List<SpraywallProblem> Problems)> PrepareProblems()
+    private async Task<(Thecell.Bibaboulder.Model.Model.Indoor.Spraywall Spraywall, User User, List<SpraywallProblem> Problems)> PrepareProblems()
     {
         var user = new UserBuilder()
             .SetUsername(_bogus.Internet.UserName())

@@ -2,7 +2,7 @@ using System;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 
-namespace Thecell.Bibaboulder.Model.Dto;
+namespace Thecell.Bibaboulder.Model.Dto.Outdoor;
 
 public class LineDto
 {

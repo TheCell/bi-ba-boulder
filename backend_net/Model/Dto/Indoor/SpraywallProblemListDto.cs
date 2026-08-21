@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Thecell.Bibaboulder.Model.Dto;
+namespace Thecell.Bibaboulder.Model.Dto.Indoor;
 
 public class SpraywallProblemListDto
 {

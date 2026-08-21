@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Thecell.Bibaboulder.Model.Dto.Media;
 
-namespace Thecell.Bibaboulder.Model.Dto;
+namespace Thecell.Bibaboulder.Model.Dto.Outdoor;
 
 public class OutdoorAreaDto
 {

@@ -1,6 +1,6 @@
 using System;
 using Thecell.Bibaboulder.Common.Queries;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Enums;
 
 namespace Thecell.Bibaboulder.Spraywall.Handler;

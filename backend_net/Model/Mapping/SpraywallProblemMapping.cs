@@ -1,6 +1,7 @@
 using System;
 using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 
 namespace Thecell.Bibaboulder.Model.Mapping;
 

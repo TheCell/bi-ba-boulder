@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Thecell.Bibaboulder.Model.Basics;
 
-namespace Thecell.Bibaboulder.Model.Model;
+namespace Thecell.Bibaboulder.Model.Model.Indoor;
 
 public class Spraywall : VersionedEntity
 {
