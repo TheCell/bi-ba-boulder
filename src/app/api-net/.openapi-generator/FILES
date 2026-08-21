@@ -9,6 +9,8 @@ api/bff.service.ts
 api/bff.serviceInterface.ts
 api/blocs.service.ts
 api/blocs.serviceInterface.ts
+api/boulderGym.service.ts
+api/boulderGym.serviceInterface.ts
 api/boulderLogs.service.ts
 api/boulderLogs.serviceInterface.ts
 api/devAuth.service.ts
@@ -17,6 +19,8 @@ api/feedbacks.service.ts
 api/feedbacks.serviceInterface.ts
 api/lines.service.ts
 api/lines.serviceInterface.ts
+api/medias.service.ts
+api/medias.serviceInterface.ts
 api/outdoorAreas.service.ts
 api/outdoorAreas.serviceInterface.ts
 api/sectors.service.ts
@@ -36,6 +40,7 @@ encoder.ts
 git_push.sh
 index.ts
 model/blocDto.ts
+model/boulderGymDto.ts
 model/boulderLogDto.ts
 model/createBoulderLogCommand.ts
 model/createLineCommand.ts
@@ -63,6 +68,7 @@ model/updateBoulderLogCommand.ts
 model/updateLineCommand.ts
 model/updateSpraywallProblemCommand.ts
 model/updateUserSectorAccessCommand.ts
+model/uriAliasDto.ts
 model/userDto.ts
 model/userSectorAccessDto.ts
 param.ts

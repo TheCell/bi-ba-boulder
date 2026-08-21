@@ -13,16 +13,16 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 [Route("api/[controller]")]
 public class MediasController : ControllerBase
 {
-    private readonly IQueryHandler<GetUriAliasQuery, UriAliasDto> _getUriAliasQueryHandler;
+    private readonly IQueryHandler<GetUriAliasQuery, UriAliasDto?> _getUriAliasQueryHandler;
 
-    public MediasController(IQueryHandler<GetUriAliasQuery, UriAliasDto> getUriAliasQueryHandler)
+    public MediasController(IQueryHandler<GetUriAliasQuery, UriAliasDto?> getUriAliasQueryHandler)
     {
         _getUriAliasQueryHandler = getUriAliasQueryHandler;
     }
 
     [HttpGet("{alias}/{type}")]
     [AllowAnonymous]
-    public async Task<UriAliasDto> GetUriAlias(string alias, UriType type)
+    public async Task<UriAliasDto?> GetUriAlias(string alias, UriType type)
     {
         return await _getUriAliasQueryHandler.HandleAsync(new GetUriAliasQuery { Alias = alias, Type = type });
     }

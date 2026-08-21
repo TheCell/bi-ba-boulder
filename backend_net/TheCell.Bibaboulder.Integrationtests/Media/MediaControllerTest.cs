@@ -23,7 +23,7 @@ public class MediaControllerTest : BaseTest
     }
 
     [Fact]
-    public async Task GetMedia_Anonymous_Ok()
+    public async Task GetAriaUri_Anonymous_Ok()
     {
         var uriAliases = await PrepareUriAliases();
         var firstUriAlias = uriAliases.Single(u => u.Type == UriType.BoulderGym);
@@ -71,34 +71,4 @@ public class MediaControllerTest : BaseTest
 
         return [uriAliasBoulderGym, uriAliasOutdoorArea];
     }
-
-    //private async Task<List<BoulderGym>> PrepareUriAlias()
-    //{
-    //    var boulderGyms = new List<BoulderGym>();
-    //    for (var i = 0; i < 5; i++)
-    //    {
-    //        var spraywalls = new List<Thecell.Bibaboulder.Model.Model.Indoor.Spraywall>();
-    //        for (var j = 0; j < 3; j++)
-    //        {
-    //            spraywalls.Add(new SpraywallBuilder()
-    //                .SetName(_bogus.Lorem.Slug())
-    //                .SetIsArchived(_bogus.Random.Bool())
-    //                .SetDescription(_bogus.Lorem.Sentence())
-    //                .SetPreviewImageUri(_bogus.Image.PicsumUrl())
-    //                .Build());
-    //        }
-
-    //        boulderGyms.Add(new BoulderGymBuilder()
-    //            .SetName(_bogus.Company.CompanyName())
-    //            .SetDescription(_bogus.Lorem.Sentence())
-    //            .SetImportantInfo(_bogus.Lorem.Paragraph())
-    //            .SetPreviewImageUri(_bogus.Image.PicsumUrl())
-    //            .SetSpraywalls(spraywalls)
-    //            .Build());
-    //    }
-
-    //    await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(boulderGyms);
-
-    //    return boulderGyms;
-    //}
 }

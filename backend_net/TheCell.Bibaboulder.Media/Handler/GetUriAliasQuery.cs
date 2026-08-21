@@ -4,7 +4,7 @@ using Thecell.Bibaboulder.Model.Enums;
 
 namespace TheCell.Bibaboulder.Media.Handler;
 
-public class GetUriAliasQuery : IQuery<UriAliasDto>
+public class GetUriAliasQuery : IQuery<UriAliasDto?>
 {
     public required string Alias { get; set; }
 

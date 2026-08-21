@@ -7,13 +7,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { PublicResourceDto } from './publicResourceDto';
+import { SpraywallDto } from './spraywallDto';
 
 
-export interface SpraywallDto { 
-    id: string;
-    isArchived?: boolean;
+export interface BoulderGymDto { 
+    id?: string;
     name: string;
     description?: string | null;
+    importantInfo?: string | null;
     previewImageUri?: string | null;
+    images?: Array<PublicResourceDto>;
+    spraywalls?: Array<SpraywallDto>;
 }
 

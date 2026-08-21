@@ -9,11 +9,7 @@
  */
 
 
-export interface SpraywallDto { 
-    id: string;
-    isArchived?: boolean;
-    name: string;
-    description?: string | null;
-    previewImageUri?: string | null;
+export interface UriAliasDto { 
+    id?: string;
 }
 

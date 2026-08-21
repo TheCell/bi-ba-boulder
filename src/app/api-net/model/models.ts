@@ -1,4 +1,5 @@
 export * from './blocDto';
+export * from './boulderGymDto';
 export * from './boulderLogDto';
 export * from './createBoulderLogCommand';
 export * from './createLineCommand';
@@ -25,5 +26,6 @@ export * from './updateBoulderLogCommand';
 export * from './updateLineCommand';
 export * from './updateSpraywallProblemCommand';
 export * from './updateUserSectorAccessCommand';
+export * from './uriAliasDto';
 export * from './userDto';
 export * from './userSectorAccessDto';
