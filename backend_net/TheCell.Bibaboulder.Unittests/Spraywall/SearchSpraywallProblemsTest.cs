@@ -218,6 +218,7 @@ public class SearchSpraywallProblemsTest
 
         var spraywall = new SpraywallBuilder()
             .SetName(_bogus.Lorem.Slug())
+            .SetIsArchived(_bogus.Random.Bool())
             .SetDescription(_bogus.Lorem.Sentence())
             .Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);

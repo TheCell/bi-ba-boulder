@@ -11,6 +11,7 @@ public static class SpraywallMapping
         {
             Id = spraywall.Id,
             Name = spraywall.Name,
+            IsArchived = spraywall.IsArchived,
             Description = spraywall.Description,
             PreviewImageUri = spraywall.PreviewImageUri
         };

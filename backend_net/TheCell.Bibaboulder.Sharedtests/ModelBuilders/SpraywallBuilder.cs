@@ -19,6 +19,12 @@ public class SpraywallBuilder : BuilderBase<Spraywall>
         return this;
     }
 
+    public SpraywallBuilder SetIsArchived(bool value)
+    {
+        _instance.IsArchived = value;
+        return this;
+    }
+
     public SpraywallBuilder SetDescription(string? value)
     {
         _instance.Description = value;

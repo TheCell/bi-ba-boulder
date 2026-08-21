@@ -13,6 +13,8 @@ public class Spraywall : VersionedEntity
     [MaxLength(512)]
     public required string Name { get; set; }
 
+    public bool IsArchived { get; set; }
+
     public string? Description { get; set; }
 
     public string? PreviewImageUri { get; set; }

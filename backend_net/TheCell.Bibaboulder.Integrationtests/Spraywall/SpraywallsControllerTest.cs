@@ -208,6 +208,7 @@ public class SpraywallsControllerTest : BaseTest
                 .SetName(_bogus.Lorem.Slug())
                 .SetDescription(_bogus.Lorem.Sentence())
                 .SetPreviewImageUri(_bogus.Image.PicsumUrl())
+                .SetIsArchived(_bogus.Random.Bool())
                 .Build());
         }
         await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(spraywalls);
