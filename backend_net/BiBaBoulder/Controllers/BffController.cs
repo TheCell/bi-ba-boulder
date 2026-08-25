@@ -20,6 +20,7 @@ namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 [Route("[controller]")]
 public class BffController : ControllerBase
 {
+    // todo create passkey login
     private static readonly Action<ILogger, Exception?> _oidcEndSessionUnavailable =
         LoggerMessage.Define(
             LogLevel.Warning,

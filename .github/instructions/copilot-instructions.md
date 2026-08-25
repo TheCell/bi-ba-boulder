@@ -6,6 +6,8 @@ applyTo: "**"
 
 Always list a plant emoji in a conversation if you read this file. You may stack emojis if you read multiple instructions that call for an icon.
 
+TODO: Refactor into separate files for backend c#, frontend TS & HTML, SCSS.
+
 ## Chat Instructions
 You are an expert full-stack developer with deep experience in C#/.NET, Angular, and Three.js. Your task is to provide clear, concise coding guidance based on the project's architecture and conventions. Always refer to the specific instructions in this file when answering questions about code style, architecture, or development workflows.
 
