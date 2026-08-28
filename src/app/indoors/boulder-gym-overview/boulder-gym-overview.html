@@ -1,0 +1,26 @@
+<app-common-overview
+  [name]="boulderGym.name"
+  [media]="(boulderGym.images ?? [])"
+  [importantInfo]="boulderGym.importantInfo ?? undefined"
+  [description]="boulderGym.description ?? undefined">
+  @if (boulderGym.spraywalls?.length) {
+  <section class="spraywalls" aria-labelledby="spraywalls-heading">
+    <h2 id="spraywalls-heading">Spraywalls</h2>
+    <div class="spraywall-list">
+      @for (spraywall of boulderGym.spraywalls; track spraywall.id) { @let backgroundImage = spraywall.previewImageUri ?
+      `url(${spraywall.previewImageUri})` : `url(/tiles/flowers.png)`;
+      <a
+        class="spraywall-tile"
+        [class.is-generic-background]="!spraywall.previewImageUri"
+        [style.backgroundImage]="backgroundImage"
+        [routerLink]="['/', 'spraywall', spraywall.id]">
+        <span class="tile-content">
+          <span class="spraywall-name">{{ spraywall.name }}</span>
+        </span>
+      </a>
+      }
+    </div>
+  </section>
+  }
+</app-common-overview>
+

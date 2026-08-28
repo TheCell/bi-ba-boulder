@@ -2,16 +2,34 @@
 <section>
   <div class="tile-container">
     @for (spraywall of this.spraywalls(); track spraywall.id) {
-      @let backgroundImage = spraywall.previewImageUri ? `url(${spraywall.previewImageUri})` : `url(/tiles/bricks.png)`;
+      @if (!spraywall.isPartOfGym) {
+        @let backgroundImage =
+          spraywall.previewImageUri ? `url(${spraywall.previewImageUri})` : `url(/tiles/bricks.png)`;
+        <div
+          class="big-tile"
+          [ngClass]="{
+            'is-generic-background': (spraywall.previewImageUri?.length ?? 0) === 0
+          }"
+          [style.backgroundImage]="backgroundImage"
+          [routerLink]="['/', 'spraywall', spraywall.id]">
+          <div class="tile-content">
+            <h2>{{ spraywall.name }}</h2>
+          </div>
+        </div>
+      }
+    }
+    @for (boulderGym of this.boulderGyms(); track boulderGym.id) {
+      @let backgroundImage =
+        boulderGym.previewImageUri ? `url(${boulderGym.previewImageUri})` : `url(/tiles/bricks.png)`;
       <div
         class="big-tile"
         [ngClass]="{
-          'is-generic-background': (spraywall.previewImageUri?.length ?? 0) === 0
+          'is-generic-background': (boulderGym.previewImageUri?.length ?? 0) === 0
         }"
         [style.backgroundImage]="backgroundImage"
-        [routerLink]="['/', 'spraywall', spraywall.id]">
+        [routerLink]="['/', 'boulder-gym', boulderGym.id]">
         <div class="tile-content">
-          <h2>{{ spraywall.name }}</h2>
+          <h2>{{ boulderGym.name }}</h2>
         </div>
       </div>
     }

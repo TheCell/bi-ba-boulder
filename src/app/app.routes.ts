@@ -15,6 +15,8 @@ import { lineResolver } from './core/resolvers/line.resolver';
 import { ChangelogComponent } from './changelog/changelog.component';
 import { OutdoorAreaOverview } from './outdoors/outdoor-area-overview/outdoor-area-overview';
 import { outdoorAreaResolver } from './core/resolvers/outdoor-area.resolver';
+import { BoulderGymOverview } from './indoors/boulder-gym-overview/boulder-gym-overview';
+import { boulderGymResolver } from './core/resolvers/boulder-gym.resolver';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -35,6 +37,13 @@ export const routes: Routes = [
     component: OutdoorAreaOverview,
     resolve: {
       outdoorArea: outdoorAreaResolver
+    }
+  },
+  {
+    path: 'boulder-gym/:boulderGymId',
+    component: BoulderGymOverview,
+    resolve: {
+      boulderGym: boulderGymResolver
     }
   },
   {
