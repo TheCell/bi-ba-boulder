@@ -30,6 +30,16 @@
         [routerLink]="['/', 'boulder-gym', boulderGym.id]">
         <div class="tile-content">
           <h2>{{ boulderGym.name }}</h2>
+          @if (boulderGym.spraywalls?.[0]; as firstSpraywall) {
+            <button
+              type="button"
+              class="first-spraywall-button"
+              [routerLink]="['/', 'spraywall', firstSpraywall.id]"
+              [attr.aria-label]="'Open the first spraywall at ' + boulderGym.name"
+              (click)="$event.stopPropagation()">
+              directly to spraywall
+            </button>
+          }
         </div>
       </div>
     }
