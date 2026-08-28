@@ -1,35 +1,8 @@
-<main class="outdoor-area">
-  <h1>{{ sector.name }}</h1>
-
-  @if (imageUris.length > 0) {
-    <section class="gallery-section" aria-labelledby="gallery-heading">
-      <h2 id="gallery-heading" class="visually-hidden">Images of {{ sector.name }}</h2>
-      <div class="image-carousel" tabindex="0">
-        @for (imageUri of imageUris; track imageUri) {
-          <img
-            #img
-            role="button"
-            tabindex="0"
-            class="area-image"
-            (click)="openImageModal(imageUri)"
-            [src]="imageUri"
-            [alt]="sector.name + ', image ' + ($index + 1)" />
-        }
-      </div>
-    </section>
-  }
-  @if (sector.importantInfo) {
-    <aside class="important-info" aria-labelledby="important-info-heading">
-      <h2 id="important-info-heading">Important information</h2>
-      <p>{{ sector.importantInfo }}</p>
-    </aside>
-  }
-  @if (sector.description) {
-    <section class="description" aria-labelledby="description-heading">
-      <h2 id="description-heading">Description</h2>
-      <p>{{ sector.description }}</p>
-    </section>
-  }
+<app-common-overview
+  [name]="sector.name"
+  [media]="sector.images ?? []"
+  [importantInfo]="sector.importantInfo ?? undefined"
+  [description]="sector.description ?? undefined">
   @if (blocs.length > 0) {
     <section class="sectors" aria-labelledby="sectors-heading">
       <h2 id="sectors-heading">Sectors</h2>
@@ -54,6 +27,4 @@
       </div>
     </section>
   }
-</main>
-
-<app-modal [variableWidth]="true" #imageModal></app-modal>
+</app-common-overview>
