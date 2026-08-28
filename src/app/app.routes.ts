@@ -17,6 +17,8 @@ import { OutdoorAreaOverview } from './outdoors/outdoor-area-overview/outdoor-ar
 import { outdoorAreaResolver } from './core/resolvers/outdoor-area.resolver';
 import { BoulderGymOverview } from './indoors/boulder-gym-overview/boulder-gym-overview';
 import { boulderGymResolver } from './core/resolvers/boulder-gym.resolver';
+import { shareGymGuard, shareOutdoorGuard } from './core/guards/share-guard';
+import { NotFound } from './navigation/not-found/not-found';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -24,6 +26,8 @@ export const routes: Routes = [
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'terms', component: TermsComponent },
   { path: 'changelog', component: ChangelogComponent },
+  { path: 'share-gym/:alias', canActivate: [shareGymGuard], component: BoulderGymOverview },
+  { path: 'share-outdoors/:alias', canActivate: [shareOutdoorGuard], component: OutdoorAreaOverview },
   {
     path: 'sectors',
     pathMatch: 'full',
@@ -109,5 +113,13 @@ export const routes: Routes = [
   {
     path: 'spraywall-editor/:spraywallId',
     component: SpraywallEditor
+  },
+  {
+    path: 'not-found',
+    component: NotFound
+  },
+  {
+    path: '**',
+    component: NotFound
   }
 ];

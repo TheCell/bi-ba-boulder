@@ -17,3 +17,14 @@ Always declare explicit return types for functions, methods, callbacks, and othe
 ## Signals for inputs, outputs, and forms
 
 Use Angular signals for component inputs and outputs and for form state and handling. Prefer signal-based forms over legacy decorator- or subscription-driven form patterns when implementing new frontend features.
+
+## RxJS subscriptions
+Use the object form for every frontend subscription, even when only handling successful emissions. Put the handler under `next` and use an appropriately typed parameter.
+
+```ts
+observable.subscribe({
+  next: (todo: Todo): void => {
+    // handle todo
+  }
+});
+```

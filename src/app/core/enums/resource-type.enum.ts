@@ -1,4 +1,4 @@
 export enum ResourceType {
-  Image = 1,
-  Video = 2
+  Image,
+  Video
 }
