@@ -13,6 +13,7 @@ public class UriAlias : VersionedEntity
     [Key]
     public Guid Id { get; set; }
 
+    [MaxLength(100)]
     public required string Alias { get; set; }
 
     public required UriType Type { get; set; }

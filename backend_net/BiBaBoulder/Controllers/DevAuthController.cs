@@ -63,7 +63,7 @@ public class DevAuthController : ControllerBase
                 OidcSubject = oidcSub,
                 Email = email,
                 Username = email.Split('@')[0],
-                Roles = AuthorizationRoles.User + AuthorizationRoles.Editor + AuthorizationRoles.Admin,
+                Roles = $"{AuthorizationRoles.User},{AuthorizationRoles.Editor},{AuthorizationRoles.ContentAdmin},{AuthorizationRoles.Admin}",
                 IsVerified = true,
             };
             _dbContext.Users.Add(user);
@@ -79,6 +79,7 @@ public class DevAuthController : ControllerBase
             new Claim("db_user_id", user.Id.ToString()),
             new Claim(ClaimTypes.Role, AuthorizationRoles.User),
             new Claim(ClaimTypes.Role, AuthorizationRoles.Editor),
+            new Claim(ClaimTypes.Role, AuthorizationRoles.ContentAdmin),
             new Claim(ClaimTypes.Role, AuthorizationRoles.Admin),
         };
 

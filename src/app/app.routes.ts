@@ -19,6 +19,8 @@ import { BoulderGymOverview } from './indoors/boulder-gym-overview/boulder-gym-o
 import { boulderGymResolver } from './core/resolvers/boulder-gym.resolver';
 import { shareGymGuard, shareOutdoorGuard } from './core/guards/share-guard';
 import { NotFound } from './navigation/not-found/not-found';
+import { contentAdminGuard } from './core/guards/content-admin.guard';
+import { UriAliases } from './admin/uri-aliases/uri-aliases';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -113,6 +115,11 @@ export const routes: Routes = [
   {
     path: 'spraywall-editor/:spraywallId',
     component: SpraywallEditor
+  },
+  {
+    path: 'admin/uri-aliases',
+    canActivate: [contentAdminGuard],
+    component: UriAliases
   },
   {
     path: 'not-found',

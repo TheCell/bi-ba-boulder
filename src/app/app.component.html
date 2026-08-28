@@ -18,6 +18,13 @@
         </a>
       </li>
     }
+    @if (authSessionStateService.canManageContent()) {
+      <li>
+        <a [routerLink]="['admin', 'uri-aliases']" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >URI aliases</a
+        >
+      </li>
+    }
     <li class="nav-right">
       <a
         #rlaChangelog="routerLinkActive"

@@ -24,3 +24,11 @@ When a project uses model assertion helpers, create a dedicated `<ModelName>Asse
 ## Test Handlers with Unit Tests
 
 Cover CQRS command and query handlers with unit tests by default. Use integration tests when behavior depends on the HTTP pipeline, database integration, or other infrastructure that unit tests cannot exercise in isolation.
+
+## Create Version 7 GUIDs
+
+Create new GUIDs with `Guid.CreateVersion7()` so generated identifiers use the project's time-ordered UUID version.
+
+## Use UTC Time
+
+Create, store, and compare time values in UTC. Use `DateTime.UtcNow` whenever the current time is required.

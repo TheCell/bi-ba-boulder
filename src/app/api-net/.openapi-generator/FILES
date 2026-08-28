@@ -46,8 +46,10 @@ model/createBoulderLogCommand.ts
 model/createLineCommand.ts
 model/createSectorCommand.ts
 model/createSpraywallProblemCommand.ts
+model/createUriAliasCommand.ts
 model/createUserSectorAccessCommand.ts
 model/deleteBoulderLogCommand.ts
+model/deleteUriAliasCommand.ts
 model/deleteUserSectorAccessCommand.ts
 model/lineData.ts
 model/lineDto.ts
@@ -67,7 +69,9 @@ model/testDto.ts
 model/updateBoulderLogCommand.ts
 model/updateLineCommand.ts
 model/updateSpraywallProblemCommand.ts
+model/updateUriAliasCommand.ts
 model/updateUserSectorAccessCommand.ts
+model/uriAliasAdministrationDto.ts
 model/uriAliasDto.ts
 model/userDto.ts
 model/userSectorAccessDto.ts

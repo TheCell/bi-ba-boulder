@@ -106,6 +106,10 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
             .ToTable(t => t.HasCheckConstraint("CK_UriAlias_OnlyOneForeignKey",
                 "([BoulderGymId] IS NOT NULL AND [OutdoorAreaId] IS NULL) OR " +
                 "([BoulderGymId] IS NULL AND [OutdoorAreaId] IS NOT NULL)"));
+
+        modelBuilder.Entity<UriAlias>()
+            .HasIndex(uriAlias => new { uriAlias.Type, uriAlias.Alias })
+            .IsUnique();
     }
 
     public async Task InsertEntityAndSaveChangesAsync(VersionedEntity entity)

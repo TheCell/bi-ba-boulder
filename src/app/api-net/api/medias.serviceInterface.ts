@@ -11,6 +11,10 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { CreateUriAliasCommand } from '../model/models';
+import { DeleteUriAliasCommand } from '../model/models';
+import { UpdateUriAliasCommand } from '../model/models';
+import { UriAliasAdministrationDto } from '../model/models';
 import { UriAliasDto } from '../model/models';
 
 
@@ -25,9 +29,45 @@ export interface MediasServiceInterface {
     /**
      * 
      * 
+     * @param createUriAliasCommand 
+     */
+    createUriAlias(createUriAliasCommand: CreateUriAliasCommand, extraHttpRequestParams?: any): Observable<UriAliasAdministrationDto>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param deleteUriAliasCommand 
+     */
+    deleteUriAlias(id: string, deleteUriAliasCommand: DeleteUriAliasCommand, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * 
      * @param alias 
      * @param type 
      */
     getUriAlias(alias: string, type: number, extraHttpRequestParams?: any): Observable<UriAliasDto>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     */
+    getUriAliasById(id: string, extraHttpRequestParams?: any): Observable<UriAliasAdministrationDto>;
+
+    /**
+     * 
+     * 
+     */
+    getUriAliases(extraHttpRequestParams?: any): Observable<Array<UriAliasAdministrationDto>>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param updateUriAliasCommand 
+     */
+    updateUriAlias(id: string, updateUriAliasCommand: UpdateUriAliasCommand, extraHttpRequestParams?: any): Observable<UriAliasAdministrationDto>;
 
 }

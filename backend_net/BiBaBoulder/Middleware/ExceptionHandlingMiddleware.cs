@@ -32,6 +32,9 @@ public class ExceptionHandlingMiddleware
     {
         switch (ex)
         {
+            case ArgumentException argumentException:
+                await HandleArgumentException(context, argumentException);
+                break;
             case AuthenticationException authenticationException:
                 await HandleAuthenticationException(context, authenticationException);
                 break;
@@ -48,6 +51,13 @@ public class ExceptionHandlingMiddleware
                 await HandleSystemException(context, ex);
                 break;
         }
+    }
+
+    private Task HandleArgumentException(HttpContext context, ArgumentException argumentException)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        context.Response.ContentType = "application/json";
+        return context.Response.WriteAsJsonAsync(new { message = argumentException.Message });
     }
 
     private Task HandleDbUpdateConcurrencyException(HttpContext context, DbUpdateConcurrencyException dbUpdateConcurrencyException)

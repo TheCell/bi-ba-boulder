@@ -9,7 +9,10 @@
  */
 
 
-export interface UriAliasDto { 
-    id: string;
+export interface UpdateUriAliasCommand { 
+    alias: string;
+    typeId: number;
+    targetId: string;
+    version?: number;
 }
 
