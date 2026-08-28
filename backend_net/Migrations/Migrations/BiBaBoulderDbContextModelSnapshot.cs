@@ -820,9 +820,11 @@ namespace BiBaBoulder.Migrations
 
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Indoor.Spraywall", b =>
                 {
-                    b.HasOne("Thecell.Bibaboulder.Model.Model.Indoor.BoulderGym", null)
+                    b.HasOne("Thecell.Bibaboulder.Model.Model.Indoor.BoulderGym", "BoulderGym")
                         .WithMany("Spraywalls")
                         .HasForeignKey("BoulderGymId");
+
+                    b.Navigation("BoulderGym");
                 });
 
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Indoor.SpraywallProblem", b =>

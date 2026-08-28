@@ -13,7 +13,8 @@ public static class SpraywallMapping
             Name = spraywall.Name,
             IsArchived = spraywall.IsArchived,
             Description = spraywall.Description,
-            PreviewImageUri = spraywall.PreviewImageUri
+            PreviewImageUri = spraywall.PreviewImageUri,
+            IsPartOfGym = spraywall.BoulderGymId.HasValue
         };
     }
 }

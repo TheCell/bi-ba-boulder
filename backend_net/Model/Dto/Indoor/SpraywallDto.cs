@@ -9,4 +9,5 @@ public class SpraywallDto
     public required string Name { get; set; }
     public string? Description { get; set; }
     public string? PreviewImageUri { get; set; }
+    public bool IsPartOfGym { get; set; }
 }

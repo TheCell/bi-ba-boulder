@@ -45,4 +45,25 @@ public class GetSpraywallsTest
         SpraywallAssertion.Assert(spraywall1, result.Single(s => s.Id == spraywall1.Id));
         SpraywallAssertion.Assert(spraywall2, result.Single(s => s.Id == spraywall2.Id));
     }
+
+    [Fact]
+    public async Task GetSpraywalls_PartOfGym_Ok()
+    {
+        var spraywall = new SpraywallBuilder()
+            .SetName("Wall A")
+            .Build();
+        var boulderGym = new BoulderGymBuilder()
+            .SetName("Test Gym")
+            .SetSpraywalls([spraywall])
+            .Build();
+        spraywall.BoulderGymId = boulderGym.Id;
+        await _dbContext.InsertEntityAndSaveChangesAsync(boulderGym);
+
+        var handler = new GetSpraywallsQueryHandler(_dbContext);
+        var result = await handler.HandleAsync(new GetSpraywallsQuery());
+
+        var spraywallDto = Assert.Single(result);
+        SpraywallAssertion.Assert(spraywall, spraywallDto);
+        Assert.True(spraywallDto.IsPartOfGym);
+    }
 }

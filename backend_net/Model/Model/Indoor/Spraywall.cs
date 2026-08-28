@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Thecell.Bibaboulder.Model.Basics;
 
 namespace Thecell.Bibaboulder.Model.Model.Indoor;
@@ -18,6 +19,11 @@ public class Spraywall : VersionedEntity
     public string? Description { get; set; }
 
     public string? PreviewImageUri { get; set; }
+
+    public Guid? BoulderGymId { get; set; }
+
+    [ForeignKey(nameof(BoulderGymId))]
+    public BoulderGym? BoulderGym { get; set; }
 
     public ICollection<SpraywallProblem> SpraywallProblems { get; set; } = [];
 }

@@ -15,6 +15,7 @@ public static class SpraywallAssertion
         Xunit.Assert.Equal(expected.IsArchived, actual.IsArchived);
         Xunit.Assert.Equal(expected.Description, actual.Description);
         Xunit.Assert.Equal(expected.PreviewImageUri, actual.PreviewImageUri);
+        Xunit.Assert.Equal(expected.BoulderGymId.HasValue, actual.IsPartOfGym);
     }
 
     public static void Assert(CreateSpraywallProblemCommand expected, SpraywallProblem actual)
