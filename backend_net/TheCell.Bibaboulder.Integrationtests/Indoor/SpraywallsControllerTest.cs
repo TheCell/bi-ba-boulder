@@ -199,9 +199,9 @@ public class SpraywallsControllerTest : BaseTest
         Assert.DoesNotContain(result.Problems, p => p.Id == wipProblem.Id);
     }
 
-    private async Task<List<Thecell.Bibaboulder.Model.Model.Indoor.Spraywall>> PrepareSpraywalls()
+    private async Task<List<Spraywall>> PrepareSpraywalls()
     {
-        var spraywalls = new List<Thecell.Bibaboulder.Model.Model.Indoor.Spraywall>();
+        var spraywalls = new List<Spraywall>();
         for (var i = 0; i < 3; i++)
         {
             spraywalls.Add(new SpraywallBuilder()
@@ -215,7 +215,7 @@ public class SpraywallsControllerTest : BaseTest
         return spraywalls;
     }
 
-    private async Task<(Thecell.Bibaboulder.Model.Model.Indoor.Spraywall Spraywall, User User, List<SpraywallProblem> Problems)> PrepareProblems()
+    private async Task<(Spraywall Spraywall, User User, List<SpraywallProblem> Problems)> PrepareProblems()
     {
         var user = new UserBuilder()
             .SetUsername(_bogus.Internet.UserName())

@@ -23,7 +23,7 @@ public class MediaControllerTest : BaseTest
     }
 
     [Fact]
-    public async Task GetAriaUri_Anonymous_Ok()
+    public async Task GetUriAlias_BoulderGym_Anonymous_Ok()
     {
         var uriAliases = await PrepareUriAliases();
         var firstUriAlias = uriAliases.Single(u => u.Type == UriType.BoulderGym);
@@ -35,8 +35,22 @@ public class MediaControllerTest : BaseTest
 
         Assert.NotNull(result);
 
-        var boulderGym = await BiBaBoulderDbContext.BoulderGyms.FindAsync([firstUriAlias.BoulderGymId, TestContext.Current.CancellationToken], TestContext.Current.CancellationToken);
-        Assert.NotNull(boulderGym);
+        Assert.Equal(firstUriAlias.BoulderGymId, result.Id);
+    }
+
+    [Fact]
+    public async Task GetUriAlias_OutdoorArea_Anonymous_Ok()
+    {
+        var uriAliases = await PrepareUriAliases();
+        var uriAlias = uriAliases.Single(u => u.Type == UriType.OutdoorArea);
+
+        var response = await Client().GetAsync($"{_baseUrl}/{uriAlias.Alias}/{uriAlias.Type}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<UriAliasDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Equal(uriAlias.OutdoorAreaId, result.Id);
     }
 
     private async Task<ICollection<UriAlias>> PrepareUriAliases()
