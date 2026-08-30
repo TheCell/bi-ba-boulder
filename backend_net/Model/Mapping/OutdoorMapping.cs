@@ -11,6 +11,7 @@ public static class OutdoorMapping
         return new OutdoorAreaDto
         {
             Id = outdoorArea.Id,
+            Version = outdoorArea.Version,
             Name = outdoorArea.Name,
             Description = outdoorArea.Description,
             ImportantInfo = outdoorArea.ImportantInfo,

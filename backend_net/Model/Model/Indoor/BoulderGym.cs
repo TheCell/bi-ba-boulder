@@ -6,7 +6,7 @@ using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace Thecell.Bibaboulder.Model.Model.Indoor;
 
-public class BoulderGym : VersionedEntity
+public class BoulderGym : VersionedEntity, IContentEntity
 {
     [Key]
     public Guid Id { get; set; }

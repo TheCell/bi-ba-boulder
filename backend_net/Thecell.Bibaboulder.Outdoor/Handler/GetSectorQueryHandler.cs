@@ -22,6 +22,7 @@ public class GetSectorQueryHandler : IQueryHandler<GetSectorQuery, SectorDto>
     {
         var sector = await _dbContext.Sectors
             .AsNoTracking()
+            .Include(item => item.OutdoorAreas)
             .SingleOrDefaultAsync(s => s.Id == query.Id)
             .ThrowIfNullAsync(query.Id);
 

@@ -154,4 +154,6 @@ public class DeleteSpraywallProblemTest
 
         _imageServiceMock.Verify(imageService => imageService.DeleteImageAsync(It.IsAny<Guid>(), It.IsAny<Guid>()), Times.Once);
     }
+
+    // todo test delete when spraywall problem is linked to a boulderGym.
 }

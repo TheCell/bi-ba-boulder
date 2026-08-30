@@ -7,6 +7,7 @@ namespace Thecell.Bibaboulder.Model.Dto.Outdoor;
 public class SectorDto
 {
     public required Guid Id { get; set; }
+    public long Version { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
     public string? ImportantInfo { get; set; }

@@ -11,6 +11,7 @@ public static class BoulderGymMapping
         return new BoulderGymDto
         {
             Id = boulderGym.Id,
+            Version = boulderGym.Version,
             Name = boulderGym.Name,
             Description = boulderGym.Description,
             ImportantInfo = boulderGym.ImportantInfo,

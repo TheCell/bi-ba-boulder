@@ -4,7 +4,7 @@ using Thecell.Bibaboulder.Common.Commands;
 
 namespace Thecell.Bibaboulder.Outdoor.Handler;
 
-public class CreateSectorCommand : CreateContentCommand
+public class UpdateSectorCommand : UpdateContentCommand
 {
     public bool IsPublic { get; set; }
 

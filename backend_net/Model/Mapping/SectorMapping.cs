@@ -11,13 +11,15 @@ public static class SectorMapping
         return new SectorDto
         {
             Id = sector.Id,
+            Version = sector.Version,
             Name = sector.Name,
             Description = sector.Description,
             ImportantInfo = sector.ImportantInfo,
             IsPublic = sector.IsPublic,
             Coordinates = sector.Coordinates,
             PreviewImageUri = sector.PreviewImageUri,
-            Images = sector.Media.Select(m => m.MapToPublicResourceDto()).ToList()
+            Images = sector.Media.Select(m => m.MapToPublicResourceDto()).ToList(),
+            OutdoorAreas = sector.OutdoorAreas.Select(area => new OutdoorAreaDto { Id = area.Id, Version = area.Version, Name = area.Name }).ToList()
         };
     }
 }

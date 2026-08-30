@@ -5,7 +5,7 @@ using Thecell.Bibaboulder.Model.Basics;
 
 namespace Thecell.Bibaboulder.Model.Model.Outdoor;
 
-public class Sector : VersionedEntity
+public class Sector : VersionedEntity, IContentEntity
 {
     [Key]
     public Guid Id { get; set; }
