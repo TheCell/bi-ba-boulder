@@ -32,3 +32,7 @@ Create new GUIDs with `Guid.CreateVersion7()` so generated identifiers use the p
 ## Use UTC Time
 
 Create, store, and compare time values in UTC. Use `DateTime.UtcNow` whenever the current time is required.
+
+## One Command or Handler per File
+
+Give every CQRS command class and every command handler class its own file, named after the class. Do not group multiple commands or handlers together in a single file (e.g. one file per aggregate's operations), even when they are small or closely related — this keeps navigation, diffs, and generated-file conventions consistent across the codebase.
