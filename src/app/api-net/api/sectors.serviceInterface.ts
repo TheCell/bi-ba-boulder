@@ -12,7 +12,9 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { CreateSectorCommand } from '../model/models';
+import { DeleteSectorCommand } from '../model/models';
 import { SectorDto } from '../model/models';
+import { UpdateSectorCommand } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -34,6 +36,14 @@ export interface SectorsServiceInterface {
      * 
      * 
      * @param id 
+     * @param deleteSectorCommand 
+     */
+    deleteSector(id: string, deleteSectorCommand: DeleteSectorCommand, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * 
+     * @param id 
      */
     getSector(id: string, extraHttpRequestParams?: any): Observable<SectorDto>;
 
@@ -42,5 +52,13 @@ export interface SectorsServiceInterface {
      * 
      */
     getSectors(extraHttpRequestParams?: any): Observable<Array<SectorDto>>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param updateSectorCommand 
+     */
+    updateSector(id: string, updateSectorCommand: UpdateSectorCommand, extraHttpRequestParams?: any): Observable<SectorDto>;
 
 }

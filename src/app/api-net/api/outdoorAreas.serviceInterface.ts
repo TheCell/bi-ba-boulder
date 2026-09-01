@@ -11,7 +11,10 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { CreateOutdoorAreaCommand } from '../model/models';
+import { DeleteOutdoorAreaCommand } from '../model/models';
 import { OutdoorAreaDto } from '../model/models';
+import { UpdateOutdoorAreaCommand } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -25,6 +28,21 @@ export interface OutdoorAreasServiceInterface {
     /**
      * 
      * 
+     * @param createOutdoorAreaCommand 
+     */
+    createOutdoorArea(createOutdoorAreaCommand: CreateOutdoorAreaCommand, extraHttpRequestParams?: any): Observable<OutdoorAreaDto>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param deleteOutdoorAreaCommand 
+     */
+    deleteOutdoorArea(id: string, deleteOutdoorAreaCommand: DeleteOutdoorAreaCommand, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * 
      * @param id 
      */
     getOutdoorArea(id: string, extraHttpRequestParams?: any): Observable<OutdoorAreaDto>;
@@ -34,5 +52,13 @@ export interface OutdoorAreasServiceInterface {
      * 
      */
     getOutdoorAreas(extraHttpRequestParams?: any): Observable<Array<OutdoorAreaDto>>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param updateOutdoorAreaCommand 
+     */
+    updateOutdoorArea(id: string, updateOutdoorAreaCommand: UpdateOutdoorAreaCommand, extraHttpRequestParams?: any): Observable<OutdoorAreaDto>;
 
 }

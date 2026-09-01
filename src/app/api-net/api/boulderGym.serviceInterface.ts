@@ -12,6 +12,9 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { BoulderGymDto } from '../model/models';
+import { CreateBoulderGymCommand } from '../model/models';
+import { DeleteBoulderGymCommand } from '../model/models';
+import { UpdateBoulderGymCommand } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -25,6 +28,21 @@ export interface BoulderGymServiceInterface {
     /**
      * 
      * 
+     * @param createBoulderGymCommand 
+     */
+    createBoulderGym(createBoulderGymCommand: CreateBoulderGymCommand, extraHttpRequestParams?: any): Observable<BoulderGymDto>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param deleteBoulderGymCommand 
+     */
+    deleteBoulderGym(id: string, deleteBoulderGymCommand: DeleteBoulderGymCommand, extraHttpRequestParams?: any): Observable<{}>;
+
+    /**
+     * 
+     * 
      * @param id 
      */
     getBoulderGym(id: string, extraHttpRequestParams?: any): Observable<BoulderGymDto>;
@@ -34,5 +52,13 @@ export interface BoulderGymServiceInterface {
      * 
      */
     getBoulderGyms(extraHttpRequestParams?: any): Observable<Array<BoulderGymDto>>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param updateBoulderGymCommand 
+     */
+    updateBoulderGym(id: string, updateBoulderGymCommand: UpdateBoulderGymCommand, extraHttpRequestParams?: any): Observable<BoulderGymDto>;
 
 }

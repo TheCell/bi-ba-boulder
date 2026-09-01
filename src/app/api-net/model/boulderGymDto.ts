@@ -13,6 +13,7 @@ import { SpraywallDto } from './spraywallDto';
 
 export interface BoulderGymDto { 
     id?: string;
+    version?: number;
     name: string;
     description?: string | null;
     importantInfo?: string | null;

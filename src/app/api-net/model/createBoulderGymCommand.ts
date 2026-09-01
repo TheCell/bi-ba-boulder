@@ -7,18 +7,13 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { PublicResourceDto } from './publicResourceDto';
-import { SectorDto } from './sectorDto';
 
 
-export interface OutdoorAreaDto { 
-    id?: string;
-    version?: number;
+export interface CreateBoulderGymCommand { 
     name: string;
     description?: string | null;
     importantInfo?: string | null;
     previewImageUri?: string | null;
-    images?: Array<PublicResourceDto>;
-    sectors?: Array<SectorDto>;
+    imageUris?: Array<string>;
 }
 
