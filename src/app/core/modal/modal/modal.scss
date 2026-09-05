@@ -19,7 +19,8 @@
 }
 
 .modal-content {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: $backgroundColor;
   // width: min(50%, 500px);
   width: min(50%, 500px);
