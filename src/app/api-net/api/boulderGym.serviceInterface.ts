@@ -11,6 +11,7 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { AddSpraywallToBoulderGymCommand } from '../model/models';
 import { BoulderGymDto } from '../model/models';
 import { CreateBoulderGymCommand } from '../model/models';
 import { DeleteBoulderGymCommand } from '../model/models';
@@ -24,6 +25,14 @@ import { Configuration }                                     from '../configurat
 export interface BoulderGymServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param addSpraywallToBoulderGymCommand 
+     */
+    addSpraywallToBoulderGym(id: string, addSpraywallToBoulderGymCommand: AddSpraywallToBoulderGymCommand, extraHttpRequestParams?: any): Observable<BoulderGymDto>;
 
     /**
      * 
@@ -52,6 +61,14 @@ export interface BoulderGymServiceInterface {
      * 
      */
     getBoulderGyms(extraHttpRequestParams?: any): Observable<Array<BoulderGymDto>>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param spraywallId 
+     */
+    removeSpraywallFromBoulderGym(id: string, spraywallId: string, extraHttpRequestParams?: any): Observable<BoulderGymDto>;
 
     /**
      * 

@@ -39,6 +39,7 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/addSpraywallToBoulderGymCommand.ts
 model/blocDto.ts
 model/boulderGymDto.ts
 model/boulderLogDto.ts

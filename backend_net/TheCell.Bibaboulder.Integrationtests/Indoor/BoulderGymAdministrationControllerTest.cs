@@ -232,4 +232,62 @@ public class BoulderGymAdministrationControllerTest : BaseTest
         var exists = await BiBaBoulderDbContext.BoulderGyms.AnyAsync(gym => gym.Id == boulderGym.Id, TestContext.Current.CancellationToken);
         Assert.True(exists);
     }
+
+    [Fact]
+    public async Task AddSpraywallToBoulderGym_Ok()
+    {
+        var contentAdmin = new UserBuilder().SetUsername("Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
+        var boulderGym = new BoulderGymBuilder().Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(boulderGym);
+
+        var spraywall = new SpraywallBuilder().Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(spraywall);
+
+        var command = new AddSpraywallToBoulderGymCommand
+        {
+            BoulderGymId = boulderGym.Id,
+            SpraywallId = spraywall.Id
+        };
+
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var response = await client.PostAsync($"{BaseUrl}/{boulderGym.Id}/spraywalls", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<BoulderGymDto>(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(result);
+        Assert.Contains(result.Spraywalls, s => s.Id == spraywall.Id);
+
+        var spraywallFromDb = await BiBaBoulderDbContext.Spraywalls
+            .AsNoTracking()
+            .SingleAsync(s => s.Id == spraywall.Id, TestContext.Current.CancellationToken);
+        Assert.Equal(boulderGym.Id, spraywallFromDb.BoulderGymId);
+    }
+
+    [Fact]
+    public async Task RemoveSpraywallFromBoulderGym_Ok()
+    {
+        var contentAdmin = new UserBuilder().SetUsername("Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
+        var boulderGym = new BoulderGymBuilder().Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(boulderGym);
+
+        var spraywall = new SpraywallBuilder().SetBoulderGymId(boulderGym.Id).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(spraywall);
+
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var response = await client.DeleteAsync($"{BaseUrl}/{boulderGym.Id}/spraywalls/{spraywall.Id}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<BoulderGymDto>(cancellationToken: TestContext.Current.CancellationToken);
+        Assert.NotNull(result);
+        Assert.DoesNotContain(result.Spraywalls, s => s.Id == spraywall.Id);
+
+        var spraywallFromDb = await BiBaBoulderDbContext.Spraywalls
+            .AsNoTracking()
+            .SingleAsync(s => s.Id == spraywall.Id, TestContext.Current.CancellationToken);
+        Assert.Null(spraywallFromDb.BoulderGymId);
+    }
 }

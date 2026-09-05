@@ -1,3 +1,4 @@
+export * from './addSpraywallToBoulderGymCommand';
 export * from './blocDto';
 export * from './boulderGymDto';
 export * from './boulderLogDto';

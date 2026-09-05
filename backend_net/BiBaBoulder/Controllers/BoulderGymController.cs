@@ -21,19 +21,25 @@ public class BoulderGymController : ControllerBase
     private readonly ICommandHandler<CreateBoulderGymCommand> _createBoulderGymCommandHandler;
     private readonly ICommandHandler<UpdateBoulderGymCommand> _updateBoulderGymCommandHandler;
     private readonly ICommandHandler<DeleteBoulderGymCommand> _deleteBoulderGymCommandHandler;
+    private readonly ICommandHandler<AddSpraywallToBoulderGymCommand> _addSpraywallToBoulderGymCommandHandler;
+    private readonly ICommandHandler<RemoveSpraywallFromBoulderGymCommand> _removeSpraywallFromBoulderGymCommandHandler;
 
     public BoulderGymController(
         IQueryHandler<GetBoulderGymQuery, BoulderGymDto> getBoulderGymQueryHandler,
         IQueryHandler<GetBoulderGymsQuery, ICollection<BoulderGymDto>> getBoulderGymsQueryHandler,
         ICommandHandler<CreateBoulderGymCommand> createBoulderGymCommandHandler,
         ICommandHandler<UpdateBoulderGymCommand> updateBoulderGymCommandHandler,
-        ICommandHandler<DeleteBoulderGymCommand> deleteBoulderGymCommandHandler)
+        ICommandHandler<DeleteBoulderGymCommand> deleteBoulderGymCommandHandler,
+        ICommandHandler<AddSpraywallToBoulderGymCommand> addSpraywallToBoulderGymCommandHandler,
+        ICommandHandler<RemoveSpraywallFromBoulderGymCommand> removeSpraywallFromBoulderGymCommandHandler)
     {
         _getBoulderGymQueryHandler = getBoulderGymQueryHandler;
         _getBoulderGymsQueryHandler = getBoulderGymsQueryHandler;
         _createBoulderGymCommandHandler = createBoulderGymCommandHandler;
         _updateBoulderGymCommandHandler = updateBoulderGymCommandHandler;
         _deleteBoulderGymCommandHandler = deleteBoulderGymCommandHandler;
+        _addSpraywallToBoulderGymCommandHandler = addSpraywallToBoulderGymCommandHandler;
+        _removeSpraywallFromBoulderGymCommandHandler = removeSpraywallFromBoulderGymCommandHandler;
     }
 
     [HttpGet]
@@ -58,6 +64,15 @@ public class BoulderGymController : ControllerBase
         return await _getBoulderGymQueryHandler.HandleAsync(new GetBoulderGymQuery { Id = command.Id });
     }
 
+    [HttpPost("{id}/spraywalls")]
+    [Authorize(Roles = $"{AuthorizationRoles.ContentAdmin},{AuthorizationRoles.Admin}")]
+    public async Task<BoulderGymDto> AddSpraywallToBoulderGym(Guid id, [FromBody] AddSpraywallToBoulderGymCommand command)
+    {
+        command.BoulderGymId = id;
+        await _addSpraywallToBoulderGymCommandHandler.HandleAsync(command);
+        return await _getBoulderGymQueryHandler.HandleAsync(new GetBoulderGymQuery { Id = id });
+    }
+
     [HttpPut("{id}")]
     [Authorize(Roles = $"{AuthorizationRoles.ContentAdmin},{AuthorizationRoles.Admin}")]
     public async Task<BoulderGymDto> UpdateBoulderGym(Guid id, UpdateBoulderGymCommand command)
@@ -73,5 +88,18 @@ public class BoulderGymController : ControllerBase
     {
         command.Id = id;
         await _deleteBoulderGymCommandHandler.HandleAsync(command);
+    }
+
+    [HttpDelete("{id}/spraywalls/{spraywallId}")]
+    [Authorize(Roles = $"{AuthorizationRoles.ContentAdmin},{AuthorizationRoles.Admin}")]
+    public async Task<BoulderGymDto> RemoveSpraywallFromBoulderGym(Guid id, Guid spraywallId)
+    {
+        var command = new RemoveSpraywallFromBoulderGymCommand
+        {
+            BoulderGymId = id,
+            SpraywallId = spraywallId
+        };
+        await _removeSpraywallFromBoulderGymCommandHandler.HandleAsync(command);
+        return await _getBoulderGymQueryHandler.HandleAsync(new GetBoulderGymQuery { Id = id });
     }
 }

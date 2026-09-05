@@ -43,6 +43,12 @@ public class SpraywallBuilder : BuilderBase<Spraywall>
         return this;
     }
 
+    public SpraywallBuilder SetBoulderGymId(Guid? value)
+    {
+        _instance.BoulderGymId = value;
+        return this;
+    }
+
     public SpraywallBuilder SetBoulderGym(BoulderGym value)
     {
         _instance.BoulderGym = value;
