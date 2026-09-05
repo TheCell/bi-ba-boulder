@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Model.Services;
@@ -24,8 +25,13 @@ public class CreateOutdoorAreaCommandHandler : ICommandHandler<CreateOutdoorArea
 
     public async Task HandleAsync(CreateOutdoorAreaCommand command)
     {
-        // todo add permission check
         var currentUser = await _currentUserService.GetCurrentUserOrThrowAsync();
+
+        if (!currentUser.IsInRole(UserRole.Admin) && !currentUser.IsInRole(UserRole.ContentAdmin))
+        {
+            throw new UnauthorizedAccessException("User does not have the required role.");
+        }
+
         var outdoorArea = new OutdoorArea { Id = Guid.CreateVersion7(), Name = command.Name, CreatedUserId = currentUser.Id };
         outdoorArea.UpdateContent(command.Name, command.Description, command.ImportantInfo, command.PreviewImageUri, command.ImageUris);
         outdoorArea.Sectors = await GetSectorsAsync(command.SectorIds);

@@ -46,8 +46,14 @@ public class CreateBoulderGymTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Paragraph(),
             ImportantInfo = _bogus.Lorem.Sentence(),
-            PreviewImageUri = _bogus.Internet.Url(),
-            ImageUris = [_bogus.Internet.Url(), _bogus.Internet.Url()]
+            PreviewImageUri = _bogus.Internet.Url().Replace("https://", "").Replace("http://", ""),
+            ImageUris = [
+                _bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", ""),
+                _bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", "")]
         };
 
         _currentUserServiceMock.WithUser(user);
@@ -55,15 +61,19 @@ public class CreateBoulderGymTest
         await handler.HandleAsync(command);
 
         var boulderGym = await _dbContext.BoulderGyms
+            .Include(boulderGym => boulderGym.Media)
             .AsNoTracking()
             .SingleAsync(gym => gym.Id == command.Id, TestContext.Current.CancellationToken);
 
-        // todo add assertertions to verify the response content
         Assert.Equal(command.Name, boulderGym.Name);
         Assert.Equal(command.Description, boulderGym.Description);
         Assert.Equal(command.ImportantInfo, boulderGym.ImportantInfo);
         Assert.Equal(command.PreviewImageUri, boulderGym.PreviewImageUri);
         Assert.Equal(command.ImageUris.Count, boulderGym.Media.Count);
+        foreach (var uri in command.ImageUris)
+        {
+            Assert.Contains(boulderGym.Media, media => media.Uri == uri);
+        }
         Assert.Equal(1, boulderGym.Version);
         Assert.Equal(user.Id, boulderGym.CreatedUserId);
     }
@@ -79,7 +89,7 @@ public class CreateBoulderGymTest
         var command = new CreateBoulderGymCommand
         {
             Name = _bogus.Lorem.Slug(),
-            ImageUris = ["not-a-valid-url"]
+            ImageUris = ["https://my-external-url.com"]
         };
 
         _currentUserServiceMock.WithUser(user);

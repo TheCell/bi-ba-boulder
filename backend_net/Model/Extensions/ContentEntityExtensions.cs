@@ -70,11 +70,9 @@ public static class ContentEntityExtensions
             return;
         }
 
-        // TODO the uri must be relative.
-        if (!Uri.TryCreate(uri.Trim(), UriKind.Absolute, out var parsedUri) ||
-            (parsedUri.Scheme != Uri.UriSchemeHttp && parsedUri.Scheme != Uri.UriSchemeHttps))
+        if (!Uri.TryCreate(uri.Trim(), UriKind.Relative, out _))
         {
-            throw new ArgumentException("Image URLs must be absolute HTTP(S) URLs.", parameterName);
+            throw new ArgumentException("Image URLs must be relative URLs.", parameterName);
         }
     }
 }

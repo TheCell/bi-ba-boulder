@@ -58,8 +58,12 @@ public class BoulderGymAdministrationControllerTest : BaseTest
         {
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Paragraph(),
-            PreviewImageUri = _bogus.Internet.Url(),
-            ImageUris = [_bogus.Internet.Url()]
+            PreviewImageUri = _bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", ""),
+            ImageUris = [_bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", "")]
         };
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: role, username: user.Username);
@@ -67,12 +71,24 @@ public class BoulderGymAdministrationControllerTest : BaseTest
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<BoulderGymDto>(cancellationToken: TestContext.Current.CancellationToken);
-
-        // todo add assertertions to verify the response content
         Assert.NotNull(result);
-        Assert.Equal(command.Name, result.Name);
-        Assert.Single(result.Images);
-        Assert.Equal(1, result.Version);
+
+        var boulderGym = await BiBaBoulderDbContext.BoulderGyms
+            .Include(boulderGym => boulderGym.Media)
+            .AsNoTracking()
+            .SingleAsync(gym => gym.Id == result.Id, TestContext.Current.CancellationToken);
+
+        Assert.Equal(command.Name, boulderGym.Name);
+        Assert.Equal(command.Description, boulderGym.Description);
+        Assert.Equal(command.ImportantInfo, boulderGym.ImportantInfo);
+        Assert.Equal(command.PreviewImageUri, boulderGym.PreviewImageUri);
+        Assert.Equal(command.ImageUris.Count, boulderGym.Media.Count);
+        foreach (var uri in command.ImageUris)
+        {
+            Assert.Contains(boulderGym.Media, media => media.Uri == uri);
+        }
+        Assert.Equal(1, boulderGym.Version);
+        Assert.Equal(user.Id, boulderGym.CreatedUserId);
     }
 
     [Fact]
@@ -83,7 +99,7 @@ public class BoulderGymAdministrationControllerTest : BaseTest
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var command = new CreateBoulderGymCommand { Name = _bogus.Lorem.Slug(), ImageUris = ["not-a-url"] };
+        var command = new CreateBoulderGymCommand { Name = _bogus.Lorem.Slug(), ImageUris = ["https://other-url/not-a-url"] };
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
@@ -94,6 +110,9 @@ public class BoulderGymAdministrationControllerTest : BaseTest
     [Fact]
     public async Task UpdateBoulderGym_Ok()
     {
+        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
         var boulderGym = new BoulderGymBuilder()
             .SetName("Original")
             .Build();
@@ -105,13 +124,12 @@ public class BoulderGymAdministrationControllerTest : BaseTest
             Version = boulderGym.Version
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.ContentAdmin);
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{boulderGym.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<BoulderGymDto>(cancellationToken: TestContext.Current.CancellationToken);
 
-        // todo add assertertions to verify the response content
         Assert.NotNull(result);
         Assert.Equal(command.Name, result.Name);
         Assert.Equal(boulderGym.Version + 1, result.Version);
@@ -120,12 +138,15 @@ public class BoulderGymAdministrationControllerTest : BaseTest
     [Fact]
     public async Task UpdateBoulderGym_StaleVersion_Conflict()
     {
+        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
         var boulderGym = new BoulderGymBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(boulderGym);
 
         var command = new UpdateBoulderGymCommand { Name = _bogus.Lorem.Slug(), Version = boulderGym.Version + 99 };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{boulderGym.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
@@ -134,20 +155,62 @@ public class BoulderGymAdministrationControllerTest : BaseTest
     [Fact]
     public async Task DeleteBoulderGym_Ok()
     {
+        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
         var boulderGym = new BoulderGymBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(boulderGym);
+
+        var spraywall = new SpraywallBuilder()
+            .SetBoulderGym(boulderGym)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
         var request = new HttpRequestMessage(HttpMethod.Delete, $"{BaseUrl}/{boulderGym.Id}")
         {
             Content = GetJsonHttpBody(new DeleteBoulderGymCommand { Version = boulderGym.Version })
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
         var exists = await BiBaBoulderDbContext.BoulderGyms.AnyAsync(gym => gym.Id == boulderGym.Id, TestContext.Current.CancellationToken);
         Assert.False(exists);
+
+        var spraywallFromDb = await BiBaBoulderDbContext.Spraywalls
+            .AsNoTracking()
+            .SingleAsync(sw => sw.Id == spraywall.Id, TestContext.Current.CancellationToken);
+        Assert.Null(spraywallFromDb.BoulderGymId);
+    }
+
+    [Fact]
+    public async Task DeleteBoulderGym_UriAlias_InternalServerError()
+    {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.ContentAdmin)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var boulderGym = new BoulderGymBuilder().Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(boulderGym);
+
+        var uriAlias = new UriAliasBuilder("test-url")
+            .SetBoulderGym(boulderGym)
+            .SetType(Thecell.Bibaboulder.Model.Enums.UriType.BoulderGym)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(uriAlias);
+
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"{BaseUrl}/{boulderGym.Id}")
+        {
+            Content = GetJsonHttpBody(new DeleteBoulderGymCommand { Version = boulderGym.Version })
+        };
+
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
+        var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
     }
 
     [Fact]

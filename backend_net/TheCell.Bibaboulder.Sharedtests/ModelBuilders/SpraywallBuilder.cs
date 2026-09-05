@@ -42,4 +42,11 @@ public class SpraywallBuilder : BuilderBase<Spraywall>
         _instance.PreviewImageUri = value;
         return this;
     }
+
+    public SpraywallBuilder SetBoulderGym(BoulderGym value)
+    {
+        _instance.BoulderGym = value;
+        _instance.BoulderGymId = value.Id;
+        return this;
+    }
 }

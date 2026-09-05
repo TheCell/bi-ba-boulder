@@ -52,8 +52,12 @@ public class CreateOutdoorAreaTest
             Name = _bogus.Lorem.Slug(),
             Description = _bogus.Lorem.Paragraph(),
             ImportantInfo = _bogus.Lorem.Sentence(),
-            PreviewImageUri = _bogus.Internet.Url(),
-            ImageUris = [_bogus.Internet.Url()],
+            PreviewImageUri = _bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", ""),
+            ImageUris = [_bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", "")],
             SectorIds = [sector.Id]
         };
 

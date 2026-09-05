@@ -63,6 +63,8 @@ public class CreateSectorTest
             IsPublic = _bogus.Random.Bool(),
             Coordinates = "46.9914628, 7.5589870",
             PreviewImageUri = _bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", "")
         };
 
         _currentUserServiceMock.WithUser(user);

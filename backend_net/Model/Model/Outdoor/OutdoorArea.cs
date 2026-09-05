@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Thecell.Bibaboulder.Model.Basics;
+using Thecell.Bibaboulder.Model.Model.Media;
 
 namespace Thecell.Bibaboulder.Model.Model.Outdoor;
 
@@ -25,4 +26,6 @@ public class OutdoorArea : VersionedEntity, IContentEntity
     public ICollection<PublicResource> Media { get; set; } = [];
 
     public ICollection<Sector> Sectors { get; set; } = [];
+
+    public ICollection<UriAlias> UriAliases { get; set; } = [];
 }

@@ -10,6 +10,7 @@ using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
+using Thecell.Bibaboulder.Model.Enums;
 
 namespace TheCell.Bibaboulder.Integrationtests.Outdoor;
 
@@ -70,10 +71,10 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<OutdoorAreaDto>(cancellationToken: TestContext.Current.CancellationToken);
 
-        // todo add assertertions to verify the response content
         Assert.NotNull(result);
         Assert.Single(result.Sectors);
         Assert.Equal(sector.Id, result.Sectors.Single().Id);
+        Assert.Equal(command.Name, result.Name);
     }
 
     [Fact]
@@ -99,6 +100,9 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
     [Fact]
     public async Task UpdateOutdoorArea_Ok()
     {
+        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
         var outdoorArea = new OutdoorAreaBuilder()
             .SetName("Original")
             .Build();
@@ -106,13 +110,12 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
 
         var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.ContentAdmin);
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<OutdoorAreaDto>(cancellationToken: TestContext.Current.CancellationToken);
 
-        // todo add assertertions to verify the response content
         Assert.NotNull(result);
         Assert.Equal(command.Name, result.Name);
         Assert.Equal(outdoorArea.Version + 1, result.Version);
@@ -121,20 +124,52 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
     [Fact]
     public async Task UpdateOutdoorArea_StaleVersion_Conflict()
     {
+        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
         var outdoorArea = new OutdoorAreaBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
         var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version + 99 };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
 
     [Fact]
+    public async Task DeleteOutdoorArea_WithUriAlias_InternalServerError()
+    {
+        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
+        var outdoorArea = new OutdoorAreaBuilder().Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
+
+        var uriAlias = new UriAliasBuilder("alias-url")
+            .SetType(UriType.OutdoorArea)
+            .SetOutdoorArea(outdoorArea)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(uriAlias);
+
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"{BaseUrl}/{outdoorArea.Id}")
+        {
+            Content = GetJsonHttpBody(new DeleteOutdoorAreaCommand { Version = outdoorArea.Version })
+        };
+
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+    }
+
+    [Fact]
     public async Task DeleteOutdoorArea_Ok()
     {
+        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+
         var outdoorArea = new OutdoorAreaBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
@@ -143,7 +178,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteOutdoorAreaCommand { Version = outdoorArea.Version })
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();

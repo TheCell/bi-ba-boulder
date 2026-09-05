@@ -67,7 +67,9 @@ public class UpdateSectorTest
             Name = _bogus.Lorem.Slug(),
             Coordinates = "46.9914628, 7.5589870",
             IsPublic = true,
-            ImageUris = [_bogus.Internet.Url()],
+            ImageUris = [_bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", "")],
             OutdoorAreaIds = [outdoorArea.Id]
         };
 
