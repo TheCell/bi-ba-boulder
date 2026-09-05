@@ -1,0 +1,10 @@
+<h2>Delete boulder gym</h2>
+
+<p>Delete “{{ boulderGym.name }}”? This cannot be undone.</p>
+
+<div class="form-group form-action">
+  <button type="button" class="button" (click)="closeModal.emit({ closeType: 1 })">Cancel</button>
+  <button type="button" class="button danger" (click)="closeModal.emit({ closeType: 0, data: boulderGym })">
+    Delete
+  </button>
+</div>

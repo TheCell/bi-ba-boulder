@@ -1,0 +1,39 @@
+<h2>{{ title() }}</h2>
+
+<div class="form-group form-input" [class.disabled]="boulderGymForm.name().disabled()">
+  <input id="name" type="text" autocomplete="off" placeholder="" [formField]="boulderGymForm.name" />
+  <label for="name" class="group-label">Name</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="boulderGymForm.description().disabled()">
+  <textarea id="description" rows="3" [formField]="boulderGymForm.description"></textarea>
+  <label for="description" class="group-label">Description</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="boulderGymForm.importantInfo().disabled()">
+  <textarea id="important-info" rows="2" [formField]="boulderGymForm.importantInfo"></textarea>
+  <label for="important-info" class="group-label">Important info</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="boulderGymForm.previewImageUri().disabled()">
+  <input
+    id="preview-image-uri"
+    type="string"
+    autocomplete="off"
+    placeholder="subfolder/preview.jpg"
+    [formField]="boulderGymForm.previewImageUri" />
+  <label for="preview-image-uri" class="group-label">Preview image URL</label>
+</div>
+
+<app-image-url-list [(images)]="images" [isDisabled]="disabled()"></app-image-url-list>
+
+<div class="form-group form-action">
+  <button
+    type="button"
+    class="button primary"
+    (click)="onSave()"
+    [class.disabled]="isSubmitDisabled()"
+    [disabled]="isSubmitDisabled()">
+    {{ isLoading() ? 'Saving…' : 'Save' }}
+  </button>
+</div>

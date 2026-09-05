@@ -1,0 +1,50 @@
+<header class="page-header">
+  <div>
+    <h1>Boulder gyms</h1>
+    <p>Manage boulder gym content, preview images, and gallery images.</p>
+  </div>
+  <button type="button" class="button primary" (click)="openCreateDialog()">Create boulder gym</button>
+</header>
+
+<section class="filters" aria-label="Boulder gym filters">
+  <div class="form-group form-input">
+    <input id="search" type="search" autocomplete="off" placeholder="" (input)="onSearch($event)" />
+    <label for="search" class="group-label">Name</label>
+  </div>
+</section>
+
+@if (isLoading()) {
+<p aria-live="polite">Loading boulder gyms…</p>
+} @else if (filteredBoulderGyms().length === 0) {
+<p class="empty-state">No boulder gyms match the current filters.</p>
+} @else {
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Images</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (boulderGym of filteredBoulderGyms(); track boulderGym.id) {
+      <tr>
+        <td>{{ boulderGym.name }}</td>
+        <td>{{ boulderGym.images?.length ?? 0 }}</td>
+        <td class="actions">
+          <button type="button" class="button" (click)="onGoToBoulderGym(boulderGym)">
+            <app-icon [icon]="'long-arrow-right-empty'"></app-icon>
+          </button>
+          <button type="button" class="button" (click)="openEditDialog(boulderGym)">Edit</button>
+          <button type="button" class="button danger" (click)="openDeleteDialog(boulderGym)">Delete</button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}
+
+<app-modal #editorModal (closed)="onEditorClosed($event)"></app-modal>
+<app-modal #deleteModal [isSmall]="true" (closed)="onDeleteClosed($event)"></app-modal>
