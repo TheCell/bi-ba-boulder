@@ -1,4 +1,4 @@
-@use '../../../styles/variables' as variables;
+@use '../../../styles/variables' as *;
 
 :host {
   display: block;
@@ -21,17 +21,11 @@
 }
 
 .filters {
-  background: variables.$lightDark;
-  border-radius: 6px;
+  background: $lightDark;
+  border-radius: 5px;
   margin-bottom: 20px;
   padding: 6px;
   padding-left: 16px;
-}
-
-.filters label {
-  display: grid;
-  flex: 1;
-  gap: 6px;
 }
 
 .table-container {
@@ -45,13 +39,9 @@ table {
 
 th,
 td {
-  border-bottom: 1px solid variables.$lightDark;
+  border-bottom: 1px solid $lightDark;
   padding: 12px;
   text-align: left;
-}
-
-th {
-  color: variables.$blueGray;
 }
 
 .actions {
