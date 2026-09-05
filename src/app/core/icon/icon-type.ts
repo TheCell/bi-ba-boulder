@@ -47,6 +47,8 @@ export const ICONS = [
   'change-log-empty',
   'change-log-filled',
   'arrow-left',
-  'arrow-right'
+  'arrow-right',
+  'long-arrow-right-empty',
+  'long-arrow-right-filled'
 ] as const;
 export type IconType = (typeof ICONS)[number];
