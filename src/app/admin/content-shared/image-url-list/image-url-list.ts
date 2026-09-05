@@ -7,6 +7,7 @@ import { Component, model } from '@angular/core';
 })
 export class ImageUrlList {
   public images = model.required<string[]>();
+  public isDisabled = model<boolean>(false);
 
   public onImageChanged(index: number, event: Event): void {
     const value = (event.target as HTMLInputElement).value;

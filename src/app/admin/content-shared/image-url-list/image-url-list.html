@@ -4,6 +4,7 @@
     type="input"
     [id]="'image-url-' + $index"
     [value]="image"
+    [disabled]="isDisabled()"
     autocomplete="off"
     placeholder="subfolder/image.jpg"
     (input)="onImageChanged($index, $event)" />
