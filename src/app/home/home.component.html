@@ -21,27 +21,29 @@
     @for (boulderGym of this.boulderGyms(); track boulderGym.id) {
       @let backgroundImage =
         boulderGym.previewImageUri ? `url(${boulderGym.previewImageUri})` : `url(/tiles/bricks.png)`;
-      <div
-        class="big-tile"
-        [ngClass]="{
-          'is-generic-background': (boulderGym.previewImageUri?.length ?? 0) === 0
-        }"
-        [style.backgroundImage]="backgroundImage"
-        [routerLink]="['/', 'boulder-gym', boulderGym.id]">
-        <div class="tile-content">
-          <h2>{{ boulderGym.name }}</h2>
-          @if (boulderGym.spraywalls?.[0]; as firstSpraywall) {
-            <button
-              type="button"
-              class="first-spraywall-button"
-              [routerLink]="['/', 'spraywall', firstSpraywall.id]"
-              [attr.aria-label]="'Open the first spraywall at ' + boulderGym.name"
-              (click)="$event.stopPropagation()">
-              directly to spraywall
-            </button>
-          }
+      @if (boulderGym.spraywalls !== undefined && boulderGym.spraywalls.length > 0) {
+        <div
+          class="big-tile"
+          [ngClass]="{
+            'is-generic-background': (boulderGym.previewImageUri?.length ?? 0) === 0
+          }"
+          [style.backgroundImage]="backgroundImage"
+          [routerLink]="['/', 'boulder-gym', boulderGym.id]">
+          <div class="tile-content">
+            <h2>{{ boulderGym.name }}</h2>
+            @if (boulderGym.spraywalls?.[0]; as firstSpraywall) {
+              <button
+                type="button"
+                class="first-spraywall-button"
+                [routerLink]="['/', 'spraywall', firstSpraywall.id]"
+                [attr.aria-label]="'Open the first spraywall at ' + boulderGym.name"
+                (click)="$event.stopPropagation()">
+                directly to spraywall
+              </button>
+            }
+          </div>
         </div>
-      </div>
+      }
     }
   </div>
 </section>
