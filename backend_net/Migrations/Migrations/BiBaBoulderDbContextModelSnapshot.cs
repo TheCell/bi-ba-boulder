@@ -862,11 +862,11 @@ namespace BiBaBoulder.Migrations
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Media.UriAlias", b =>
                 {
                     b.HasOne("Thecell.Bibaboulder.Model.Model.Indoor.BoulderGym", "BoulderGym")
-                        .WithMany()
+                        .WithMany("UriAliases")
                         .HasForeignKey("BoulderGymId");
 
                     b.HasOne("Thecell.Bibaboulder.Model.Model.Outdoor.OutdoorArea", "OutdoorArea")
-                        .WithMany()
+                        .WithMany("UriAliases")
                         .HasForeignKey("OutdoorAreaId");
 
                     b.Navigation("BoulderGym");
@@ -951,6 +951,8 @@ namespace BiBaBoulder.Migrations
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Indoor.BoulderGym", b =>
                 {
                     b.Navigation("Spraywalls");
+
+                    b.Navigation("UriAliases");
                 });
 
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Indoor.BoulderLog", b =>
@@ -973,6 +975,11 @@ namespace BiBaBoulder.Migrations
                     b.Navigation("AdditionalParts");
 
                     b.Navigation("BoulderLines");
+                });
+
+            modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.OutdoorArea", b =>
+                {
+                    b.Navigation("UriAliases");
                 });
 
             modelBuilder.Entity("Thecell.Bibaboulder.Model.Model.Outdoor.Sector", b =>
