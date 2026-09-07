@@ -1,0 +1,19 @@
+textarea {
+  resize: vertical;
+}
+
+.sector-list {
+  border: none;
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.checkbox-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
