@@ -54,7 +54,7 @@ export class BoulderGymSpraywallsDialog implements IModal {
     this.currentlySelectedSpraywalls.update((spraywalls) => spraywalls.filter((s) => s.id !== spraywall.id));
   }
 
-  public onClose(): void {
+  public onSaveAndClose(): void {
     this.isLoading.set(true);
     const unmodifiedSpraywalls = this.boulderGym()?.spraywalls ?? [];
     const targetSpraywalls = this.currentlySelectedSpraywalls();
