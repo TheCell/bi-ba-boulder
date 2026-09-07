@@ -24,6 +24,7 @@
       <tr>
         <th scope="col">Name</th>
         <th scope="col">Images</th>
+        <th scope="col">Spraywalls</th>
         <th scope="col"><span class="visually-hidden">Actions</span></th>
       </tr>
     </thead>
@@ -32,10 +33,12 @@
       <tr>
         <td>{{ boulderGym.name }}</td>
         <td>{{ boulderGym.images?.length ?? 0 }}</td>
+        <td>{{ boulderGym.spraywalls?.length ?? 0 }}</td>
         <td class="actions">
           <button type="button" class="button" (click)="onGoToBoulderGym(boulderGym)">
             <app-icon [icon]="'long-arrow-right-empty'"></app-icon>
           </button>
+          <button type="button" class="button" (click)="openSpraywallsDialog(boulderGym)">Spraywalls</button>
           <button type="button" class="button" (click)="openEditDialog(boulderGym)">Edit</button>
           <button type="button" class="button danger" (click)="openDeleteDialog(boulderGym)">Delete</button>
         </td>
@@ -48,3 +51,4 @@
 
 <app-modal #editorModal (closed)="onEditorClosed($event)"></app-modal>
 <app-modal #deleteModal [isSmall]="true" (closed)="onDeleteClosed($event)"></app-modal>
+<app-modal #spraywallsModal (closed)="onSpraywallsClosed($event)"></app-modal>

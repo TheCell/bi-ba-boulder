@@ -51,18 +51,24 @@ export class UriAliases implements OnInit {
   }
 
   public openCreateDialog(): void {
-    const dialog = this.modalService.open(this.editorModal.id, UriAliasEditorDialog) as UriAliasEditorDialog;
-    dialog.initialize({});
+    const dialog = this.modalService.open(this.editorModal.id, UriAliasEditorDialog);
+    if (dialog !== undefined && typeof dialog.initialize === 'function') {
+      dialog.initialize({});
+    }
   }
 
   public openEditDialog(uriAlias: UriAliasAdministrationDto): void {
-    const dialog = this.modalService.open(this.editorModal.id, UriAliasEditorDialog) as UriAliasEditorDialog;
-    dialog.initialize({ uriAlias });
+    const dialog = this.modalService.open(this.editorModal.id, UriAliasEditorDialog);
+    if (dialog !== undefined && typeof dialog.initialize === 'function') {
+      dialog.initialize({ uriAlias });
+    }
   }
 
   public openDeleteDialog(uriAlias: UriAliasAdministrationDto): void {
-    const dialog = this.modalService.open(this.deleteModal.id, DeleteUriAliasDialog) as DeleteUriAliasDialog;
-    dialog.initialize({ uriAlias });
+    const dialog = this.modalService.open(this.deleteModal.id, DeleteUriAliasDialog);
+    if (dialog !== undefined && typeof dialog.initialize === 'function') {
+      dialog.initialize({ uriAlias });
+    }
   }
 
   public onEditorClosed(event: CloseModalEvent): void {

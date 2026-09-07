@@ -1,13 +1,14 @@
-import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { BoulderGymDto, BoulderGymService, DeleteBoulderGymCommand } from '@api-net/index';
+import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { Modal } from '../../core/modal/modal/modal';
 import { ModalService } from '../../core/modal/modal.service';
-import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { ToastService } from '../../core/toast-container/toast.service';
+import { Icon } from '../../core/icon/icon';
 import { BoulderGymEditorDialog } from './boulder-gym-editor-dialog';
 import { DeleteBoulderGymDialog } from './delete-boulder-gym-dialog';
-import { Icon } from '../../core/icon/icon';
-import { Router } from '@angular/router';
+import { BoulderGymSpraywallsDialog } from './boulder-gym-spraywalls-dialog';
 
 @Component({
   selector: 'app-boulder-gyms-admin',
@@ -16,8 +17,9 @@ import { Router } from '@angular/router';
   styleUrl: './boulder-gyms-admin.scss'
 })
 export class BoulderGymsAdmin implements OnInit {
-  @ViewChild('editorModal') private editorModal!: Modal;
-  @ViewChild('deleteModal') private deleteModal!: Modal;
+  private editorModal = viewChild.required<Modal>('editorModal');
+  private deleteModal = viewChild.required<Modal>('deleteModal');
+  private spraywallsModal = viewChild.required<Modal>('spraywallsModal');
 
   private boulderGymService = inject(BoulderGymService);
   private toastService = inject(ToastService);
@@ -47,24 +49,41 @@ export class BoulderGymsAdmin implements OnInit {
   }
 
   public openCreateDialog(): void {
-    const dialog = this.modalService.open(this.editorModal.id, BoulderGymEditorDialog) as BoulderGymEditorDialog;
-    dialog.initialize({});
+    const dialog = this.modalService.open(this.editorModal().id, BoulderGymEditorDialog);
+    if (dialog !== undefined && typeof dialog.initialize === 'function') {
+      dialog.initialize({});
+    }
   }
 
   public openEditDialog(boulderGym: BoulderGymDto): void {
-    const dialog = this.modalService.open(this.editorModal.id, BoulderGymEditorDialog) as BoulderGymEditorDialog;
-    dialog.initialize({ boulderGym });
+    const dialog = this.modalService.open(this.editorModal().id, BoulderGymEditorDialog);
+    if (dialog !== undefined && typeof dialog.initialize === 'function') {
+      dialog.initialize({ boulderGym });
+    }
   }
 
   public openDeleteDialog(boulderGym: BoulderGymDto): void {
-    const dialog = this.modalService.open(this.deleteModal.id, DeleteBoulderGymDialog) as DeleteBoulderGymDialog;
-    dialog.initialize({ boulderGym });
+    const dialog = this.modalService.open(this.deleteModal().id, DeleteBoulderGymDialog);
+    if (dialog !== undefined && typeof dialog.initialize === 'function') {
+      dialog.initialize({ boulderGym });
+    }
+  }
+
+  public openSpraywallsDialog(boulderGym: BoulderGymDto): void {
+    const dialog = this.modalService.open(this.spraywallsModal().id, BoulderGymSpraywallsDialog);
+    if (dialog !== undefined && typeof dialog.initialize === 'function') {
+      dialog.initialize({ boulderGym });
+    }
   }
 
   public onEditorClosed(event: CloseModalEvent): void {
     if (event.closeType === 0) {
       this.loadBoulderGyms();
     }
+  }
+
+  public onSpraywallsClosed(_event: CloseModalEvent): void {
+    this.loadBoulderGyms();
   }
 
   public onDeleteClosed(event: CloseModalEvent): void {
