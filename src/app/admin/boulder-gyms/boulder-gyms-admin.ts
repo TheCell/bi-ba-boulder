@@ -9,6 +9,7 @@ import { Icon } from '../../core/icon/icon';
 import { BoulderGymEditorDialog } from './boulder-gym-editor-dialog';
 import { DeleteBoulderGymDialog } from './delete-boulder-gym-dialog';
 import { BoulderGymSpraywallsDialog } from './boulder-gym-spraywalls-dialog';
+import { BoulderGymSpraywallDialogData } from './boulder-gym-spraywall-data';
 
 @Component({
   selector: 'app-boulder-gyms-admin',
@@ -72,7 +73,8 @@ export class BoulderGymsAdmin implements OnInit {
   public openSpraywallsDialog(boulderGym: BoulderGymDto): void {
     const dialog = this.modalService.open(this.spraywallsModal().id, BoulderGymSpraywallsDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
-      dialog.initialize({ boulderGym });
+      const boulderGymSpraywallDialogData: BoulderGymSpraywallDialogData = { boulderGym };
+      dialog.initialize(boulderGymSpraywallDialogData);
     }
   }
 
