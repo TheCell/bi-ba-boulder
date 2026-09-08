@@ -17,3 +17,19 @@ textarea {
   display: flex;
   gap: 8px;
 }
+
+.sector-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add-sector-form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .form-group {
+    flex: 1;
+  }
+}

@@ -14,10 +14,11 @@ import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { IModal } from '../../core/modal/modal/modal.interface';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { OutdoorAreaDialogData } from './outdoor-area-dialog-data';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-outdoor-area-editor-dialog',
-  imports: [FormField, ImageUrlList],
+  imports: [FormField, ImageUrlList, FormsModule],
   templateUrl: './outdoor-area-editor-dialog.html',
   styleUrl: './outdoor-area-editor-dialog.scss'
 })
@@ -26,17 +27,23 @@ export class OutdoorAreaEditorDialog implements IModal {
   private sectorsService = inject(SectorsService);
   private toastService = inject(ToastService);
 
+  public closeModal = output<CloseModalEvent>();
   private isDisabled = signal(false);
   private formModel = signal<ContentFormModel>({ name: '', description: '', importantInfo: '', previewImageUri: '' });
   private editingOutdoorArea?: OutdoorAreaDto;
 
-  public closeModal = output<CloseModalEvent>();
-  public disabled = this.isDisabled.asReadonly();
   public canCloseWithoutPermission = true;
+  public disabled = this.isDisabled.asReadonly();
   public isLoading = signal(true);
   public images = signal<string[]>([]);
-  public availableSectors = signal<SectorDto[]>([]);
-  public selectedSectorIds = signal<Set<string>>(new Set());
+
+  public allSectors = signal<SectorDto[]>([]);
+  public assignedSectors = signal<SectorDto[]>([]);
+  public availableSectors = computed(() => {
+    const assignedIds = new Set(this.assignedSectors().map((s) => s.id));
+    return this.allSectors().filter((s) => !assignedIds.has(s.id));
+  });
+  public selectedSectorIdToAdd = signal<string>('');
   public title = computed(() => (this.editingOutdoorArea ? 'Edit outdoor area' : 'Create outdoor area'));
   public isSubmitDisabled = computed(
     () => this.isLoading() || this.outdoorAreaForm().disabled() || this.outdoorAreaForm().invalid()
@@ -51,7 +58,14 @@ export class OutdoorAreaEditorDialog implements IModal {
 
   public constructor() {
     effect(() => {
-      this.canCloseWithoutPermission = !this.outdoorAreaForm().dirty();
+      const unmodifiedSectors = (this.editingOutdoorArea?.sectors ?? []).map((s) => s.id);
+      const currentlyAssignedSectors = this.assignedSectors().map((s) => s.id);
+
+      this.canCloseWithoutPermission =
+        !this.outdoorAreaForm().dirty() &&
+        unmodifiedSectors.length === currentlyAssignedSectors.length &&
+        unmodifiedSectors.every((id, index) => id === currentlyAssignedSectors[index]);
+      console.log('effect', this.canCloseWithoutPermission);
     });
   }
 
@@ -64,21 +78,23 @@ export class OutdoorAreaEditorDialog implements IModal {
       previewImageUri: data.outdoorArea?.previewImageUri ?? ''
     });
     this.images.set(data.outdoorArea?.images?.map((image) => image.uri) ?? []);
-    this.selectedSectorIds.set(new Set(data.outdoorArea?.sectors?.map((sector) => sector.id) ?? []));
+    this.assignedSectors.set(data.outdoorArea?.sectors ?? []);
     this.loadSectors();
   }
 
-  public onSectorToggle(sectorId: string, event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.selectedSectorIds.update((ids) => {
-      const next = new Set(ids);
-      if (checked) {
-        next.add(sectorId);
-      } else {
-        next.delete(sectorId);
-      }
-      return next;
-    });
+  public onAddSector(): void {
+    const sectorId = this.selectedSectorIdToAdd();
+    const sector = this.availableSectors().find((s) => s.id === sectorId);
+    if (!sector) {
+      return;
+    }
+
+    this.assignedSectors.update((sectors) => [...sectors, sector]);
+    this.selectedSectorIdToAdd.set('');
+  }
+
+  public onRemoveSector(sectorId: string): void {
+    this.assignedSectors.update((sectors) => sectors.filter((s) => s.id !== sectorId));
   }
 
   public onSaveAndClose(): void {
@@ -91,7 +107,7 @@ export class OutdoorAreaEditorDialog implements IModal {
 
     const model = this.formModel();
     // TODO: this must be in a separate dialog and made like the boulder gym spraywalls dialog
-    const sectorIds = [...this.selectedSectorIds()];
+    const sectorIds = this.assignedSectors().map((s) => s.id);
     const editingOutdoorArea = this.editingOutdoorArea;
 
     if (editingOutdoorArea) {
@@ -146,7 +162,7 @@ export class OutdoorAreaEditorDialog implements IModal {
     this.isLoading.set(true);
     this.sectorsService.getSectors().subscribe({
       next: (sectors: SectorDto[]) => {
-        this.availableSectors.set([...sectors].sort((left, right) => left.name.localeCompare(right.name)));
+        this.allSectors.set([...sectors].sort((left, right) => left.name.localeCompare(right.name)));
         this.isLoading.set(false);
       },
       error: () => {

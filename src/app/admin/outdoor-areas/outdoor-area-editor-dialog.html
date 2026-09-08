@@ -27,17 +27,51 @@
 
 <app-image-url-list [(images)]="images" [isDisabled]="disabled()"></app-image-url-list>
 
-<legend>Sectors</legend>
-<p class="field-help">No sectors available yet.</p>
+<h2>Sectors</h2>
+<h3>Assigned sectors</h3>
+@if (assignedSectors().length === 0) {
+<p class="empty-state">No sectors assigned to this boulder gym.</p>
+} @else {
+<ul class="sector-list">
+  @for (sector of assignedSectors(); track sector.id) {
+  <li class="sector-item">
+    <span class="sector-name">{{ sector.name }}</span>
+    <button type="button" class="button danger small" [disabled]="isLoading()" (click)="onRemoveSector(sector.id)">
+      Remove
+    </button>
+  </li>
+  }
+</ul>
+}
 
+<h3>Add sector</h3>
 @if (availableSectors().length === 0) {
-<p class="field-help">No sectors available yet.</p>
-} @else { @for (sector of availableSectors(); track sector.id) {
-<label class="checkbox-row">
-  <input type="checkbox" [checked]="selectedSectorIds().has(sector.id)" (change)="onSectorToggle(sector.id, $event)" />
-  {{ sector.name }}
-</label>
-} }
+<p class="empty-state">No unassigned sectors available.</p>
+} @else {
+<div class="add-sector-form">
+  <div class="form-group form-input">
+    <select
+      id="sector-select"
+      [ngModel]="selectedSectorIdToAdd()"
+      (ngModelChange)="selectedSectorIdToAdd.set($event)"
+      [disabled]="isLoading()">
+      <option value="" disabled>Select a sector...</option>
+      @for (sector of availableSectors(); track sector.id) {
+      <option [value]="sector.id">{{ sector.name }}</option>
+      }
+    </select>
+    <label for="sector-select" class="group-label">Available sector</label>
+  </div>
+
+  <button
+    type="button"
+    class="button primary"
+    [disabled]="isLoading() || !selectedSectorIdToAdd()"
+    (click)="onAddSector()">
+    Add to area
+  </button>
+</div>
+}
 
 <div class="form-group form-action">
   <button
