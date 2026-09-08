@@ -1,0 +1,8 @@
+<h2>Delete outdoor area</h2>
+
+<p>Delete "{{ outdoorArea.name }}"? This cannot be undone.</p>
+
+<div class="form-group form-action">
+  <button type="button" class="button" (click)="closeModal.emit({ closeType: 1 })">Cancel</button>
+  <button type="button" class="button danger" (click)="onDelete()">Delete</button>
+</div>
