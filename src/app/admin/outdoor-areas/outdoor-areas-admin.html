@@ -1,0 +1,49 @@
+<header class="page-header">
+  <div>
+    <h1>Outdoor areas</h1>
+    <p>Manage outdoor area content, images, and sector assignments.</p>
+  </div>
+  <button type="button" class="button primary" (click)="openCreateDialog()">Create outdoor area</button>
+</header>
+
+<section class="filters" aria-label="Outdoor area filters">
+  <div class="form-group form-input">
+    <input id="search" type="search" autocomplete="off" placeholder="" (input)="onSearch($event)" />
+    <label for="search" class="group-label">Name</label>
+  </div>
+</section>
+
+@if (isLoading()) {
+  <p aria-live="polite">Loading outdoor areas…</p>
+} @else if (filteredOutdoorAreas().length === 0) {
+  <p class="empty-state">No outdoor areas match the current filters.</p>
+} @else {
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Sectors</th>
+          <th scope="col">Images</th>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (outdoorArea of filteredOutdoorAreas(); track outdoorArea.id) {
+          <tr>
+            <td>{{ outdoorArea.name }}</td>
+            <td>{{ outdoorArea.sectors?.length ?? 0 }}</td>
+            <td>{{ outdoorArea.images?.length ?? 0 }}</td>
+            <td class="actions">
+              <button type="button" class="button" (click)="openEditDialog(outdoorArea)">Edit</button>
+              <button type="button" class="button danger" (click)="openDeleteDialog(outdoorArea)">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<app-modal #editorModal (closed)="onEditorClosed($event)"></app-modal>
+<app-modal #deleteModal [isSmall]="true" (closed)="onDeleteClosed($event)"></app-modal>
