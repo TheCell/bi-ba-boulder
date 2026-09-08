@@ -1,0 +1,52 @@
+<header class="page-header">
+  <div>
+    <h1>Sectors</h1>
+    <p>Manage sector content, images, and outdoor area assignments.</p>
+  </div>
+  <button type="button" class="button primary" (click)="openCreateDialog()">Create sector</button>
+</header>
+
+<section class="filters" aria-label="Sector filters">
+  <div class="form-group form-input">
+    <input id="search" type="search" autocomplete="off" placeholder="" (input)="onSearch($event)" />
+    <label for="search" class="group-label">Name</label>
+  </div>
+</section>
+
+@if (isLoading()) {
+<p aria-live="polite">Loading sectors…</p>
+} @else if (filteredSectors().length === 0) {
+<p class="empty-state">No sectors match the current filters.</p>
+} @else {
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Public</th>
+        <th scope="col">Outdoor areas</th>
+        <th scope="col">Images</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (sector of filteredSectors(); track sector.id) {
+      <tr>
+        <td>{{ sector.name }}</td>
+        <td>{{ sector.isPublic ? 'Yes' : 'No' }}</td>
+        <td>{{ sector.outdoorAreas?.length ?? 0 }}</td>
+        <td>{{ sector.images?.length ?? 0 }}</td>
+        <td class="actions">
+          <!-- TODO: add modal to add blocs to the sector -->
+          <button type="button" class="button" (click)="openEditDialog(sector)">Edit</button>
+          <button type="button" class="button danger" (click)="openDeleteDialog(sector)">Delete</button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}
+
+<app-modal #editorModal (closed)="onEditorClosed($event)"></app-modal>
+<app-modal #deleteModal [isSmall]="true" (closed)="onDeleteClosed($event)"></app-modal>

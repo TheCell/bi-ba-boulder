@@ -21,6 +21,9 @@ import { shareGymGuard, shareOutdoorGuard } from './core/guards/share-guard';
 import { NotFound } from './navigation/not-found/not-found';
 import { contentAdminGuard } from './core/guards/content-admin.guard';
 import { UriAliases } from './admin/uri-aliases/uri-aliases';
+import { BoulderGymsAdmin } from './admin/boulder-gyms/boulder-gyms-admin';
+import { OutdoorAreasAdmin } from './admin/outdoor-areas/outdoor-areas-admin';
+import { SectorsAdmin } from './admin/sectors/sectors-admin';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -120,6 +123,21 @@ export const routes: Routes = [
     path: 'admin/uri-aliases',
     canActivate: [contentAdminGuard],
     component: UriAliases
+  },
+  {
+    path: 'admin/boulder-gyms',
+    canActivate: [contentAdminGuard],
+    component: BoulderGymsAdmin
+  },
+  {
+    path: 'admin/outdoor-areas',
+    canActivate: [contentAdminGuard],
+    component: OutdoorAreasAdmin
+  },
+  {
+    path: 'admin/sectors',
+    canActivate: [contentAdminGuard],
+    component: SectorsAdmin
   },
   {
     path: 'not-found',

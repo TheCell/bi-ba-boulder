@@ -10,5 +10,6 @@ public class CreateSectorCommand : CreateContentCommand
 
     public string? Coordinates { get; set; }
 
+    //todo Remove
     public ICollection<Guid> OutdoorAreaIds { get; set; } = [];
 }

@@ -1,0 +1,55 @@
+<h2>{{ title() }}</h2>
+
+<div class="form-group form-input" [class.disabled]="sectorForm.name().disabled()">
+  <input id="name" type="text" autocomplete="off" placeholder="" [formField]="sectorForm.name" />
+  <label for="name" class="group-label">Name</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="sectorForm.description().disabled()">
+  <textarea id="description" rows="3" [formField]="sectorForm.description"></textarea>
+  <label for="description" class="group-label">Description</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="sectorForm.importantInfo().disabled()">
+  <textarea id="important-info" rows="2" [formField]="sectorForm.importantInfo"></textarea>
+  <label for="important-info" class="group-label">Important info</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="sectorForm.coordinates().disabled()">
+  <input
+    id="coordinates"
+    type="text"
+    autocomplete="off"
+    placeholder="46.9914628, 7.5589870"
+    [formField]="sectorForm.coordinates" />
+  <label for="coordinates" class="group-label">Coordinates</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="sectorForm.previewImageUri().disabled()">
+  <input
+    id="preview-image-uri"
+    type="url"
+    autocomplete="off"
+    placeholder="examplecom/preview.jpg"
+    [formField]="sectorForm.previewImageUri" />
+  <label for="preview-image-uri" class="group-label">Preview image URL</label>
+</div>
+
+<app-image-url-list [(images)]="images" [isDisabled]="disabled()"></app-image-url-list>
+
+<!-- TODO style the checkbox row properly -->
+<div class="form-group form-input" [class.disabled]="sectorForm.coordinates().disabled()">
+  <label class="checkbox-row" for="is-public" [class.disabled]="sectorForm.isPublic().disabled()">Is Public</label>
+  <input type="checkbox" id="is-public" [formField]="sectorForm.isPublic" />
+</div>
+
+<div class="form-group form-action">
+  <button
+    type="button"
+    class="button primary"
+    (click)="onSubmit()"
+    [class.disabled]="isSubmitDisabled()"
+    [disabled]="isSubmitDisabled()">
+    {{ isLoading() ? 'Saving…' : 'Save' }}
+  </button>
+</div>

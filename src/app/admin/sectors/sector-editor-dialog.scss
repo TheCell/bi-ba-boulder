@@ -1,0 +1,28 @@
+.field-help {
+  margin-top: -10px;
+  opacity: 0.75;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.checkbox-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+form > .checkbox-row {
+  margin-bottom: 16px;
+}
+
+.outdoor-area-list {
+  border: none;
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0;
+}
