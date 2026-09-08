@@ -1,4 +1,4 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BoulderGymDto, BoulderGymService, SpraywallDto, SpraywallsService } from '@api-net/index';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
@@ -32,6 +32,17 @@ export class BoulderGymSpraywallsDialog implements IModal {
     const assignedIds = new Set(this.currentlySelectedSpraywalls().map((s) => s.id));
     return this.allSpraywalls().filter((s) => !assignedIds.has(s.id));
   });
+
+  public constructor() {
+    effect(() => {
+      const unmodifiedSpraywalls = (this.boulderGym()?.spraywalls ?? []).map((s) => s.id);
+      const targetSpraywalls = this.currentlySelectedSpraywalls().map((s) => s.id);
+      this.canCloseWithoutPermission =
+        !this.isLoading() &&
+        unmodifiedSpraywalls.length === targetSpraywalls.length &&
+        unmodifiedSpraywalls.every((id, index) => id === targetSpraywalls[index]);
+    });
+  }
 
   public initialize(data: BoulderGymSpraywallDialogData): void {
     this.boulderGym.set(data.boulderGym);
@@ -81,6 +92,7 @@ export class BoulderGymSpraywallsDialog implements IModal {
       return;
     }
 
+    // todo this should be one request and not multiple separate add/remove requests
     forkJoin([...addRequests, ...removeRequests]).subscribe({
       next: () => {
         this.isLoading.set(false);
