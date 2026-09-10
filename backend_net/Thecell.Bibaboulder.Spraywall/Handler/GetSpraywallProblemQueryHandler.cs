@@ -5,12 +5,12 @@ using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Mapping;
 using Thecell.Bibaboulder.Model.Services;
 
-namespace Thecell.Bibaboulder.Spraywall.Handler;
+namespace Thecell.Bibaboulder.Indoor.Handler;
 
 public class GetSpraywallProblemQueryHandler : IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto>
 {

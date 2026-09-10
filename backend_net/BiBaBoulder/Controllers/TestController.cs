@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Spraywall.Testing;
+using Thecell.Bibaboulder.Indoor.Testing;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 

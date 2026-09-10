@@ -7,7 +7,7 @@ using Thecell.Bibaboulder.BoulderLog.Handler;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;

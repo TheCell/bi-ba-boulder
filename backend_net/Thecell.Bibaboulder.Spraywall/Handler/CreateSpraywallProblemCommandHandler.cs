@@ -6,10 +6,10 @@ using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Extensions;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 using Thecell.Bibaboulder.Model.Services;
 
-namespace Thecell.Bibaboulder.Spraywall.Handler;
+namespace Thecell.Bibaboulder.Indoor.Handler;
 
 public partial class CreateSpraywallProblemCommandHandler : ICommandHandlerWithExtraTransaction<CreateSpraywallProblemCommand>
 {

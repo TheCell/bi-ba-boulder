@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Thecell.Bibaboulder.Model.csproj" />
+    <ProjectReference Include="..\Thecell.Bibaboulder.Common\Thecell.Bibaboulder.Common.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Services;
 

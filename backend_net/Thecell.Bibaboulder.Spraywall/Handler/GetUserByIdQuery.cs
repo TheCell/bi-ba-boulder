@@ -2,7 +2,7 @@ using System;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model.Dto;
 
-namespace Thecell.Bibaboulder.Spraywall.Handler;
+namespace Thecell.Bibaboulder.Indoor.Handler;
 
 public class GetUserByIdQuery : IQuery<UserDto>
 {

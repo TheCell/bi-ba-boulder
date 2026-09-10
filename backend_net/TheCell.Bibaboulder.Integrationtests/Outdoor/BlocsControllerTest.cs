@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Bogus;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;

@@ -18,7 +18,7 @@ h1 {
   flex-wrap: wrap;
   justify-content: start;
   align-content: flex-start;
-  height: calc(50vh - 75px - 45px); // 75px title
+  height: calc(50svh - 75px - 45px); // 75px title
   gap: 10px;
   padding: 10px;
   overflow-y: scroll;
@@ -64,4 +64,22 @@ h1 {
 
 .tile-content h2 {
   margin-top: 2px;
+}
+
+.first-spraywall-button {
+  border: 1px solid $fontColor;
+  border-radius: 4px;
+  background-color: rgba($darkDark, 0.85);
+  color: $fontColor;
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 12px 20px;
+  float: right;
+  margin-top: 70px;
+}
+
+.first-spraywall-button:hover,
+.first-spraywall-button:focus-visible {
+  background-color: $primary;
+  color: $darkDark;
 }

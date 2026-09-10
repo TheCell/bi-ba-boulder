@@ -27,12 +27,13 @@ export class SocialsOverlay {
 
     let wasShared = false;
     if (this.isMobileDevice() && typeof navigator.share === 'function') {
-      try {
-        await navigator.share({ url: routeUrl });
-        wasShared = true;
-      } catch (_error: unknown) {
-        wasShared = false;
-      }
+      await navigator.share({ url: routeUrl });
+      wasShared = true;
+      // try {
+      //   wasShared = true;
+      // } catch (_error: unknown) {
+      //   wasShared = false;
+      // }
     }
 
     if (wasShared) {

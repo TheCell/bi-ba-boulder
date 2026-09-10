@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Thecell.Bibaboulder.Common.Queries;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;

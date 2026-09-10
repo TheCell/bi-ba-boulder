@@ -57,8 +57,9 @@
     <ProjectReference Include="..\Model\Thecell.Bibaboulder.Model.csproj" />
     <ProjectReference Include="..\Thecell.Bibaboulder.BoulderLog\Thecell.Bibaboulder.BoulderLog.csproj" />
     <ProjectReference Include="..\Thecell.Bibaboulder.Common\Thecell.Bibaboulder.Common.csproj" />
+    <ProjectReference Include="..\TheCell.Bibaboulder.Media\TheCell.Bibaboulder.Media.csproj" />
     <ProjectReference Include="..\Thecell.Bibaboulder.Outdoor\Thecell.Bibaboulder.Outdoor.csproj" />
-    <ProjectReference Include="..\Thecell.Bibaboulder.Spraywall\Thecell.Bibaboulder.Spraywall.csproj" />
+    <ProjectReference Include="..\Thecell.Bibaboulder.Spraywall\Thecell.Bibaboulder.Indoor.csproj" />
     <ProjectReference Include="..\Migrations\Thecell.Bibaboulder.Migrations.csproj" />
   </ItemGroup>
 

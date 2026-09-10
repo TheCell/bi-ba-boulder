@@ -1,0 +1,85 @@
+<h2>{{ title() }}</h2>
+
+<div class="form-group form-input" [class.disabled]="outdoorAreaForm.name().disabled()">
+  <input id="name" type="text" autocomplete="off" placeholder="" [formField]="outdoorAreaForm.name" />
+  <label for="name" class="group-label">Name</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="outdoorAreaForm.description().disabled()">
+  <textarea id="description" rows="3" [formField]="outdoorAreaForm.description"></textarea>
+  <label for="description" class="group-label">Description</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="outdoorAreaForm.importantInfo().disabled()">
+  <textarea id="important-info" rows="2" [formField]="outdoorAreaForm.importantInfo"></textarea>
+  <label for="important-info" class="group-label">Important info</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="outdoorAreaForm.previewImageUri().disabled()">
+  <input
+    id="preview-image-uri"
+    type="url"
+    autocomplete="off"
+    placeholder="example/preview.jpg"
+    [formField]="outdoorAreaForm.previewImageUri" />
+  <label for="preview-image-uri" class="group-label">Preview image URL</label>
+</div>
+
+<app-image-url-list [(images)]="images" [isDisabled]="disabled()"></app-image-url-list>
+
+<h2>Sectors</h2>
+<h3>Assigned sectors</h3>
+@if (assignedSectors().length === 0) {
+<p class="empty-state">No sectors assigned to this boulder gym.</p>
+} @else {
+<ul class="sector-list">
+  @for (sector of assignedSectors(); track sector.id) {
+  <li class="sector-item">
+    <span class="sector-name">{{ sector.name }}</span>
+    <button type="button" class="button danger small" [disabled]="isLoading()" (click)="onRemoveSector(sector.id)">
+      Remove
+    </button>
+  </li>
+  }
+</ul>
+}
+
+<h3>Add sector</h3>
+@if (availableSectors().length === 0) {
+<p class="empty-state">No unassigned sectors available.</p>
+} @else {
+<div class="add-sector-form">
+  <div class="form-group form-input">
+    <select
+      id="sector-select"
+      [ngModel]="selectedSectorIdToAdd()"
+      (ngModelChange)="selectedSectorIdToAdd.set($event)"
+      [disabled]="isLoading()">
+      <option value="" disabled>Select a sector...</option>
+      @for (sector of availableSectors(); track sector.id) {
+      <option [value]="sector.id">{{ sector.name }}</option>
+      }
+    </select>
+    <label for="sector-select" class="group-label">Available sector</label>
+  </div>
+
+  <button
+    type="button"
+    class="button primary"
+    [disabled]="isLoading() || !selectedSectorIdToAdd()"
+    (click)="onAddSector()">
+    Add to area
+  </button>
+</div>
+}
+
+<div class="form-group form-action">
+  <button
+    type="button"
+    class="button primary"
+    (click)="onSaveAndClose()"
+    [class.disabled]="isSubmitDisabled()"
+    [disabled]="isSubmitDisabled()">
+    Save and Close
+  </button>
+</div>

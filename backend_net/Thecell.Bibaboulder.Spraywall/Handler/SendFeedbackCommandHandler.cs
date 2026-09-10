@@ -5,7 +5,7 @@ using Thecell.Bibaboulder.Common.Appsettings;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model.Services;
 
-namespace Thecell.Bibaboulder.Spraywall.Handler;
+namespace Thecell.Bibaboulder.Indoor.Handler;
 
 public class SendFeedbackCommandHandler : ICommandHandler<SendFeedbackCommand>
 {

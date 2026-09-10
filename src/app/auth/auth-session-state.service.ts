@@ -25,16 +25,18 @@ export class AuthSessionStateService {
     return this.authenticated;
   }
 
-  /**
-   * Returns true if the user has the "admin" role claim. This will be reworked in the future
-   * @returns
-   */
   public isAdmin(): boolean {
-    if (!this.authenticated) {
-      return false;
-    }
+    return this.hasRole('admin');
+  }
 
-    return this.claims.some((claim) => claim.type.indexOf('claims/role') !== -1 && claim.value === 'admin');
+  public canManageContent(): boolean {
+    return this.hasRole('contentadmin') || this.hasRole('admin');
+  }
+
+  public hasRole(role: string): boolean {
+    return (
+      this.authenticated && this.claims.some((claim) => claim.type.includes('claims/role') && claim.value === role)
+    );
   }
 
   public getClaimValue(type: string): string | undefined {

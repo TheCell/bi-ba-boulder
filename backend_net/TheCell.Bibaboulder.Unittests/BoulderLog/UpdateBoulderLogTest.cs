@@ -96,7 +96,7 @@ public class UpdateBoulderLogTest
         var queryHandler = new GetBoulderLogQueryHandler(_dbContext);
         var result = await queryHandler.HandleAsync(new GetBoulderLogQuery { Id = log.Id });
 
-        Assert.True(result!.IsSent);
+        Assert.True(result.IsSent);
         Assert.True(result.IsProject);
         Assert.Equal(Rating.Five, result.Rating);
         Assert.Equal(FontGrade.FourMinus, result.FontGrade);

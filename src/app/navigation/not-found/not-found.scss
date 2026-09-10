@@ -1,0 +1,110 @@
+@use '../../../styles/variables' as *;
+
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+.not-found {
+  box-sizing: border-box;
+  display: grid;
+  min-height: 100%;
+  place-items: center;
+  overflow: hidden;
+  padding: clamp(24px, 7vw, 80px) 20px;
+  position: relative;
+  isolation: isolate;
+}
+
+.not-found__card {
+  align-items: center;
+  background: linear-gradient(145deg, rgba($lightDark, 0.95), rgba($darkDark, 0.98));
+  border: 1px solid rgba($primary, 0.55);
+  border-radius: 5px;
+  display: flex;
+  gap: clamp(28px, 7vw, 72px);
+  max-width: 780px;
+  padding: clamp(32px, 7vw, 72px);
+  width: min(100%, 780px);
+}
+
+.not-found__route {
+  color: $primary;
+  flex: 0 0 auto;
+  font-size: clamp(4.5rem, 15vw, 9rem);
+  font-weight: 900;
+  letter-spacing: -0.1em;
+  line-height: 0.8;
+  opacity: 0.9;
+  text-shadow: 5px 5px 0 rgba($primary, 0.12);
+}
+
+.not-found__content {
+  max-width: 430px;
+}
+
+.not-found__eyebrow {
+  color: $primary;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+
+h1 {
+  color: $light;
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.not-found__message {
+  color: $blueGray;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 18px 0 28px;
+}
+
+.not-found__link {
+  align-items: center;
+  background-color: $primary;
+  border: 2px solid $primary;
+  border-radius: 6px;
+  color: $black;
+  display: inline-flex;
+  font-weight: 700;
+  gap: 12px;
+  padding: 11px 18px;
+  text-decoration: none;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease,
+    transform 150ms ease;
+}
+
+.not-found__link:hover {
+  background-color: transparent;
+  color: $light;
+  transform: translateY(-2px);
+}
+
+.not-found__link:focus-visible {
+  outline: 3px solid $light;
+  outline-offset: 3px;
+}
+
+.not-found__link span {
+  font-size: 1.3rem;
+  line-height: 0.8;
+}
+
+@media (max-width: 600px) {
+  .not-found__card {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .not-found__route {
+    font-size: clamp(4rem, 24vw, 7rem);
+  }
+}

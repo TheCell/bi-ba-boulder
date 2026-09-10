@@ -1,0 +1,69 @@
+using System.Linq;
+using System.Threading.Tasks;
+using Thecell.Bibaboulder.Indoor.Handler;
+using Thecell.Bibaboulder.Model;
+using TheCell.Bibaboulder.Sharedtests.Assertions;
+using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
+
+namespace TheCell.Bibaboulder.Unittests.Indoor;
+
+public class GetSpraywallsTest
+{
+    private readonly IBiBaBoulderDbContext _dbContext;
+
+    public GetSpraywallsTest()
+    {
+        _dbContext = new DbContextMock().Build();
+    }
+
+    [Fact]
+    public async Task GetSpraywalls_EmptyResult_Ok()
+    {
+        var handler = new GetSpraywallsQueryHandler(_dbContext);
+        var result = await handler.HandleAsync(new GetSpraywallsQuery());
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetSpraywalls_Ok()
+    {
+        var spraywall1 = new SpraywallBuilder()
+            .SetName("Wall A")
+            .SetPreviewImageUri("https://example.com/wall-a.jpg")
+            .Build();
+        var spraywall2 = new SpraywallBuilder()
+            .SetName("Wall B")
+            .SetPreviewImageUri("https://example.com/wall-b.jpg")
+            .Build();
+        await _dbContext.InsertEntitiesAndSaveChangesAsync([spraywall1, spraywall2]);
+
+        var handler = new GetSpraywallsQueryHandler(_dbContext);
+        var result = await handler.HandleAsync(new GetSpraywallsQuery());
+
+        Assert.Equal(2, result.Count);
+        SpraywallAssertion.Assert(spraywall1, result.Single(s => s.Id == spraywall1.Id));
+        SpraywallAssertion.Assert(spraywall2, result.Single(s => s.Id == spraywall2.Id));
+    }
+
+    [Fact]
+    public async Task GetSpraywalls_PartOfGym_Ok()
+    {
+        var spraywall = new SpraywallBuilder()
+            .SetName("Wall A")
+            .Build();
+        var boulderGym = new BoulderGymBuilder()
+            .SetName("Test Gym")
+            .SetSpraywalls([spraywall])
+            .Build();
+        spraywall.BoulderGymId = boulderGym.Id;
+        await _dbContext.InsertEntityAndSaveChangesAsync(boulderGym);
+
+        var handler = new GetSpraywallsQueryHandler(_dbContext);
+        var result = await handler.HandleAsync(new GetSpraywallsQuery());
+
+        var spraywallDto = Assert.Single(result);
+        SpraywallAssertion.Assert(spraywall, spraywallDto);
+        Assert.True(spraywallDto.IsPartOfGym);
+    }
+}

@@ -1,5 +1,5 @@
-using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 
 namespace Thecell.Bibaboulder.Model.Mapping;
 
@@ -11,8 +11,10 @@ public static class SpraywallMapping
         {
             Id = spraywall.Id,
             Name = spraywall.Name,
+            IsArchived = spraywall.IsArchived,
             Description = spraywall.Description,
-            PreviewImageUri = spraywall.PreviewImageUri
+            PreviewImageUri = spraywall.PreviewImageUri,
+            IsPartOfGym = spraywall.BoulderGymId.HasValue
         };
     }
 }

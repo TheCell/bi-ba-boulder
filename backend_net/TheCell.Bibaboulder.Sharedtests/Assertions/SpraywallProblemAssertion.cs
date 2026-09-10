@@ -1,6 +1,6 @@
-using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Model.Model;
-using Thecell.Bibaboulder.Spraywall.Handler;
+using Thecell.Bibaboulder.Indoor.Handler;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 using TheCell.Bibaboulder.Sharedtests.Extensions;
 
 namespace TheCell.Bibaboulder.Sharedtests.Assertions;

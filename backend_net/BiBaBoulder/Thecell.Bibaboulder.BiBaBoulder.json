@@ -167,6 +167,346 @@
         }
       }
     },
+    "/api/BoulderGym": {
+      "get": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "getBoulderGyms",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BoulderGymDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BoulderGymDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BoulderGymDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "createBoulderGym",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoulderGymCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoulderGymCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBoulderGymCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BoulderGym/{id}": {
+      "get": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "getBoulderGym",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "updateBoulderGym",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBoulderGymCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBoulderGymCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBoulderGymCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "deleteBoulderGym",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBoulderGymCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBoulderGymCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBoulderGymCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/BoulderGym/{id}/spraywalls": {
+      "post": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "addSpraywallToBoulderGym",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddSpraywallToBoulderGymCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddSpraywallToBoulderGymCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddSpraywallToBoulderGymCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BoulderGym/{id}/spraywalls/{spraywallId}": {
+      "delete": {
+        "tags": [
+          "BoulderGym"
+        ],
+        "operationId": "removeSpraywallFromBoulderGym",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "spraywallId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BoulderGymDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/BoulderLogs": {
       "get": {
         "tags": [
@@ -757,6 +1097,283 @@
         }
       }
     },
+    "/api/Medias/{alias}/{type}": {
+      "get": {
+        "tags": [
+          "Medias"
+        ],
+        "operationId": "getUriAlias",
+        "parameters": [
+          {
+            "name": "alias",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UriType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Medias/uri-aliases": {
+      "get": {
+        "tags": [
+          "Medias"
+        ],
+        "operationId": "getUriAliases",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Medias"
+        ],
+        "operationId": "createUriAlias",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUriAliasCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUriAliasCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUriAliasCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Medias/uri-aliases/{id}": {
+      "get": {
+        "tags": [
+          "Medias"
+        ],
+        "operationId": "getUriAliasById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Medias"
+        ],
+        "operationId": "updateUriAlias",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUriAliasCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUriAliasCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUriAliasCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UriAliasAdministrationDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Medias"
+        ],
+        "operationId": "deleteUriAlias",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUriAliasCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUriAliasCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUriAliasCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/OutdoorAreas": {
       "get": {
         "tags": [
@@ -789,6 +1406,54 @@
                   "items": {
                     "$ref": "#/components/schemas/OutdoorAreaDto"
                   }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "OutdoorAreas"
+        ],
+        "operationId": "createOutdoorArea",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOutdoorAreaCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOutdoorAreaCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOutdoorAreaCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
                 }
               }
             }
@@ -833,6 +1498,107 @@
                 }
               }
             }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "OutdoorAreas"
+        ],
+        "operationId": "updateOutdoorArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOutdoorAreaCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOutdoorAreaCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOutdoorAreaCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutdoorAreaDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "OutdoorAreas"
+        ],
+        "operationId": "deleteOutdoorArea",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteOutdoorAreaCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteOutdoorAreaCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteOutdoorAreaCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -961,6 +1727,107 @@
                 }
               }
             }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Sectors"
+        ],
+        "operationId": "updateSector",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSectorCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSectorCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSectorCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectorDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectorDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectorDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Sectors"
+        ],
+        "operationId": "deleteSector",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteSectorCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteSectorCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteSectorCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -1352,6 +2219,19 @@
         }
       }
     },
+    "/api/Users/keepalive": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "operationId": "keepAlive",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/UserSectorAccesses": {
       "get": {
         "tags": [
@@ -1614,6 +2494,19 @@
       "AccessSourceType": {
         "type": "integer"
       },
+      "AddSpraywallToBoulderGymCommand": {
+        "type": "object",
+        "properties": {
+          "boulderGymId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "spraywallId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "BlocDto": {
         "required": [
           "id",
@@ -1672,6 +2565,55 @@
           }
         }
       },
+      "BoulderGymDto": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicResourceDto"
+            }
+          },
+          "spraywalls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpraywallDto"
+            }
+          }
+        }
+      },
       "BoulderLogDto": {
         "required": [
           "id",
@@ -1726,6 +2668,41 @@
               "string"
             ],
             "format": "uuid"
+          }
+        }
+      },
+      "CreateBoulderGymCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "imageUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1817,12 +2794,19 @@
           }
         }
       },
-      "CreateSectorCommand": {
+      "CreateOutdoorAreaCommand": {
         "required": [
           "name"
         ],
         "type": "object",
         "properties": {
+          "sectorIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
           "name": {
             "type": "string"
           },
@@ -1838,10 +2822,52 @@
               "string"
             ]
           },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "imageUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CreateSectorCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
           "isPublic": {
             "type": "boolean"
           },
           "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "outdoorAreaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
             "type": [
               "null",
               "string"
@@ -1852,6 +2878,12 @@
               "null",
               "string"
             ]
+          },
+          "imageUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -1898,6 +2930,27 @@
           }
         }
       },
+      "CreateUriAliasCommand": {
+        "required": [
+          "alias",
+          "typeId",
+          "targetId"
+        ],
+        "type": "object",
+        "properties": {
+          "alias": {
+            "type": "string"
+          },
+          "typeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "CreateUserSectorAccessCommand": {
         "required": [
           "userId",
@@ -1926,6 +2979,15 @@
           }
         }
       },
+      "DeleteBoulderGymCommand": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "DeleteBoulderLogCommand": {
         "required": [
           "id",
@@ -1937,6 +2999,33 @@
             "type": "string",
             "format": "uuid"
           },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "DeleteOutdoorAreaCommand": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "DeleteSectorCommand": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "DeleteUriAliasCommand": {
+        "type": "object",
+        "properties": {
           "version": {
             "type": "integer",
             "format": "int64"
@@ -2069,6 +3158,10 @@
           "id": {
             "type": "string",
             "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
           },
           "name": {
             "type": "string"
@@ -2225,6 +3318,10 @@
             "type": "string",
             "format": "uuid"
           },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
           "name": {
             "type": "string"
           },
@@ -2291,6 +3388,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "isArchived": {
+            "type": "boolean"
+          },
           "name": {
             "type": "string"
           },
@@ -2305,6 +3405,9 @@
               "null",
               "string"
             ]
+          },
+          "isPartOfGym": {
+            "type": "boolean"
           }
         }
       },
@@ -2434,6 +3537,45 @@
           }
         }
       },
+      "UpdateBoulderGymCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "imageUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "UpdateBoulderLogCommand": {
         "required": [
           "id",
@@ -2520,6 +3662,107 @@
           }
         }
       },
+      "UpdateOutdoorAreaCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "sectorIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "imageUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "UpdateSectorCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "isPublic": {
+            "type": "boolean"
+          },
+          "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "outdoorAreaIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "importantInfo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "imageUris": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "UpdateSpraywallProblemCommand": {
         "required": [
           "name",
@@ -2567,6 +3810,31 @@
           }
         }
       },
+      "UpdateUriAliasCommand": {
+        "required": [
+          "alias",
+          "typeId",
+          "targetId"
+        ],
+        "type": "object",
+        "properties": {
+          "alias": {
+            "type": "string"
+          },
+          "typeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "UpdateUserSectorAccessCommand": {
         "required": [
           "userId",
@@ -2599,6 +3867,56 @@
             "format": "date-time"
           }
         }
+      },
+      "UriAliasAdministrationDto": {
+        "required": [
+          "id",
+          "alias",
+          "typeId",
+          "targetId",
+          "targetName",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "typeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetName": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "UriAliasDto": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "UriType": {
+        "type": "integer"
       },
       "UserDto": {
         "required": [
@@ -2669,6 +3987,9 @@
       "name": "Blocs"
     },
     {
+      "name": "BoulderGym"
+    },
+    {
       "name": "BoulderLogs"
     },
     {
@@ -2679,6 +4000,9 @@
     },
     {
       "name": "Lines"
+    },
+    {
+      "name": "Medias"
     },
     {
       "name": "OutdoorAreas"

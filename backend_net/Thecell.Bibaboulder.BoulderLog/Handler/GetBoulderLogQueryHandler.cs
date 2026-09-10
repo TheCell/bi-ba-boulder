@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Mapping;
 
 namespace Thecell.Bibaboulder.BoulderLog.Handler;

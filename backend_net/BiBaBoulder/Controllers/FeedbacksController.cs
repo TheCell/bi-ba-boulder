@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Spraywall.Handler;
+using Thecell.Bibaboulder.Indoor.Handler;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 

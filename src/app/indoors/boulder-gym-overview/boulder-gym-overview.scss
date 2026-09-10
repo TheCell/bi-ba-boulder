@@ -1,0 +1,73 @@
+@use '../../../styles/variables' as *;
+
+:host {
+  display: block;
+}
+
+h1 {
+  margin: 0 0 24px;
+  color: $primary;
+}
+
+h2 {
+  margin: 0 0 16px;
+}
+
+.spraywalls {
+  margin-bottom: 40px;
+}
+
+.spraywall-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 400px));
+  gap: 16px;
+}
+
+.spraywall-tile {
+  display: flex;
+  min-height: 200px;
+  overflow: hidden;
+  border: 1px solid $primary;
+  border-radius: 5px;
+  background-position: center;
+  background-size: cover;
+  color: $fontColor;
+  text-decoration: none;
+}
+
+.spraywall-tile.is-generic-background {
+  background-color: $darkDark;
+  background-position: unset;
+  background-repeat: repeat;
+  background-size: 56px 56px;
+  background-blend-mode: multiply;
+}
+
+.tile-content {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 28px;
+  align-self: flex-start;
+  background-image: linear-gradient(rgba($dark, 1) 45%, rgba($dark, 0) 100%);
+}
+
+.spraywall-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-shadow: 1px 1px 2px rgba($black, 0.5);
+}
+
+@media (max-width: 600px) {
+  .spraywalls {
+    margin-bottom: 32px;
+  }
+
+  .spraywall-list {
+    grid-template-columns: 1fr;
+  }
+
+  .spraywall-tile {
+    width: 100%;
+  }
+}
+

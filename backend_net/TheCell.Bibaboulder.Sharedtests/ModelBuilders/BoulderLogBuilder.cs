@@ -1,6 +1,7 @@
 using System;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 
 namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 

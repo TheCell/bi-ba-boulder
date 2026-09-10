@@ -1,0 +1,61 @@
+<header class="page-header">
+  <div>
+    <h1>URI aliases</h1>
+    <p>Manage public share links for boulder gyms and outdoor areas.</p>
+  </div>
+  <button type="button" class="button primary" (click)="openCreateDialog()">Create alias</button>
+</header>
+
+<section class="filters" aria-label="URI alias filters">
+  <div class="form-group form-input">
+    <input id="search" type="search" autocomplete="off" placeholder="" (input)="onSearch($event)" />
+    <label for="search" class="group-label">Alias or target</label>
+  </div>
+  <!-- <label>
+    <span>Search</span>
+    <input type="search" placeholder="Alias or target" (input)="onSearch($event)" />
+  </label> -->
+  <div class="form-group form-input">
+    <select id="type" (change)="onTypeFilter($event)">
+      <option value="all">All types</option>
+      <option value="0">Outdoor areas</option>
+      <option value="1">Boulder gyms</option>
+    </select>
+    <label for="type" class="group-label">Type</label>
+  </div>
+</section>
+
+@if (isLoading()) {
+<p aria-live="polite">Loading URI aliases…</p>
+} @else if (filteredUriAliases().length === 0) {
+<p class="empty-state">No URI aliases match the current filters.</p>
+} @else {
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Alias</th>
+        <th scope="col">Type</th>
+        <th scope="col">Target</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (uriAlias of filteredUriAliases(); track uriAlias.id) {
+      <tr>
+        <td><code>{{ uriAlias.alias }}</code></td>
+        <td>{{ getTypeName(uriAlias.typeId) }}</td>
+        <td>{{ uriAlias.targetName }}</td>
+        <td class="actions">
+          <button type="button" class="button" (click)="openEditDialog(uriAlias)">Edit</button>
+          <button type="button" class="button danger" (click)="openDeleteDialog(uriAlias)">Delete</button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}
+
+<app-modal #editorModal (closed)="onEditorClosed($event)"></app-modal>
+<app-modal #deleteModal [isSmall]="true" (closed)="onDeleteClosed($event)"></app-modal>

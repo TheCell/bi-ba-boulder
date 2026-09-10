@@ -1,9 +1,10 @@
-import { Injectable, inject } from '@angular/core';
-import { Subject } from 'rxjs';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { interval, Subject, switchMap, takeUntil } from 'rxjs';
 import { BffAuthService } from './bff-auth.service';
 import { HttpContext } from '@angular/common/http';
 import { SKIP_ERROR_HANDLER } from '../core/interceptors/error-handler-interceptor';
-import { DevAuthService } from '@api-net/index';
+import { DevAuthService, UsersService } from '@api-net/index';
 import { AuthSessionStateService } from './auth-session-state.service';
 
 @Injectable({
@@ -13,9 +14,26 @@ export class LoginTrackerService {
   private bffAuthService = inject(BffAuthService);
   private devAuthService = inject(DevAuthService);
   private authSessionStateService = inject(AuthSessionStateService);
+  private usersService = inject(UsersService);
+  private destroyRef = inject(DestroyRef);
 
   /** Emits whenever the authentication state changes. */
   public authStateChanged$: Subject<boolean> = this.authSessionStateService.authStateChanged$;
+  private keepAliveBeat$ = interval(1000 * 60 * 5);
+  private keepAliveDestroy$ = new Subject<void>();
+
+  constructor() {
+    if (this.authSessionStateService.isLoggedIn()) {
+      this.startKeepAlive();
+    }
+    this.authStateChanged$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((authenticated) => {
+      if (authenticated) {
+        this.startKeepAlive();
+      } else {
+        this.stopKeepAlive();
+      }
+    });
+  }
 
   /**
    * Fetches the current session state from the BFF.
@@ -42,6 +60,25 @@ export class LoginTrackerService {
 
   public getUserName(): string | undefined {
     return this.getClaimValue('name') ?? this.getClaimValue('preferred_username') ?? this.getUserMail();
+  }
+
+  public startKeepAlive(): void {
+    this.stopKeepAlive();
+    this.keepAliveBeat$
+      .pipe(
+        takeUntil(this.keepAliveDestroy$),
+        switchMap(() => this.usersService.keepAlive())
+      )
+      .subscribe({
+        next: () => {
+          // console.log('Keep-alive successful');
+        }
+      });
+  }
+
+  public stopKeepAlive(): void {
+    this.keepAliveDestroy$.next();
+    // console.log('stopped Keeping alive');
   }
 
   /**

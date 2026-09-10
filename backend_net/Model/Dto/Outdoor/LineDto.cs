@@ -1,0 +1,17 @@
+using System;
+using Thecell.Bibaboulder.Model.Enums;
+using Thecell.Bibaboulder.Model.Model.Outdoor;
+
+namespace Thecell.Bibaboulder.Model.Dto.Outdoor;
+
+public class LineDto
+{
+    public required Guid Id { get; set; }
+    public required string Identifier { get; set; }
+    public FontGrade? FontGrade { get; set; }
+    public string? Description { get; set; }
+    public string? Name { get; set; }
+    public LineData Data { get; set; } = new LineData();
+    public required long Version { get; set; }
+    public required LineMetadataDto Metadata { get; set; }
+}

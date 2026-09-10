@@ -15,6 +15,15 @@ import { lineResolver } from './core/resolvers/line.resolver';
 import { ChangelogComponent } from './changelog/changelog.component';
 import { OutdoorAreaOverview } from './outdoors/outdoor-area-overview/outdoor-area-overview';
 import { outdoorAreaResolver } from './core/resolvers/outdoor-area.resolver';
+import { BoulderGymOverview } from './indoors/boulder-gym-overview/boulder-gym-overview';
+import { boulderGymResolver } from './core/resolvers/boulder-gym.resolver';
+import { shareGymGuard, shareOutdoorGuard } from './core/guards/share-guard';
+import { NotFound } from './navigation/not-found/not-found';
+import { contentAdminGuard } from './core/guards/content-admin.guard';
+import { UriAliases } from './admin/uri-aliases/uri-aliases';
+import { BoulderGymsAdmin } from './admin/boulder-gyms/boulder-gyms-admin';
+import { OutdoorAreasAdmin } from './admin/outdoor-areas/outdoor-areas-admin';
+import { SectorsAdmin } from './admin/sectors/sectors-admin';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -22,6 +31,8 @@ export const routes: Routes = [
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: 'terms', component: TermsComponent },
   { path: 'changelog', component: ChangelogComponent },
+  { path: 'share-gym/:alias', canActivate: [shareGymGuard], component: BoulderGymOverview },
+  { path: 'share-outdoors/:alias', canActivate: [shareOutdoorGuard], component: OutdoorAreaOverview },
   {
     path: 'sectors',
     pathMatch: 'full',
@@ -35,6 +46,13 @@ export const routes: Routes = [
     component: OutdoorAreaOverview,
     resolve: {
       outdoorArea: outdoorAreaResolver
+    }
+  },
+  {
+    path: 'boulder-gym/:boulderGymId',
+    component: BoulderGymOverview,
+    resolve: {
+      boulderGym: boulderGymResolver
     }
   },
   {
@@ -100,5 +118,33 @@ export const routes: Routes = [
   {
     path: 'spraywall-editor/:spraywallId',
     component: SpraywallEditor
+  },
+  {
+    path: 'admin/uri-aliases',
+    canActivate: [contentAdminGuard],
+    component: UriAliases
+  },
+  {
+    path: 'admin/boulder-gyms',
+    canActivate: [contentAdminGuard],
+    component: BoulderGymsAdmin
+  },
+  {
+    path: 'admin/outdoor-areas',
+    canActivate: [contentAdminGuard],
+    component: OutdoorAreasAdmin
+  },
+  {
+    path: 'admin/sectors',
+    canActivate: [contentAdminGuard],
+    component: SectorsAdmin
+  },
+  {
+    path: 'not-found',
+    component: NotFound
+  },
+  {
+    path: '**',
+    component: NotFound
   }
 ];

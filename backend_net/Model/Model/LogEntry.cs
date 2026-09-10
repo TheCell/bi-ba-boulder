@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Thecell.Bibaboulder.Model.Basics;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 
 namespace Thecell.Bibaboulder.Model.Model;
 

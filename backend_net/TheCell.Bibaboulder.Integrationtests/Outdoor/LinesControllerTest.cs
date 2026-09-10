@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;

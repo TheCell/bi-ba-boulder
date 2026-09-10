@@ -1,4 +1,4 @@
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Media;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 
 namespace TheCell.Bibaboulder.Sharedtests.Assertions;

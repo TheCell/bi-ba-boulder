@@ -286,6 +286,16 @@
   mask-image: url("data:image/svg+xml;utf8,#{$arrow-right-svg}");
 }
 
+.long-arrow-right-empty {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$long-arrow-right-empty-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$long-arrow-right-empty-svg}");
+}
+
+.long-arrow-right-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$long-arrow-right-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$long-arrow-right-filled-svg}");
+}
+
 .focus {
   background-color: $primary;
 }

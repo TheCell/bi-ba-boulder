@@ -1,0 +1,10 @@
+<h2>Delete URI alias</h2>
+
+<p>Delete “{{ uriAlias.alias }}” for {{ uriAlias.targetName }}?</p>
+
+<div class="form-group form-action">
+  <button type="button" class="button" (click)="closeModal.emit({ closeType: 1 })">Cancel</button>
+  <button type="button" class="button danger" (click)="closeModal.emit({ closeType: 0, data: uriAlias })">
+    Delete
+  </button>
+</div>

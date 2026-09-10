@@ -11,8 +11,10 @@
 
 export interface SpraywallDto { 
     id: string;
+    isArchived?: boolean;
     name: string;
     description?: string | null;
     previewImageUri?: string | null;
+    isPartOfGym?: boolean;
 }
 

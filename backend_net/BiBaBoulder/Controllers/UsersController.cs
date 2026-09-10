@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Dto;
-using Thecell.Bibaboulder.Spraywall.Handler;
+using Thecell.Bibaboulder.Indoor.Handler;
 
 namespace Thecell.Bibaboulder.BiBaBoulder.Controllers;
 
@@ -39,5 +39,13 @@ public class UsersController : ControllerBase
     {
         return await _getUserByIdQueryHandler.HandleAsync(
             new GetUserByIdQuery { Id = id });
+    }
+
+    [HttpGet("keepalive")]
+    [Authorize(Roles = AuthorizationRoles.User)]
+    public async Task<IActionResult> KeepAlive()
+    {
+        await Task.CompletedTask;
+        return Ok(new { Message = "Still alive" });
     }
 }

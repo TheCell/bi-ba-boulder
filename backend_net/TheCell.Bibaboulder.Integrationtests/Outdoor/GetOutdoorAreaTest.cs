@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 

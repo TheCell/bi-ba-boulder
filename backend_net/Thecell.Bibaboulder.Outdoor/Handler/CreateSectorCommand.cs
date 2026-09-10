@@ -1,18 +1,15 @@
+using System;
+using System.Collections.Generic;
 using Thecell.Bibaboulder.Common.Commands;
 
 namespace Thecell.Bibaboulder.Outdoor.Handler;
 
-public class CreateSectorCommand : CreateCommand
+public class CreateSectorCommand : CreateContentCommand
 {
-    public required string Name { get; set; }
-
-    public string? Description { get; set; }
-
-    public string? ImportantInfo { get; set; }
-
     public bool IsPublic { get; set; }
 
     public string? Coordinates { get; set; }
 
-    public string? PreviewImageUri { get; set; }
+    //todo Remove
+    public ICollection<Guid> OutdoorAreaIds { get; set; } = [];
 }

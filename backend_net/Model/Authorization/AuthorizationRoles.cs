@@ -4,5 +4,6 @@ public static class AuthorizationRoles
 {
     public const string User = "user";
     public const string Editor = "editor";
+    public const string ContentAdmin = "contentadmin";
     public const string Admin = "admin";
 }

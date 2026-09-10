@@ -1,0 +1,24 @@
+@for (image of images(); track $index) {
+<div class="form-group form-input image-url-row">
+  <input
+    type="input"
+    [id]="'image-url-' + $index"
+    [value]="image"
+    [disabled]="isDisabled()"
+    autocomplete="off"
+    placeholder="subfolder/image.jpg"
+    (input)="onImageChanged($index, $event)" />
+  <label [for]="'image-url-' + $index" class="group-label">Image URL {{ $index + 1 }}</label>
+  <button
+    type="button"
+    class="button danger"
+    [class.disabled]="isDisabled()"
+    [disabled]="isDisabled()"
+    (click)="removeImage($index)">
+    Remove
+  </button>
+</div>
+}
+<button type="button" class="button" [class.disabled]="isDisabled()" [disabled]="isDisabled()" (click)="addImage()">
+  Add image URL
+</button>

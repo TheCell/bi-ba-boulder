@@ -1,7 +1,10 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Model.Services;
 
@@ -22,9 +25,10 @@ public class CreateSectorCommandHandler : ICommandHandler<CreateSectorCommand>
 
     public async Task HandleAsync(CreateSectorCommand command)
     {
+        // todo add permission check
         var currentUser = await _currentUserService.GetCurrentUserOrThrowAsync();
 
-        var testing = new Sector
+        var sector = new Sector
         {
             Id = Guid.CreateVersion7(),
             Name = command.Name,
@@ -36,7 +40,15 @@ public class CreateSectorCommandHandler : ICommandHandler<CreateSectorCommand>
             CreatedUserId = currentUser.Id
         };
 
-        await _dbContext.InsertEntityAndSaveChangesAsync(testing);
-        command.Id = testing.Id;
+        sector.UpdateContent(command.Name, command.Description, command.ImportantInfo, command.PreviewImageUri, command.ImageUris);
+        var outdoorAreaIds = command.OutdoorAreaIds.Distinct().ToList();
+        var outdoorAreas = await _dbContext.OutdoorAreas.Where(area => outdoorAreaIds.Contains(area.Id)).ToListAsync();
+        if (outdoorAreas.Count != outdoorAreaIds.Count)
+        {
+            throw new ArgumentException("One or more outdoor areas do not exist.");
+        }
+        sector.OutdoorAreas = outdoorAreas;
+        await _dbContext.InsertEntityAndSaveChangesAsync(sector);
+        command.Id = sector.Id;
     }
 }

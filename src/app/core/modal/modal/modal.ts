@@ -33,6 +33,7 @@ export class Modal implements OnInit, OnDestroy {
   private changeDetectorRef = inject(ChangeDetectorRef);
 
   public isSmall = input<boolean>(false);
+  public variableWidth = input<boolean>(false);
   public closed = output<CloseModalEvent>();
 
   public id: string = 'modal'.appendUniqueId();
@@ -41,6 +42,7 @@ export class Modal implements OnInit, OnDestroy {
 
   private element: HTMLElement;
   private componentRef?: ComponentRef<IModal>;
+  private mouseDownOnBackdrop = false;
 
   public constructor() {
     this.element = this.elementRef.nativeElement;
@@ -66,6 +68,16 @@ export class Modal implements OnInit, OnDestroy {
 
   public openWithExternalContent(): void {
     this.isOpen.set(true);
+  }
+
+  public onBackdropMouseDown(event: MouseEvent): void {
+    this.mouseDownOnBackdrop = event.target === event.currentTarget;
+  }
+
+  public onBackdropClick(event: MouseEvent): void {
+    if (this.mouseDownOnBackdrop && event.target === event.currentTarget) {
+      this.close({ closeType: 1 });
+    }
   }
 
   public open<T extends IModal>(component: Type<T>): IModal {

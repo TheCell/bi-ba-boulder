@@ -13,6 +13,7 @@ import { SectorDto } from './sectorDto';
 
 export interface OutdoorAreaDto { 
     id?: string;
+    version?: number;
     name: string;
     description?: string | null;
     importantInfo?: string | null;

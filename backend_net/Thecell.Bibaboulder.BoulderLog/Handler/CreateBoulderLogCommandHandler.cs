@@ -33,7 +33,7 @@ public class CreateBoulderLogCommandHandler : ICommandHandler<CreateBoulderLogCo
             throw new InvalidOperationException("Log already exists");
         }
 
-        var boulderLog = new Model.Model.BoulderLog
+        var boulderLog = new Model.Model.Indoor.BoulderLog
         {
             Id = Guid.CreateVersion7(),
             IsSent = command.IsSent,

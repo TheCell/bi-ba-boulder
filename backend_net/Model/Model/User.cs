@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Thecell.Bibaboulder.Model.Basics;
 using Thecell.Bibaboulder.Model.Model.Access;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 
 namespace Thecell.Bibaboulder.Model.Model;
 

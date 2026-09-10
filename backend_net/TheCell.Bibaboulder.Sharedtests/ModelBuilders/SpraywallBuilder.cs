@@ -1,6 +1,6 @@
 using System;
 using Bogus;
-using Thecell.Bibaboulder.Model.Model;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 
 namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -19,15 +19,40 @@ public class SpraywallBuilder : BuilderBase<Spraywall>
         return this;
     }
 
+    public SpraywallBuilder SetIsArchived(bool value)
+    {
+        _instance.IsArchived = value;
+        return this;
+    }
+
     public SpraywallBuilder SetDescription(string? value)
     {
         _instance.Description = value;
         return this;
     }
 
+    public SpraywallBuilder SetCreatedDate(DateTime value)
+    {
+        _instance.CreatedDate = value;
+        return this;
+    }
+
     public SpraywallBuilder SetPreviewImageUri(string? value)
     {
         _instance.PreviewImageUri = value;
+        return this;
+    }
+
+    public SpraywallBuilder SetBoulderGymId(Guid? value)
+    {
+        _instance.BoulderGymId = value;
+        return this;
+    }
+
+    public SpraywallBuilder SetBoulderGym(BoulderGym value)
+    {
+        _instance.BoulderGym = value;
+        _instance.BoulderGymId = value.Id;
         return this;
     }
 }

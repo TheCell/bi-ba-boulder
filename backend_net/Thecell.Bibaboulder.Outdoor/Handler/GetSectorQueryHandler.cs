@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Mapping;
 
@@ -22,6 +22,7 @@ public class GetSectorQueryHandler : IQueryHandler<GetSectorQuery, SectorDto>
     {
         var sector = await _dbContext.Sectors
             .AsNoTracking()
+            .Include(item => item.OutdoorAreas)
             .SingleOrDefaultAsync(s => s.Id == query.Id)
             .ThrowIfNullAsync(query.Id);
 

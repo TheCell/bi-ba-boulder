@@ -3,12 +3,13 @@
   role="dialog"
   class="modal"
   [ngClass]="{ 'isVisible': isOpen() }"
-  (click)="close({ closeType: 1 })"
+  (mousedown)="onBackdropMouseDown($event)"
+  (click)="onBackdropClick($event)"
   (keyup.escape)="close({ closeType: 1 })">
   <div
     role="dialog"
     class="modal-content"
-    [ngClass]="{ 'small-modal': isSmall() }"
+    [ngClass]="{ 'small-modal': isSmall(), 'variable-width': variableWidth() }"
     (click)="$event.stopPropagation()"
     (keyup)="$event.stopPropagation()">
     <div class="modal-taskbar">

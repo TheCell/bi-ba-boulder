@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Model.Authorization;
-using Thecell.Bibaboulder.Model.Dto;
+using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
@@ -51,12 +51,8 @@ public class SectorsControllerTest : BaseTest
     [Fact]
     public async Task CreateSector_Ok()
     {
-        var user = new UserBuilder()
-            .SetUsername(_bogus.Internet.UserName())
-            .SetEmail(_bogus.Internet.Email())
-            .SetRoles(AuthorizationRoles.Admin)
-            .Build();
-        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
 
         var command = new CreateSectorCommand
         {
@@ -66,11 +62,11 @@ public class SectorsControllerTest : BaseTest
             ImportantInfo = "Test Important Info",
             IsPublic = true,
             Coordinates = "46.9914628, 7.5589870",
-            PreviewImageUri = "https://example.com/preview.jpg"
+            PreviewImageUri = "example/preview.jpg"
         };
 
         var beforeSend = DateTime.UtcNow;
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PostAsync(
             $"{_baseUrl}",
             GetJsonHttpBody(command),

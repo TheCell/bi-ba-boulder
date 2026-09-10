@@ -5,5 +5,6 @@ public enum UserRole
     None,
     User,
     Editor,
+    ContentAdmin,
     Admin
 }

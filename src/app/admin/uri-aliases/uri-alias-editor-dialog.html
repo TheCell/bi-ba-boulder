@@ -1,0 +1,38 @@
+<h2>{{ title() }}</h2>
+
+<form (ngSubmit)="onSubmit()" [class.disabled]="uriAliasForm().disabled()">
+  <div class="form-group form-input" [class.disabled]="uriAliasForm.alias().disabled()">
+    <input id="alias" type="text" autocomplete="off" placeholder="" [formField]="uriAliasForm.alias" />
+    <label for="alias" class="group-label">Alias</label>
+  </div>
+  <p class="field-help">letters, numbers, and single hyphens.</p>
+
+  <div class="form-group form-input" [class.disabled]="uriAliasForm.typeId().disabled()">
+    <select id="alias-type" [formField]="uriAliasForm.typeId" (change)="onTypeChanged()">
+      <option value="0">Outdoor area</option>
+      <option value="1">Boulder gym</option>
+    </select>
+    <label for="alias-type" class="group-label">Type</label>
+  </div>
+
+  <div class="form-group form-input">
+    <input id="target-search" type="search" autocomplete="off" placeholder="" (input)="onTargetSearch($event)" />
+    <label for="target-search" class="group-label">Search targets</label>
+  </div>
+
+  <div class="form-group form-input" [class.disabled]="uriAliasForm.targetId().disabled()">
+    <select id="target" [formField]="uriAliasForm.targetId">
+      <option value="">Select a target</option>
+      @for (target of availableTargets(); track target.id) {
+      <option [value]="target.id">{{ target.name }}</option>
+      }
+    </select>
+    <label for="target" class="group-label">Target</label>
+  </div>
+
+  <div class="form-group form-action">
+    <button type="submit" class="button primary" [class.disabled]="isSubmitDisabled()" [disabled]="isSubmitDisabled()">
+      {{ isLoading() ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+</form>

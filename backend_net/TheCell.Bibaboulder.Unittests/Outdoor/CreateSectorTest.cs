@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +63,8 @@ public class CreateSectorTest
             IsPublic = _bogus.Random.Bool(),
             Coordinates = "46.9914628, 7.5589870",
             PreviewImageUri = _bogus.Internet.Url()
+                .Replace("https://", "")
+                .Replace("http://", "")
         };
 
         _currentUserServiceMock.WithUser(user);
@@ -72,5 +76,55 @@ public class CreateSectorTest
             .SingleAsync(cancellationToken: TestContext.Current.CancellationToken);
         SectorAssertion.Assert(command, sector);
         Assert.Equal(1, sector.Version);
+    }
+
+    [Fact]
+    public async Task CreateSector_UnknownOutdoorArea_ArgumentException()
+    {
+        var user = new UserBuilder()
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var command = new CreateSectorCommand
+        {
+            Name = _bogus.Lorem.Slug(),
+            OutdoorAreaIds = [Guid.NewGuid()]
+        };
+
+        _currentUserServiceMock.WithUser(user);
+        var handler = new CreateSectorCommandHandler(_dbContext, _currentUserServiceMock);
+
+        var ex = await Assert.ThrowsAsync<ArgumentException>(async () => await handler.HandleAsync(command));
+        Assert.Equal("One or more outdoor areas do not exist.", ex.Message);
+    }
+
+    [Fact]
+    public async Task CreateSector_WithOutdoorArea_Ok()
+    {
+        var user = new UserBuilder()
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var outdoorArea = new OutdoorAreaBuilder().SetName("Lindental").Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
+
+        var command = new CreateSectorCommand
+        {
+            Name = _bogus.Lorem.Slug(),
+            OutdoorAreaIds = [outdoorArea.Id]
+        };
+
+        _currentUserServiceMock.WithUser(user);
+        var handler = new CreateSectorCommandHandler(_dbContext, _currentUserServiceMock);
+        await handler.HandleAsync(command);
+
+        var sector = await _dbContext.Sectors
+            .AsNoTracking()
+            .Include(item => item.OutdoorAreas)
+            .SingleAsync(item => item.Id == command.Id, TestContext.Current.CancellationToken);
+        Assert.Single(sector.OutdoorAreas);
+        Assert.Equal(outdoorArea.Id, sector.OutdoorAreas.Single().Id);
     }
 }

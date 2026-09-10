@@ -1,0 +1,50 @@
+<h2>Manage {{ boulderGym()?.name }} Spraywalls</h2>
+
+<h3>Assigned spraywalls</h3>
+@if (assignedSpraywalls().length === 0) {
+<p class="empty-state">No spraywalls assigned to this boulder gym.</p>
+} @else {
+<ul class="spraywall-list">
+  @for (spraywall of assignedSpraywalls(); track spraywall.id) {
+  <li class="spraywall-item">
+    <span class="spraywall-name">{{ spraywall.name }}</span>
+    <button type="button" class="button danger small" [disabled]="isLoading()" (click)="onRemoveSpraywall(spraywall)">
+      Remove
+    </button>
+  </li>
+  }
+</ul>
+}
+
+<h3>Add spraywall</h3>
+@if (availableSpraywalls().length === 0) {
+<p class="empty-state">No unassigned spraywalls available.</p>
+} @else {
+<div class="add-spraywall-form">
+  <div class="form-group form-input">
+    <select
+      id="spraywall-select"
+      [ngModel]="selectedSpraywallIdToAdd()"
+      (ngModelChange)="selectedSpraywallIdToAdd.set($event)"
+      [disabled]="isLoading()">
+      <option value="" disabled>Select a spraywall...</option>
+      @for (spraywall of availableSpraywalls(); track spraywall.id) {
+      <option [value]="spraywall.id">{{ spraywall.name }}</option>
+      }
+    </select>
+    <label for="spraywall-select" class="group-label">Available spraywall</label>
+  </div>
+
+  <button
+    type="button"
+    class="button primary"
+    [disabled]="isLoading() || !selectedSpraywallIdToAdd()"
+    (click)="onAddSpraywall()">
+    Add to gym
+  </button>
+</div>
+}
+
+<div class="form-group form-action">
+  <button type="button" class="button" (click)="onSaveAndClose()">Save and Close</button>
+</div>

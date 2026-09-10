@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Thecell.Bibaboulder.Common.Commands;
 using Thecell.Bibaboulder.Model.Enums;
 
-namespace Thecell.Bibaboulder.Spraywall.Handler;
+namespace Thecell.Bibaboulder.Indoor.Handler;
 
 public class CreateSpraywallProblemCommand : CreateCommand
 {

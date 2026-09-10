@@ -18,6 +18,28 @@
         </a>
       </li>
     }
+    @if (authSessionStateService.canManageContent()) {
+      <li>
+        <a [routerLink]="['admin', 'boulder-gyms']" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Boulder gyms</a
+        >
+      </li>
+      <li>
+        <a [routerLink]="['admin', 'outdoor-areas']" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Outdoor areas</a
+        >
+      </li>
+      <li>
+        <a [routerLink]="['admin', 'sectors']" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Sectors</a
+        >
+      </li>
+      <li>
+        <a [routerLink]="['admin', 'uri-aliases']" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >URI aliases</a
+        >
+      </li>
+    }
     <li class="nav-right">
       <a
         #rlaChangelog="routerLinkActive"

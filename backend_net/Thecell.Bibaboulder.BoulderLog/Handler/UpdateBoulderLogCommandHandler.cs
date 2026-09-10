@@ -28,7 +28,7 @@ public class UpdateBoulderLogCommandHandler : ICommandHandler<UpdateBoulderLogCo
         var boulderLog = await _dbContext.BoulderLogs
             .SingleOrDefaultAsync(b => b.Id == command.Id);
 
-        NotFoundException.ThrowIfNull(boulderLog, nameof(Model.Model.BoulderLog), command.Id);
+        NotFoundException.ThrowIfNull(boulderLog, nameof(Model.Model.Indoor.BoulderLog), command.Id);
 
         if (boulderLog.UserId != currentUser.Id)
         {

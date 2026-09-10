@@ -67,6 +67,14 @@ input[type="checkbox"]:focus {
   transition: background-color 0.25s cubic-bezier(0, 0, 0.1, 1.0);
 }
 
+input::placeholder {
+  visibility: hidden;
+}
+
+input:focus::placeholder {
+  visibility: visible;
+}
+
 .form-group {
   padding-top: 20px;
   position: relative;
