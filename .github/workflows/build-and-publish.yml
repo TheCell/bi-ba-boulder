@@ -241,7 +241,7 @@ jobs:
     - run: ls -R
 
     - name: Deploy backend to FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      uses: SamKirkland/FTP-Deploy-Action@v4.4.0
       with:
         server: api.bibaboulder.org
         username: ${{ secrets.FTP_USER_BACKEND }}
@@ -286,7 +286,7 @@ jobs:
     - run: ls -R
 
     - name: Sync files to bibaboulder.org
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      uses: SamKirkland/FTP-Deploy-Action@v4.4.0
       with:
         server: bibaboulder.org
         username: ${{ secrets.FTP_USER_FRONTEND }}
