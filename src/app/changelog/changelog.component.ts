@@ -31,6 +31,29 @@ export class ChangelogComponent {
 
   public readonly releaseNotes: ReleaseNote[] = [
     {
+      prNumber: 112,
+      releasedOn: '2026-09-10',
+      headline: 'Media content management and gym/outdoor area admin features',
+      highlights: [
+        {
+          text: 'Added media content management with image modal and endpoints for uploading and managing media across gyms and outdoor areas.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Implemented URI alias management system for custom friendly URLs to gyms and outdoor areas.',
+          isOutdoorRelated: false
+        },
+        {
+          text: 'Enhanced UI with improved modal handling, unified scrollbar design, and prevented modal interactions on mobile devices.',
+          isOutdoorRelated: false
+        },
+        {
+          text: 'Reorganized project structure and added session keep-alive functionality for better stability.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
       prNumber: 111,
       releasedOn: '2026-08-14',
       headline: 'Outdoor area release, access control, and scene markings',
