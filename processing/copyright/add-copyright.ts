@@ -12,7 +12,7 @@ main().catch((error) => {
 });
 
 async function main() {
-  const folder = process.argv[2];
+  const folder = normalizeFolderArg(process.argv.slice(2));
 
   if (!folder) {
     console.error('Usage: npx tsx add-copyright.ts <folder>');
@@ -38,6 +38,14 @@ async function main() {
   }
 
   await saveIndex(indexPath, index);
+}
+
+// Shells can split an unquoted path on spaces and leave a stray quote when a
+// quoted path ends with a backslash (e.g. "C:\a b\LOD\").
+function normalizeFolderArg(args: string[]): string {
+  let folder = args.join(' ').trim();
+  folder = folder.replace(/^["']+/, '').replace(/["']+$/, '').trim();
+  return folder ? path.resolve(folder) : '';
 }
 
 async function processFile(filePath: string): Promise<CopyrightEntry> {
