@@ -9,10 +9,8 @@
  */
 
 
-export interface BlocDto { 
-    id: string;
-    version?: number;
-    sectorId?: string | null;
+export interface CreateBlocCommand { 
+    sectorId: string;
     name: string;
     description?: string | null;
     coordinates?: string | null;
@@ -20,6 +18,5 @@ export interface BlocDto {
     blocMedRes?: string | null;
     blocHighRes?: string | null;
     previewImageUri?: string | null;
-    additionalParts?: Array<BlocDto>;
 }
 

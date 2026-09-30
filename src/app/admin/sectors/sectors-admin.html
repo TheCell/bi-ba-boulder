@@ -37,7 +37,7 @@
         <td>{{ sector.outdoorAreas?.length ?? 0 }}</td>
         <td>{{ sector.images?.length ?? 0 }}</td>
         <td class="actions">
-          <!-- TODO: add modal to add blocs to the sector -->
+          <a class="button" [routerLink]="['/admin', 'blocs']" [queryParams]="{ sectorId: sector.id }">Blocs</a>
           <button type="button" class="button" (click)="openEditDialog(sector)">Edit</button>
           <button type="button" class="button danger" (click)="openDeleteDialog(sector)">Delete</button>
         </td>

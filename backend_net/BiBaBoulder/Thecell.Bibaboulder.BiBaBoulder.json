@@ -165,6 +165,157 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": [
+          "Blocs"
+        ],
+        "operationId": "updateBloc",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBlocCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBlocCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBlocCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Blocs"
+        ],
+        "operationId": "deleteBloc",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBlocCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBlocCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteBlocCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Blocs": {
+      "post": {
+        "tags": [
+          "Blocs"
+        ],
+        "operationId": "createBloc",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlocCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlocCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBlocCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlocDto"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/BoulderGym": {
@@ -2518,6 +2669,17 @@
             "type": "string",
             "format": "uuid"
           },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sectorId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
           "name": {
             "type": "string"
           },
@@ -2668,6 +2830,58 @@
               "string"
             ],
             "format": "uuid"
+          }
+        }
+      },
+      "CreateBlocCommand": {
+        "required": [
+          "sectorId",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "sectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocLowRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocMedRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocHighRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -2976,6 +3190,15 @@
               "string"
             ],
             "format": "date-time"
+          }
+        }
+      },
+      "DeleteBlocCommand": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -3532,6 +3755,62 @@
             "format": "uuid"
           },
           "spraywallCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "UpdateBlocCommand": {
+        "required": [
+          "sectorId",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "sectorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "coordinates": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocLowRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocMedRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blocHighRes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "previewImageUri": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
             "type": "integer",
             "format": "int64"
           }

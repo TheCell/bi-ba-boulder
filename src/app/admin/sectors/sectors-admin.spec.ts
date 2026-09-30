@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { SectorDto, SectorsService } from '@api-net/index';
 import { of } from 'rxjs';
 import { ToastService } from '../../core/toast-container/toast.service';
@@ -23,6 +24,7 @@ describe('SectorsAdmin', (): void => {
     await TestBed.configureTestingModule({
       imports: [SectorsAdmin],
       providers: [
+        provideRouter([]),
         { provide: SectorsService, useValue: sectorsService },
         { provide: ToastService, useValue: toastService }
       ]

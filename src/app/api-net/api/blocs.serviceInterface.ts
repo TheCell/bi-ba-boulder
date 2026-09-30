@@ -12,6 +12,9 @@ import { HttpHeaders }                                       from '@angular/comm
 import { Observable }                                        from 'rxjs';
 
 import { BlocDto } from '../model/models';
+import { CreateBlocCommand } from '../model/models';
+import { DeleteBlocCommand } from '../model/models';
+import { UpdateBlocCommand } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -21,6 +24,21 @@ import { Configuration }                                     from '../configurat
 export interface BlocsServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
+
+    /**
+     * 
+     * 
+     * @param createBlocCommand 
+     */
+    createBloc(createBlocCommand: CreateBlocCommand, extraHttpRequestParams?: any): Observable<BlocDto>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param deleteBlocCommand 
+     */
+    deleteBloc(id: string, deleteBlocCommand: DeleteBlocCommand, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * 
@@ -35,5 +53,13 @@ export interface BlocsServiceInterface {
      * @param sectorId 
      */
     getBlocsBySectorId(sectorId: string, extraHttpRequestParams?: any): Observable<Array<BlocDto>>;
+
+    /**
+     * 
+     * 
+     * @param id 
+     * @param updateBlocCommand 
+     */
+    updateBloc(id: string, updateBlocCommand: UpdateBlocCommand, extraHttpRequestParams?: any): Observable<BlocDto>;
 
 }
