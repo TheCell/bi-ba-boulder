@@ -23,6 +23,8 @@ public class OutdoorArea : VersionedEntity, IContentEntity
 
     public string? PreviewImageUri { get; set; }
 
+    public bool IsPublic { get; set; }
+
     public ICollection<PublicResource> Media { get; set; } = [];
 
     public ICollection<Sector> Sectors { get; set; } = [];

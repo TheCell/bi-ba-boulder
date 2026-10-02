@@ -19,7 +19,13 @@ public static class SectorMapping
             Coordinates = sector.Coordinates,
             PreviewImageUri = sector.PreviewImageUri,
             Images = sector.Media.Select(m => m.MapToPublicResourceDto()).ToList(),
-            OutdoorAreas = sector.OutdoorAreas.Select(area => new OutdoorAreaDto { Id = area.Id, Version = area.Version, Name = area.Name }).ToList()
+            OutdoorAreas = sector.OutdoorAreas.Select(area => new OutdoorAreaDto
+            {
+                Id = area.Id,
+                Version = area.Version,
+                Name = area.Name,
+                IsPublic = area.IsPublic
+            }).ToList()
         };
     }
 }

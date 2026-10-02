@@ -34,6 +34,11 @@ public class DeleteOutdoorAreaCommandHandler : ICommandHandler<DeleteOutdoorArea
             .SingleOrDefaultAsync(area => area.Id == command.Id)
             .ThrowIfNullAsync(command.Id);
 
+        if (!outdoorArea.IsVisibleTo(currentUser))
+        {
+            throw new UnauthorizedAccessException("User does not have access to this outdoor area.");
+        }
+
         if (outdoorArea.UriAliases.Count != 0)
         {
             throw new InvalidOperationException($"Cannot delete outdoor area because it has associated uri aliases.");

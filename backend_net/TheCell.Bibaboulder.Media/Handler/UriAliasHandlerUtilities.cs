@@ -5,13 +5,14 @@ using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model.Media;
+using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Services;
 
 namespace TheCell.Bibaboulder.Media.Handler;
 
 internal static partial class UriAliasHandlerUtilities
 {
-    public static async Task EnsureContentAdministratorAsync(ICurrentUserService currentUserService)
+    public static async Task<User> EnsureContentAdministratorAsync(ICurrentUserService currentUserService)
     {
         var currentUser = await currentUserService.GetCurrentUserOrThrowAsync();
         var canManageContent =
@@ -21,6 +22,8 @@ internal static partial class UriAliasHandlerUtilities
         {
             throw new UnauthorizedAccessException("Only content administrators can manage URI aliases.");
         }
+
+        return currentUser;
     }
 
     [SuppressMessage(

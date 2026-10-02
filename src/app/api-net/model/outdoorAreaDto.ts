@@ -15,6 +15,7 @@ export interface OutdoorAreaDto {
     id?: string;
     version?: number;
     name: string;
+    isPublic?: boolean;
     description?: string | null;
     importantInfo?: string | null;
     previewImageUri?: string | null;

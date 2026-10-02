@@ -12,6 +12,7 @@ public static class OutdoorAreaAssertion
         Xunit.Assert.Equal(expected.Id, actual.Id);
         expected.Id.AssertV7();
         Xunit.Assert.Equal(expected.Name, actual.Name);
+        Xunit.Assert.Equal(expected.IsPublic, actual.IsPublic);
         Xunit.Assert.Equal(expected.Description, actual.Description);
         Xunit.Assert.Equal(expected.ImportantInfo, actual.ImportantInfo);
         Xunit.Assert.Equal(expected.PreviewImageUri, actual.PreviewImageUri);

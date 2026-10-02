@@ -56,6 +56,7 @@ public class UpdateBlocTest
         var otherSector = new SectorBuilder().Build();
         await _dbContext.InsertEntitiesAndSaveChangesAsync([sector, otherSector]);
         var bloc = new BlocBuilder().SetSectorId(sector.Id).Build();
+        bloc.CreatedUserId = user.Id;
         await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var command = new UpdateBlocCommand
@@ -91,6 +92,7 @@ public class UpdateBlocTest
         var otherSector = new SectorBuilder().Build();
         await _dbContext.InsertEntitiesAndSaveChangesAsync([sector, otherSector]);
         var bloc = new BlocBuilder().SetSectorId(sector.Id).Build();
+        bloc.CreatedUserId = user.Id;
         await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var command = new UpdateBlocCommand
@@ -127,6 +129,7 @@ public class UpdateBlocTest
         var otherSector = new SectorBuilder().Build();
         await _dbContext.InsertEntitiesAndSaveChangesAsync([sector]);
         var bloc = new BlocBuilder().SetSectorId(sector.Id).Build();
+        bloc.CreatedUserId = user.Id;
         await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var command = new UpdateBlocCommand

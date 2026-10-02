@@ -9,6 +9,7 @@ public class OutdoorAreaDto
     public Guid Id { get; set; }
     public long Version { get; set; }
     public required string Name { get; set; }
+    public bool IsPublic { get; set; }
     public string? Description { get; set; }
     public string? ImportantInfo { get; set; }
     public string? PreviewImageUri { get; set; }

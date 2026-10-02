@@ -44,6 +44,7 @@ public class DeleteBlocTest
         var sector = new SectorBuilder().Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(sector);
         var bloc = new BlocBuilder().SetSectorId(sector.Id).Build();
+        bloc.CreatedUserId = user.Id;
         await _dbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var command = new DeleteBlocCommand { Id = bloc.Id, Version = bloc.Version };

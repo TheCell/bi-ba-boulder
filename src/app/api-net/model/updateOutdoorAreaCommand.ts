@@ -11,6 +11,7 @@
 
 export interface UpdateOutdoorAreaCommand { 
     sectorIds?: Array<string>;
+    isPublic?: boolean | null;
     name: string;
     description?: string | null;
     importantInfo?: string | null;

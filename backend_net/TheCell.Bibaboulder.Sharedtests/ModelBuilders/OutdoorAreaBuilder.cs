@@ -20,6 +20,12 @@ public class OutdoorAreaBuilder : BuilderBase<OutdoorArea>
         return this;
     }
 
+    public OutdoorAreaBuilder SetIsPublic(bool value)
+    {
+        _instance.IsPublic = value;
+        return this;
+    }
+
     public OutdoorAreaBuilder SetDescription(string? value)
     {
         _instance.Description = value;

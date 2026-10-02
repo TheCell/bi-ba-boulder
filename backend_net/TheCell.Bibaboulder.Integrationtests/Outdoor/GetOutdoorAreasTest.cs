@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
+using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
 namespace TheCell.Bibaboulder.Integrationtests.Outdoor;
 
@@ -29,5 +30,20 @@ public class GetOutdoorAreasTest : OutdoorAreaIntegrationTestBase
         var outdoorAreaDto = result.Single(area => area.Id == outdoorArea.Id);
         OutdoorAreaAssertion.Assert(outdoorArea, outdoorAreaDto);
         Assert.Equal(2, outdoorAreaDto.Sectors.Count);
+    }
+
+    [Fact]
+    public async Task GetOutdoorAreas_PrivateAreaAsAnonymous_Hidden()
+    {
+        var privateArea = new OutdoorAreaBuilder().Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(privateArea);
+
+        var response = await Client().GetAsync(BaseUrl, TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<OutdoorAreaDto>>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.DoesNotContain(result, area => area.Id == privateArea.Id);
     }
 }

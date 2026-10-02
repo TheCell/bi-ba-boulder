@@ -148,6 +148,7 @@ public class BlocAdministrationControllerTest : BaseTest
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
         var bloc = new BlocBuilder().SetSectorId(sector.Id).Build();
+        bloc.CreatedUserId = contentAdmin.Id;
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var command = new UpdateBlocCommand
@@ -188,6 +189,7 @@ public class BlocAdministrationControllerTest : BaseTest
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
         var bloc = new BlocBuilder().SetSectorId(sector.Id).Build();
+        bloc.CreatedUserId = contentAdmin.Id;
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var command = new UpdateBlocCommand { SectorId = sector.Id, Name = _bogus.Lorem.Slug(), Version = bloc.Version + 1 };
@@ -207,6 +209,7 @@ public class BlocAdministrationControllerTest : BaseTest
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
         var bloc = new BlocBuilder().SetSectorId(sector.Id).Build();
+        bloc.CreatedUserId = contentAdmin.Id;
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         var request = new HttpRequestMessage(HttpMethod.Delete, $"{BaseUrl}/{bloc.Id}")

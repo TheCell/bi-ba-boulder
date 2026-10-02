@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Dto.Media;
+using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Mapping;
 using Thecell.Bibaboulder.Model.Services;
 
@@ -20,15 +21,19 @@ public class GetUriAliasesQueryHandler : IQueryHandler<GetUriAliasesQuery, IColl
 
     public async Task<ICollection<UriAliasAdministrationDto>> HandleAsync(GetUriAliasesQuery query)
     {
-        await UriAliasHandlerUtilities.EnsureContentAdministratorAsync(_currentUserService);
+        var currentUser = await UriAliasHandlerUtilities.EnsureContentAdministratorAsync(_currentUserService);
 
-        return await _dbContext.UriAliases
+        var uriAliases = await _dbContext.UriAliases
             .AsNoTracking()
             .Include(ua => ua.BoulderGym)
             .Include(ua => ua.OutdoorArea)
             .OrderBy(uriAlias => uriAlias.Type)
             .ThenBy(uriAlias => uriAlias.Alias)
-            .Select(uriAlias => uriAlias.MapToUriAliasDto())
             .ToListAsync();
+
+        return uriAliases
+            .Where(uriAlias => uriAlias.OutdoorArea is null || uriAlias.OutdoorArea.IsVisibleTo(currentUser))
+            .Select(uriAlias => uriAlias.MapToUriAliasDto())
+            .ToList();
     }
 }

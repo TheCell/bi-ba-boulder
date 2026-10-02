@@ -7,4 +7,6 @@ namespace Thecell.Bibaboulder.Outdoor.Handler;
 public class UpdateOutdoorAreaCommand : UpdateContentCommand
 {
     public ICollection<Guid> SectorIds { get; set; } = [];
+
+    public bool? IsPublic { get; set; }
 }

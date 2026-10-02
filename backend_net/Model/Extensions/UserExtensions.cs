@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Thecell.Bibaboulder.Model.Authorization;
@@ -11,19 +12,19 @@ public static class UserExtensions
     public static UserRole[] GetUserRoles(this User user)
     {
         var roles = new List<UserRole>();
-        if (user.Roles.Contains(AuthorizationRoles.Admin))
+        if (HasRole(user, AuthorizationRoles.Admin))
         {
             roles.Add(UserRole.Admin);
         }
-        if (user.Roles.Contains(AuthorizationRoles.Editor))
+        if (HasRole(user, AuthorizationRoles.Editor))
         {
             roles.Add(UserRole.Editor);
         }
-        if (user.Roles.Contains(AuthorizationRoles.ContentAdmin))
+        if (HasRole(user, AuthorizationRoles.ContentAdmin))
         {
             roles.Add(UserRole.ContentAdmin);
         }
-        if (user.Roles.Contains(AuthorizationRoles.User))
+        if (HasRole(user, AuthorizationRoles.User))
         {
             roles.Add(UserRole.User);
         }
@@ -33,5 +34,12 @@ public static class UserExtensions
     public static bool IsInRole(this User user, UserRole role)
     {
         return user.GetUserRoles().Contains(role);
+    }
+
+    private static bool HasRole(User user, string role)
+    {
+        return user.Roles
+            .Split([',', '[', ']', '"', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Contains(role, StringComparer.OrdinalIgnoreCase);
     }
 }

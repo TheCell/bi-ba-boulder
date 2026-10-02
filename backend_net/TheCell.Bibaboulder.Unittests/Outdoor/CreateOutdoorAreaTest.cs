@@ -58,7 +58,8 @@ public class CreateOutdoorAreaTest
             ImageUris = [_bogus.Internet.Url()
                 .Replace("https://", "")
                 .Replace("http://", "")],
-            SectorIds = [sector.Id]
+            SectorIds = [sector.Id],
+            IsPublic = true
         };
 
         _currentUserServiceMock.WithUser(user);
@@ -75,6 +76,7 @@ public class CreateOutdoorAreaTest
         Assert.Single(outdoorArea.Media);
         Assert.Single(outdoorArea.Sectors);
         Assert.Equal(sector.Id, outdoorArea.Sectors.Single().Id);
+        Assert.True(outdoorArea.IsPublic);
         Assert.Equal(1, outdoorArea.Version);
     }
 

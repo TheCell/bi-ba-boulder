@@ -16,6 +16,8 @@ import { ToastService } from '../../core/toast-container/toast.service';
 import { OutdoorAreaDialogData } from './outdoor-area-dialog-data';
 import { FormsModule } from '@angular/forms';
 
+type OutdoorAreaFormModel = ContentFormModel & { isPublic: boolean };
+
 @Component({
   selector: 'app-outdoor-area-editor-dialog',
   imports: [FormField, ImageUrlList, FormsModule],
@@ -29,7 +31,13 @@ export class OutdoorAreaEditorDialog implements IModal {
 
   public closeModal = output<CloseModalEvent>();
   private isDisabled = signal(false);
-  private formModel = signal<ContentFormModel>({ name: '', description: '', importantInfo: '', previewImageUri: '' });
+  private formModel = signal<OutdoorAreaFormModel>({
+    name: '',
+    description: '',
+    importantInfo: '',
+    previewImageUri: '',
+    isPublic: false
+  });
   private editingOutdoorArea?: OutdoorAreaDto;
 
   public canCloseWithoutPermission = true;
@@ -53,6 +61,7 @@ export class OutdoorAreaEditorDialog implements IModal {
     disabled(schemaPath.description, { when: () => this.isDisabled() });
     disabled(schemaPath.importantInfo, { when: () => this.isDisabled() });
     disabled(schemaPath.previewImageUri, { when: () => this.isDisabled() });
+    disabled(schemaPath.isPublic, { when: () => this.isDisabled() });
     required(schemaPath.name);
   });
 
@@ -75,7 +84,8 @@ export class OutdoorAreaEditorDialog implements IModal {
       name: data.outdoorArea?.name ?? '',
       description: data.outdoorArea?.description ?? '',
       importantInfo: data.outdoorArea?.importantInfo ?? '',
-      previewImageUri: data.outdoorArea?.previewImageUri ?? ''
+      previewImageUri: data.outdoorArea?.previewImageUri ?? '',
+      isPublic: data.outdoorArea?.isPublic ?? false
     });
     this.images.set(data.outdoorArea?.images?.map((image) => image.uri) ?? []);
     this.assignedSectors.set(data.outdoorArea?.sectors ?? []);
@@ -118,6 +128,7 @@ export class OutdoorAreaEditorDialog implements IModal {
         previewImageUri: model.previewImageUri,
         imageUris: this.images(),
         sectorIds,
+        isPublic: model.isPublic,
         version: editingOutdoorArea.version
       };
       this.outdoorAreasService.updateOutdoorArea(editingOutdoorArea.id!, updateOutdoorArea).subscribe({
@@ -140,7 +151,8 @@ export class OutdoorAreaEditorDialog implements IModal {
         importantInfo: model.importantInfo,
         previewImageUri: model.previewImageUri,
         imageUris: this.images(),
-        sectorIds
+        sectorIds,
+        isPublic: model.isPublic
       };
       this.outdoorAreasService.createOutdoorArea(createOutdoorArea).subscribe({
         next: (outdoorArea: OutdoorAreaDto) => {

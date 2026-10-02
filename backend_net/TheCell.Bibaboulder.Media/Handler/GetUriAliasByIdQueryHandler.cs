@@ -3,6 +3,7 @@ using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Common.Queries;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Dto.Media;
+using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Model.Mapping;
 using Thecell.Bibaboulder.Model.Services;
 
@@ -21,17 +22,21 @@ public class GetUriAliasByIdQueryHandler : IQueryHandler<GetUriAliasByIdQuery, U
 
     public async Task<UriAliasAdministrationDto> HandleAsync(GetUriAliasByIdQuery query)
     {
-        await UriAliasHandlerUtilities.EnsureContentAdministratorAsync(_currentUserService);
+        var currentUser = await UriAliasHandlerUtilities.EnsureContentAdministratorAsync(_currentUserService);
 
         var uriAlias = await _dbContext.UriAliases
             .AsNoTracking()
             .Include(ua => ua.BoulderGym)
             .Include(ua => ua.OutdoorArea)
-            .Where(uriAlias => uriAlias.Id == query.Id)
-            .Select(uriAlias => uriAlias.MapToUriAliasDto())
-            .SingleOrDefaultAsync();
-        NotFoundException.ThrowIfNull(uriAlias, nameof(UriAliasAdministrationDto), query.Id);
+            .SingleOrDefaultAsync(uriAlias => uriAlias.Id == query.Id);
+        if (uriAlias?.OutdoorArea is not null && !uriAlias.OutdoorArea.IsVisibleTo(currentUser))
+        {
+            uriAlias = null;
+        }
 
-        return uriAlias;
+        var uriAliasDto = uriAlias?.MapToUriAliasDto();
+        NotFoundException.ThrowIfNull(uriAliasDto, nameof(UriAliasAdministrationDto), query.Id);
+
+        return uriAliasDto;
     }
 }

@@ -25,6 +25,11 @@
   <label for="preview-image-uri" class="group-label">Preview image URL</label>
 </div>
 
+<div class="form-group" [class.disabled]="outdoorAreaForm.isPublic().disabled()">
+  <input id="is-public" type="checkbox" [formField]="outdoorAreaForm.isPublic" />
+  <label for="is-public">Public outdoor area</label>
+</div>
+
 <app-image-url-list [(images)]="images" [isDisabled]="disabled()"></app-image-url-list>
 
 <h2>Sectors</h2>

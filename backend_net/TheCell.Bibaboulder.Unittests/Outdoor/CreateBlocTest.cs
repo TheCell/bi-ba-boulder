@@ -1,8 +1,6 @@
-using System;
 using System.Threading.Tasks;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
-using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Outdoor.Handler;

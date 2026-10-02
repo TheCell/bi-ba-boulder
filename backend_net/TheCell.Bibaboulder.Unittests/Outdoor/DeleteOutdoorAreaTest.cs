@@ -38,6 +38,7 @@ public class DeleteOutdoorAreaTest
         _currentUserService.WithUser(contentAdmin);
 
         var outdoorArea = new OutdoorAreaBuilder().Build();
+        outdoorArea.CreatedUserId = contentAdmin.Id;
         await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
         var command = new DeleteOutdoorAreaCommand { Id = outdoorArea.Id, Version = outdoorArea.Version };
@@ -46,6 +47,26 @@ public class DeleteOutdoorAreaTest
 
         var exists = await _dbContext.OutdoorAreas.AnyAsync(area => area.Id == outdoorArea.Id, TestContext.Current.CancellationToken);
         Assert.False(exists);
+    }
+
+    [Fact]
+    public async Task DeleteOutdoorArea_NonCreatorCannotDeletePrivateArea_Exception()
+    {
+        var creator = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        var otherContentAdmin = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntitiesAndSaveChangesAsync([creator, otherContentAdmin]);
+        _currentUserService.WithUser(otherContentAdmin);
+
+        var outdoorArea = new OutdoorAreaBuilder().Build();
+        outdoorArea.CreatedUserId = creator.Id;
+        await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
+
+        var command = new DeleteOutdoorAreaCommand { Id = outdoorArea.Id, Version = outdoorArea.Version };
+        var handler = new DeleteOutdoorAreaCommandHandler(_dbContext, _currentUserService);
+
+        var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(() => handler.HandleAsync(command));
+
+        Assert.Equal("User does not have access to this outdoor area.", exception.Message);
     }
 
     // todo test delete when spraywall is linked to it.

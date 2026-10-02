@@ -106,9 +106,10 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
         var outdoorArea = new OutdoorAreaBuilder()
             .SetName("Original")
             .Build();
+        outdoorArea.CreatedUserId = contentAdmin.Id;
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
-        var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version };
+        var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version, IsPublic = true };
 
         var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
@@ -118,6 +119,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
 
         Assert.NotNull(result);
         Assert.Equal(command.Name, result.Name);
+        Assert.True(result.IsPublic);
         Assert.Equal(outdoorArea.Version + 1, result.Version);
     }
 
@@ -128,6 +130,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
 
         var outdoorArea = new OutdoorAreaBuilder().Build();
+        outdoorArea.CreatedUserId = contentAdmin.Id;
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
         var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version + 99 };
@@ -145,6 +148,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
 
         var outdoorArea = new OutdoorAreaBuilder().Build();
+        outdoorArea.CreatedUserId = contentAdmin.Id;
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
         var uriAlias = new UriAliasBuilder("alias-url")
@@ -171,6 +175,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
 
         var outdoorArea = new OutdoorAreaBuilder().Build();
+        outdoorArea.CreatedUserId = contentAdmin.Id;
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
         var request = new HttpRequestMessage(HttpMethod.Delete, $"{BaseUrl}/{outdoorArea.Id}")

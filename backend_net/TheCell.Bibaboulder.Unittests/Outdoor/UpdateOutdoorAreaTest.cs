@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
+using Thecell.Bibaboulder.Model.Enums;
+using Thecell.Bibaboulder.Model.Extensions;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
@@ -47,6 +49,7 @@ public class UpdateOutdoorAreaTest
         _currentUserService.WithUser(contentAdmin);
 
         var outdoorArea = new OutdoorAreaBuilder().Build();
+        outdoorArea.IsPublic = true;
         await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
         var command = new UpdateOutdoorAreaCommand
@@ -82,6 +85,7 @@ public class UpdateOutdoorAreaTest
             .SetName("Original")
             .SetSectors([originalSector])
             .Build();
+        outdoorArea.CreatedUserId = contentAdmin.Id;
         await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
         var command = new UpdateOutdoorAreaCommand
@@ -92,7 +96,8 @@ public class UpdateOutdoorAreaTest
             ImageUris = [_bogus.Internet.Url()
                 .Replace("https://", "")
                 .Replace("http://", "")],
-            SectorIds = [newSector.Id]
+            SectorIds = [newSector.Id],
+            IsPublic = true
         };
 
         var handler = new UpdateOutdoorAreaCommandHandler(_dbContext, _currentUserService);
@@ -108,6 +113,34 @@ public class UpdateOutdoorAreaTest
         Assert.Single(updated.Sectors);
         Assert.Equal(newSector.Id, updated.Sectors.Single().Id);
         Assert.Single(updated.Media);
+        Assert.True(updated.IsPublic);
         Assert.Equal(command.Version + 1, updated.Version);
+    }
+
+    [Fact]
+    public async Task UpdateOutdoorArea_NonCreatorCannotChangeVisibility()
+    {
+        var creator = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        var otherContentAdmin = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        Assert.False(otherContentAdmin.IsInRole(UserRole.Admin));
+        await _dbContext.InsertEntitiesAndSaveChangesAsync([creator, otherContentAdmin]);
+
+        var outdoorArea = new OutdoorAreaBuilder().SetIsPublic(true).Build();
+        outdoorArea.CreatedUserId = creator.Id;
+        await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
+        _currentUserService.WithUser(otherContentAdmin);
+
+        var command = new UpdateOutdoorAreaCommand
+        {
+            Id = outdoorArea.Id,
+            Version = outdoorArea.Version,
+            Name = outdoorArea.Name,
+            IsPublic = false
+        };
+        var handler = new UpdateOutdoorAreaCommandHandler(_dbContext, _currentUserService);
+
+        var exception = await Assert.ThrowsAsync<UnauthorizedAccessException>(() => handler.HandleAsync(command));
+
+        Assert.Equal("Only the creator or an admin can change outdoor area visibility.", exception.Message);
     }
 }

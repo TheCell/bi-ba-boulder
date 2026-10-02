@@ -13,6 +13,7 @@ public static class OutdoorMapping
             Id = outdoorArea.Id,
             Version = outdoorArea.Version,
             Name = outdoorArea.Name,
+            IsPublic = outdoorArea.IsPublic,
             Description = outdoorArea.Description,
             ImportantInfo = outdoorArea.ImportantInfo,
             PreviewImageUri = outdoorArea.PreviewImageUri,

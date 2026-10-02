@@ -36,6 +36,10 @@ h1 {
   cursor: pointer;
 }
 
+.big-tile.is-private {
+  border: 1px solid $warning;
+}
+
 .big-tile.is-generic-background {
   background-position: unset;
   background-color: $darkDark;

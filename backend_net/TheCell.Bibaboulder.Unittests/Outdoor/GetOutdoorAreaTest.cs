@@ -4,6 +4,7 @@ using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Outdoor.Handler;
+using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -12,17 +13,19 @@ namespace TheCell.Bibaboulder.Unittests.Outdoor;
 public class GetOutdoorAreaTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
+    private readonly CurrentUserServiceMock _currentUserService;
 
     public GetOutdoorAreaTest()
     {
         _dbContext = new DbContextMock().Build();
+        _currentUserService = new CurrentUserServiceMock();
     }
 
     [Fact]
     public async Task GetOutdoorArea_NotFoundException()
     {
         var query = new GetOutdoorAreaQuery { Id = Guid.CreateVersion7() };
-        var handler = new GetOutdoorAreaQueryHandler(_dbContext);
+        var handler = new GetOutdoorAreaQueryHandler(_dbContext, _currentUserService);
 
         var exception = await Assert.ThrowsAsync<NotFoundException>(() => handler.HandleAsync(query));
 
@@ -52,6 +55,7 @@ public class GetOutdoorAreaTest
 
         var outdoorArea = new OutdoorAreaBuilder()
             .SetName("Lindental")
+            .SetIsPublic(true)
             .SetDescription("Sandstone bouldering")
             .SetImportantInfo("Respect access rules")
             .SetPreviewImageUri("https://example.com/area-preview.jpg")
@@ -60,10 +64,23 @@ public class GetOutdoorAreaTest
             .Build();
         await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
-        var handler = new GetOutdoorAreaQueryHandler(_dbContext);
+        var handler = new GetOutdoorAreaQueryHandler(_dbContext, _currentUserService);
         var result = await handler.HandleAsync(new GetOutdoorAreaQuery { Id = outdoorArea.Id });
 
         OutdoorAreaAssertion.Assert(outdoorArea, result);
         Assert.Equal(2, result.Sectors.Count);
+    }
+
+    [Fact]
+    public async Task GetOutdoorArea_PrivateArea_AnonymousNotFound()
+    {
+        var outdoorArea = new OutdoorAreaBuilder().Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
+        var handler = new GetOutdoorAreaQueryHandler(_dbContext, _currentUserService);
+
+        var exception = await Assert.ThrowsAsync<NotFoundException>(() =>
+            handler.HandleAsync(new GetOutdoorAreaQuery { Id = outdoorArea.Id }));
+
+        Assert.Equal($"OutdoorArea not found. (Id: {outdoorArea.Id})", exception.Message);
     }
 }

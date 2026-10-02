@@ -3062,6 +3062,9 @@
               "format": "uuid"
             }
           },
+          "isPublic": {
+            "type": "boolean"
+          },
           "name": {
             "type": "string"
           },
@@ -3429,6 +3432,9 @@
           },
           "name": {
             "type": "string"
+          },
+          "isPublic": {
+            "type": "boolean"
           },
           "description": {
             "type": [
@@ -3996,6 +4002,12 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "isPublic": {
+            "type": [
+              "null",
+              "boolean"
+            ]
           },
           "name": {
             "type": "string"

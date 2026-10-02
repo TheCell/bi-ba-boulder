@@ -68,7 +68,8 @@
       <div
         class="big-tile"
         [ngClass]="{
-          'is-generic-background': (outdoorArea.previewImageUri?.length ?? 0) === 0
+          'is-generic-background': (outdoorArea.previewImageUri?.length ?? 0) === 0,
+          'is-private': !outdoorArea.isPublic
         }"
         [style.backgroundImage]="backgroundImage"
         [routerLink]="['/', 'outdoor-area', outdoorArea.id]">
