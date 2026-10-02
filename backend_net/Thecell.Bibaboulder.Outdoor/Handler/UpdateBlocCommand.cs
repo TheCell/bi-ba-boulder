@@ -5,9 +5,9 @@ namespace Thecell.Bibaboulder.Outdoor.Handler;
 
 public class UpdateBlocCommand : UpdateCommand
 {
-    public required Guid SectorId { get; set; }
-
     public required string Name { get; set; }
+
+    public Guid? SectorId { get; set; }
 
     public string? Description { get; set; }
 

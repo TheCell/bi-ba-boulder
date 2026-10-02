@@ -10,8 +10,8 @@
 
 
 export interface UpdateBlocCommand { 
-    sectorId: string;
     name: string;
+    sectorId?: string | null;
     description?: string | null;
     coordinates?: string | null;
     blocLowRes?: string | null;
