@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { SectorDto, SectorsService } from '@api-net/index';
 import { Modal } from '../../core/modal/modal/modal';
 import { ModalService } from '../../core/modal/modal.service';
@@ -9,7 +10,7 @@ import { DeleteSectorDialog } from './delete-sector-dialog';
 
 @Component({
   selector: 'app-sectors-admin',
-  imports: [Modal],
+  imports: [Modal, RouterLink],
   templateUrl: './sectors-admin.html',
   styleUrl: './sectors-admin.scss'
 })

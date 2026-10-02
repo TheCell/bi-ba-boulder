@@ -1,0 +1,60 @@
+<header class="page-header">
+  <div>
+    <h1>Blocs</h1>
+    <p>Manage blocs, their 3D models, and sector assignments.</p>
+  </div>
+  <button type="button" class="button primary" (click)="openCreateDialog()">Create bloc</button>
+</header>
+
+<section class="filters" aria-label="Bloc filters">
+  <div class="form-group form-input">
+    <select id="sector-filter" (change)="onSectorChange($event)">
+      <option value="" [selected]="selectedSectorId() === null">Without sector</option>
+      @for (sector of sectors(); track sector.id) {
+      <option [value]="sector.id" [selected]="sector.id === selectedSectorId()">{{ sector.name }}</option>
+      }
+    </select>
+    <label for="sector-filter" class="group-label">Sector</label>
+  </div>
+  <div class="form-group form-input">
+    <input id="search" type="search" autocomplete="off" placeholder="" (input)="onSearch($event)" />
+    <label for="search" class="group-label">Name</label>
+  </div>
+</section>
+
+@if (isLoading()) {
+<p aria-live="polite">Loading blocs…</p>
+} @else if (filteredBlocs().length === 0) {
+<p class="empty-state">No blocs match the current filters.</p>
+} @else {
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Coordinates</th>
+        <th scope="col">3D model</th>
+        <th scope="col">Additional parts</th>
+        <th scope="col"><span class="visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (bloc of filteredBlocs(); track bloc.id) {
+      <tr>
+        <td>{{ bloc.name }}</td>
+        <td>{{ bloc.coordinates }}</td>
+        <td>{{ bloc.blocHighRes || bloc.blocMedRes || bloc.blocLowRes ? 'Yes' : 'No' }}</td>
+        <td>{{ bloc.additionalParts?.length ?? 0 }}</td>
+        <td class="actions">
+          <button type="button" class="button" (click)="openEditDialog(bloc)">Edit</button>
+          <button type="button" class="button danger" (click)="openDeleteDialog(bloc)">Delete</button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}
+
+<app-modal #editorModal (closed)="onEditorClosed($event)"></app-modal>
+<app-modal #deleteModal [isSmall]="true" (closed)="onDeleteClosed($event)"></app-modal>

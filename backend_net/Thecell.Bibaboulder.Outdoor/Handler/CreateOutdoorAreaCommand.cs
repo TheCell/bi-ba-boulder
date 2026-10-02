@@ -7,4 +7,6 @@ namespace Thecell.Bibaboulder.Outdoor.Handler;
 public class CreateOutdoorAreaCommand : CreateContentCommand
 {
     public ICollection<Guid> SectorIds { get; set; } = [];
+
+    public bool IsPublic { get; set; }
 }

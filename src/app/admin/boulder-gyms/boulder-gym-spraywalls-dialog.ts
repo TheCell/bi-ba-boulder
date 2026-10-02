@@ -100,9 +100,12 @@ export class BoulderGymSpraywallsDialog implements IModal {
           'Spraywalls updated',
           'Spraywalls were successfully updated for the boulder gym.'
         );
+
+        this.canCloseWithoutPermission = true;
         this.closeModal.emit({ closeType: 0, data: this.boulderGym() });
       },
       error: () => {
+        this.canCloseWithoutPermission = false;
         this.isLoading.set(false);
       }
     });

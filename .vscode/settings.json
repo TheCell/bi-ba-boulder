@@ -15,7 +15,9 @@
         "dotnet package": true,
         "ConvertFrom-Json": true,
         "npx tsc": true,
-        "ng": true
+        "ng": true,
+        "npx ng": true,
+        "npx eslint": true
     },
     "chat.mcp.serverSampling": {
         "bi-ba-boulder/.vscode/mcp.json: angular-cli": {

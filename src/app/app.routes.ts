@@ -24,6 +24,7 @@ import { UriAliases } from './admin/uri-aliases/uri-aliases';
 import { BoulderGymsAdmin } from './admin/boulder-gyms/boulder-gyms-admin';
 import { OutdoorAreasAdmin } from './admin/outdoor-areas/outdoor-areas-admin';
 import { SectorsAdmin } from './admin/sectors/sectors-admin';
+import { BlocsAdmin } from './admin/blocs/blocs-admin';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -138,6 +139,11 @@ export const routes: Routes = [
     path: 'admin/sectors',
     canActivate: [contentAdminGuard],
     component: SectorsAdmin
+  },
+  {
+    path: 'admin/blocs',
+    canActivate: [contentAdminGuard],
+    component: BlocsAdmin
   },
   {
     path: 'not-found',

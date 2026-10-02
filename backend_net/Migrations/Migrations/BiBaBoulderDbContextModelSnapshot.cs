@@ -612,6 +612,9 @@ namespace BiBaBoulder.Migrations
                     b.Property<string>("ImportantInfo")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)

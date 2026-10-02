@@ -11,6 +11,8 @@ public static class BlocMapping
         return new BlocDto
         {
             Id = bloc.Id,
+            Version = bloc.Version,
+            SectorId = bloc.SectorId,
             Name = bloc.Name,
             Description = bloc.Description,
             BlocLowRes = bloc.BlocLowRes,

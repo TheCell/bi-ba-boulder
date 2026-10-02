@@ -1,6 +1,7 @@
 using System.Linq;
 using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
+using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests.Extensions;
 
 namespace TheCell.Bibaboulder.Sharedtests.Assertions;
@@ -11,6 +12,8 @@ public static class BlocAssertion
     {
         Xunit.Assert.Equal(expected.Id, actual.Id);
         expected.Id.AssertV7();
+        Xunit.Assert.Equal(expected.Version, actual.Version);
+        Xunit.Assert.Equal(expected.SectorId, actual.SectorId);
         Xunit.Assert.Equal(expected.Name, actual.Name);
         Xunit.Assert.Equal(expected.Coordinates, actual.Coordinates);
         Xunit.Assert.Equal(expected.Description, actual.Description);
@@ -25,5 +28,33 @@ public static class BlocAssertion
             var expectedBloc = expected.AdditionalParts.First(b => b.Id == bloc.Id);
             Assert(expectedBloc, bloc);
         }
+    }
+
+    public static void Assert(CreateBlocCommand expected, Bloc actual)
+    {
+        Xunit.Assert.Equal(expected.Id, actual.Id);
+        actual.Id.AssertV7();
+        Xunit.Assert.Equal(expected.SectorId, actual.SectorId);
+        Xunit.Assert.Equal(expected.Name, actual.Name);
+        Xunit.Assert.Equal(expected.Description, actual.Description);
+        Xunit.Assert.Equal(expected.Coordinates, actual.Coordinates);
+        Xunit.Assert.Equal(expected.BlocLowRes, actual.BlocLowRes);
+        Xunit.Assert.Equal(expected.BlocMedRes, actual.BlocMedRes);
+        Xunit.Assert.Equal(expected.BlocHighRes, actual.BlocHighRes);
+        Xunit.Assert.Equal(expected.PreviewImageUri, actual.PreviewImageUri);
+    }
+
+    public static void Assert(UpdateBlocCommand expected, Bloc actual)
+    {
+        Xunit.Assert.Equal(expected.Id, actual.Id);
+        Xunit.Assert.Equal(expected.Version + 1, actual.Version);
+        Xunit.Assert.Equal(expected.SectorId, actual.SectorId);
+        Xunit.Assert.Equal(expected.Name, actual.Name);
+        Xunit.Assert.Equal(expected.Description, actual.Description);
+        Xunit.Assert.Equal(expected.Coordinates, actual.Coordinates);
+        Xunit.Assert.Equal(expected.BlocLowRes, actual.BlocLowRes);
+        Xunit.Assert.Equal(expected.BlocMedRes, actual.BlocMedRes);
+        Xunit.Assert.Equal(expected.BlocHighRes, actual.BlocHighRes);
+        Xunit.Assert.Equal(expected.PreviewImageUri, actual.PreviewImageUri);
     }
 }

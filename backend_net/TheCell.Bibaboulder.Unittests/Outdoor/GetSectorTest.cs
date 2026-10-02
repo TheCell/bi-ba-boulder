@@ -4,6 +4,7 @@ using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Outdoor.Handler;
+using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -12,10 +13,12 @@ namespace TheCell.Bibaboulder.Unittests.Outdoor;
 public class GetSectorTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
+    private readonly CurrentUserServiceMock _currentUserService;
 
     public GetSectorTest()
     {
         _dbContext = new DbContextMock().Build();
+        _currentUserService = new CurrentUserServiceMock();
     }
 
     [Fact]
@@ -26,7 +29,7 @@ public class GetSectorTest
             Id = Guid.CreateVersion7()
         };
 
-        var handler = new GetSectorQueryHandler(_dbContext);
+        var handler = new GetSectorQueryHandler(_dbContext, _currentUserService);
 
         var ex = await Assert.ThrowsAsync<NotFoundException>(async () =>
             await handler.HandleAsync(query));
@@ -52,10 +55,26 @@ public class GetSectorTest
             Id = sector.Id
         };
 
-        var handler = new GetSectorQueryHandler(_dbContext);
+        var handler = new GetSectorQueryHandler(_dbContext, _currentUserService);
         var result = await handler.HandleAsync(query);
 
         SectorAssertion.Assert(sector, result);
         Assert.Equal(1, sector.Version);
+    }
+
+    [Fact]
+    public async Task GetSector_HidesPrivateOutdoorAreas()
+    {
+        var publicArea = new OutdoorAreaBuilder().SetIsPublic(true).Build();
+        var privateArea = new OutdoorAreaBuilder().Build();
+        var sector = new SectorBuilder().Build();
+        sector.OutdoorAreas = [publicArea, privateArea];
+        await _dbContext.InsertEntitiesAndSaveChangesAsync([publicArea, privateArea, sector]);
+
+        var handler = new GetSectorQueryHandler(_dbContext, _currentUserService);
+
+        var result = await handler.HandleAsync(new GetSectorQuery { Id = sector.Id });
+
+        Assert.Equal(publicArea.Id, Assert.Single(result.OutdoorAreas).Id);
     }
 }

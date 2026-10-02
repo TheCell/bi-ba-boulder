@@ -11,6 +11,7 @@
 
 export interface CreateOutdoorAreaCommand { 
     sectorIds?: Array<string>;
+    isPublic?: boolean;
     name: string;
     description?: string | null;
     importantInfo?: string | null;

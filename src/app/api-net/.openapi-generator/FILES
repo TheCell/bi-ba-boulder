@@ -43,6 +43,7 @@ model/addSpraywallToBoulderGymCommand.ts
 model/blocDto.ts
 model/boulderGymDto.ts
 model/boulderLogDto.ts
+model/createBlocCommand.ts
 model/createBoulderGymCommand.ts
 model/createBoulderLogCommand.ts
 model/createLineCommand.ts
@@ -51,6 +52,7 @@ model/createSectorCommand.ts
 model/createSpraywallProblemCommand.ts
 model/createUriAliasCommand.ts
 model/createUserSectorAccessCommand.ts
+model/deleteBlocCommand.ts
 model/deleteBoulderGymCommand.ts
 model/deleteBoulderLogCommand.ts
 model/deleteOutdoorAreaCommand.ts
@@ -72,6 +74,7 @@ model/spraywallProblemDto.ts
 model/spraywallProblemListDto.ts
 model/spraywallProblemMetadataDto.ts
 model/testDto.ts
+model/updateBlocCommand.ts
 model/updateBoulderGymCommand.ts
 model/updateBoulderLogCommand.ts
 model/updateLineCommand.ts

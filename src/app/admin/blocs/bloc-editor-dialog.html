@@ -1,0 +1,67 @@
+<h2>{{ title() }}</h2>
+
+<div class="form-group form-input" [class.disabled]="blocForm.sectorId().disabled()">
+  <select id="sector" [formField]="blocForm.sectorId">
+    <option value="">Without sector</option>
+    @for (sector of sectors(); track sector.id) {
+    <option [value]="sector.id">{{ sector.name }}</option>
+    }
+  </select>
+  <label for="sector" class="group-label">Sector (optional)</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="blocForm.name().disabled()">
+  <input id="name" type="text" autocomplete="off" placeholder="" [formField]="blocForm.name" />
+  <label for="name" class="group-label">Name</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="blocForm.description().disabled()">
+  <textarea id="description" rows="3" [formField]="blocForm.description"></textarea>
+  <label for="description" class="group-label">Description</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="blocForm.coordinates().disabled()">
+  <input
+    id="coordinates"
+    type="text"
+    autocomplete="off"
+    placeholder="46.9914628, 7.5589870"
+    [formField]="blocForm.coordinates" />
+  <label for="coordinates" class="group-label">Coordinates</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="blocForm.previewImageUri().disabled()">
+  <input
+    id="preview-image-uri"
+    type="url"
+    autocomplete="off"
+    placeholder="examplecom/preview.jpg"
+    [formField]="blocForm.previewImageUri" />
+  <label for="preview-image-uri" class="group-label">Preview image URL</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="blocForm.blocLowRes().disabled()">
+  <input id="bloc-low-res" type="text" autocomplete="off" placeholder="" [formField]="blocForm.blocLowRes" />
+  <label for="bloc-low-res" class="group-label">Model low resolution</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="blocForm.blocMedRes().disabled()">
+  <input id="bloc-med-res" type="text" autocomplete="off" placeholder="" [formField]="blocForm.blocMedRes" />
+  <label for="bloc-med-res" class="group-label">Model medium resolution</label>
+</div>
+
+<div class="form-group form-input" [class.disabled]="blocForm.blocHighRes().disabled()">
+  <input id="bloc-high-res" type="text" autocomplete="off" placeholder="" [formField]="blocForm.blocHighRes" />
+  <label for="bloc-high-res" class="group-label">Model high resolution</label>
+</div>
+
+<div class="form-group form-action">
+  <button
+    type="button"
+    class="button primary"
+    (click)="onSubmit()"
+    [class.disabled]="isSubmitDisabled()"
+    [disabled]="isSubmitDisabled()">
+    {{ isLoading() ? 'Saving…' : 'Save' }}
+  </button>
+</div>

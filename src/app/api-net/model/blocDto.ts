@@ -11,6 +11,8 @@
 
 export interface BlocDto { 
     id: string;
+    version?: number;
+    sectorId?: string | null;
     name: string;
     description?: string | null;
     coordinates?: string | null;

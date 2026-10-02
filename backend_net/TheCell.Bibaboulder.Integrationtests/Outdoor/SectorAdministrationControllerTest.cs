@@ -47,6 +47,7 @@ public class SectorAdministrationControllerTest : BaseTest
 
         var outdoorArea = new OutdoorAreaBuilder()
             .SetName("Lindental")
+            .SetIsPublic(true)
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 

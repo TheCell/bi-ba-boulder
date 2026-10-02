@@ -38,6 +38,7 @@ public abstract class OutdoorAreaIntegrationTestBase : BaseTest
 
         var outdoorArea = new OutdoorAreaBuilder()
             .SetName("Lindental")
+            .SetIsPublic(true)
             .SetDescription("Sandstone bouldering")
             .SetImportantInfo("Respect access rules")
             .SetPreviewImageUri("https://example.com/area-preview.jpg")

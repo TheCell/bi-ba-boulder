@@ -35,6 +35,20 @@ public class UpdateOutdoorAreaCommandHandler : ICommandHandler<UpdateOutdoorArea
             .SingleOrDefaultAsync(area => area.Id == command.Id)
             .ThrowIfNullAsync(command.Id);
 
+        var isAdmin = currentUser.IsInRole(UserRole.Admin);
+        if (!isAdmin && currentUser.IsInRole(UserRole.ContentAdmin))
+        {
+            if (!outdoorArea.IsPublic && outdoorArea.CreatedUserId != currentUser.Id)
+            {
+                throw new UnauthorizedAccessException("User does not have access to this outdoor area.");
+            }
+
+            if (command.IsPublic.HasValue && command.IsPublic != outdoorArea.IsPublic && outdoorArea.CreatedUserId != currentUser.Id)
+            {
+                throw new UnauthorizedAccessException("Only the creator or an admin can change outdoor area visibility.");
+            }
+        }
+
         var ids = command.SectorIds.Distinct().ToList();
         var sectors = await _dbContext.Sectors.Where(sector => ids.Contains(sector.Id)).ToListAsync();
         if (sectors.Count != ids.Count)
@@ -43,6 +57,7 @@ public class UpdateOutdoorAreaCommandHandler : ICommandHandler<UpdateOutdoorArea
         }
 
         outdoorArea.UpdateContent(command.Name, command.Description, command.ImportantInfo, command.PreviewImageUri, command.ImageUris);
+        outdoorArea.IsPublic = command.IsPublic ?? outdoorArea.IsPublic;
         outdoorArea.Sectors = sectors;
         await _dbContext.UpdateEntityAndSaveChangesAsync(outdoorArea, command.Version);
     }

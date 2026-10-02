@@ -32,7 +32,13 @@ public class CreateOutdoorAreaCommandHandler : ICommandHandler<CreateOutdoorArea
             throw new UnauthorizedAccessException("User does not have the required role.");
         }
 
-        var outdoorArea = new OutdoorArea { Id = Guid.CreateVersion7(), Name = command.Name, CreatedUserId = currentUser.Id };
+        var outdoorArea = new OutdoorArea
+        {
+            Id = Guid.CreateVersion7(),
+            Name = command.Name,
+            CreatedUserId = currentUser.Id,
+            IsPublic = command.IsPublic
+        };
         outdoorArea.UpdateContent(command.Name, command.Description, command.ImportantInfo, command.PreviewImageUri, command.ImageUris);
         outdoorArea.Sectors = await GetSectorsAsync(command.SectorIds);
         await _dbContext.InsertEntityAndSaveChangesAsync(outdoorArea);

@@ -1,6 +1,12 @@
 <h1>Spraywalls</h1>
 <section>
   <div class="tile-container">
+    @if (isLoadingSpraywalls() || isLoadingBoulderGyms()) {
+      <div class="big-tile is-loading">
+        <div class="tile-content"></div>
+      </div>
+    }
+
     @for (spraywall of this.spraywalls(); track spraywall.id) {
       @if (!spraywall.isPartOfGym) {
         @let backgroundImage =
@@ -19,29 +25,33 @@
       }
     }
     @for (boulderGym of this.boulderGyms(); track boulderGym.id) {
-      @let backgroundImage =
-        boulderGym.previewImageUri ? `url(${boulderGym.previewImageUri})` : `url(/tiles/bricks.png)`;
-      @if (boulderGym.spraywalls !== undefined && boulderGym.spraywalls.length > 0) {
-        <div
-          class="big-tile"
-          [ngClass]="{
-            'is-generic-background': (boulderGym.previewImageUri?.length ?? 0) === 0
-          }"
-          [style.backgroundImage]="backgroundImage"
-          [routerLink]="['/', 'boulder-gym', boulderGym.id]">
-          <div class="tile-content">
-            <h2>{{ boulderGym.name }}</h2>
-            @if (boulderGym.spraywalls?.[0]; as firstSpraywall) {
-              <button
-                type="button"
-                class="first-spraywall-button"
-                [routerLink]="['/', 'spraywall', firstSpraywall.id]"
-                [attr.aria-label]="'Open the first spraywall at ' + boulderGym.name"
-                (click)="$event.stopPropagation()">
-                directly to spraywall
-              </button>
-            }
-          </div>
+      <!-- todo: either make imag euri relative or save absolute uris -->
+      @if (boulderGym.spraywalls?.[0]; as firstSpraywall) {
+        <div class="big-tile split-tile">
+          <a
+            class="split-tile-link gym-link"
+            [class.is-generic-background]="!boulderGym.previewImageUri"
+            [style.backgroundImage]="
+              boulderGym.previewImageUri ? `url(${boulderGym.previewImageUri})` : 'url(/tiles/bricks.png)'
+            "
+            [routerLink]="['/', 'boulder-gym', boulderGym.id]"
+            [attr.aria-label]="'Open gym ' + boulderGym.name">
+            <div class="tile-content">
+              <h2>{{ boulderGym.name }}</h2>
+            </div>
+          </a>
+          <a
+            class="split-tile-link spraywall-link"
+            [class.is-generic-background]="!firstSpraywall.previewImageUri"
+            [style.backgroundImage]="
+              firstSpraywall.previewImageUri ? `url(${firstSpraywall.previewImageUri})` : 'url(/tiles/bricks.png)'
+            "
+            [routerLink]="['/', 'spraywall', firstSpraywall.id]"
+            [attr.aria-label]="'Open spraywall at ' + boulderGym.name">
+            <div class="tile-content">
+              <h2>spraywall</h2>
+            </div>
+          </a>
         </div>
       }
     }
@@ -50,13 +60,20 @@
 <h1>Outdoor</h1>
 <section>
   <div class="tile-container">
+    @if (isLoadingOutdoorAreas()) {
+      <div class="big-tile is-loading">
+        <div class="tile-content"></div>
+      </div>
+    }
+
     @for (outdoorArea of this.outdoorAreas(); track outdoorArea.id) {
       @let backgroundImage =
         outdoorArea.previewImageUri ? `url(${outdoorArea.previewImageUri})` : `url(/tiles/flowers.png)`;
       <div
         class="big-tile"
         [ngClass]="{
-          'is-generic-background': (outdoorArea.previewImageUri?.length ?? 0) === 0
+          'is-generic-background': (outdoorArea.previewImageUri?.length ?? 0) === 0,
+          'is-private': !outdoorArea.isPublic
         }"
         [style.backgroundImage]="backgroundImage"
         [routerLink]="['/', 'outdoor-area', outdoorArea.id]">
