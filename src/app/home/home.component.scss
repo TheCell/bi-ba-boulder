@@ -43,7 +43,22 @@ h1 {
   background-repeat: repeat;
   background-image: url('/tiles/pattern_007.png');
   background-blend-mode: multiply;
-  // background-blend-mode: screen;
+}
+
+.big-tile.is-loading {
+  background-color: $lightDark;
+  background-image: linear-gradient(90deg, transparent, $gray, transparent, transparent);
+  background-repeat: no-repeat;
+  animation: skeleton-loading 1.5s infinite linear;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
 }
 
 @media (max-width: 600px) {

@@ -1,6 +1,12 @@
 <h1>Spraywalls</h1>
 <section>
   <div class="tile-container">
+    @if (isLoadingSpraywalls() || isLoadingBoulderGyms()) {
+      <div class="big-tile is-loading">
+        <div class="tile-content"></div>
+      </div>
+    }
+
     @for (spraywall of this.spraywalls(); track spraywall.id) {
       @if (!spraywall.isPartOfGym) {
         @let backgroundImage =
@@ -31,7 +37,7 @@
           [routerLink]="['/', 'boulder-gym', boulderGym.id]">
           <div class="tile-content">
             <h2>{{ boulderGym.name }}</h2>
-            @if (boulderGym.spraywalls?.[0]; as firstSpraywall) {
+            @if (boulderGym.spraywalls[0]; as firstSpraywall) {
               <button
                 type="button"
                 class="first-spraywall-button"
@@ -50,6 +56,12 @@
 <h1>Outdoor</h1>
 <section>
   <div class="tile-container">
+    @if (isLoadingOutdoorAreas()) {
+      <div class="big-tile is-loading">
+        <div class="tile-content"></div>
+      </div>
+    }
+
     @for (outdoorArea of this.outdoorAreas(); track outdoorArea.id) {
       @let backgroundImage =
         outdoorArea.previewImageUri ? `url(${outdoorArea.previewImageUri})` : `url(/tiles/flowers.png)`;
