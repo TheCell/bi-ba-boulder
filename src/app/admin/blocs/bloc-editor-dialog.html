@@ -2,12 +2,12 @@
 
 <div class="form-group form-input" [class.disabled]="blocForm.sectorId().disabled()">
   <select id="sector" [formField]="blocForm.sectorId">
-    <option value="">Select a sector</option>
+    <option value="">Without sector</option>
     @for (sector of sectors(); track sector.id) {
     <option [value]="sector.id">{{ sector.name }}</option>
     }
   </select>
-  <label for="sector" class="group-label">Sector</label>
+  <label for="sector" class="group-label">Sector (optional)</label>
 </div>
 
 <div class="form-group form-input" [class.disabled]="blocForm.name().disabled()">

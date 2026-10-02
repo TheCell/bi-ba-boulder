@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, output, signal } from '@angular/core';
 import { disabled, form, FormField, required } from '@angular/forms/signals';
-import { BlocDto, BlocsService, SectorDto } from '@api-net/index';
+import { BlocDto, BlocsService, CreateBlocCommand, SectorDto } from '@api-net/index';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { IModal } from '../../core/modal/modal/modal.interface';
 import { ToastService } from '../../core/toast-container/toast.service';
@@ -45,9 +45,7 @@ export class BlocEditorDialog implements IModal {
   public isLoading = signal(false);
   public sectors = signal<SectorDto[]>([]);
   public title = computed(() => (this.editingBloc ? 'Edit bloc' : 'Create bloc'));
-  public isSubmitDisabled = computed(
-    () => this.isLoading() || this.blocForm().disabled() || this.blocForm().invalid()
-  );
+  public isSubmitDisabled = computed(() => this.isLoading() || this.blocForm().disabled() || this.blocForm().invalid());
   public blocForm = form(this.formModel, (schemaPath) => {
     disabled(schemaPath.sectorId, { when: () => this.isDisabled() });
     disabled(schemaPath.name, { when: () => this.isDisabled() });
@@ -57,7 +55,6 @@ export class BlocEditorDialog implements IModal {
     disabled(schemaPath.blocLowRes, { when: () => this.isDisabled() });
     disabled(schemaPath.blocMedRes, { when: () => this.isDisabled() });
     disabled(schemaPath.blocHighRes, { when: () => this.isDisabled() });
-    required(schemaPath.sectorId);
     required(schemaPath.name);
   });
 
@@ -90,7 +87,10 @@ export class BlocEditorDialog implements IModal {
     this.isDisabled.set(true);
     this.isLoading.set(true);
 
-    const model = this.formModel();
+    const model: CreateBlocCommand = {
+      ...this.formModel(),
+      sectorId: this.formModel().sectorId || null
+    };
     const editingBloc = this.editingBloc;
 
     const request$ = editingBloc

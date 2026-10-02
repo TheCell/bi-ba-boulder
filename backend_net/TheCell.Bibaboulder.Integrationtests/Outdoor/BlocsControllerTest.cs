@@ -65,6 +65,24 @@ public class BlocsControllerTest : BaseTest
         }
     }
 
+    [Fact]
+    public async Task GetBlocsWithoutSector_Anonymous_ReturnsOnlyUnassignedBlocs()
+    {
+        var (_, assignedBlocs) = await PrepareData();
+        var unassignedBloc = new BlocBuilder().Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(unassignedBloc);
+
+        var response = await Client().GetAsync($"{_baseUrl}/without-sector", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<BlocDto>>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.All(result, bloc => Assert.Null(bloc.SectorId));
+        Assert.DoesNotContain(result, bloc => assignedBlocs.Any(assigned => assigned.Id == bloc.Id));
+        BlocAssertion.Assert(unassignedBloc, result.Single(bloc => bloc.Id == unassignedBloc.Id));
+    }
+
     private async Task<(Sector Sector, List<Bloc> Blocs)> PrepareData()
     {
         var sector = new SectorBuilder()

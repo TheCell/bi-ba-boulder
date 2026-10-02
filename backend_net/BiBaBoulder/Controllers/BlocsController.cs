@@ -44,6 +44,14 @@ public class BlocsController : ControllerBase
             new GetBlocsBySectorIdQuery { SectorId = sectorId });
     }
 
+    [HttpGet("without-sector")]
+    [AllowAnonymous]
+    public async Task<ICollection<BlocDto>> GetBlocsWithoutSector()
+    {
+        return await _getBlocsBySectorIdQueryHandler.HandleAsync(
+            new GetBlocsBySectorIdQuery { SectorId = null });
+    }
+
     [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<BlocDto> GetBloc(Guid id)

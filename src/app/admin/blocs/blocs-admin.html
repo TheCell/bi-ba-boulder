@@ -3,14 +3,13 @@
     <h1>Blocs</h1>
     <p>Manage blocs, their 3D models, and sector assignments.</p>
   </div>
-  <button type="button" class="button primary" [disabled]="sectors().length === 0" (click)="openCreateDialog()">
-    Create bloc
-  </button>
+  <button type="button" class="button primary" (click)="openCreateDialog()">Create bloc</button>
 </header>
 
 <section class="filters" aria-label="Bloc filters">
   <div class="form-group form-input">
     <select id="sector-filter" (change)="onSectorChange($event)">
+      <option value="" [selected]="selectedSectorId() === null">Without sector</option>
       @for (sector of sectors(); track sector.id) {
       <option [value]="sector.id" [selected]="sector.id === selectedSectorId()">{{ sector.name }}</option>
       }

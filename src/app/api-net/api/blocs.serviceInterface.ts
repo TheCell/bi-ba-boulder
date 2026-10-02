@@ -57,6 +57,12 @@ export interface BlocsServiceInterface {
     /**
      * 
      * 
+     */
+    getBlocsWithoutSector(extraHttpRequestParams?: any): Observable<Array<BlocDto>>;
+
+    /**
+     * 
+     * 
      * @param id 
      * @param updateBlocCommand 
      */

@@ -46,7 +46,7 @@ export class BlocsAdmin implements OnInit {
   }
 
   public onSectorChange(event: Event): void {
-    this.selectSector((event.target as HTMLSelectElement).value);
+    this.selectSector((event.target as HTMLSelectElement).value || null);
   }
 
   public openCreateDialog(): void {
@@ -85,9 +85,13 @@ export class BlocsAdmin implements OnInit {
     this.blocs.update((items) => items.filter((item) => item.id !== bloc.id));
   }
 
-  private selectSector(sectorId: string): void {
+  private selectSector(sectorId: string | null): void {
     this.selectedSectorId.set(sectorId);
-    this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { sectorId }, replaceUrl: true });
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { sectorId: sectorId ?? 'unassigned' },
+      replaceUrl: true
+    });
     this.loadBlocs();
   }
 
@@ -99,12 +103,12 @@ export class BlocsAdmin implements OnInit {
         this.sectors.set(sortedSectors);
 
         const requestedSectorId = this.activatedRoute.snapshot.queryParamMap.get('sectorId');
-        const initialSector = sortedSectors.find((sector) => sector.id === requestedSectorId) ?? sortedSectors[0];
-        if (initialSector === undefined) {
-          this.isLoading.set(false);
+        if (requestedSectorId === 'unassigned') {
+          this.selectSector(null);
           return;
         }
-        this.selectSector(initialSector.id);
+        const initialSector = sortedSectors.find((sector) => sector.id === requestedSectorId) ?? sortedSectors[0];
+        this.selectSector(initialSector?.id ?? null);
       },
       error: () => {
         this.isLoading.set(false);
@@ -115,12 +119,10 @@ export class BlocsAdmin implements OnInit {
 
   private loadBlocs(): void {
     const sectorId = this.selectedSectorId();
-    if (sectorId === null) {
-      return;
-    }
-
     this.isLoading.set(true);
-    this.blocsService.getBlocsBySectorId(sectorId).subscribe({
+    const request$ =
+      sectorId === null ? this.blocsService.getBlocsWithoutSector() : this.blocsService.getBlocsBySectorId(sectorId);
+    request$.subscribe({
       next: (blocs: BlocDto[]) => {
         this.blocs.set(blocs);
         this.isLoading.set(false);
