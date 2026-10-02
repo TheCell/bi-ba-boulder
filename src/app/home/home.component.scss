@@ -26,6 +26,7 @@ h1 {
 }
 
 .big-tile {
+  position: relative;
   height: 200px;
   width: 400px;
   background-size: cover;
@@ -40,7 +41,8 @@ h1 {
   border: 1px solid $warning;
 }
 
-.big-tile.is-generic-background {
+.big-tile.is-generic-background,
+.split-tile-link.is-generic-background {
   background-position: unset;
   background-color: $darkDark;
   background-size: 56px 56px;
@@ -72,33 +74,99 @@ h1 {
 }
 
 .tile-content {
+  position: relative;
   padding: 25px 25px 25px 25px;
   // background-image: linear-gradient(rgba($primary, 1.0) 50%, rgba($primary, 0.0) 90%);
-  background-image: linear-gradient(rgba($dark, 1.0) 50%, rgba($dark, 0.0) 90%);
+  // background-image: linear-gradient(rgba($dark, 1.0) 50%, rgba($dark, 0.0) 90%);
+  background-image: linear-gradient(180deg, rgba($dark, 1.0) 0%, rgba($dark, 0.0) 75%);
   margin-bottom: 0px;
   border-radius: 5px;
   color: $fontColor;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  // text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .tile-content h2 {
   margin-top: 2px;
 }
 
-.first-spraywall-button {
-  border: 1px solid $fontColor;
-  border-radius: 4px;
-  background-color: rgba($darkDark, 0.85);
-  color: $fontColor;
-  cursor: pointer;
-  font-size: 0.8rem;
-  padding: 12px 20px;
-  float: right;
-  margin-top: 70px;
+.big-tile:not(.is-loading):not(.split-tile)::before,
+.split-tile-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: $primary;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  pointer-events: none;
 }
 
-.first-spraywall-button:hover,
-.first-spraywall-button:focus-visible {
-  background-color: $primary;
-  color: $darkDark;
+.big-tile:not(.is-loading):not(.split-tile):hover::before,
+.big-tile:not(.is-loading):not(.split-tile):focus-visible::before,
+.split-tile-link:hover::before,
+.split-tile-link:focus-visible::before {
+  opacity: 0.5;
+}
+
+.split-tile {
+  overflow: hidden;
+  background-color: $darkDark;
+  cursor: default;
+}
+
+.split-tile-link {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  color: $fontColor;
+  text-decoration: none;
+  cursor: pointer;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(180deg, rgba($dark, 1.0) 0%, rgba($dark, 0.0) 75%);
+    pointer-events: none;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $fontColor;
+    outline-offset: -3px;
+  }
+
+  .tile-content {
+    z-index: 1;
+    box-sizing: border-box;
+    width: 65%;
+    overflow-wrap: anywhere;
+    background-image: none;
+  }
+}
+
+.gym-link {
+  clip-path: polygon(0 0, 70% 0, 30% 100%, 0 100%);
+}
+
+.spraywall-link {
+  clip-path: polygon(70% 0, 100% 0, 100% 100%, 30% 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  &::after {
+    background-image: linear-gradient(0deg, rgba($dark, 1.0) 0%, rgba($dark, 0.0) 75%);
+  }
+
+  .tile-content {
+    text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .big-tile::before,
+  .split-tile-link::before {
+    transition: none;
+  }
 }
