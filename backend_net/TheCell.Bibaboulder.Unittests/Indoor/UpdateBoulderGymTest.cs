@@ -115,25 +115,25 @@ public class UpdateBoulderGymTest
         Assert.Equal("example/new.jpg", updated.Media.Single().Uri);
     }
 
-    [Fact(Skip = "Skipping test due to invalid image URI handling not implemented yet")]
-    public async Task UpdateBoulderGym_InvalidImageUri_ArgumentException()
-    {
-        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
-        await _dbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
-        _currentUserService.WithUser(contentAdmin);
+    //[Fact(Skip = "Skipping test due to invalid image URI handling not implemented yet")]
+    //public async Task UpdateBoulderGym_InvalidImageUri_ArgumentException()
+    //{
+    //    var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
+    //    await _dbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
+    //    _currentUserService.WithUser(contentAdmin);
 
-        var boulderGym = new BoulderGymBuilder().Build();
-        await _dbContext.InsertEntityAndSaveChangesAsync(boulderGym);
+    //    var boulderGym = new BoulderGymBuilder().Build();
+    //    await _dbContext.InsertEntityAndSaveChangesAsync(boulderGym);
 
-        var command = new UpdateBoulderGymCommand
-        {
-            Id = boulderGym.Id,
-            Version = boulderGym.Version,
-            Name = boulderGym.Name,
-            ImageUris = ["ftp://example.com/image.jpg"]
-        };
+    //    var command = new UpdateBoulderGymCommand
+    //    {
+    //        Id = boulderGym.Id,
+    //        Version = boulderGym.Version,
+    //        Name = boulderGym.Name,
+    //        ImageUris = ["ftp://example.com/image.jpg"]
+    //    };
 
-        var handler = new UpdateBoulderGymCommandHandler(_dbContext, _currentUserService);
-        await Assert.ThrowsAsync<ArgumentException>(async () => await handler.HandleAsync(command));
-    }
+    //    var handler = new UpdateBoulderGymCommandHandler(_dbContext, _currentUserService);
+    //    await Assert.ThrowsAsync<ArgumentException>(async () => await handler.HandleAsync(command));
+    //}
 }
