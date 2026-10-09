@@ -1,0 +1,5 @@
+<div
+  class="container"
+  [ngClass]="{ 'right-side': isRightToLeft(), 'has-reached-threshold': hasReachedThreshold() }"
+  [ngStyle]="{ 'width': math.abs(delta()) + 'px' }"></div>
+
