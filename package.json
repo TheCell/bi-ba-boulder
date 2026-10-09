@@ -55,5 +55,9 @@
     "karma-jasmine-html-reporter": "~2.2.0",
     "typescript": "~6.0.3",
     "typescript-eslint": "8.62.1"
+  },
+  "allowScripts": {
+    "@openapitools/openapi-generator-cli@2.41.0": true,
+    "esbuild@0.28.2": true
   }
 }
