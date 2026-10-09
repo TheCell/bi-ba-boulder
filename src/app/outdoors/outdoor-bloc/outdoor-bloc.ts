@@ -1,4 +1,14 @@
-import { Component, computed, DestroyRef, inject, OnDestroy, signal, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  inject,
+  OnDestroy,
+  signal,
+  viewChild
+} from '@angular/core';
 import { SocialsOverlay } from '../../render-overlays/socials-overlay/socials-overlay';
 import { EnhancedLine, OutdoorRenderer } from '../../renderer/outdoor-renderer/outdoor-renderer';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
@@ -19,6 +29,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ConfirmDeleteOutdoorsDialog } from '../confirm-delete-outdoors-dialog/confirm-delete-outdoors-dialog';
 import { ConfirmDeleteOutdoorsDialogData } from '../confirm-delete-outdoors-dialog/confirm-delete-outdoors-dialog-data';
 import { Icon } from '../../core/icon/icon';
+import { SwipeIndicator } from '../../common/swipe-indicator/swipe-indicator';
+import { SwipeEvent } from '../../common/swipe-indicator/swipe-event';
+
+type EnhancedSwipeType = ({ [K in keyof SwipeEvent]: SwipeEvent[K] } & { identifier: number }) | undefined;
 
 @Component({
   selector: 'app-outdoor-bloc',
@@ -30,13 +44,15 @@ import { Icon } from '../../core/icon/icon';
     BlocLineItem,
     Modal,
     SocialsOverlay,
-    Icon
+    Icon,
+    SwipeIndicator
   ],
   templateUrl: './outdoor-bloc.html',
   styleUrl: './outdoor-bloc.scss'
 })
-export class OutdoorBloc implements OnDestroy {
-  @ViewChild('confirmDelete') private confirmDeleteModal!: Modal;
+export class OutdoorBloc implements AfterViewInit, OnDestroy {
+  private confirmDeleteModal = viewChild.required<Modal>('confirmDelete');
+  private legendSection = viewChild.required<ElementRef>('legendSection');
 
   private boulderLoaderService = inject(BoulderLoaderService);
   private linesService = inject(LinesService);
@@ -73,6 +89,8 @@ export class OutdoorBloc implements OnDestroy {
     resolution: ResolutionLevel;
   }>();
   private blocChanged = new Subject<BlocDto>();
+  private _swipeEvent = signal<EnhancedSwipeType>(undefined);
+  public swipeEvent = this._swipeEvent.asReadonly();
   private subscription = new Subscription();
 
   public constructor() {
@@ -116,42 +134,6 @@ export class OutdoorBloc implements OnDestroy {
       })
     );
 
-    // this.subscription.add(
-    //   this.startLoadingBoulder
-    //     .pipe(
-    //       takeUntilDestroyed(this.destroyRef),
-    //       switchMap(({ urls, blocIds, resolution }) => {
-    //         const urlBlocPair = urls.map((url, index) => ({ url, blocId: blocIds[index] }));
-    //         // todo load the first part without waiting for the additional parts
-    //         return forkJoin(
-    //           urlBlocPair.map(({ url, blocId }) => this.boulderLoaderService.loadBoulder(url, blocId, resolution))
-    //         ).pipe(
-    //           map((results) => {
-    //             return { data: results, resolution, blocIds };
-    //           })
-    //         );
-    //       })
-    //     )
-    //     .subscribe({
-    //       next: ({
-    //         data,
-    //         resolution,
-    //         blocIds
-    //       }: {
-    //         data: ArrayBuffer[];
-    //         resolution: ResolutionLevel;
-    //         blocIds: string[];
-    //       }) => {
-    //         const currentModels = [...(this.currentRawModels() ?? [])];
-    //         for (let i = 0; i < data.length; i++) {
-    //           currentModels.push({ arrayBuffer: data[i], resolution: resolution, blocId: blocIds[i] });
-    //         }
-    //         this.currentRawModels.set(currentModels);
-    //         this.loadNextResolution.next(resolution);
-    //       }
-    //     })
-    // );
-
     this.subscription.add(
       this.startLoadingBoulder
         .pipe(
@@ -167,7 +149,6 @@ export class OutdoorBloc implements OnDestroy {
               )
             ).pipe(
               tap(({ result, blocId, resolution }) => {
-                // console.log(result);
                 const currentModels = [...(this.currentRawModels() ?? [])];
                 currentModels.push({ arrayBuffer: result, resolution: resolution, blocId: blocId });
                 this.currentRawModels.set(currentModels);
@@ -177,34 +158,13 @@ export class OutdoorBloc implements OnDestroy {
                 return results[0].resolution;
               })
             );
-            // .pipe(
-            //   map((results) => {
-            //     return results;
-            //     // return { data: results, resolution, blocIds };
-            //   })
-            // );
           })
         )
         .subscribe({
           next: (resolution) => {
-            // console.log('ye done', resolution);
             this.loadNextResolution.next(resolution);
           }
         })
-      // .subscribe({
-      //   next: ({
-      //     data,
-      //     resolution,
-      //     blocIds
-      //   }: {
-      //     data: ArrayBuffer[];
-      //     resolution: ResolutionLevel;
-      //     blocIds: string[];
-      //   }) => {
-      //     console.log('ye done', blocIds);
-      //     this.loadNextResolution.next(resolution);
-      //   }
-      // })
     );
 
     this.subscription.add(
@@ -218,8 +178,25 @@ export class OutdoorBloc implements OnDestroy {
     );
   }
 
+  public ngAfterViewInit(): void {
+    this.legendSection().nativeElement.addEventListener('touchstart', this.touchSwipeStartEvent);
+    this.legendSection().nativeElement.addEventListener('touchmove', this.touchSwipeMoveEvent);
+    this.legendSection().nativeElement.addEventListener('touchend', this.touchSwipeEndEvent);
+  }
+
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.legendSection().nativeElement.removeEventListener('touchstart', this.touchSwipeStartEvent);
+    this.legendSection().nativeElement.removeEventListener('touchmove', this.touchSwipeMoveEvent);
+    this.legendSection().nativeElement.removeEventListener('touchend', this.touchSwipeEndEvent);
+  }
+
+  public onSwipe(event: number) {
+    if (event > 0 && this.previousBloc !== undefined) {
+      this.router.navigate(this.blocRouterLink(this.previousBloc.id));
+    } else if (event < 0 && this.nextBloc !== undefined) {
+      this.router.navigate(this.blocRouterLink(this.nextBloc.id));
+    }
   }
 
   public onEditLine(): void {
@@ -230,7 +207,7 @@ export class OutdoorBloc implements OnDestroy {
 
   public onDeleteLine(): void {
     if (this.selectedLine()?.line) {
-      const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteOutdoorsDialog);
+      const modal = this.modalService.open(this.confirmDeleteModal().id, ConfirmDeleteOutdoorsDialog);
       if (modal && modal.initialize) {
         const data: ConfirmDeleteOutdoorsDialogData = {
           line: this.selectedLine()!.line
@@ -292,6 +269,33 @@ export class OutdoorBloc implements OnDestroy {
 
     return ['/', 'bloc', blocId];
   }
+
+  private touchSwipeStartEvent = (event: TouchEvent): void => {
+    const touch = event.changedTouches.item(0);
+    if (touch) {
+      this._swipeEvent.set({ identifier: touch.identifier, startX: touch.clientX, endX: touch.clientX });
+    }
+  };
+
+  private touchSwipeMoveEvent = (event: TouchEvent): void => {
+    for (let i = 0; i < event.changedTouches.length; i++) {
+      const touch = event.changedTouches.item(i);
+      const swipeEvent = this._swipeEvent();
+      if (touch && swipeEvent && swipeEvent.identifier === touch.identifier) {
+        this._swipeEvent.set({ ...this._swipeEvent()!, endX: touch.clientX });
+      }
+    }
+  };
+
+  private touchSwipeEndEvent = (event: TouchEvent): void => {
+    for (let i = 0; i < event.changedTouches.length; i++) {
+      const touch = event.changedTouches.item(i);
+      const swipeEvent = this._swipeEvent();
+      if (touch && swipeEvent && swipeEvent.identifier === touch.identifier) {
+        this._swipeEvent.set(undefined);
+      }
+    }
+  };
 
   private setSelectedLine(selectedLine: { line: LineDto; setFocus: boolean } | undefined, updateUrl = true): void {
     this.selectedLine.set(selectedLine);
