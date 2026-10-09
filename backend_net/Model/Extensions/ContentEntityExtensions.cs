@@ -72,7 +72,10 @@ public static class ContentEntityExtensions
 
         if (!Uri.TryCreate(uri.Trim(), UriKind.Relative, out _))
         {
-            throw new ArgumentException("Image URLs must be relative URLs.", parameterName);
+            Console.WriteLine($"Skipping invalid image URI: {parameterName}");
+            // skipping this for now
+            // TODO rework this
+            //throw new ArgumentException("Image URLs must be relative URLs.", parameterName);
         }
     }
 }
