@@ -14,7 +14,9 @@
     }
   </section>
   <section class="legend" #legendSection>
+    @if (previousBloc || nextBloc) {
     <app-swipe-indicator [swipeEvent]="swipeEvent()" (swiped)="onSwipe($event)"></app-swipe-indicator>
+    }
     <div class="actions">
       @if (previousBloc) {
       <a

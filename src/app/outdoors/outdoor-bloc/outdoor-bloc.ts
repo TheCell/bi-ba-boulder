@@ -95,9 +95,6 @@ export class OutdoorBloc implements AfterViewInit, OnDestroy {
 
   public constructor() {
     this.bloc = this.activatedRoute.snapshot.data['bloc'];
-    // this.touchSwipeStartEvent = this.touchSwipeStartEvent.bind(this);
-    // this.touchSwipeMoveEvent = this.touchSwipeMoveEvent.bind(this);
-    // this.touchSwipeEndEvent = this.touchSwipeEndEvent.bind(this);
 
     this.subscription.add(
       this.activatedRoute.queryParamMap.subscribe({
@@ -152,7 +149,6 @@ export class OutdoorBloc implements AfterViewInit, OnDestroy {
               )
             ).pipe(
               tap(({ result, blocId, resolution }) => {
-                // console.log(result);
                 const currentModels = [...(this.currentRawModels() ?? [])];
                 currentModels.push({ arrayBuffer: result, resolution: resolution, blocId: blocId });
                 this.currentRawModels.set(currentModels);
@@ -166,7 +162,6 @@ export class OutdoorBloc implements AfterViewInit, OnDestroy {
         )
         .subscribe({
           next: (resolution) => {
-            // console.log('ye done', resolution);
             this.loadNextResolution.next(resolution);
           }
         })
@@ -184,7 +179,6 @@ export class OutdoorBloc implements AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    console.log('ngAfterViewInit');
     this.legendSection().nativeElement.addEventListener('touchstart', this.touchSwipeStartEvent);
     this.legendSection().nativeElement.addEventListener('touchmove', this.touchSwipeMoveEvent);
     this.legendSection().nativeElement.addEventListener('touchend', this.touchSwipeEndEvent);
@@ -192,25 +186,17 @@ export class OutdoorBloc implements AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
-
-    console.log('ngOnDestroy');
     this.legendSection().nativeElement.removeEventListener('touchstart', this.touchSwipeStartEvent);
     this.legendSection().nativeElement.removeEventListener('touchmove', this.touchSwipeMoveEvent);
     this.legendSection().nativeElement.removeEventListener('touchend', this.touchSwipeEndEvent);
   }
 
   public onSwipe(event: number) {
-    console.log('onSwipe');
-
     if (event > 0 && this.previousBloc !== undefined) {
       this.router.navigate(this.blocRouterLink(this.previousBloc.id));
     } else if (event < 0 && this.nextBloc !== undefined) {
       this.router.navigate(this.blocRouterLink(this.nextBloc.id));
     }
-  }
-
-  public onDrag(event: DragEvent): void {
-    console.log(event);
   }
 
   public onEditLine(): void {
