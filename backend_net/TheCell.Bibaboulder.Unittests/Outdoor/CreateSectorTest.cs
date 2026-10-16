@@ -124,7 +124,7 @@ public class CreateSectorTest
             .AsNoTracking()
             .Include(item => item.OutdoorAreas)
             .SingleAsync(item => item.Id == command.Id, TestContext.Current.CancellationToken);
-        Assert.Single(sector.OutdoorAreas);
-        Assert.Equal(outdoorArea.Id, sector.OutdoorAreas.Single().Id);
+        var item = Assert.Single(sector.OutdoorAreas);
+        Assert.Equal(outdoorArea.Id, item.Id);
     }
 }

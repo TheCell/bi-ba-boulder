@@ -95,8 +95,8 @@ public class SearchSpraywallProblemsTest
         });
 
         Assert.Equal(1, result.TotalCount);
-        Assert.Single(result.Problems);
-        var spraywallDto = result.Problems.First();
+        var item = Assert.Single(result.Problems);
+        var spraywallDto = item;
         SpraywallProblemAssertion.Assert(problem, spraywallDto);
         Assert.Equal("Problem A", spraywallDto.Name);
         Assert.Equal("creator", spraywallDto.CreatedByName);
@@ -132,8 +132,7 @@ public class SearchSpraywallProblemsTest
         });
 
         Assert.Equal(1, result.TotalCount);
-        Assert.Single(result.Problems);
-        var spraywallDto = result.Problems.First();
+        var spraywallDto = Assert.Single(result.Problems);
         SpraywallProblemAssertion.Assert(problem, spraywallDto);
         Assert.Equal("Problem A", spraywallDto.Name);
         Assert.Equal(creator.Username, spraywallDto.CreatedByName);

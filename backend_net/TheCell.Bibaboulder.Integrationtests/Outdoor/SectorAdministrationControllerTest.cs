@@ -79,8 +79,8 @@ public class SectorAdministrationControllerTest : BaseTest
         Assert.NotNull(result);
         Assert.Equal(command.Name, result.Name);
         Assert.True(result.IsPublic);
-        Assert.Single(result.OutdoorAreas);
-        Assert.Equal(outdoorArea.Id, result.OutdoorAreas.Single().Id);
+        var item = Assert.Single(result.OutdoorAreas);
+        Assert.Equal(outdoorArea.Id, item.Id);
         Assert.Equal(sector.Version + 1, result.Version);
     }
 

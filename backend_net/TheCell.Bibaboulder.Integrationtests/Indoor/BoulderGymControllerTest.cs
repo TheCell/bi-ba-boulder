@@ -60,7 +60,7 @@ public class MediaControllerTest : BaseTest
         var boulderGyms = new List<BoulderGym>();
         for (var i = 0; i < 5; i++)
         {
-            var spraywalls = new List<Thecell.Bibaboulder.Model.Model.Indoor.Spraywall>();
+            var spraywalls = new List<Spraywall>();
             for (var j = 0; j < 3; j++)
             {
                 spraywalls.Add(new SpraywallBuilder()

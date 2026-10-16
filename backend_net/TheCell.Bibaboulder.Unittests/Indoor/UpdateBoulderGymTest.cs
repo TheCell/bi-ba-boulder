@@ -78,8 +78,8 @@ public class UpdateBoulderGymTest
         Assert.Equal(command.Description, updated.Description);
         Assert.Equal(command.ImportantInfo, updated.ImportantInfo);
         Assert.Equal(command.PreviewImageUri, updated.PreviewImageUri);
-        Assert.Single(updated.Media);
-        Assert.Equal(command.ImageUris.Single(), updated.Media.Single().Uri);
+        var item = Assert.Single(updated.Media);
+        Assert.Equal(command.ImageUris.Single(), item.Uri);
         Assert.Equal(command.Version + 1, updated.Version);
     }
 
@@ -111,8 +111,8 @@ public class UpdateBoulderGymTest
             .AsNoTracking()
             .SingleAsync(gym => gym.Id == boulderGym.Id, TestContext.Current.CancellationToken);
 
-        Assert.Single(updated.Media);
-        Assert.Equal("example/new.jpg", updated.Media.Single().Uri);
+        var item = Assert.Single(updated.Media);
+        Assert.Equal("example/new.jpg", item.Uri);
     }
 
     //[Fact(Skip = "Skipping test due to invalid image URI handling not implemented yet")]

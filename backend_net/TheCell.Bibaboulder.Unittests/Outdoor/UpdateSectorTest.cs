@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
@@ -135,8 +134,8 @@ public class UpdateSectorTest
         Assert.Equal(command.Coordinates, updated.Coordinates);
         Assert.True(updated.IsPublic);
         Assert.Single(updated.Media);
-        Assert.Single(updated.OutdoorAreas);
-        Assert.Equal(outdoorArea.Id, updated.OutdoorAreas.Single().Id);
+        var item = Assert.Single(updated.OutdoorAreas);
+        Assert.Equal(outdoorArea.Id, item.Id);
         Assert.Equal(command.Version + 1, updated.Version);
     }
 }

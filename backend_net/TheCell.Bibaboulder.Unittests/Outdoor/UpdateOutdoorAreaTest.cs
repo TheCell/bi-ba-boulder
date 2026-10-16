@@ -110,8 +110,8 @@ public class UpdateOutdoorAreaTest
 
         // todo add assertions to verify the response content
         Assert.Equal(command.Name, updated.Name);
-        Assert.Single(updated.Sectors);
-        Assert.Equal(newSector.Id, updated.Sectors.Single().Id);
+        var item = Assert.Single(updated.Sectors);
+        Assert.Equal(newSector.Id, item.Id);
         Assert.Single(updated.Media);
         Assert.True(updated.IsPublic);
         Assert.Equal(command.Version + 1, updated.Version);

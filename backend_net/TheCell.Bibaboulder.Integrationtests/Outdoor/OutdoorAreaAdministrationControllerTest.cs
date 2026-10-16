@@ -75,8 +75,8 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
         var result = await response.Content.ReadFromJsonAsync<OutdoorAreaDto>(cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.NotNull(result);
-        Assert.Single(result.Sectors);
-        Assert.Equal(sector.Id, result.Sectors.Single().Id);
+        var item = Assert.Single(result.Sectors);
+        Assert.Equal(sector.Id, item.Id);
         Assert.Equal(command.Name, result.Name);
     }
 
