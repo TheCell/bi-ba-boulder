@@ -55,6 +55,8 @@ jobs:
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: backend_net/global.json 
 
       - name: Restore dependencies
         run: cd backend_net && dotnet restore BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
@@ -126,6 +128,8 @@ jobs:
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: backend_net/global.json 
 
       - name: Restore dependencies
         run: cd backend_net && dotnet restore BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
@@ -144,32 +148,6 @@ jobs:
         with:
           name: DotNet_Backend_Build
           path: ./publish
-
-  # run-migrations:
-  #   name: Run EF Core Migrations
-  #   runs-on: ubuntu-latest
-  #   needs: [build-dotnet-backend]
-    
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Setup .NET 10
-  #       uses: actions/setup-dotnet@v6
-
-  #     - name: Install EF Core tools
-  #       run: dotnet tool install --global dotnet-ef
-
-  #     - name: Restore dependencies
-  #       run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
-
-  #     - name: Build solution
-  #       run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --no-restore --configuration Release
-
-  #     - name: Run migrations
-  #       run: dotnet ef database update --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --connection "${{ secrets.MSSQL_CONNECTION_STRING }}"
-  #       env:
-  #         ASPNETCORE_ENVIRONMENT: Production
 
   dotnet-backend-deploy:
     name: Deploy .NET Backend to FTP
