@@ -82,17 +82,17 @@ jobs:
         run: cd backend_net && dotnet build BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
 
       - name: Run unit tests
-        run: cd backend_net && dotnet test TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+        run: cd backend_net && dotnet test --project TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj --configuration Release --no-build --verbosity normal --results-directory TestResults/Unittests -- --coverlet --coverlet-output-format cobertura
 
       - name: Run integration tests
-        run: cd backend_net && dotnet test TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+        run: cd backend_net && dotnet test --project TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj --configuration Release --no-build --verbosity normal --results-directory TestResults/Integrationtests -- --coverlet --coverlet-output-format cobertura
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: backend-coverage
-          path: backend_net/**/TestResults/**/coverage.cobertura.xml
+          path: backend_net/**/TestResults/**/coverage.cobertura*.xml
 
   build-frontend:
     name: Build Frontend
