@@ -138,7 +138,7 @@ jobs:
         run: cd backend_net && dotnet build BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
 
       - name: Publish
-        run: cd backend_net && dotnet publish BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --configuration Release --output ./publish --no-build
+        run: cd backend_net && dotnet publish BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --configuration Release --output "${{ github.workspace }}/publish" --no-build
 
       - name: Copy web.config to publish directory
         run: cp backend_net/BiBaBoulder/web.config ./publish/

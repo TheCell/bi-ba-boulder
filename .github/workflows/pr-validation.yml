@@ -137,7 +137,7 @@ jobs:
         run: cd backend_net && dotnet build BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
 
       - name: Publish
-        run: cd backend_net && dotnet publish BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --configuration Release --output ./publish --no-build
+        run: cd backend_net && dotnet publish BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --configuration Release --output "${{ github.workspace }}/publish" --no-build
 
   validate-migrations:
     name: Validate EF Core Migrations
