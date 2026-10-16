@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
+using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -14,15 +16,21 @@ namespace TheCell.Bibaboulder.Unittests.Outdoor;
 public class CreateLineTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
+    private readonly CurrentUserServiceMock _currentUserServiceMock;
 
     public CreateLineTest()
     {
         _dbContext = new DbContextMock().Build();
+        _currentUserServiceMock = new CurrentUserServiceMock();
     }
 
     [Fact]
     public async Task CreateLineForBloc_NotFound_NotFoundException()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var command = new CreateLineCommand
         {
             BlocId = Guid.CreateVersion7(),
@@ -32,7 +40,7 @@ public class CreateLineTest
             Data = CreateLineData(false)
         };
 
-        var handler = new CreateLineCommandHandler(_dbContext);
+        var handler = new CreateLineCommandHandler(_dbContext, _currentUserServiceMock);
 
         await Assert.ThrowsAsync<NotFoundException>(async () =>
             await handler.HandleAsync(command));
@@ -41,6 +49,10 @@ public class CreateLineTest
     [Fact]
     public async Task CreateLineForBloc_ArgumentException()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var bloc = await PrepareBloc();
 
         var command = new CreateLineCommand
@@ -52,7 +64,7 @@ public class CreateLineTest
             Data = new LineData { Positions = [] }
         };
 
-        var handler = new CreateLineCommandHandler(_dbContext);
+        var handler = new CreateLineCommandHandler(_dbContext, _currentUserServiceMock);
 
         var ex = await Assert.ThrowsAsync<ArgumentException>(async () =>
             await handler.HandleAsync(command));
@@ -62,6 +74,10 @@ public class CreateLineTest
     [Fact]
     public async Task CreateLineForBloc_Ok()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var bloc = await PrepareBloc();
 
         var command = new CreateLineCommand
@@ -73,7 +89,7 @@ public class CreateLineTest
             Data = CreateLineData(false)
         };
 
-        var handler = new CreateLineCommandHandler(_dbContext);
+        var handler = new CreateLineCommandHandler(_dbContext, _currentUserServiceMock);
         await handler.HandleAsync(command);
 
         var line = await _dbContext.Lines
@@ -92,6 +108,10 @@ public class CreateLineTest
     [Fact]
     public async Task CreateLineForBloc_WithMarkings_Ok()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var bloc = await PrepareBloc();
 
         var command = new CreateLineCommand
@@ -103,7 +123,7 @@ public class CreateLineTest
             Data = CreateLineData(true)
         };
 
-        var handler = new CreateLineCommandHandler(_dbContext);
+        var handler = new CreateLineCommandHandler(_dbContext, _currentUserServiceMock);
         await handler.HandleAsync(command);
 
         var line = await _dbContext.Lines

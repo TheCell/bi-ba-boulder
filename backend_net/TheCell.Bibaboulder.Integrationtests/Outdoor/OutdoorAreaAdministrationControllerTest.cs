@@ -98,7 +98,27 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
     }
 
     [Fact]
-    public async Task UpdateOutdoorArea_Ok()
+    public async Task UpdateOutdoorArea_Editor_Forbidden()
+    {
+        var editor = new UserBuilder().SetUsername("Editor").SetRoles(AuthorizationRoles.Editor).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(editor);
+
+        var outdoorArea = new OutdoorAreaBuilder()
+            .SetName("Original")
+            .Build();
+        outdoorArea.CreatedUserId = editor.Id;
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
+
+        var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version, IsPublic = true };
+
+        var client = AuthenticatedClient(userId: editor.OidcSubject, role: AuthorizationRoles.Editor, username: editor.Username);
+        var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task UpdateOutdoorArea_ContentAdmin_Ok()
     {
         var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
@@ -112,6 +132,31 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
         var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version, IsPublic = true };
 
         var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<OutdoorAreaDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        Assert.Equal(command.Name, result.Name);
+        Assert.True(result.IsPublic);
+        Assert.Equal(outdoorArea.Version + 1, result.Version);
+    }
+
+    [Fact]
+    public async Task UpdateOutdoorArea_Admin_Ok()
+    {
+        var admin = new UserBuilder().SetUsername("Admin").SetRoles(AuthorizationRoles.Admin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(admin);
+
+        var outdoorArea = new OutdoorAreaBuilder()
+            .SetName("Original")
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
+
+        var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version, IsPublic = true };
+
+        var client = AuthenticatedClient(userId: admin.OidcSubject, role: AuthorizationRoles.Admin, username: admin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();

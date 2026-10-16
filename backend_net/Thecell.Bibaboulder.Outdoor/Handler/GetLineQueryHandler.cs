@@ -35,7 +35,8 @@ public class GetLineQueryHandler : IQueryHandler<GetLineQuery, LineDto>
             .SingleOrDefaultAsync(l => l.Id == query.Id)
             .ThrowIfNullAsync(query.Id);
 
-        if (!isAdmin)
+        var isLineOwner = currentUser is not null && line.CreatedUserId == currentUser.Id;
+        if (!isAdmin && !(hasEditorRole && isLineOwner))
         {
             var access = await _dbContext.Blocs
                 .AsNoTracking()

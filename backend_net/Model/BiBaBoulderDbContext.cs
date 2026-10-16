@@ -209,6 +209,7 @@ public class BiBaBoulderDbContext : DbContext, IBiBaBoulderDbContext
 
     private Guid GetCurrentUserId()
     {
+        // this looks at the oidcSubject instead of the userId
         var claim = _httpContextAccessor?.HttpContext?.User?.FindFirst("db_user_id");
         return claim is not null && Guid.TryParse(claim.Value, out var id) ? id : Guid.Empty;
     }

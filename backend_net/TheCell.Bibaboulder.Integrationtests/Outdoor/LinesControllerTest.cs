@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Dto.Outdoor;
 using Thecell.Bibaboulder.Model.Enums;
+using Thecell.Bibaboulder.Model.Model;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
 using TheCell.Bibaboulder.Sharedtests;
@@ -311,6 +312,44 @@ public class LinesControllerTest : BaseTest
     }
 
     [Fact]
+    public async Task CreateLineForBloc_Editor_Ok()
+    {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var bloc = await PrepareBloc(createdUser: user);
+
+        var command = new CreateLineCommand
+        {
+            Id = Guid.NewGuid(),
+            BlocId = bloc.Id,
+            Identifier = "L-102",
+            Name = _bogus.Lorem.Slug(),
+            Description = _bogus.Lorem.Sentence(),
+            FontGrade = FontGrade.Four,
+            Data = CreateLineData()
+        };
+
+        var users = await BiBaBoulderDbContext.Users.ToListAsync(TestContext.Current.CancellationToken);
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
+        var response = await client.PostAsync($"{_baseUrl}/for-bloc/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<LineDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        var lineFromDb = await BiBaBoulderDbContext.Lines
+            .AsNoTracking()
+            .SingleAsync(l => l.Id == result.Id, cancellationToken: TestContext.Current.CancellationToken);
+        LineAssertion.Assert(lineFromDb, result);
+        Assert.Equal(bloc.Id, lineFromDb.BlocId);
+    }
+
+    [Fact]
     public async Task CreateLineForBloc_Admin_Ok()
     {
         var user = new UserBuilder()
@@ -417,6 +456,46 @@ public class LinesControllerTest : BaseTest
         };
 
         var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var response = await client.PostAsync($"{_baseUrl}/{line.Id}", GetJsonHttpBody(body), TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<LineDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        var lineFromDb = await BiBaBoulderDbContext.Lines
+            .AsNoTracking()
+            .SingleAsync(l => l.Id == line.Id, cancellationToken: TestContext.Current.CancellationToken);
+        Assert.Equal(body.Identifier, lineFromDb.Identifier);
+        Assert.Equal(body.Name, lineFromDb.Name);
+        Assert.Equal(body.Description, lineFromDb.Description);
+        Assert.Equal(body.FontGrade, lineFromDb.FontGrade);
+        LineAssertion.Assert(lineFromDb, result);
+        Assert.Equal(2, lineFromDb.Version);
+    }
+
+    [Fact]
+    public async Task UpdateLine_Editor_Ok()
+    {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.Editor)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var line = await PrepareLine(createdUser: user);
+
+        var body = new UpdateLineCommand
+        {
+            Version = line.Version,
+            Identifier = "L-202",
+            Name = _bogus.Lorem.Slug(),
+            Description = _bogus.Lorem.Sentence(),
+            FontGrade = FontGrade.Five,
+            Data = CreateLineData()
+        };
+
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
         var response = await client.PostAsync($"{_baseUrl}/{line.Id}", GetJsonHttpBody(body), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -557,35 +636,52 @@ public class LinesControllerTest : BaseTest
         return (bloc, lines);
     }
 
-    private async Task<Bloc> PrepareBloc(bool isSectorPublic = false)
+    private async Task<Bloc> PrepareBloc(bool isSectorPublic = false, User? createdUser = null)
     {
-        var sector = new SectorBuilder()
+        var sectorBuilder = new SectorBuilder()
             .SetName(_bogus.Lorem.Slug())
-            .SetIsPublic(isSectorPublic)
-            .Build();
+            .SetIsPublic(isSectorPublic);
+
+        if (createdUser is not null)
+        {
+            sectorBuilder.SetCreatedUser(createdUser);
+        }
+        var sector = sectorBuilder.Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
-        var bloc = new BlocBuilder()
+        var blocBuilder = new BlocBuilder()
             .SetName(_bogus.Lorem.Slug())
-            .SetSectorId(sector.Id)
-            .Build();
+            .SetSectorId(sector.Id);
+
+        if (createdUser is not null)
+        {
+            blocBuilder.SetCreatedUser(createdUser);
+        }
+
+        var bloc = blocBuilder.Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(bloc);
 
         return bloc;
     }
 
-    private async Task<Line> PrepareLine(bool isSectorPublic = false)
+    private async Task<Line> PrepareLine(bool isSectorPublic = false, User? createdUser = null)
     {
-        var bloc = await PrepareBloc(isSectorPublic);
+        var bloc = await PrepareBloc(isSectorPublic, createdUser);
 
-        var line = new LineBuilder()
+        var lineBuilder = new LineBuilder()
             .SetIdentifier("L-001")
             .SetName(_bogus.Lorem.Slug())
             .SetDescription(_bogus.Lorem.Sentence())
             .SetFontGrade(FontGrade.ThreePlus)
             .SetData(CreateLineData())
-            .SetBlocId(bloc.Id)
-            .Build();
+            .SetBlocId(bloc.Id);
+
+        if (createdUser is not null)
+        {
+            lineBuilder.SetCreator(createdUser);
+        }
+
+        var line = lineBuilder.Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(line);
 
         return line;

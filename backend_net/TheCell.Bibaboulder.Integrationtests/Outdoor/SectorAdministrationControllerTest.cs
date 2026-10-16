@@ -40,14 +40,23 @@ public class SectorAdministrationControllerTest : BaseTest
     [Fact]
     public async Task UpdateSector_WithOutdoorAreas_Ok()
     {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.ContentAdmin)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
         var sector = new SectorBuilder()
             .SetName("Original")
+            .SetCreatedUser(user)
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var outdoorArea = new OutdoorAreaBuilder()
             .SetName("Lindental")
             .SetIsPublic(true)
+            .SetCreatedUser(user)
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
@@ -60,7 +69,7 @@ public class SectorAdministrationControllerTest : BaseTest
             OutdoorAreaIds = [outdoorArea.Id]
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.ContentAdmin);
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
         var response = await client.PutAsync($"{BaseUrl}/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -78,6 +87,13 @@ public class SectorAdministrationControllerTest : BaseTest
     [Fact]
     public async Task UpdateSector_UnknownOutdoorArea_BadRequest()
     {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.Admin)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
@@ -88,7 +104,7 @@ public class SectorAdministrationControllerTest : BaseTest
             OutdoorAreaIds = [System.Guid.NewGuid()]
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
         var response = await client.PutAsync($"{BaseUrl}/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

@@ -1,5 +1,6 @@
 using System;
 using Thecell.Bibaboulder.Model.Basics;
+using Thecell.Bibaboulder.Model.Model;
 
 namespace TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -22,6 +23,26 @@ public abstract class BuilderBase<T> : IBuilder<T> where T : class
         {
             versioned.Version = 1;
         }
+    }
+
+    public IBuilder<T> SetCreatedUser(User user)
+    {
+        if (_instance is EntityAuditFields auditable)
+        {
+            auditable.CreatedUserId = user.Id;
+        }
+
+        return this;
+    }
+
+    public IBuilder<T> SetCreatedDate(DateTime createdDate)
+    {
+        if (_instance is EntityAuditFields auditable)
+        {
+            auditable.CreatedDate = createdDate;
+        }
+
+        return this;
     }
 
     public virtual T Build()

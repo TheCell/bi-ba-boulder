@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
+using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Model.Outdoor;
 using Thecell.Bibaboulder.Outdoor.Handler;
+using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.Assertions;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -14,15 +16,21 @@ namespace TheCell.Bibaboulder.Unittests.Outdoor;
 public class UpdateLineTest
 {
     private readonly IBiBaBoulderDbContext _dbContext;
+    private readonly CurrentUserServiceMock _currentUserServiceMock;
 
     public UpdateLineTest()
     {
         _dbContext = new DbContextMock().Build();
+        _currentUserServiceMock = new CurrentUserServiceMock();
     }
 
     [Fact]
     public async Task UpdateLine_NotFound_NotFoundException()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var command = new UpdateLineCommand
         {
             Id = Guid.CreateVersion7(),
@@ -33,7 +41,7 @@ public class UpdateLineTest
             Data = CreateLineData(false)
         };
 
-        var handler = new UpdateLineCommandHandler(_dbContext);
+        var handler = new UpdateLineCommandHandler(_dbContext, _currentUserServiceMock);
 
         await Assert.ThrowsAsync<NotFoundException>(async () =>
             await handler.HandleAsync(command));
@@ -42,6 +50,10 @@ public class UpdateLineTest
     [Fact]
     public async Task UpdateLine_ArgumentException()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var line = await PrepareLine(false);
 
         var command = new UpdateLineCommand
@@ -61,7 +73,7 @@ public class UpdateLineTest
             }
         };
 
-        var handler = new UpdateLineCommandHandler(_dbContext);
+        var handler = new UpdateLineCommandHandler(_dbContext, _currentUserServiceMock);
 
         var ex = await Assert.ThrowsAsync<ArgumentException>(async () =>
             await handler.HandleAsync(command));
@@ -71,6 +83,10 @@ public class UpdateLineTest
     [Fact]
     public async Task UpdateLine_MissingLineData_ArgumentException()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var line = await PrepareLine(false);
 
         var command = new UpdateLineCommand
@@ -83,7 +99,7 @@ public class UpdateLineTest
             Data = new LineData()
         };
 
-        var handler = new UpdateLineCommandHandler(_dbContext);
+        var handler = new UpdateLineCommandHandler(_dbContext, _currentUserServiceMock);
 
         var ex = await Assert.ThrowsAsync<ArgumentException>(async () =>
             await handler.HandleAsync(command));
@@ -92,6 +108,10 @@ public class UpdateLineTest
     [Fact]
     public async Task UpdateLine_Ok()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var line = await PrepareLine(false);
 
         var command = new UpdateLineCommand
@@ -104,7 +124,7 @@ public class UpdateLineTest
             Data = CreateLineData(false)
         };
 
-        var handler = new UpdateLineCommandHandler(_dbContext);
+        var handler = new UpdateLineCommandHandler(_dbContext, _currentUserServiceMock);
         await handler.HandleAsync(command);
 
         var updated = await _dbContext.Lines
@@ -121,6 +141,10 @@ public class UpdateLineTest
     [Fact]
     public async Task UpdateLine_AddLineData_Ok()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var line = await PrepareLine(false);
 
         var command = new UpdateLineCommand
@@ -133,7 +157,7 @@ public class UpdateLineTest
             Data = CreateLineData(true)
         };
 
-        var handler = new UpdateLineCommandHandler(_dbContext);
+        var handler = new UpdateLineCommandHandler(_dbContext, _currentUserServiceMock);
         await handler.HandleAsync(command);
 
         var updated = await _dbContext.Lines
@@ -150,6 +174,10 @@ public class UpdateLineTest
     [Fact]
     public async Task UpdateLine_RemoveLineData_Ok()
     {
+        var user = new UserBuilder().SetRoles(AuthorizationRoles.ContentAdmin).Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(user);
+        _currentUserServiceMock.WithUser(user);
+
         var line = await PrepareLine(true);
 
         var command = new UpdateLineCommand
@@ -162,7 +190,7 @@ public class UpdateLineTest
             Data = CreateLineData(false)
         };
 
-        var handler = new UpdateLineCommandHandler(_dbContext);
+        var handler = new UpdateLineCommandHandler(_dbContext, _currentUserServiceMock);
         await handler.HandleAsync(command);
 
         var updated = await _dbContext.Lines
