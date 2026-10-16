@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Bogus;
 using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Indoor.Handler;
-using Thecell.Bibaboulder.Model.Authorization;
 using TheCell.Bibaboulder.Sharedtests;
 using TheCell.Bibaboulder.Sharedtests.ModelBuilders;
 
@@ -41,10 +40,7 @@ public class FeedbacksControllerTest : BaseTest
         var user = new UserBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var client = AuthenticatedClient(
-            subjectId: user.OidcSubject,
-            role: AuthorizationRoles.User,
-            username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var feedbackText = _bogus.Lorem.Sentence();
         var body = new SendFeedbackCommand { Feedback = feedbackText };

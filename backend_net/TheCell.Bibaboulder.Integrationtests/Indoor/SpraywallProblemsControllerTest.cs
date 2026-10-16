@@ -81,10 +81,7 @@ public class SpraywallProblemsControllerTest : BaseTest
             Version = problem.Version
         };
 
-        var client = AuthenticatedClient(
-            subjectId: user.OidcSubject,
-            role: $"{AuthorizationRoles.Editor}",
-            username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.PostAsync(
             $"{_baseUrl}/{problem.Id}",
@@ -118,10 +115,7 @@ public class SpraywallProblemsControllerTest : BaseTest
     {
         var (user, problem) = await PrepareData();
 
-        var client = AuthenticatedClient(
-            subjectId: user.OidcSubject,
-            role: $"{AuthorizationRoles.Editor}",
-            username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.DeleteAsync($"{_baseUrl}/{problem.Id}", TestContext.Current.CancellationToken);
 

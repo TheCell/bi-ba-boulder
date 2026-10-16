@@ -69,7 +69,7 @@ public class SectorAdministrationControllerTest : BaseTest
             OutdoorAreaIds = [outdoorArea.Id]
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PutAsync($"{BaseUrl}/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -104,14 +104,14 @@ public class SectorAdministrationControllerTest : BaseTest
             OutdoorAreaIds = [System.Guid.NewGuid()]
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PutAsync($"{BaseUrl}/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
-    public async Task DeleteSector_Ok()
+    public async Task DeleteSector_Admin_Ok()
     {
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
@@ -121,7 +121,10 @@ public class SectorAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteSectorCommand { Version = sector.Version })
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var user = new UserBuilder().SetUsername("User").SetRoles(AuthorizationRoles.Admin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -140,7 +143,10 @@ public class SectorAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteSectorCommand { Version = sector.Version })
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.User);
+        var user = new UserBuilder().SetUsername("User").SetRoles(AuthorizationRoles.User).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);

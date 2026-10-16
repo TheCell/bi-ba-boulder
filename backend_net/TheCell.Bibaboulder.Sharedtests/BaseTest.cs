@@ -29,15 +29,18 @@ public class BaseTest : IDisposable, IAsyncLifetime
 
     /// <summary>
     /// Creates an HttpClient configured to simulate an authenticated user.
-    /// The client includes X-CSRF header and TestAuthHandler headers.
+    /// The client includes X-CSRF and test auth headers.
+    ///
+    /// If the supplied subject matches a seeded user, TestAuthHandler will load
+    /// db_user_id, username and roles from the database to mimic production auth.
+    /// The role and username parameters are only used as fallbacks when no local
+    /// user exists for the supplied subject.
     /// </summary>
-    /// <param name="subjectId">The user's ID (defaults to a fixed GUID)</param>
-    /// <param name="role">The user's role (defaults to "user")</param>
-    /// <param name="username">The username (defaults to "testuser")</param>
+    /// <param name="subjectId">The OIDC subject claim value (defaults to a fixed test subject)</param>
+    /// 
+    /// 
     protected HttpClient AuthenticatedClient(
-        string? subjectId = null,
-        string role = "user",
-        string username = "testuser")
+        string? subjectId = null)
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
         {
@@ -45,9 +48,7 @@ public class BaseTest : IDisposable, IAsyncLifetime
         });
 
         client.DefaultRequestHeaders.Add("X-CSRF", "1");
-        client.DefaultRequestHeaders.Add(TestAuthHandler.UserIdHeader, subjectId ?? "00000000-0000-0000-0000-000000000001");
-        client.DefaultRequestHeaders.Add(TestAuthHandler.RoleHeader, role);
-        client.DefaultRequestHeaders.Add(TestAuthHandler.UsernameHeader, username);
+        client.DefaultRequestHeaders.Add(TestAuthHandler.SubjectIdHeader, subjectId ?? "00000000-0000-0000-0000-000000000000");
 
         return client;
     }

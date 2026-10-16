@@ -39,7 +39,7 @@ public class BoulderLogsControllerTest : BaseTest
         var log = new BoulderLogBuilder().SetUser(user).SetIsSent(true).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(log);
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync(_baseUrl, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -66,7 +66,7 @@ public class BoulderLogsControllerTest : BaseTest
         var log = new BoulderLogBuilder().SetUser(user).SetIsSent(true).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(log);
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/{log.Id}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -103,7 +103,7 @@ public class BoulderLogsControllerTest : BaseTest
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(boulderLog);
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/spraywall/{spraywallProblem.Id}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -131,7 +131,7 @@ public class BoulderLogsControllerTest : BaseTest
             SpraywallProblemId = spraywallProblem.Id
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PutAsync($"{_baseUrl}/{spraywallProblem.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -161,7 +161,7 @@ public class BoulderLogsControllerTest : BaseTest
 
         var body = new UpdateBoulderLogCommand { Id = Guid.CreateVersion7(), Version = 1L, IsSent = true, IsProject = true, Rating = Rating.Five };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync($"{_baseUrl}/{log.Id}", GetJsonHttpBody(body), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -196,7 +196,7 @@ public class BoulderLogsControllerTest : BaseTest
 
         var body = new DeleteBoulderLogCommand { Id = Guid.CreateVersion7(), Version = 1L };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var request = new HttpRequestMessage(HttpMethod.Delete, $"{_baseUrl}/{log.Id}")
         {
             Content = GetJsonHttpBody(body)

@@ -54,7 +54,7 @@ public class LinesControllerTest : BaseTest
         var (_, lines) = await PrepareData();
         var line = lines.First();
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/{line.Id}", TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -76,7 +76,7 @@ public class LinesControllerTest : BaseTest
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(access);
 
         var line = lines.First();
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/{line.Id}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -101,7 +101,7 @@ public class LinesControllerTest : BaseTest
         var (_, lines) = await PrepareData();
         var line = lines.First();
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/{line.Id}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -156,7 +156,7 @@ public class LinesControllerTest : BaseTest
 
         var (bloc, _) = await PrepareData();
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/by-bloc/{bloc.Id}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -181,7 +181,7 @@ public class LinesControllerTest : BaseTest
         var access = new UserSectorAccessBuilder(user, sector).SetValidUntil(DateTime.UtcNow.AddDays(1)).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(access);
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/by-bloc/{bloc.Id}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -210,7 +210,7 @@ public class LinesControllerTest : BaseTest
 
         var (bloc, lines) = await PrepareData();
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/by-bloc/{bloc.Id}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -238,7 +238,7 @@ public class LinesControllerTest : BaseTest
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.GetAsync($"{_baseUrl}/by-bloc/{Guid.CreateVersion7()}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -305,7 +305,7 @@ public class LinesControllerTest : BaseTest
             Data = CreateLineData()
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync($"{_baseUrl}/for-bloc/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -335,7 +335,7 @@ public class LinesControllerTest : BaseTest
         };
 
         var users = await BiBaBoulderDbContext.Users.ToListAsync(TestContext.Current.CancellationToken);
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync($"{_baseUrl}/for-bloc/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -372,7 +372,7 @@ public class LinesControllerTest : BaseTest
             Data = CreateLineData()
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync($"{_baseUrl}/for-bloc/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -427,7 +427,7 @@ public class LinesControllerTest : BaseTest
             Data = CreateLineData()
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync($"{_baseUrl}/{line.Id}", GetJsonHttpBody(body), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -455,7 +455,7 @@ public class LinesControllerTest : BaseTest
             Data = CreateLineData()
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync($"{_baseUrl}/{line.Id}", GetJsonHttpBody(body), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -495,7 +495,7 @@ public class LinesControllerTest : BaseTest
             Data = CreateLineData()
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync($"{_baseUrl}/{line.Id}", GetJsonHttpBody(body), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -549,7 +549,7 @@ public class LinesControllerTest : BaseTest
             Version = line.Version
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var request = new HttpRequestMessage(HttpMethod.Delete, $"{_baseUrl}/{line.Id}")
         {
             Content = GetJsonHttpBody(body)
@@ -577,7 +577,7 @@ public class LinesControllerTest : BaseTest
             Version = line.Version
         };
 
-        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var request = new HttpRequestMessage(HttpMethod.Delete, $"{_baseUrl}/{line.Id}")
         {
             Content = GetJsonHttpBody(body)
