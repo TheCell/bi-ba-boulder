@@ -31,11 +31,11 @@ public class BaseTest : IDisposable, IAsyncLifetime
     /// Creates an HttpClient configured to simulate an authenticated user.
     /// The client includes X-CSRF header and TestAuthHandler headers.
     /// </summary>
-    /// <param name="userId">The user's ID (defaults to a fixed GUID)</param>
+    /// <param name="subjectId">The user's ID (defaults to a fixed GUID)</param>
     /// <param name="role">The user's role (defaults to "user")</param>
     /// <param name="username">The username (defaults to "testuser")</param>
     protected HttpClient AuthenticatedClient(
-        string? userId = null,
+        string? subjectId = null,
         string role = "user",
         string username = "testuser")
     {
@@ -45,7 +45,7 @@ public class BaseTest : IDisposable, IAsyncLifetime
         });
 
         client.DefaultRequestHeaders.Add("X-CSRF", "1");
-        client.DefaultRequestHeaders.Add(TestAuthHandler.UserIdHeader, userId ?? "00000000-0000-0000-0000-000000000001");
+        client.DefaultRequestHeaders.Add(TestAuthHandler.UserIdHeader, subjectId ?? "00000000-0000-0000-0000-000000000001");
         client.DefaultRequestHeaders.Add(TestAuthHandler.RoleHeader, role);
         client.DefaultRequestHeaders.Add(TestAuthHandler.UsernameHeader, username);
 

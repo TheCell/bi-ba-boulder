@@ -37,7 +37,7 @@ public class UsersControllerTest : BaseTest
         var user = await PrepareUser();
 
         var client = AuthenticatedClient(
-            userId: user.OidcSubject,
+            subjectId: user.OidcSubject,
             role: AuthorizationRoles.User,
             username: user.Username);
 
@@ -71,7 +71,7 @@ public class UsersControllerTest : BaseTest
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(adminUser);
 
         var client = AuthenticatedClient(
-            userId: adminUser.OidcSubject,
+            subjectId: adminUser.OidcSubject,
             role: AuthorizationRoles.Admin,
             username: adminUser.Username);
 
@@ -90,7 +90,7 @@ public class UsersControllerTest : BaseTest
         var user = await PrepareUser();
 
         var client = AuthenticatedClient(
-            userId: user.OidcSubject,
+            subjectId: user.OidcSubject,
             role: AuthorizationRoles.User,
             username: user.Username);
 

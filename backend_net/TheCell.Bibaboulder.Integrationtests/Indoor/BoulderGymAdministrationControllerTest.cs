@@ -66,7 +66,7 @@ public class BoulderGymAdministrationControllerTest : BaseTest
                 .Replace("http://", "")]
         };
 
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: role, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: role, username: user.Username);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -124,7 +124,7 @@ public class BoulderGymAdministrationControllerTest : BaseTest
             Version = boulderGym.Version
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{boulderGym.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -146,7 +146,7 @@ public class BoulderGymAdministrationControllerTest : BaseTest
 
         var command = new UpdateBoulderGymCommand { Name = _bogus.Lorem.Slug(), Version = boulderGym.Version + 99 };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{boulderGym.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
@@ -171,7 +171,7 @@ public class BoulderGymAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteBoulderGymCommand { Version = boulderGym.Version })
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -208,7 +208,7 @@ public class BoulderGymAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteBoulderGymCommand { Version = boulderGym.Version })
         };
 
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
     }
@@ -251,7 +251,7 @@ public class BoulderGymAdministrationControllerTest : BaseTest
             SpraywallId = spraywall.Id
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PostAsync($"{BaseUrl}/{boulderGym.Id}/spraywalls", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -277,7 +277,7 @@ public class BoulderGymAdministrationControllerTest : BaseTest
         var spraywall = new SpraywallBuilder().SetBoulderGymId(boulderGym.Id).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(spraywall);
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.DeleteAsync($"{BaseUrl}/{boulderGym.Id}/spraywalls/{spraywall.Id}", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();

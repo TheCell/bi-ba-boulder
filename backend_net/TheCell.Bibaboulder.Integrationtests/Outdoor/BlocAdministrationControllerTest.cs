@@ -73,7 +73,7 @@ public class BlocAdministrationControllerTest : BaseTest
             PreviewImageUri = _bogus.Internet.UrlWithPath()
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -107,7 +107,7 @@ public class BlocAdministrationControllerTest : BaseTest
             PreviewImageUri = _bogus.Internet.UrlWithPath()
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -164,7 +164,7 @@ public class BlocAdministrationControllerTest : BaseTest
             Version = bloc.Version
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -194,7 +194,7 @@ public class BlocAdministrationControllerTest : BaseTest
 
         var command = new UpdateBlocCommand { SectorId = sector.Id, Name = _bogus.Lorem.Slug(), Version = bloc.Version + 1 };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
@@ -217,7 +217,7 @@ public class BlocAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteBlocCommand { Version = bloc.Version })
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();

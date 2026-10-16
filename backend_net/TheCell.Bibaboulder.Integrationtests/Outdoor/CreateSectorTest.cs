@@ -66,7 +66,7 @@ public class SectorsControllerTest : BaseTest
         };
 
         var beforeSend = DateTime.UtcNow;
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PostAsync(
             $"{_baseUrl}",
             GetJsonHttpBody(command),

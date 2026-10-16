@@ -82,7 +82,7 @@ public class SpraywallProblemsControllerTest : BaseTest
         };
 
         var client = AuthenticatedClient(
-            userId: user.OidcSubject,
+            subjectId: user.OidcSubject,
             role: $"{AuthorizationRoles.Editor}",
             username: user.Username);
 
@@ -119,7 +119,7 @@ public class SpraywallProblemsControllerTest : BaseTest
         var (user, problem) = await PrepareData();
 
         var client = AuthenticatedClient(
-            userId: user.OidcSubject,
+            subjectId: user.OidcSubject,
             role: $"{AuthorizationRoles.Editor}",
             username: user.Username);
 

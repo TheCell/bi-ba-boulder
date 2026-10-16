@@ -42,7 +42,7 @@ public class FeedbacksControllerTest : BaseTest
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
         var client = AuthenticatedClient(
-            userId: user.OidcSubject,
+            subjectId: user.OidcSubject,
             role: AuthorizationRoles.User,
             username: user.Username);
 

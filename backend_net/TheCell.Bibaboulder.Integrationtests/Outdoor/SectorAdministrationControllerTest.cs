@@ -69,7 +69,7 @@ public class SectorAdministrationControllerTest : BaseTest
             OutdoorAreaIds = [outdoorArea.Id]
         };
 
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
         var response = await client.PutAsync($"{BaseUrl}/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -104,7 +104,7 @@ public class SectorAdministrationControllerTest : BaseTest
             OutdoorAreaIds = [System.Guid.NewGuid()]
         };
 
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
         var response = await client.PutAsync($"{BaseUrl}/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

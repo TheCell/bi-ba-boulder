@@ -65,7 +65,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
             SectorIds = [sector.Id]
         };
 
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: user.Username);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -91,7 +91,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
             SectorIds = [System.Guid.NewGuid()]
         };
 
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Admin, username: user.Username);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -111,7 +111,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
 
         var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version, IsPublic = true };
 
-        var client = AuthenticatedClient(userId: editor.OidcSubject, role: AuthorizationRoles.Editor, username: editor.Username);
+        var client = AuthenticatedClient(subjectId: editor.OidcSubject, role: AuthorizationRoles.Editor, username: editor.Username);
         var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -131,7 +131,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
 
         var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version, IsPublic = true };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -156,7 +156,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
 
         var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version, IsPublic = true };
 
-        var client = AuthenticatedClient(userId: admin.OidcSubject, role: AuthorizationRoles.Admin, username: admin.Username);
+        var client = AuthenticatedClient(subjectId: admin.OidcSubject, role: AuthorizationRoles.Admin, username: admin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -180,7 +180,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
 
         var command = new UpdateOutdoorAreaCommand { Name = _bogus.Lorem.Slug(), Version = outdoorArea.Version + 99 };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.PutAsync($"{BaseUrl}/{outdoorArea.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
@@ -207,7 +207,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteOutdoorAreaCommand { Version = outdoorArea.Version })
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
@@ -228,7 +228,7 @@ public class OutdoorAreaAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteOutdoorAreaCommand { Version = outdoorArea.Version })
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();

@@ -96,7 +96,7 @@ public class SpraywallsControllerTest : BaseTest
         };
 
         var beforeSend = DateTime.UtcNow;
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
         var response = await client.PutAsync(
             $"{_baseUrl}/{spraywall.Id}/problem",
             GetJsonHttpBody(body),
@@ -153,7 +153,7 @@ public class SpraywallsControllerTest : BaseTest
         var mockImageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
         await SpraywallImageService.SaveImageAsync(spraywall.Id, wipProblem.Id, mockImageData);
 
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject, role: AuthorizationRoles.Editor, username: user.Username);
         var response = await client.PostAsync(
             $"{_baseUrl}/{spraywall.Id}/problems",
             GetJsonHttpBody(new { Page = 1 }),
@@ -186,7 +186,7 @@ public class SpraywallsControllerTest : BaseTest
         var mockImageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
         await SpraywallImageService.SaveImageAsync(spraywall.Id, wipProblem.Id, mockImageData);
 
-        var client = AuthenticatedClient(userId: otherUser.OidcSubject, role: AuthorizationRoles.Editor, username: otherUser.Username);
+        var client = AuthenticatedClient(subjectId: otherUser.OidcSubject, role: AuthorizationRoles.Editor, username: otherUser.Username);
         var response = await client.PostAsync(
             $"{_baseUrl}/{spraywall.Id}/problems",
             GetJsonHttpBody(new { Page = 1 }),
