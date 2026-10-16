@@ -30,7 +30,7 @@ public class UserSectorAccessesControllerTest : BaseTest
     public async Task GetUserSectorAccesses_AsUser_Forbidden()
     {
         var (user, _) = await CreateUserAndSectorAsync();
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.GetAsync(BaseUrl, TestContext.Current.CancellationToken);
 
@@ -78,7 +78,7 @@ public class UserSectorAccessesControllerTest : BaseTest
         var (user, sector) = await CreateUserAndSectorAsync();
         var access = new UserSectorAccessBuilder(user, sector).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(access);
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.GetAsync($"{BaseUrl}/users/{user.Id}/sectors/{sector.Id}", TestContext.Current.CancellationToken);
 
@@ -120,7 +120,7 @@ public class UserSectorAccessesControllerTest : BaseTest
             AccessSourceType = AccessSourceType.ManualGrant,
             ValidUntil = DateTime.UtcNow.AddDays(1)
         };
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
@@ -167,7 +167,7 @@ public class UserSectorAccessesControllerTest : BaseTest
             AccessSourceType = AccessSourceType.Subscription,
             ValidUntil = null
         };
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.PutAsync($"{BaseUrl}/users/{user.Id}/sectors/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
@@ -215,7 +215,7 @@ public class UserSectorAccessesControllerTest : BaseTest
         {
             Content = GetJsonHttpBody(command)
         };
-        var client = AuthenticatedClient(userId: user.OidcSubject, role: AuthorizationRoles.User, username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
@@ -254,6 +254,6 @@ public class UserSectorAccessesControllerTest : BaseTest
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(admin);
 
-        return AuthenticatedClient(userId: admin.OidcSubject, role: AuthorizationRoles.Admin, username: admin.Username);
+        return AuthenticatedClient(subjectId: admin.OidcSubject);
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Thecell.Bibaboulder.Common.Commands;
+using Thecell.Bibaboulder.Common.Exceptions;
 using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Enums;
 using Thecell.Bibaboulder.Model.Extensions;
@@ -27,6 +29,15 @@ public class CreateBlocCommandHandler : ICommandHandler<CreateBlocCommand>
         if (!currentUser.IsInRole(UserRole.Admin) && !currentUser.IsInRole(UserRole.ContentAdmin))
         {
             throw new UnauthorizedAccessException("User is not authorized to create a bloc.");
+        }
+
+        if (command.SectorId != null)
+        {
+            var sectorExists = await _dbContext.Sectors.AnyAsync(s => s.Id == command.SectorId);
+            if (!sectorExists)
+            {
+                NotFoundException.ThrowIfNull(null, id: command.SectorId);
+            }
         }
 
         var bloc = new Bloc

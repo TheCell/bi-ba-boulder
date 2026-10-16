@@ -40,14 +40,23 @@ public class SectorAdministrationControllerTest : BaseTest
     [Fact]
     public async Task UpdateSector_WithOutdoorAreas_Ok()
     {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.ContentAdmin)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
         var sector = new SectorBuilder()
             .SetName("Original")
+            .SetCreatedUser(user)
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var outdoorArea = new OutdoorAreaBuilder()
             .SetName("Lindental")
             .SetIsPublic(true)
+            .SetCreatedUser(user)
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(outdoorArea);
 
@@ -60,7 +69,7 @@ public class SectorAdministrationControllerTest : BaseTest
             OutdoorAreaIds = [outdoorArea.Id]
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.ContentAdmin);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PutAsync($"{BaseUrl}/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -70,14 +79,21 @@ public class SectorAdministrationControllerTest : BaseTest
         Assert.NotNull(result);
         Assert.Equal(command.Name, result.Name);
         Assert.True(result.IsPublic);
-        Assert.Single(result.OutdoorAreas);
-        Assert.Equal(outdoorArea.Id, result.OutdoorAreas.Single().Id);
+        var item = Assert.Single(result.OutdoorAreas);
+        Assert.Equal(outdoorArea.Id, item.Id);
         Assert.Equal(sector.Version + 1, result.Version);
     }
 
     [Fact]
     public async Task UpdateSector_UnknownOutdoorArea_BadRequest()
     {
+        var user = new UserBuilder()
+            .SetUsername(_bogus.Internet.UserName())
+            .SetEmail(_bogus.Internet.Email())
+            .SetRoles(AuthorizationRoles.Admin)
+            .Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
@@ -88,14 +104,14 @@ public class SectorAdministrationControllerTest : BaseTest
             OutdoorAreaIds = [System.Guid.NewGuid()]
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PutAsync($"{BaseUrl}/{sector.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
-    public async Task DeleteSector_Ok()
+    public async Task DeleteSector_Admin_Ok()
     {
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
@@ -105,7 +121,10 @@ public class SectorAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteSectorCommand { Version = sector.Version })
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var user = new UserBuilder().SetUsername("User").SetRoles(AuthorizationRoles.Admin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -124,7 +143,10 @@ public class SectorAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteSectorCommand { Version = sector.Version })
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.User);
+        var user = new UserBuilder().SetUsername("User").SetRoles(AuthorizationRoles.User).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);

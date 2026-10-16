@@ -205,8 +205,8 @@ public class GetLinesByBlocIdTest
         var handler = new GetLinesByBlocIdQueryHandler(_dbContext, _currentUserServiceMock);
         var result = await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = bloc.Id });
 
-        Assert.Single(result);
-        LineAssertion.Assert(line, result.Single());
+        var item = Assert.Single(result);
+        LineAssertion.Assert(line, item);
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public class GetLinesByBlocIdTest
         var handler = new GetLinesByBlocIdQueryHandler(_dbContext, _currentUserServiceMock);
         var result = await handler.HandleAsync(new GetLinesByBlocIdQuery { BlocId = bloc.Id });
 
-        Assert.Single(result);
-        LineAssertion.Assert(line, result.Single());
+        var item = Assert.Single(result);
+        LineAssertion.Assert(line, item);
     }
 }

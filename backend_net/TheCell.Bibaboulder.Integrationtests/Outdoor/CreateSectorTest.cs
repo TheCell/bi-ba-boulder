@@ -66,7 +66,7 @@ public class SectorsControllerTest : BaseTest
         };
 
         var beforeSend = DateTime.UtcNow;
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject);
         var response = await client.PostAsync(
             $"{_baseUrl}",
             GetJsonHttpBody(command),
@@ -144,7 +144,7 @@ public class SectorsControllerTest : BaseTest
 
     protected async Task<HttpResponseMessage> GetRequestAsync(string route, string query = "", bool authenticated = false)
     {
-        var client = authenticated ? AuthenticatedClient(role: AuthorizationRoles.User) : Client();
+        var client = authenticated ? AuthenticatedClient() : Client();
         return await client.GetAsync($"{_baseUrl}{route}{query}");
     }
 }

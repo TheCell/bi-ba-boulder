@@ -36,10 +36,7 @@ public class UsersControllerTest : BaseTest
     {
         var user = await PrepareUser();
 
-        var client = AuthenticatedClient(
-            userId: user.OidcSubject,
-            role: AuthorizationRoles.User,
-            username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.GetAsync($"{_baseUrl}/me", TestContext.Current.CancellationToken);
 
@@ -70,10 +67,7 @@ public class UsersControllerTest : BaseTest
             .Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(adminUser);
 
-        var client = AuthenticatedClient(
-            userId: adminUser.OidcSubject,
-            role: AuthorizationRoles.Admin,
-            username: adminUser.Username);
+        var client = AuthenticatedClient(subjectId: adminUser.OidcSubject);
 
         var response = await client.GetAsync($"{_baseUrl}/{targetUser.Id}", TestContext.Current.CancellationToken);
 
@@ -89,10 +83,7 @@ public class UsersControllerTest : BaseTest
     {
         var user = await PrepareUser();
 
-        var client = AuthenticatedClient(
-            userId: user.OidcSubject,
-            role: AuthorizationRoles.User,
-            username: user.Username);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
 
         var response = await client.GetAsync($"{_baseUrl}/{Guid.CreateVersion7()}", TestContext.Current.CancellationToken);
 

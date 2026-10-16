@@ -53,7 +53,7 @@ public class LinesController : ControllerBase
     }
 
     [HttpPost("for-bloc/{blocId}")]
-    [Authorize(Roles = AuthorizationRoles.Admin)]
+    [Authorize(Roles = $"{AuthorizationRoles.Editor},{AuthorizationRoles.Admin}")]
     public async Task<LineDto> CreateLineForBloc(Guid blocId, [FromBody] CreateLineCommand command)
     {
         command.BlocId = blocId;
@@ -62,7 +62,7 @@ public class LinesController : ControllerBase
     }
 
     [HttpPost("{id}")]
-    [Authorize(Roles = AuthorizationRoles.Admin)]
+    [Authorize(Roles = $"{AuthorizationRoles.Editor},{AuthorizationRoles.Admin}")]
     public async Task<LineDto> UpdateLine(Guid id, [FromBody] UpdateLineCommand command)
     {
         command.Id = id;
@@ -71,7 +71,7 @@ public class LinesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = AuthorizationRoles.Admin)]
+    [Authorize(Roles = $"{AuthorizationRoles.Editor},{AuthorizationRoles.Admin}")]
     public async Task DeleteLine(Guid id)
     {
         var command = new DeleteLineCommand

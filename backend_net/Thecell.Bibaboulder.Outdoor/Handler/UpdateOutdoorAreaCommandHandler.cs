@@ -25,15 +25,15 @@ public class UpdateOutdoorAreaCommandHandler : ICommandHandler<UpdateOutdoorArea
     {
         var currentUser = await _currentUserService.GetCurrentUserOrThrowAsync();
 
-        if (!currentUser.IsInRole(UserRole.Admin) && !currentUser.IsInRole(UserRole.ContentAdmin))
-        {
-            throw new UnauthorizedAccessException("User does not have the required role.");
-        }
-
         var outdoorArea = await _dbContext.OutdoorAreas
             .Include(area => area.Sectors)
             .SingleOrDefaultAsync(area => area.Id == command.Id)
             .ThrowIfNullAsync(command.Id);
+
+        if (!currentUser.IsInRole(UserRole.Admin) && !currentUser.IsInRole(UserRole.ContentAdmin) && currentUser.Id != outdoorArea.CreatedUserId)
+        {
+            throw new UnauthorizedAccessException("User does not have the required role.");
+        }
 
         var isAdmin = currentUser.IsInRole(UserRole.Admin);
         if (!isAdmin && currentUser.IsInRole(UserRole.ContentAdmin))

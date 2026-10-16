@@ -54,21 +54,21 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '10.0.x'
+          global-json-file: backend_net/global.json 
 
       - name: Restore dependencies
-        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+        run: cd backend_net && dotnet restore BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
 
       - name: Build
-        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
+        run: cd backend_net && dotnet build BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test backend_net/TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj --configuration Release --no-build --verbosity normal
+        run: cd backend_net && dotnet test --project TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj --configuration Release --no-build --verbosity normal
 
       - name: Run integration tests
-        run: dotnet test backend_net/TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj --configuration Release --no-build --verbosity normal
+        run: cd backend_net && dotnet test --project TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj --configuration Release --no-build --verbosity normal
 
   build:
     name: Build Frontend
@@ -127,18 +127,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '10.0.x'
+          global-json-file: backend_net/global.json 
 
       - name: Restore dependencies
-        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
+        run: cd backend_net && dotnet restore BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
 
       - name: Build solution
-        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
+        run: cd backend_net && dotnet build BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --configuration Release --output ./publish --no-build
+        run: cd backend_net && dotnet publish BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --configuration Release --output ./publish --no-build
 
       - name: Copy web.config to publish directory
         run: cp backend_net/BiBaBoulder/web.config ./publish/
@@ -148,35 +148,6 @@ jobs:
         with:
           name: DotNet_Backend_Build
           path: ./publish
-
-  # run-migrations:
-  #   name: Run EF Core Migrations
-  #   runs-on: ubuntu-latest
-  #   needs: [build-dotnet-backend]
-    
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-
-  #     - name: Setup .NET 10
-  #       uses: actions/setup-dotnet@v4
-  #       with:
-  #         dotnet-version: '10.0.x'
-  #         dotnet-quality: 'preview'
-
-  #     - name: Install EF Core tools
-  #       run: dotnet tool install --global dotnet-ef
-
-  #     - name: Restore dependencies
-  #       run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx
-
-  #     - name: Build solution
-  #       run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --no-restore --configuration Release
-
-  #     - name: Run migrations
-  #       run: dotnet ef database update --project backend_net/Migrations/Thecell.Bibaboulder.Migrations.csproj --startup-project backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.csproj --connection "${{ secrets.MSSQL_CONNECTION_STRING }}"
-  #       env:
-  #         ASPNETCORE_ENVIRONMENT: Production
 
   dotnet-backend-deploy:
     name: Deploy .NET Backend to FTP

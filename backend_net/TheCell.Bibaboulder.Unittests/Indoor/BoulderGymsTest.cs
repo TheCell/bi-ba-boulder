@@ -43,8 +43,8 @@ public class BoulderGymsTest
         var spraywall3 = new SpraywallBuilder()
             .SetName("Wall B")
             .SetIsArchived(false)
-            .SetCreatedDate(DateTime.UtcNow.AddDays(-3))
             .SetPreviewImageUri("https://example.com/wall-c.jpg")
+            .SetCreatedDate(DateTime.UtcNow.AddDays(-3))
             .Build();
 
         var boulderGym = new BoulderGymBuilder()
@@ -98,7 +98,7 @@ public class BoulderGymsTest
         var result = await handler.HandleAsync(new GetBoulderGymQuery { Id = boulderGym2.Id });
 
         BoulderGymAssertion.Assert(boulderGym2, result);
-        Assert.Single(result.Spraywalls);
-        SpraywallAssertion.Assert(spraywall2, result.Spraywalls.First());
+        var item = Assert.Single(result.Spraywalls);
+        SpraywallAssertion.Assert(spraywall2, item);
     }
 }

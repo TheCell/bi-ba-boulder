@@ -41,12 +41,15 @@ public class BlocAdministrationControllerTest : BaseTest
     [Fact]
     public async Task CreateBloc_User_Forbidden()
     {
+        var user = new UserBuilder().SetUsername("User").SetRoles(AuthorizationRoles.User).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
 
         var command = new CreateBlocCommand { SectorId = sector.Id, Name = _bogus.Lorem.Slug() };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.User);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -73,7 +76,7 @@ public class BlocAdministrationControllerTest : BaseTest
             PreviewImageUri = _bogus.Internet.UrlWithPath()
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -90,35 +93,14 @@ public class BlocAdministrationControllerTest : BaseTest
     }
 
     [Fact]
-    public async Task CreateBloc_UnknownSector_Ok()
-    {
-        var contentAdmin = new UserBuilder().SetUsername("Content Admin").SetRoles(AuthorizationRoles.ContentAdmin).Build();
-        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(contentAdmin);
-
-        var command = new CreateBlocCommand
-        {
-            SectorId = Guid.CreateVersion7(),
-            Name = _bogus.Lorem.Slug(),
-            Description = _bogus.Lorem.Sentence(),
-            Coordinates = "46.9914628, 7.5589870",
-            BlocLowRes = _bogus.Internet.UrlWithPath(),
-            BlocMedRes = _bogus.Internet.UrlWithPath(),
-            BlocHighRes = _bogus.Internet.UrlWithPath(),
-            PreviewImageUri = _bogus.Internet.UrlWithPath()
-        };
-
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
-        var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
-
-        Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-    }
-
-    [Fact]
     public async Task CreateBloc_UnknownSector_NotFound()
     {
+        var user = new UserBuilder().SetUsername("User").SetRoles(AuthorizationRoles.Admin).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
+
         var command = new CreateBlocCommand { SectorId = Guid.CreateVersion7(), Name = _bogus.Lorem.Slug() };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.Admin);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.PostAsync(BaseUrl, GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -164,7 +146,7 @@ public class BlocAdministrationControllerTest : BaseTest
             Version = bloc.Version
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject);
         var response = await client.PutAsync($"{BaseUrl}/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -194,7 +176,7 @@ public class BlocAdministrationControllerTest : BaseTest
 
         var command = new UpdateBlocCommand { SectorId = sector.Id, Name = _bogus.Lorem.Slug(), Version = bloc.Version + 1 };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject);
         var response = await client.PutAsync($"{BaseUrl}/{bloc.Id}", GetJsonHttpBody(command), TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
@@ -217,7 +199,7 @@ public class BlocAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteBlocCommand { Version = bloc.Version })
         };
 
-        var client = AuthenticatedClient(userId: contentAdmin.OidcSubject, role: AuthorizationRoles.ContentAdmin, username: contentAdmin.Username);
+        var client = AuthenticatedClient(subjectId: contentAdmin.OidcSubject);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
@@ -228,6 +210,8 @@ public class BlocAdministrationControllerTest : BaseTest
     [Fact]
     public async Task DeleteBloc_User_Forbidden()
     {
+        var user = new UserBuilder().SetUsername("User").SetRoles(AuthorizationRoles.User).Build();
+        await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
         var sector = new SectorBuilder().Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(sector);
         var bloc = new BlocBuilder().SetSectorId(sector.Id).Build();
@@ -238,7 +222,7 @@ public class BlocAdministrationControllerTest : BaseTest
             Content = GetJsonHttpBody(new DeleteBlocCommand { Version = bloc.Version })
         };
 
-        var client = AuthenticatedClient(role: AuthorizationRoles.User);
+        var client = AuthenticatedClient(subjectId: user.OidcSubject);
         var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);

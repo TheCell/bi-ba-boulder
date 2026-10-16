@@ -74,8 +74,8 @@ public class CreateOutdoorAreaTest
         // todo add assertertions to verify the response content
         Assert.Equal(command.Name, outdoorArea.Name);
         Assert.Single(outdoorArea.Media);
-        Assert.Single(outdoorArea.Sectors);
-        Assert.Equal(sector.Id, outdoorArea.Sectors.Single().Id);
+        var item = Assert.Single(outdoorArea.Sectors);
+        Assert.Equal(sector.Id, item.Id);
         Assert.True(outdoorArea.IsPublic);
         Assert.Equal(1, outdoorArea.Version);
     }

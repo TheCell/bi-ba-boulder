@@ -235,6 +235,6 @@ public class MediasControllerTest : BaseTest
         var user = new UserBuilder().SetRoles(role).Build();
         await BiBaBoulderDbContext.InsertEntityAndSaveChangesAsync(user);
 
-        return AuthenticatedClient(userId: user.OidcSubject, role: role, username: user.Username);
+        return AuthenticatedClient(subjectId: user.OidcSubject);
     }
 }
