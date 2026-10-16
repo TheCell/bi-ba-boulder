@@ -77,16 +77,16 @@ jobs:
           dotnet-quality: 'preview'
 
       - name: Restore dependencies
-        run: dotnet restore backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --runtime linux-x64
+        run: cd backend_net && dotnet restore BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --runtime linux-x64
 
       - name: Build
-        run: dotnet build backend_net/BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
+        run: cd backend_net && dotnet build BiBaBoulder/Thecell.Bibaboulder.BiBaBoulder.slnx --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test backend_net/TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+        run: cd backend_net && dotnet test TheCell.Bibaboulder.Unittests/TheCell.Bibaboulder.Unittests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
 
       - name: Run integration tests
-        run: dotnet test backend_net/TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+        run: cd backend_net && dotnet test TheCell.Bibaboulder.Integrationtests/TheCell.Bibaboulder.Integrationtests.csproj --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
