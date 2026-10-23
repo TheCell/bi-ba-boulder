@@ -129,6 +129,14 @@ input:focus::placeholder {
   margin: 0px 8px;
 }
 
+.checkbox-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  color: $gray;
+  font-size: 11px;
+}
+
 .radio-option {
   display: grid;
   align-items: center;
