@@ -8,6 +8,7 @@ import {
   input,
   output,
   signal,
+  viewChild,
   ViewChild
 } from '@angular/core';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
@@ -49,7 +50,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private destroyRef = inject(DestroyRef);
   private cameraControlsService = inject(CameraControlsService);
 
-  @ViewChild('canvas') public canvas: ElementRef = null!;
+  public canvas = viewChild.required<ElementRef>('canvas');
 
   public rawModels = input<RawModelInput[]>([]);
   public lines = input<EnhancedLine[]>();
@@ -127,6 +128,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private raycastTubeMeshes: THREE.Mesh[] = [];
 
   private sceneObjects: { lod: THREE.LOD; blocId: string }[] = [];
+  private renderTimesForLods = new Map<string, number>();
   private initialized = false; // temporary 'fix' for a timing problem
 
   public onResize(): void {
@@ -205,7 +207,7 @@ export class OutdoorRenderer implements AfterViewInit {
   }
 
   private createCanvas(): void {
-    const canvas = this.canvas.nativeElement;
+    const canvas = this.canvas().nativeElement;
     if (!canvas) {
       return;
     }
@@ -281,10 +283,13 @@ export class OutdoorRenderer implements AfterViewInit {
     blocId: string,
     resetCamera: boolean
   ): void {
+    const startParse = performance.now();
     this.loader.parse(
       arrayBuffer,
       '',
       (gltf: GLTF) => {
+        this.renderTimesForLods.set(resolution, performance.now() - startParse);
+
         gltf.scene.traverse((child) => {
           child.layers.set(1);
           const mesh = child as THREE.Mesh;
@@ -660,10 +665,10 @@ export class OutdoorRenderer implements AfterViewInit {
     }
 
     const pointer = new THREE.Vector2();
-    const canvasWidth = this.canvas.nativeElement.offsetWidth;
-    const canvasHeight = this.canvas.nativeElement.offsetHeight;
-    const canvasTop = this.canvas.nativeElement.getBoundingClientRect().top;
-    const canvasLeft = this.canvas.nativeElement.getBoundingClientRect().left;
+    const canvasWidth = this.canvas().nativeElement.offsetWidth;
+    const canvasHeight = this.canvas().nativeElement.offsetHeight;
+    const canvasTop = this.canvas().nativeElement.getBoundingClientRect().top;
+    const canvasLeft = this.canvas().nativeElement.getBoundingClientRect().left;
 
     const mouseX = x - canvasLeft;
     const mouseY = y - canvasTop;
@@ -832,7 +837,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private dispose(): void {
     this.controls?.removeEventListener('change', this.loop);
     this.controls?.dispose();
-    this.canvas?.nativeElement?.removeEventListener('pointerdown', this.onPointerClick);
+    this.canvas()?.nativeElement?.removeEventListener('pointerdown', this.onPointerClick);
 
     const sceneObjects = this.sceneObjects;
     for (const object of sceneObjects) {
