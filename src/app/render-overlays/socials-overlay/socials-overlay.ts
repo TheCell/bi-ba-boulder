@@ -1,4 +1,4 @@
-import { Component, inject, input, ViewChild } from '@angular/core';
+import { Component, inject, input, viewChild } from '@angular/core';
 import { Icon } from '../../core/icon/icon';
 import { ToastService } from '../../core/toast-container/toast.service';
 import { Modal } from '../../core/modal/modal/modal';
@@ -13,7 +13,7 @@ import { SocialsDialog } from './socials-dialog/socials-dialog';
   styleUrl: './socials-overlay.scss'
 })
 export class SocialsOverlay {
-  @ViewChild('modal') private modal!: Modal;
+  private modal = viewChild.required<Modal>('modal');
   private toastService = inject(ToastService);
   private modalService = inject(ModalService);
 
@@ -62,7 +62,7 @@ export class SocialsOverlay {
     const socialsDialogData: SocialsDialogData = {
       url: routeUrl
     };
-    const modal = this.modalService.open(this.modal.id, SocialsDialog);
+    const modal = this.modalService.open(this.modal().id, SocialsDialog);
     if (modal && modal.initialize) {
       modal.initialize(socialsDialogData);
     }

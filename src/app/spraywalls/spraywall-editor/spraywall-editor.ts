@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { SpraywallProblemDto } from '@api-net/index';
 import * as THREE from 'three';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -35,8 +35,8 @@ interface IHoldColorForm {
   styleUrl: './spraywall-editor.scss'
 })
 export class SpraywallEditor implements OnInit {
-  @ViewChild('modal') private modal!: Modal;
-  @ViewChild('renderer') private renderer!: SpraywallEditorRenderer;
+  private modal = viewChild.required<Modal>('modal');
+  private renderer = viewChild.required<SpraywallEditorRenderer>('renderer');
 
   private modalService = inject(ModalService);
   private boulderLoaderService = inject(BoulderLoaderService);
@@ -95,7 +95,7 @@ export class SpraywallEditor implements OnInit {
   }
 
   public onBackToSpraywall(): void {
-    const hasUnsavedChanges = this.renderer?.hasUnsavedChanges() ?? false;
+    const hasUnsavedChanges = this.renderer()?.hasUnsavedChanges() ?? false;
     if (hasUnsavedChanges) {
       const shouldDropEditing = window.confirm(
         'Do you really want to drop the current editing? Unsaved changes will be lost.'
@@ -109,12 +109,12 @@ export class SpraywallEditor implements OnInit {
   }
 
   public openSaveModal(): void {
-    const component = this.modalService.open(this.modal.id, SpraywallSaveDialog);
+    const component = this.modalService.open(this.modal().id, SpraywallSaveDialog);
     if (!component) {
       throw new Error('Modal component not found');
     }
 
-    const imageData = this.renderer.getRouteImage();
+    const imageData = this.renderer().getRouteImage();
     if (!imageData) {
       throw new Error('No image data from renderer');
     }

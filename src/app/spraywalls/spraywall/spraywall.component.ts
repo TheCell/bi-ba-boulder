@@ -7,7 +7,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
-  ViewChild
+  viewChild
 } from '@angular/core';
 import { SocialsOverlay } from '../../render-overlays/socials-overlay/socials-overlay';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
@@ -61,10 +61,10 @@ import { CameraControls } from '../../render-overlays/camera-controls/camera-con
   styleUrl: './spraywall.component.scss'
 })
 export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('infoModal') private infoModal!: Modal;
-  @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
-  @ViewChild('confirmDelete') private confirmDeleteModal!: Modal;
-  @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
+  private infoModal = viewChild.required<Modal>('infoModal');
+  private fontGradeFilterModal = viewChild.required<Modal>('fontGradeFilterModal');
+  private confirmDeleteModal = viewChild.required<Modal>('confirmDelete');
+  private scrollList = viewChild.required<ElementRef<HTMLElement>>('scrollList');
 
   public authSessionStateService = inject(AuthSessionStateService);
   private spraywallsService = inject(SpraywallsService);
@@ -151,7 +151,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    this.scrollList.nativeElement.addEventListener('scroll', this.scrollEventListener);
+    this.scrollList().nativeElement.addEventListener('scroll', this.scrollEventListener);
   }
 
   public ngOnInit() {
@@ -167,7 +167,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
-    this.scrollList.nativeElement.removeEventListener('scroll', this.scrollEventListener);
+    this.scrollList().nativeElement.removeEventListener('scroll', this.scrollEventListener);
   }
 
   public onSelectedProblem(problem: SpraywallProblemDto): void {
@@ -205,7 +205,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onGradeClicked(): void {
-    const modal = this.modalService.open(this.fontGradeFilterModal.id, SpraywallGradeFilterDialog);
+    const modal = this.modalService.open(this.fontGradeFilterModal().id, SpraywallGradeFilterDialog);
     if (modal && modal.initialize) {
       const data: SpraywallGradeFilterDialogData = {
         maxGrade: this.currentFilter.gradeMax,
@@ -227,7 +227,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onInfoClicked(): void {
-    this.modalService.open(this.infoModal.id, SpraywallInfoDialog);
+    this.modalService.open(this.infoModal().id, SpraywallInfoDialog);
   }
 
   public onEditProblem(): void {
@@ -238,7 +238,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public onDeleteProblem(): void {
     if (this.selectedProblem) {
-      const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteDialog);
+      const modal = this.modalService.open(this.confirmDeleteModal().id, ConfirmDeleteDialog);
       if (modal && modal.initialize) {
         const data: ConfirmDeleteSpraywallProblemDialogData = {
           spraywallProblem: this.selectedProblem
@@ -274,7 +274,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private currentScrollPosition(): number {
-    const element = this.scrollList.nativeElement;
+    const element = this.scrollList().nativeElement;
     return Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop);
   }
 

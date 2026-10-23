@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal, viewChild } from '@angular/core';
 import { BoulderLogDto, BoulderLogsService, CreateBoulderLogCommand, UpdateBoulderLogCommand } from '@api-net/index';
 import { ProblemLogDialog } from './problem-log-dialog/problem-log-dialog';
 import { ProblemLogDialogData } from './problem-log-dialog/problem-log-dialog-data.interface';
@@ -16,7 +16,7 @@ import { ToastService } from '../../../core/toast-container/toast.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProblemLogOverlay {
-  @ViewChild('modal') private modal!: Modal;
+  private modal = viewChild.required<Modal>('modal');
 
   private boulderLogsService = inject(BoulderLogsService);
   private modalService = inject(ModalService);
@@ -100,7 +100,7 @@ export class ProblemLogOverlay {
       spraywallProblemId: this.spraywallProblemId(),
       problemLog: this.currentBoulderLog()
     };
-    const modal = this.modalService.open(this.modal.id, ProblemLogDialog);
+    const modal = this.modalService.open(this.modal().id, ProblemLogDialog);
     if (modal && modal.initialize) {
       modal.initialize(problemLogDialogData);
     }

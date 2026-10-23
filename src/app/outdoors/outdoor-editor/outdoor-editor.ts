@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, ViewChild } from '@angular/core';
+import { Component, DestroyRef, inject, signal, viewChild } from '@angular/core';
 import { LoadingImageComponent } from '../../common/loading-image/loading-image.component';
 import { BlocDto, LineData, LineDto, LinesService } from '@api-net/index';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -32,8 +32,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrl: './outdoor-editor.scss'
 })
 export class OutdoorEditor {
-  @ViewChild('modal') private modal!: Modal;
-  @ViewChild('renderer') private renderer!: OutdoorEditorRenderer;
+  private modal = viewChild.required<Modal>('modal');
+  private renderer = viewChild.required<OutdoorEditorRenderer>('renderer');
 
   private boulderLoaderService = inject(BoulderLoaderService);
   private linesService = inject(LinesService);
@@ -147,18 +147,18 @@ export class OutdoorEditor {
   }
 
   public openSaveModal(): void {
-    const linePoints = this.renderer.getLinePoints();
+    const linePoints = this.renderer().getLinePoints();
     if (!linePoints) {
       this.toastService.showDanger('Debug Save', 'No line data from renderer. Cannot save route.');
       throw new Error('No line data from renderer');
     }
 
-    const component = this.modalService.open(this.modal.id, OutdoorSaveDialog);
+    const component = this.modalService.open(this.modal().id, OutdoorSaveDialog);
     if (!component) {
       throw new Error('Modal component not found');
     }
 
-    const sceneMarkings = this.renderer.getSceneMarkings();
+    const sceneMarkings = this.renderer().getSceneMarkings();
 
     const lineData: LineData = {
       positions: linePoints,

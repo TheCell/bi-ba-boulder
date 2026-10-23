@@ -7,7 +7,7 @@ import {
   inject,
   input,
   signal,
-  ViewChild
+  viewChild
 } from '@angular/core';
 import { KeyboardShortcutsModule, ShortcutEventOutput, ShortcutInput } from 'ng-keyboard-shortcuts';
 import * as THREE from 'three';
@@ -87,7 +87,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   private readonly cameraControlsService: CameraControlsService = inject(CameraControlsService);
   private readonly colorService: ColorService = inject(ColorService);
 
-  @ViewChild('canvas') public canvas: ElementRef = null!;
+  public canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
 
   public rawModels = input<RawModelInput[]>([]);
   public readonly lineForEdit = input<LineDto | undefined>();
@@ -389,7 +389,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       return;
     }
 
-    if (this.isDragging || !this.canvas.nativeElement.contains(event.target as Node)) {
+    if (this.isDragging || !this.canvas().nativeElement.contains(event.target as Node)) {
       return;
     }
 
@@ -402,7 +402,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
       return;
     }
 
-    if (!this.canvas.nativeElement.contains(event.target as Node)) {
+    if (!this.canvas().nativeElement.contains(event.target as Node)) {
       return;
     }
 
@@ -691,7 +691,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private createCanvas(): void {
-    const canvas: HTMLCanvasElement = this.canvas.nativeElement;
+    const canvas: HTMLCanvasElement = this.canvas().nativeElement;
     if (!canvas) {
       return;
     }
@@ -1104,10 +1104,10 @@ export class OutdoorEditorRenderer implements AfterViewInit {
   }
 
   private getCanvasPointer(clientX: number, clientY: number): THREE.Vector2 {
-    const canvasWidth: number = this.canvas.nativeElement.offsetWidth;
-    const canvasHeight: number = this.canvas.nativeElement.offsetHeight;
-    const canvasTop: number = this.canvas.nativeElement.getBoundingClientRect().top;
-    const canvasLeft: number = this.canvas.nativeElement.getBoundingClientRect().left;
+    const canvasWidth: number = this.canvas().nativeElement.offsetWidth;
+    const canvasHeight: number = this.canvas().nativeElement.offsetHeight;
+    const canvasTop: number = this.canvas().nativeElement.getBoundingClientRect().top;
+    const canvasLeft: number = this.canvas().nativeElement.getBoundingClientRect().left;
     const mouseX: number = clientX - canvasLeft;
     const mouseY: number = clientY - canvasTop;
 
@@ -1227,7 +1227,7 @@ export class OutdoorEditorRenderer implements AfterViewInit {
 
   private dispose(): void {
     window.removeEventListener('pointermove', this.onPointerMove);
-    this.canvas?.nativeElement?.removeEventListener('pointerdown', this.handleCanvasPointerDown);
+    this.canvas()?.nativeElement?.removeEventListener('pointerdown', this.handleCanvasPointerDown);
 
     this.controls?.removeEventListener('change', this.startLooping);
     this.controls?.dispose();

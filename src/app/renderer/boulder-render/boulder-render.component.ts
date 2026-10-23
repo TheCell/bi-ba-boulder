@@ -7,7 +7,7 @@ import {
   inject,
   input,
   OnInit,
-  ViewChild
+  viewChild
 } from '@angular/core';
 import * as THREE from 'three';
 import { KeyboardShortcutsModule, ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -44,7 +44,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   private destroyRef = inject(DestroyRef);
   private cameraControlsService = inject(CameraControlsService);
 
-  @ViewChild('canvas') public canvas: ElementRef = null!;
+  public canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
 
   public shortcuts: ShortcutInput[] = [];
   public rawModel = input<ArrayBuffer>();
@@ -158,7 +158,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
   }
 
   private createCanvas(): void {
-    const canvas = this.canvas.nativeElement;
+    const canvas = this.canvas().nativeElement;
     if (!canvas) {
       return;
     }
@@ -290,7 +290,7 @@ export class BoulderRenderComponent implements OnInit, AfterViewInit {
       color: new THREE.Color(color ?? this.getRandomColor()),
       opacity: 1,
       linewidth: 5,
-      resolution: new THREE.Vector2(this.canvas.nativeElement.offsetWidth, this.canvas.nativeElement.offsetHeight), // TODO this will have to be recalculated on resize?
+      resolution: new THREE.Vector2(this.canvas().nativeElement.offsetWidth, this.canvas().nativeElement.offsetHeight), // TODO this will have to be recalculated on resize?
       dashed: false
     });
   }

@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, ViewChild } from '@angular/core';
+import { Component, computed, inject, input, viewChild } from '@angular/core';
 import { Modal } from '../modal/modal/modal';
 import { ModalService } from '../modal/modal.service';
 import { ImageHolderModal } from '../modal/image-holder-modal/image-holder-modal';
@@ -12,7 +12,7 @@ import { ResourceType } from '../enums/resource-type.enum';
   styleUrl: './common-overview.scss'
 })
 export class CommonOverview {
-  @ViewChild('imageModal') private imageModal!: Modal;
+  private imageModal = viewChild.required<Modal>('imageModal');
   private modalService = inject(ModalService);
 
   public name = input<string>('');
@@ -26,7 +26,7 @@ export class CommonOverview {
   });
 
   public openImageModal(uri: string): void {
-    const imageHolderModal = this.modalService.open(this.imageModal.id, ImageHolderModal);
+    const imageHolderModal = this.modalService.open(this.imageModal().id, ImageHolderModal);
     if (imageHolderModal && imageHolderModal.initialize) {
       imageHolderModal.initialize({ imageUri: uri });
     }

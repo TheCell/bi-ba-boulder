@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SectorDto, SectorsService } from '@api-net/index';
 import { Modal } from '../../core/modal/modal/modal';
@@ -15,8 +15,8 @@ import { DeleteSectorDialog } from './delete-sector-dialog';
   styleUrl: './sectors-admin.scss'
 })
 export class SectorsAdmin implements OnInit {
-  @ViewChild('editorModal') private editorModal!: Modal;
-  @ViewChild('deleteModal') private deleteModal!: Modal;
+  private editorModal = viewChild.required<Modal>('editorModal');
+  private deleteModal = viewChild.required<Modal>('deleteModal');
 
   private sectorsService = inject(SectorsService);
   private toastService = inject(ToastService);
@@ -41,21 +41,21 @@ export class SectorsAdmin implements OnInit {
   }
 
   public openCreateDialog(): void {
-    const dialog = this.modalService.open(this.editorModal.id, SectorEditorDialog);
+    const dialog = this.modalService.open(this.editorModal().id, SectorEditorDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({});
     }
   }
 
   public openEditDialog(sector: SectorDto): void {
-    const dialog = this.modalService.open(this.editorModal.id, SectorEditorDialog);
+    const dialog = this.modalService.open(this.editorModal().id, SectorEditorDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({ sector });
     }
   }
 
   public openDeleteDialog(sector: SectorDto): void {
-    const dialog = this.modalService.open(this.deleteModal.id, DeleteSectorDialog);
+    const dialog = this.modalService.open(this.deleteModal().id, DeleteSectorDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({ sector });
     }

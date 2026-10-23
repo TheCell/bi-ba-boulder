@@ -8,8 +8,7 @@ import {
   input,
   output,
   signal,
-  viewChild,
-  ViewChild
+  viewChild
 } from '@angular/core';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import * as THREE from 'three';
@@ -50,7 +49,7 @@ export class OutdoorRenderer implements AfterViewInit {
   private destroyRef = inject(DestroyRef);
   private cameraControlsService = inject(CameraControlsService);
 
-  public canvas = viewChild.required<ElementRef>('canvas');
+  public canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
 
   public rawModels = input<RawModelInput[]>([]);
   public lines = input<EnhancedLine[]>();
