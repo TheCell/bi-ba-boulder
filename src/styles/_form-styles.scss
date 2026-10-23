@@ -69,10 +69,12 @@ input[type="checkbox"]:focus {
 
 input::placeholder {
   visibility: hidden;
+  color: transparent; /* fallback */
 }
 
 input:focus::placeholder {
   visibility: visible;
+  color: $gray; /* fallback */
 }
 
 .form-group {
