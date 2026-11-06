@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,17 +20,20 @@ public class SpraywallsController : ControllerBase
     private readonly IQueryHandler<GetSpraywallsQuery, ICollection<SpraywallDto>> _getSpraywallsQueryHandler;
     private readonly IQueryHandler<SearchSpraywallProblemsQuery, SpraywallProblemListDto> _searchProblemsQueryHandler;
     private readonly IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> _getSpraywallProblemQueryHandler;
+    private readonly IQueryHandler<GetSpraywallQuery, SpraywallDto> _getSpraywallQueryHandler;
     private readonly ICommandHandlerWithExtraTransaction<CreateSpraywallProblemCommand> _createProblemCommandHandler;
 
     public SpraywallsController(
         IQueryHandler<GetSpraywallsQuery, ICollection<SpraywallDto>> getSpraywallsQueryHandler,
         IQueryHandler<SearchSpraywallProblemsQuery, SpraywallProblemListDto> searchProblemsQueryHandler,
         IQueryHandler<GetSpraywallProblemQuery, SpraywallProblemDto> getSpraywallProblemQueryHandler,
+        IQueryHandler<GetSpraywallQuery, SpraywallDto> getSpraywallQueryHandler,
         ICommandHandlerWithExtraTransaction<CreateSpraywallProblemCommand> createProblemCommandHandler)
     {
         _getSpraywallsQueryHandler = getSpraywallsQueryHandler;
         _searchProblemsQueryHandler = searchProblemsQueryHandler;
         _getSpraywallProblemQueryHandler = getSpraywallProblemQueryHandler;
+        _getSpraywallQueryHandler = getSpraywallQueryHandler;
         _createProblemCommandHandler = createProblemCommandHandler;
     }
 
@@ -38,6 +42,13 @@ public class SpraywallsController : ControllerBase
     public async Task<ICollection<SpraywallDto>> GetSpraywalls()
     {
         return await _getSpraywallsQueryHandler.HandleAsync(new GetSpraywallsQuery());
+    }
+
+    [HttpGet("{id}")]
+    [AllowAnonymous]
+    public async Task<SpraywallDto> GetSpraywall(Guid id)
+    {
+        return await _getSpraywallQueryHandler.HandleAsync(new GetSpraywallQuery { Id = id });
     }
 
     [HttpPost("{id}/problems")]

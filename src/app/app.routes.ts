@@ -25,6 +25,7 @@ import { BoulderGymsAdmin } from './admin/boulder-gyms/boulder-gyms-admin';
 import { OutdoorAreasAdmin } from './admin/outdoor-areas/outdoor-areas-admin';
 import { SectorsAdmin } from './admin/sectors/sectors-admin';
 import { BlocsAdmin } from './admin/blocs/blocs-admin';
+import { spraywallResolver } from './core/resolvers/spraywall.resolver';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
@@ -107,18 +108,25 @@ export const routes: Routes = [
   },
   {
     path: 'spraywall/:id',
-    component: SpraywallComponent
+    component: SpraywallComponent,
+    resolve: {
+      spraywall: spraywallResolver
+    }
   },
   {
     path: 'spraywall-editor/:spraywallId/:problemId',
     component: SpraywallEditor,
     resolve: {
+      spraywall: spraywallResolver,
       spraywallProblem: spraywallProblemResolver
     }
   },
   {
     path: 'spraywall-editor/:spraywallId',
-    component: SpraywallEditor
+    component: SpraywallEditor,
+    resolve: {
+      spraywall: spraywallResolver
+    }
   },
   {
     path: 'admin/uri-aliases',

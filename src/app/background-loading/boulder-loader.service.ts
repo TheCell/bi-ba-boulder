@@ -39,6 +39,13 @@ export class BoulderLoaderService {
     return this.loadArrayBufferWithCache(fullUrl, cacheKey, resolution, blocId, url);
   }
 
+  public loadSpraywall(relativeUrl: string, spraywallId: string): Observable<ArrayBuffer> {
+    const fullUrl = `${environment.spraywallResourceURL}/${relativeUrl}`;
+    const cacheKey: string = this.createCacheKey(spraywallId, relativeUrl);
+
+    return this.loadArrayBufferWithCache(fullUrl, cacheKey, RESOLUTION_LEVEL.high, spraywallId, relativeUrl);
+  }
+
   public getUrls(blocDto: BlocDto, resolutionLevel?: ResolutionLevel): UrlsAndExtras {
     if (resolutionLevel === undefined) {
       resolutionLevel = this.getFirstResolution(blocDto);
@@ -123,103 +130,6 @@ export class BoulderLoaderService {
     }
 
     return undefined;
-  }
-
-  public loadTestBoulder(): Observable<ArrayBuffer> {
-    return this.loadWithCache(
-      './api-test/boulder/bimano/bimano_low_pos_corrected.glb',
-      this.createCacheKey('test-bimano', './api-test/boulder/bimano/bimano_low_pos_corrected.glb'),
-      RESOLUTION_LEVEL.low
-    );
-  }
-
-  public loadTestDaoneBoulder(resolutionLevel: ResolutionLevel): Observable<ArrayBuffer> {
-    switch (resolutionLevel) {
-      case 'low':
-        return this.loadWithCache(
-          './api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb',
-          this.createCacheKey('test-daone-1', './api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb'),
-          resolutionLevel
-        );
-      case 'medium':
-        return this.loadWithCache(
-          './api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.002.glb',
-          this.createCacheKey('test-daone-1', './api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.002.glb'),
-          resolutionLevel
-        );
-      case 'high':
-        return this.loadWithCache(
-          './api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.001.glb',
-          this.createCacheKey('test-daone-1', './api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.001.glb'),
-          resolutionLevel
-        );
-      default:
-        return this.loadWithCache(
-          './api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb',
-          this.createCacheKey('test-daone-1', './api-test/boulder/daone/la-plana/HIS_0110_Cleanup_reduced_0.0001.glb'),
-          RESOLUTION_LEVEL.low
-        );
-    }
-  }
-
-  public loadTestDaoneBoulder2(resolutionLevel: ResolutionLevel): Observable<ArrayBuffer> {
-    switch (resolutionLevel) {
-      case 'low':
-        return this.loadWithCache(
-          './api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb',
-          this.createCacheKey('test-daone-2', './api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb'),
-          resolutionLevel
-        );
-      case 'medium':
-        return this.loadWithCache(
-          './api-test/boulder/daone/la-plana/HIS_0761_reduced_0.01_tex_0.25.glb',
-          this.createCacheKey('test-daone-2', './api-test/boulder/daone/la-plana/HIS_0761_reduced_0.01_tex_0.25.glb'),
-          resolutionLevel
-        );
-      case 'high':
-        return this.loadWithCache(
-          './api-test/boulder/daone/la-plana/HIS_0761_reduced_0.02_tex_0.35.glb',
-          this.createCacheKey('test-daone-2', './api-test/boulder/daone/la-plana/HIS_0761_reduced_0.02_tex_0.35.glb'),
-          resolutionLevel
-        );
-      default:
-        return this.loadWithCache(
-          './api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb',
-          this.createCacheKey('test-daone-2', './api-test/boulder/daone/la-plana/HIS_0761_reduced_0.0011.glb'),
-          RESOLUTION_LEVEL.low
-        );
-    }
-  }
-
-  public loadTestSpraywall(): Observable<ArrayBuffer> {
-    return this.loadWithCache(
-      './api-test/boulder/spraywall/Spraywall_separated_test_4096.glb',
-      this.createCacheKey('test-spraywall-1', './api-test/boulder/spraywall/Spraywall_separated_test_4096.glb'),
-      RESOLUTION_LEVEL.high
-    );
-  }
-
-  public loadTestSpraywall2(): Observable<ArrayBuffer> {
-    return this.loadWithCache(
-      './api-test/boulder/spraywall2/Bimano_Spraywall_02_LOD0.glb',
-      this.createCacheKey('test-spraywall-2', './api-test/boulder/spraywall2/Bimano_Spraywall_02_LOD0.glb'),
-      RESOLUTION_LEVEL.high
-    );
-  }
-
-  public loadTestSpraywall3(): Observable<ArrayBuffer> {
-    return this.loadWithCache(
-      './api-test/boulder/spraywall2/Bimano_Spraywall_2025_UV_shenanigans_03.glb',
-      this.createCacheKey(
-        'test-spraywall-3',
-        './api-test/boulder/spraywall2/Bimano_Spraywall_2025_UV_shenanigans_03.glb'
-      ),
-      RESOLUTION_LEVEL.high
-    );
-  }
-
-  private loadWithCache(fullUrl: string, cacheKey: string, resolution: ResolutionLevel): Observable<ArrayBuffer> {
-    return this.loadArrayBufferWithCache(fullUrl, cacheKey, resolution, 'test', fullUrl);
   }
 
   private loadArrayBufferWithCache(

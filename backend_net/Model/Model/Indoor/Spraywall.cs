@@ -20,6 +20,11 @@ public class Spraywall : VersionedEntity
 
     public string? PreviewImageUri { get; set; }
 
+    public required string UvMap { get; set; }
+
+    [MaxLength(2048)]
+    public required string SpraywallModel { get; set; }
+
     public Guid? BoulderGymId { get; set; }
 
     [ForeignKey(nameof(BoulderGymId))]

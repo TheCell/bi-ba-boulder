@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   inject,
   OnDestroy,
@@ -41,6 +42,7 @@ import { ToastService } from '../../core/toast-container/toast.service';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { ProblemRulesOverlay } from '../../render-overlays/problem-rules-overlay/problem-rules-overlay';
 import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-spraywall',
@@ -75,9 +77,14 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private boulderLogsService = inject(BoulderLogsService);
+  private activatedRoute = inject(ActivatedRoute);
+
+  private data = toSignal(this.activatedRoute.data, { requireSync: true });
+  public test = computed(() => console.log(this.data()), this.data());
+  public spraywall = computed(() => this.data()['spraywall']);
 
   public currentRawModel?: ArrayBuffer;
-  public spraywallId = '';
+  public spraywallId = this.activatedRoute.snapshot.params['id'];
 
   public listOfProblems: SpraywallProblemDto[] = [];
   public selectedProblem?: SpraywallProblemDto = undefined;
@@ -95,11 +102,9 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscription = new Subscription();
 
   public constructor() {
-    const route = inject(ActivatedRoute);
-    this.spraywallId = route.snapshot.params['id'];
-
+    console.log(this.data());
     this.subscription.add(
-      route.queryParamMap.subscribe({
+      this.activatedRoute.queryParamMap.subscribe({
         next: (queryParams) => {
           this.selectedProblemIdFromQueryParam = queryParams.get('routeId') ?? undefined;
           this.trySelectProblemFromQueryParam();
@@ -155,7 +160,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngOnInit() {
-    this.boulderLoaderService.loadTestSpraywall3().subscribe({
+    this.boulderLoaderService.loadSpraywall(this.spraywall().spraywallModel, this.spraywallId).subscribe({
       next: (data: ArrayBuffer) => {
         this.currentRawModel = data;
         this.changeDetectorRef.markForCheck();

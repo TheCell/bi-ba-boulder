@@ -16,5 +16,7 @@ export interface SpraywallDto {
     description?: string | null;
     previewImageUri?: string | null;
     isPartOfGym?: boolean;
+    spraywallModel: string;
+    uvMap: string;
 }
 

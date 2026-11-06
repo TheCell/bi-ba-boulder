@@ -68,6 +68,8 @@ public class MediaControllerTest : BaseTest
                     .SetIsArchived(_bogus.Random.Bool())
                     .SetDescription(_bogus.Lorem.Sentence())
                     .SetPreviewImageUri(_bogus.Image.PicsumUrl())
+                    .SetSpraywallModel(_bogus.Internet.Url())
+                    .SetUvMap(_bogus.Internet.Url())
                     .Build());
             }
 

@@ -10,4 +10,6 @@ public class SpraywallDto
     public string? Description { get; set; }
     public string? PreviewImageUri { get; set; }
     public bool IsPartOfGym { get; set; }
+    public required string SpraywallModel { get; set; }
+    public required string UvMap { get; set; }
 }

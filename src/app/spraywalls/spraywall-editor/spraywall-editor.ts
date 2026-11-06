@@ -15,6 +15,8 @@ import { SpraywallHoldType, TypeAndColor, holdColorOptions } from '../../rendere
 import { SpraywallEditorRenderer } from '../../renderer/spraywall-editor-renderer/spraywall-editor-renderer';
 import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
 import { form, FormField } from '@angular/forms/signals';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { environment } from '../../../environments/environment';
 
 interface IHoldColorForm {
   spraywallHoldType: string;
@@ -42,6 +44,10 @@ export class SpraywallEditor implements OnInit {
   private boulderLoaderService = inject(BoulderLoaderService);
   private changeDetectorRef = inject(ChangeDetectorRef);
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
+  private data = toSignal(this.activatedRoute.data, { requireSync: true });
+  public spraywall = computed(() => this.data()['spraywall']);
 
   public colorModel = signal<IHoldColorForm>({
     spraywallHoldType: SpraywallHoldType.hold.toString()
@@ -56,30 +62,22 @@ export class SpraywallEditor implements OnInit {
   );
   public resetSignal: Subject<void> = new Subject<void>();
   public undoLastHighlightSignal: Subject<void> = new Subject<void>();
-  public spraywallId = '';
-  public problemId? = '';
-  public spraywallProblemForEdit?: SpraywallProblemDto;
+  public spraywallId = this.activatedRoute.snapshot.paramMap.get('spraywallId') ?? '';
+  public problemId? = this.activatedRoute.snapshot.paramMap.get('problemId') ?? undefined;
+  public spraywallProblemForEdit?: SpraywallProblemDto = this.activatedRoute.snapshot.data['spraywallProblem'];
   public holdColorOptions: TypeAndColor[] = holdColorOptions;
 
-  public constructor() {
-    const activatedRoute = inject(ActivatedRoute);
-    this.spraywallId = activatedRoute.snapshot.paramMap.get('spraywallId') ?? '';
-    this.problemId = activatedRoute.snapshot.paramMap.get('problemId') ?? undefined;
-    this.spraywallProblemForEdit = activatedRoute.snapshot.data['spraywallProblem'];
-  }
-
   public ngOnInit() {
-    // todo cache when switching from spraywall
-    this.boulderLoaderService.loadTestSpraywall3().subscribe({
+    this.boulderLoaderService.loadSpraywall(this.spraywall().spraywallModel, this.spraywallId).subscribe({
       next: (data: ArrayBuffer) => {
         this.currentRawModel = data;
         this.changeDetectorRef.markForCheck();
       }
     });
 
-    // const todo = './images/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
-    const todo = './api-test/boulder/spraywall2/Bimano_Spraywall_2025_rgb_blocks_128x128.png';
-    this.loadCustomUv(todo);
+    const fullUrl = `${environment.spraywallResourceURL}/${this.spraywall().uvMap}`;
+    console.log(fullUrl);
+    this.loadCustomUv(fullUrl);
   }
 
   public closeModal(closeModalEvent: CloseModalEvent) {

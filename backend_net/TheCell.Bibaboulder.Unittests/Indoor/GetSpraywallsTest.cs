@@ -31,10 +31,14 @@ public class GetSpraywallsTest
         var spraywall1 = new SpraywallBuilder()
             .SetName("Wall A")
             .SetPreviewImageUri("https://example.com/wall-a.jpg")
+            .SetSpraywallModel("https://example.com/wall-a.glb")
+            .SetUvMap("https://example.com/wall-a-uv.png")
             .Build();
         var spraywall2 = new SpraywallBuilder()
             .SetName("Wall B")
             .SetPreviewImageUri("https://example.com/wall-b.jpg")
+            .SetSpraywallModel("https://example.com/wall-b.glb")
+            .SetUvMap("https://example.com/wall-b-uv.png")
             .Build();
         await _dbContext.InsertEntitiesAndSaveChangesAsync([spraywall1, spraywall2]);
 

@@ -47,6 +47,28 @@ public class SpraywallsControllerTest : BaseTest
     }
 
     [Fact]
+    public async Task GetSpraywall_Anonymous_NotFound()
+    {
+        var response = await Client().GetAsync($"{_baseUrl}/{Guid.NewGuid()}", TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetSpraywall_Anonymous_Ok()
+    {
+        var spraywalls = await PrepareSpraywalls();
+
+        var response = await Client().GetAsync($"{_baseUrl}/{spraywalls[0].Id}", TestContext.Current.CancellationToken);
+
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<SpraywallDto>(cancellationToken: TestContext.Current.CancellationToken);
+
+        Assert.NotNull(result);
+        SpraywallAssertion.Assert(spraywalls[0], result);
+    }
+
+    [Fact]
     public async Task SearchSpraywallProblems_Anonymous_Ok()
     {
         var (spraywall, _, _) = await PrepareProblems();
@@ -209,6 +231,8 @@ public class SpraywallsControllerTest : BaseTest
                 .SetDescription(_bogus.Lorem.Sentence())
                 .SetPreviewImageUri(_bogus.Image.PicsumUrl())
                 .SetIsArchived(_bogus.Random.Bool())
+                .SetSpraywallModel(_bogus.Internet.Url())
+                .SetUvMap(_bogus.Internet.Url())
                 .Build());
         }
         await BiBaBoulderDbContext.InsertEntitiesAndSaveChangesAsync(spraywalls);
