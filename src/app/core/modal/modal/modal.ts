@@ -10,7 +10,7 @@ import {
   output,
   signal,
   Type,
-  ViewChild,
+  viewChild,
   ViewContainerRef
 } from '@angular/core';
 import { ModalService } from '../modal.service';
@@ -25,8 +25,10 @@ import { CloseModalEvent } from './close-modal-event';
   styleUrl: './modal.scss'
 })
 export class Modal implements OnInit, OnDestroy {
-  @ViewChild('dynamicContent', { read: ViewContainerRef }) public dynamicContent!: ViewContainerRef;
-  @ViewChild('noButton') public noButton?: ElementRef<HTMLElement>;
+  public dynamicContent = viewChild.required<ViewContainerRef, ViewContainerRef>('dynamicContent', {
+    read: ViewContainerRef
+  });
+  public noButton = viewChild<ElementRef<HTMLElement>>('noButton');
 
   private modalService = inject(ModalService);
   private elementRef = inject(ElementRef);
@@ -81,8 +83,8 @@ export class Modal implements OnInit, OnDestroy {
   }
 
   public open<T extends IModal>(component: Type<T>): IModal {
-    this.dynamicContent.clear();
-    this.componentRef = this.dynamicContent.createComponent(component);
+    this.dynamicContent().clear();
+    this.componentRef = this.dynamicContent().createComponent(component);
     this.isOpen.set(true);
     this.changeDetectorRef.markForCheck();
     this.componentRef.instance.closeModal.subscribe((closeModalEvent: CloseModalEvent) => {
@@ -95,7 +97,7 @@ export class Modal implements OnInit, OnDestroy {
     if (this.componentRef?.instance.canCloseWithoutPermission === false) {
       this.showAskForPermissionToClose.set(true);
       setTimeout(() => {
-        this.noButton?.nativeElement.focus();
+        this.noButton()?.nativeElement.focus();
       });
       return;
     }
@@ -113,7 +115,7 @@ export class Modal implements OnInit, OnDestroy {
   }
 
   private resetComponent(): void {
-    this.dynamicContent.clear();
+    this.dynamicContent().clear();
     this.componentRef = undefined;
   }
 }

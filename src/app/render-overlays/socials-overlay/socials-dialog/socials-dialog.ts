@@ -1,4 +1,4 @@
-import { Component, ElementRef, output, ViewChild } from '@angular/core';
+import { Component, ElementRef, output, viewChild } from '@angular/core';
 import { IModal } from '../../../core/modal/modal/modal.interface';
 import { CloseModalEvent } from '../../../core/modal/modal/close-modal-event';
 import { SocialsDialogData } from './socials-dialog-data';
@@ -11,7 +11,7 @@ import QRCode from 'qrcode-generator';
   styleUrl: './socials-dialog.scss'
 })
 export class SocialsDialog implements IModal {
-  @ViewChild('qrCodeCanvas', { static: true }) private qrCodeCanvas!: ElementRef<HTMLCanvasElement>;
+  private qrCodeCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('qrCodeCanvas');
   public closeModal = output<CloseModalEvent>();
 
   public canCloseWithoutPermission = true;
@@ -23,7 +23,7 @@ export class SocialsDialog implements IModal {
     qrCode.addData(data.url, 'Byte');
     qrCode.make();
 
-    const canvas = this.qrCodeCanvas.nativeElement;
+    const canvas = this.qrCodeCanvas().nativeElement;
 
     const context = canvas.getContext('2d');
     if (context) {

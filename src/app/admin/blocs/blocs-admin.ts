@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlocDto, BlocsService, SectorDto, SectorsService } from '@api-net/index';
 import { Modal } from '../../core/modal/modal/modal';
@@ -15,8 +15,8 @@ import { DeleteBlocDialog } from './delete-bloc-dialog';
   styleUrl: './blocs-admin.scss'
 })
 export class BlocsAdmin implements OnInit {
-  @ViewChild('editorModal') private editorModal!: Modal;
-  @ViewChild('deleteModal') private deleteModal!: Modal;
+  private editorModal = viewChild.required<Modal>('editorModal');
+  private deleteModal = viewChild.required<Modal>('deleteModal');
 
   private blocsService = inject(BlocsService);
   private sectorsService = inject(SectorsService);
@@ -50,21 +50,21 @@ export class BlocsAdmin implements OnInit {
   }
 
   public openCreateDialog(): void {
-    const dialog = this.modalService.open(this.editorModal.id, BlocEditorDialog);
+    const dialog = this.modalService.open(this.editorModal().id, BlocEditorDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({ sectors: this.sectors(), sectorId: this.selectedSectorId() ?? undefined });
     }
   }
 
   public openEditDialog(bloc: BlocDto): void {
-    const dialog = this.modalService.open(this.editorModal.id, BlocEditorDialog);
+    const dialog = this.modalService.open(this.editorModal().id, BlocEditorDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({ bloc, sectors: this.sectors() });
     }
   }
 
   public openDeleteDialog(bloc: BlocDto): void {
-    const dialog = this.modalService.open(this.deleteModal.id, DeleteBlocDialog);
+    const dialog = this.modalService.open(this.deleteModal().id, DeleteBlocDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({ bloc });
     }

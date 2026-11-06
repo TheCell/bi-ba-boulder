@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, viewChild } from '@angular/core';
 import { MediasService, UriAliasAdministrationDto } from '@api-net/index';
 import { Modal } from '../../core/modal/modal/modal';
 import { ModalService } from '../../core/modal/modal.service';
@@ -15,8 +15,8 @@ import { UriType } from '../../core/enums/uri-type.enum';
   styleUrl: './uri-aliases.scss'
 })
 export class UriAliases implements OnInit {
-  @ViewChild('editorModal') private editorModal!: Modal;
-  @ViewChild('deleteModal') private deleteModal!: Modal;
+  private editorModal = viewChild.required<Modal>('editorModal');
+  private deleteModal = viewChild.required<Modal>('deleteModal');
 
   private mediasService = inject(MediasService);
   private modalService = inject(ModalService);
@@ -51,21 +51,21 @@ export class UriAliases implements OnInit {
   }
 
   public openCreateDialog(): void {
-    const dialog = this.modalService.open(this.editorModal.id, UriAliasEditorDialog);
+    const dialog = this.modalService.open(this.editorModal().id, UriAliasEditorDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({});
     }
   }
 
   public openEditDialog(uriAlias: UriAliasAdministrationDto): void {
-    const dialog = this.modalService.open(this.editorModal.id, UriAliasEditorDialog);
+    const dialog = this.modalService.open(this.editorModal().id, UriAliasEditorDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({ uriAlias });
     }
   }
 
   public openDeleteDialog(uriAlias: UriAliasAdministrationDto): void {
-    const dialog = this.modalService.open(this.deleteModal.id, DeleteUriAliasDialog);
+    const dialog = this.modalService.open(this.deleteModal().id, DeleteUriAliasDialog);
     if (dialog !== undefined && typeof dialog.initialize === 'function') {
       dialog.initialize({ uriAlias });
     }

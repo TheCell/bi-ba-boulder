@@ -33,17 +33,23 @@ public class BoulderGymsTest
             .SetName("Wall A")
             .SetIsArchived(true)
             .SetPreviewImageUri("https://example.com/wall-a.jpg")
+            .SetSpraywallModel("https://example.com/wall-a.glb")
+            .SetUvMap("https://example.com/wall-a-uv.png")
             .Build();
         var spraywall2 = new SpraywallBuilder()
             .SetName("Wall B")
             .SetIsArchived(false)
             .SetPreviewImageUri("https://example.com/wall-b.jpg")
+            .SetSpraywallModel("https://example.com/wall-b.glb")
+            .SetUvMap("https://example.com/wall-b-uv.png")
             .SetCreatedDate(DateTime.UtcNow.AddDays(-5))
             .Build();
         var spraywall3 = new SpraywallBuilder()
             .SetName("Wall B")
             .SetIsArchived(false)
             .SetPreviewImageUri("https://example.com/wall-c.jpg")
+            .SetSpraywallModel("https://example.com/wall-c.glb")
+            .SetUvMap("https://example.com/wall-c-uv.png")
             .SetCreatedDate(DateTime.UtcNow.AddDays(-3))
             .Build();
 
@@ -71,6 +77,8 @@ public class BoulderGymsTest
             .SetName("Wall A")
             .SetIsArchived(true)
             .SetPreviewImageUri("https://example.com/wall-a.jpg")
+            .SetSpraywallModel("https://example.com/wall-a.glb")
+            .SetUvMap("https://example.com/wall-a-uv.png")
             .Build();
         var boulderGym1 = new BoulderGymBuilder()
             .SetName("Test Gym")
@@ -84,6 +92,8 @@ public class BoulderGymsTest
             .SetName("Wall B")
             .SetIsArchived(false)
             .SetPreviewImageUri("https://example.com/wall-b.jpg")
+            .SetSpraywallModel("https://example.com/wall-b.glb")
+            .SetUvMap("https://example.com/wall-b-uv.png")
             .Build();
         var boulderGym2 = new BoulderGymBuilder()
             .SetName("Test Gym 2")

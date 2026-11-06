@@ -2,12 +2,13 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  computed,
   ElementRef,
   inject,
   OnDestroy,
   OnInit,
   signal,
-  ViewChild
+  viewChild
 } from '@angular/core';
 import { SocialsOverlay } from '../../render-overlays/socials-overlay/socials-overlay';
 import { BoulderRenderComponent } from '../../renderer/boulder-render/boulder-render.component';
@@ -41,6 +42,7 @@ import { ToastService } from '../../core/toast-container/toast.service';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { ProblemRulesOverlay } from '../../render-overlays/problem-rules-overlay/problem-rules-overlay';
 import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-spraywall',
@@ -61,10 +63,10 @@ import { CameraControls } from '../../render-overlays/camera-controls/camera-con
   styleUrl: './spraywall.component.scss'
 })
 export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('infoModal') private infoModal!: Modal;
-  @ViewChild('fontGradeFilterModal') private fontGradeFilterModal!: Modal;
-  @ViewChild('confirmDelete') private confirmDeleteModal!: Modal;
-  @ViewChild('scrollList') private scrollList!: ElementRef<HTMLElement>;
+  private infoModal = viewChild.required<Modal>('infoModal');
+  private fontGradeFilterModal = viewChild.required<Modal>('fontGradeFilterModal');
+  private confirmDeleteModal = viewChild.required<Modal>('confirmDelete');
+  private scrollList = viewChild.required<ElementRef<HTMLElement>>('scrollList');
 
   public authSessionStateService = inject(AuthSessionStateService);
   private spraywallsService = inject(SpraywallsService);
@@ -75,9 +77,14 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   private router = inject(Router);
   private toastService = inject(ToastService);
   private boulderLogsService = inject(BoulderLogsService);
+  private activatedRoute = inject(ActivatedRoute);
+
+  private data = toSignal(this.activatedRoute.data, { requireSync: true });
+  public test = computed(() => console.log(this.data()), this.data());
+  public spraywall = computed(() => this.data()['spraywall']);
 
   public currentRawModel?: ArrayBuffer;
-  public spraywallId = '';
+  public spraywallId = this.activatedRoute.snapshot.params['id'];
 
   public listOfProblems: SpraywallProblemDto[] = [];
   public selectedProblem?: SpraywallProblemDto = undefined;
@@ -95,11 +102,9 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   private subscription = new Subscription();
 
   public constructor() {
-    const route = inject(ActivatedRoute);
-    this.spraywallId = route.snapshot.params['id'];
-
+    console.log(this.data());
     this.subscription.add(
-      route.queryParamMap.subscribe({
+      this.activatedRoute.queryParamMap.subscribe({
         next: (queryParams) => {
           this.selectedProblemIdFromQueryParam = queryParams.get('routeId') ?? undefined;
           this.trySelectProblemFromQueryParam();
@@ -151,11 +156,11 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    this.scrollList.nativeElement.addEventListener('scroll', this.scrollEventListener);
+    this.scrollList().nativeElement.addEventListener('scroll', this.scrollEventListener);
   }
 
   public ngOnInit() {
-    this.boulderLoaderService.loadTestSpraywall3().subscribe({
+    this.boulderLoaderService.loadSpraywall(this.spraywall().spraywallModel, this.spraywallId).subscribe({
       next: (data: ArrayBuffer) => {
         this.currentRawModel = data;
         this.changeDetectorRef.markForCheck();
@@ -167,7 +172,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
-    this.scrollList.nativeElement.removeEventListener('scroll', this.scrollEventListener);
+    this.scrollList().nativeElement.removeEventListener('scroll', this.scrollEventListener);
   }
 
   public onSelectedProblem(problem: SpraywallProblemDto): void {
@@ -205,7 +210,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onGradeClicked(): void {
-    const modal = this.modalService.open(this.fontGradeFilterModal.id, SpraywallGradeFilterDialog);
+    const modal = this.modalService.open(this.fontGradeFilterModal().id, SpraywallGradeFilterDialog);
     if (modal && modal.initialize) {
       const data: SpraywallGradeFilterDialogData = {
         maxGrade: this.currentFilter.gradeMax,
@@ -227,7 +232,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onInfoClicked(): void {
-    this.modalService.open(this.infoModal.id, SpraywallInfoDialog);
+    this.modalService.open(this.infoModal().id, SpraywallInfoDialog);
   }
 
   public onEditProblem(): void {
@@ -238,7 +243,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public onDeleteProblem(): void {
     if (this.selectedProblem) {
-      const modal = this.modalService.open(this.confirmDeleteModal.id, ConfirmDeleteDialog);
+      const modal = this.modalService.open(this.confirmDeleteModal().id, ConfirmDeleteDialog);
       if (modal && modal.initialize) {
         const data: ConfirmDeleteSpraywallProblemDialogData = {
           spraywallProblem: this.selectedProblem
@@ -274,7 +279,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private currentScrollPosition(): number {
-    const element = this.scrollList.nativeElement;
+    const element = this.scrollList().nativeElement;
     return Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop);
   }
 

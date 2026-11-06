@@ -69,10 +69,12 @@ input[type="checkbox"]:focus {
 
 input::placeholder {
   visibility: hidden;
+  color: transparent; /* fallback */
 }
 
 input:focus::placeholder {
   visibility: visible;
+  color: $gray; /* fallback */
 }
 
 .form-group {
@@ -125,6 +127,14 @@ input:focus::placeholder {
   grid-column: 1;
   grid-row: 1;
   margin: 0px 8px;
+}
+
+.checkbox-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  color: $gray;
+  font-size: 11px;
 }
 
 .radio-option {

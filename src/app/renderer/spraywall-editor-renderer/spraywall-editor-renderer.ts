@@ -7,7 +7,7 @@ import {
   inject,
   input,
   OnInit,
-  ViewChild
+  viewChild
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import * as THREE from 'three';
@@ -43,7 +43,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   private destroyRef = inject(DestroyRef);
   private cameraControlsService = inject(CameraControlsService);
 
-  @ViewChild('canvas') public canvas: ElementRef = null!;
+  public canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
 
   public rawModel = input<ArrayBuffer>();
   public highlightUv = input<THREE.Texture<HTMLImageElement>>();
@@ -316,10 +316,10 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
 
     const mouseEvent = event as MouseEvent;
     const pointer = new THREE.Vector2();
-    const canvasWidth = this.canvas.nativeElement.offsetWidth;
-    const canvasHeight = this.canvas.nativeElement.offsetHeight;
-    const canvasTop = this.canvas.nativeElement.getBoundingClientRect().top;
-    const canvasLeft = this.canvas.nativeElement.getBoundingClientRect().left;
+    const canvasWidth = this.canvas().nativeElement.offsetWidth;
+    const canvasHeight = this.canvas().nativeElement.offsetHeight;
+    const canvasTop = this.canvas().nativeElement.getBoundingClientRect().top;
+    const canvasLeft = this.canvas().nativeElement.getBoundingClientRect().left;
 
     const mouseX = mouseEvent.clientX - canvasLeft;
     const mouseY = mouseEvent.clientY - canvasTop;
@@ -515,7 +515,7 @@ export class SpraywallEditorRenderer implements OnInit, AfterViewInit {
   /// Core Threejs
   ///
   private createCanvas(): void {
-    const canvas = this.canvas.nativeElement;
+    const canvas = this.canvas().nativeElement;
     if (!canvas) {
       return;
     }

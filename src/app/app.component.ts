@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   NavigationEnd,
@@ -26,7 +26,7 @@ import { OutdoorNavigationItem } from './outdoor-navigation-item.interface';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit, OnDestroy {
-  @ViewChild('modal') private modal!: Modal;
+  private modal = viewChild.required<Modal>('modal');
   public loginTrackerService = inject(LoginTrackerService);
   public authSessionStateService = inject(AuthSessionStateService);
   public changeDetectorRef = inject(ChangeDetectorRef);
@@ -63,7 +63,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public openLoginModal(): void {
-    this.modalService.open(this.modal.id, LoginDialogComponent);
+    this.modalService.open(this.modal().id, LoginDialogComponent);
   }
 
   public logout(): void {

@@ -17,7 +17,7 @@ namespace BiBaBoulder.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.11")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -275,11 +275,20 @@ namespace BiBaBoulder.Migrations
                     b.Property<string>("PreviewImageUri")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SpraywallModel")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UpdatedUserId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UvMap")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Version")
                         .IsConcurrencyToken()

@@ -26,8 +26,8 @@
 </div>
 
 <div class="form-group" [class.disabled]="outdoorAreaForm.isPublic().disabled()">
+  <label class="checkbox-row" for="is-public">Public outdoor area</label>
   <input id="is-public" type="checkbox" [formField]="outdoorAreaForm.isPublic" />
-  <label for="is-public">Public outdoor area</label>
 </div>
 
 <app-image-url-list [(images)]="images" [isDisabled]="disabled()"></app-image-url-list>

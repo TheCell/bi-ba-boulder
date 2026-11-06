@@ -37,6 +37,13 @@ export interface SpraywallsServiceInterface {
     /**
      * 
      * 
+     * @param id 
+     */
+    getSpraywall(id: string, extraHttpRequestParams?: any): Observable<SpraywallDto>;
+
+    /**
+     * 
+     * 
      */
     getSpraywalls(extraHttpRequestParams?: any): Observable<Array<SpraywallDto>>;
 

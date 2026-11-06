@@ -10,7 +10,9 @@ public class SpraywallBuilder : BuilderBase<Spraywall>
     {
         var bogus = new Faker("de_CH");
         _instance.Id = Guid.CreateVersion7();
-        _instance.Name = bogus.Lorem.Slug();
+        SetName(bogus.Lorem.Slug());
+        SetUvMap(bogus.Internet.UrlWithPath());
+        SetSpraywallModel(bogus.Internet.UrlWithPath());
     }
 
     public SpraywallBuilder SetName(string value)
@@ -34,6 +36,18 @@ public class SpraywallBuilder : BuilderBase<Spraywall>
     public SpraywallBuilder SetPreviewImageUri(string? value)
     {
         _instance.PreviewImageUri = value;
+        return this;
+    }
+
+    public SpraywallBuilder SetUvMap(string value)
+    {
+        _instance.UvMap = value;
+        return this;
+    }
+
+    public SpraywallBuilder SetSpraywallModel(string value)
+    {
+        _instance.SpraywallModel = value;
         return this;
     }
 
