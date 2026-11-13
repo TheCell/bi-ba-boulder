@@ -90,3 +90,14 @@ ul {
 .filterable {
   cursor: pointer;
 }
+
+.name-filter-header>span {
+  margin-left: 4px;
+}
+
+.active-name-filter {
+  color: $primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -58,6 +58,11 @@
   text-overflow: ellipsis;
 }
 
+mark {
+  background-color: $primary;
+  color: $dark;
+}
+
 .hidden-on-mobile {
   color: $secondary;
 }

@@ -66,6 +66,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 export class SpraywallComponent implements OnInit, OnDestroy {
   private infoModal = viewChild.required<Modal>('infoModal');
   private fontGradeFilterModal = viewChild.required<Modal>('fontGradeFilterModal');
+  private nameFilterModal = viewChild.required<Modal>('nameFilterModal');
   private confirmDeleteModal = viewChild.required<Modal>('confirmDelete');
   private scrollList = viewChild.required<ElementRef<HTMLElement>>('scrollList');
   private loadingPlaceholder = viewChild<SpraywallLegendItemPlaceholder, ElementRef<HTMLElement>>(
@@ -98,12 +99,14 @@ export class SpraywallComponent implements OnInit, OnDestroy {
   public selectedProblem?: SpraywallProblemDto = undefined;
   public boulderLog = signal<BoulderLogDto | undefined>(undefined);
   public currentFilter: SearchProblemsRequest = {};
+  public nameSearchInput = '';
   private selectedProblemIdFromQueryParam?: string;
 
   public totalCount = signal(0);
   private currentMaxPage = signal(1);
-  // private pageSize = 30;
-  private newEntriesLoading = signal(true);
+
+  private _newEntriesLoading = signal(true);
+  public newEntriesLoading = this._newEntriesLoading.asReadonly();
 
   private reloadSearchSubject = new Subject<void>();
   private loadBoulderLog = new Subject<string>();
@@ -147,7 +150,7 @@ export class SpraywallComponent implements OnInit, OnDestroy {
           switchMap(() =>
             this.spraywallsService.searchSpraywallProblems(this.spraywallId, this.currentFilter).pipe(
               catchError((): typeof EMPTY => {
-                this.newEntriesLoading.set(false);
+                this._newEntriesLoading.set(false);
                 this.toastService.showDanger('Error', 'Could not load routes. Please try again.');
                 return EMPTY;
               })
@@ -156,7 +159,7 @@ export class SpraywallComponent implements OnInit, OnDestroy {
         )
         .subscribe({
           next: (problemSearchResult: SpraywallProblemListDto) => {
-            this.newEntriesLoading.set(false);
+            this._newEntriesLoading.set(false);
             this.currentMaxPage.set(problemSearchResult.currentPage);
             if (problemSearchResult.currentPage > 1) {
               this.listOfProblems.set([...this.listOfProblems(), ...problemSearchResult.problems]);
@@ -214,9 +217,44 @@ export class SpraywallComponent implements OnInit, OnDestroy {
     }
   }
 
+  public onNameSearchChanged(event: Event): void {
+    const target: EventTarget | null = event.target;
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    this.nameSearchInput = target.value;
+    const name: string = this.nameSearchInput.trim();
+    const activeNameFilter: string | undefined = name.length >= 2 ? name : undefined;
+    if (this.currentFilter.name === activeNameFilter) {
+      return;
+    }
+
+    this.currentFilter.name = activeNameFilter;
+    this.resetFilterPageAndResultsPosition();
+    this.reloadSearchSubject.next();
+  }
+
+  public onNameFilterClicked(): void {
+    this.nameSearchInput = this.currentFilter.name ?? '';
+    this.nameFilterModal().openWithExternalContent();
+  }
+
+  public onResetAll(): void {
+    this.currentFilter.dateOrder = undefined;
+    this.currentFilter.gradeMax = undefined;
+    this.currentFilter.gradeMin = undefined;
+    this.currentFilter.name = undefined;
+    this.resetFilterPageAndResultsPosition();
+    this.reloadSearchSubject.next();
+    this.onResetSelection();
+    this._newEntriesLoading.set(true);
+  }
+
   public onResetSelection(updateUrl = true): void {
     this.selectedProblem = undefined;
     this.boulderLog.set(undefined);
+
     if (updateUrl) {
       this.updateRouteSelectionInUrl(undefined);
     }
@@ -300,17 +338,17 @@ export class SpraywallComponent implements OnInit, OnDestroy {
   }
 
   private loadNextPage(): void {
-    if (this.newEntriesLoading() || this.listOfProblems().length >= this.totalCount()) {
+    if (this._newEntriesLoading() || this.listOfProblems().length >= this.totalCount()) {
       return;
     }
 
-    this.newEntriesLoading.set(true);
+    this._newEntriesLoading.set(true);
     this.currentFilter.page = this.currentMaxPage() + 1;
     this.reloadSearchSubject.next();
   }
 
   private resetFilterPageAndResultsPosition(): void {
-    this.newEntriesLoading.set(true);
+    this._newEntriesLoading.set(true);
     this.currentMaxPage.set(1);
     this.currentFilter.page = 0;
     this.totalCount.set(0);
