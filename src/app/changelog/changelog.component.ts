@@ -31,6 +31,98 @@ export class ChangelogComponent {
 
   public readonly releaseNotes: ReleaseNote[] = [
     {
+      prNumber: 121,
+      releasedOn: '2026-11-13',
+      headline: 'Updated Filtering and UX',
+      highlights: [
+        {
+          text: 'Updated filtering and improved user experience.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
+      prNumber: 120,
+      releasedOn: '2026-11-06',
+      headline: 'Database-backed spraywall loading',
+      highlights: [
+        {
+          text: 'Added a spraywall API and database model, and updated spraywall views, editors, and loaders to use database-backed data.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
+      prNumber: 119,
+      releasedOn: '2026-10-16',
+      headline: 'Deployment workflow fix',
+      highlights: [
+        {
+          text: 'Fixed the backend publish output path used by the build and deployment workflows.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
+      prNumber: 118,
+      releasedOn: '2026-10-16',
+      headline: '.NET build and test workflow updates',
+      highlights: [
+        {
+          text: 'Updated the .NET SDK and dependencies, and refreshed CI build, test, and code coverage workflows.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
+      prNumber: 117,
+      releasedOn: '2026-10-09',
+      headline: 'Image URI handling and backend test refinements',
+      highlights: [
+        {
+          text: 'Stopped rejecting non-relative image URIs and updated the related backend tests.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
+      prNumber: 116,
+      releasedOn: '2026-10-09',
+      headline: 'Package script configuration',
+      highlights: [
+        {
+          text: 'Allowed required install scripts for OpenAPI code generation and esbuild dependencies.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
+      prNumber: 115,
+      releasedOn: '2026-10-09',
+      headline: 'Outdoor bloc swipe navigation',
+      highlights: [
+        {
+          text: 'Added touch swipe navigation with a visual indicator for moving between outdoor blocs.',
+          isOutdoorRelated: true
+        }
+      ]
+    },
+    {
+      prNumber: 114,
+      releasedOn: '2026-10-02',
+      headline: 'Outdoor bloc administration and area visibility',
+      highlights: [
+        {
+          text: 'Added create, edit, and delete tools for outdoor blocs, along with public visibility controls for outdoor areas.',
+          isOutdoorRelated: true
+        },
+        {
+          text: 'Improved loading feedback and the spraywall launch button.',
+          isOutdoorRelated: false
+        }
+      ]
+    },
+    {
       prNumber: 112,
       releasedOn: '2026-09-10',
       headline: 'Media content management and gym/outdoor area admin features',
