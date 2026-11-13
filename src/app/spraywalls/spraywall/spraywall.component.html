@@ -60,7 +60,7 @@
       </div>
       <div #scrollList class="list-content">
         <ul>
-          @for (problem of listOfProblems; track problem.id) {
+          @for (problem of listOfProblems(); track problem.id) {
             <app-spraywall-legend-item
               class="li-item"
               [problem]="problem"
@@ -68,8 +68,9 @@
               (selected)="onSelectedProblem($event)">
             </app-spraywall-legend-item>
           }
-          @if (listOfProblems.length < totalCount) {
-            <app-spraywall-legend-item-placeholder class="li-item"> </app-spraywall-legend-item-placeholder>
+          @if (listOfProblems().length < totalCount()) {
+            <app-spraywall-legend-item-placeholder #loadingPlaceholder class="li-item">
+            </app-spraywall-legend-item-placeholder>
             <app-spraywall-legend-item-placeholder class="li-item"> </app-spraywall-legend-item-placeholder>
             <app-spraywall-legend-item-placeholder class="li-item"> </app-spraywall-legend-item-placeholder>
             <app-spraywall-legend-item-placeholder class="li-item"> </app-spraywall-legend-item-placeholder>
