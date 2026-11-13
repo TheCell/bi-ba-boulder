@@ -29,7 +29,6 @@ ul {
 
 .legend {
   grid-area: legend;
-  // background-image: linear-gradient(180deg, $black 0%, $dark 20%);
 }
 
 .actions {
@@ -46,13 +45,9 @@ ul {
 }
 
 .list-header {
-  // height: 2em;
   padding: 4px 0px;
   vertical-align: middle;
   border-bottom: 1px solid $lightDark;
-  // display: flex;
-  // flex-direction: row;
-  // flex-wrap: nowrap;
   display: grid;
   grid-template: 'header header header header header header';
   grid-template-columns: 30% 40% 10% 10% 10%;

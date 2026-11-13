@@ -2,7 +2,7 @@
 <section>
   <div class="tile-container">
     @if (isLoadingSpraywalls() || isLoadingBoulderGyms()) {
-      <div class="big-tile is-loading">
+      <div class="big-tile skeleton-loading">
         <div class="tile-content"></div>
       </div>
     }
@@ -24,6 +24,7 @@
         </div>
       }
     }
+
     @for (boulderGym of this.boulderGyms(); track boulderGym.id) {
       <!-- todo: either make imag euri relative or save absolute uris -->
       @if (boulderGym.spraywalls?.[0]; as firstSpraywall) {
@@ -61,7 +62,7 @@
 <section>
   <div class="tile-container">
     @if (isLoadingOutdoorAreas()) {
-      <div class="big-tile is-loading">
+      <div class="big-tile skeleton-loading">
         <div class="tile-content"></div>
       </div>
     }
