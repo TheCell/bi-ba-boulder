@@ -45,19 +45,19 @@ ul {
 }
 
 .list-header {
-  padding: 4px 0px;
+  padding: 4px 6px;
   vertical-align: middle;
   border-bottom: 1px solid $lightDark;
   display: grid;
   grid-template: 'header header header header header header';
-  grid-template-columns: 30% 40% 10% 10% 10%;
+  grid-template-columns: 10% 30% 40% 10% 10%;
   width: calc(100% - 15px); // adjust for scrollbar
 }
 
 @media (max-width: 600px) {
   .list-header {
     grid-template: 'header header header';
-    grid-template-columns: 60% 10% 30%;
+    grid-template-columns: 15% 55% 30%;
   }
 
   .hidden-on-mobile {
@@ -89,5 +89,4 @@ ul {
 
 .filterable {
   cursor: pointer;
-  text-shadow: $highlight 1px 1px 5px;
 }

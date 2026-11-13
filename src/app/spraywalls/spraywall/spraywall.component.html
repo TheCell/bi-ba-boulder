@@ -38,18 +38,18 @@
     </div>
     <div class="legend-list">
       <div class="list-header">
-        <div class="">name</div>
-        <div class="hidden-on-mobile">description</div>
         <div aria-hidden="true" (click)="onGradeClicked()" class="filterable">
           grade
-          @if (currentFilter.gradeMax || currentFilter.gradeMin) {
-            <app-icon [icon]="'filter'"></app-icon>
-          }
+          <app-icon [icon]="currentFilter.gradeMax || currentFilter.gradeMin ? 'filter-filled' : 'filter'"></app-icon>
         </div>
+        <div class="">name</div>
+        <div class="hidden-on-mobile">description</div>
         <div class="">creator</div>
         <div aria-hidden="true" (click)="onDateClicked()" class="hidden-on-mobile filterable">
           created Date
-          @if (currentFilter.dateOrder) {
+          @if (!currentFilter.dateOrder) {
+            <app-icon [icon]="'filter'"></app-icon>
+          } @else {
             @if (currentFilter.dateOrder === 'asc') {
               <app-icon [icon]="'filter-asc'"></app-icon>
             } @else {

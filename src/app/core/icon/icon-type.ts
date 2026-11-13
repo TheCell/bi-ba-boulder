@@ -4,6 +4,7 @@ export const ICONS = [
   'filter-asc',
   'filter-desc',
   'filter',
+  'filter-filled',
   'tag-empty',
   'tag-filled',
   'sent-empty',

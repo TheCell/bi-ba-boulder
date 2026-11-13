@@ -28,8 +28,8 @@
 
 .item {
   display: grid;
-  grid-template: 'name description fontGrade createdByName createdDate header';
-  grid-template-columns: 30% 40% 10% 10% 10%;
+  grid-template: 'fontGrade name description createdByName createdDate header';
+  grid-template-columns: 10% 30% 40% 10% 10%;
   white-space: nowrap;
 }
 
@@ -82,14 +82,14 @@
 
 @media (max-width: 600px) {
   .item {
-    grid-template: 'name fontGrade createdByName';
-    grid-template-columns: 60% 10% 30%;
+    grid-template: 'fontGrade name createdByName';
+    grid-template-columns: 15% 55% 30%;
   }
   
   .item.selected {
-    grid-template: 'name fontGrade createdByName'
-                   'description additional createdDate';
-    grid-template-columns: 60% 10% 30%;
+    grid-template: 'fontGrade name createdByName'
+                   'additional description createdDate';
+    grid-template-columns: 15% 55% 30%;
   }
 
   .hidden-on-mobile {
@@ -101,6 +101,14 @@
   }
 
   .item.selected > .description.hidden-on-mobile {
+    display: unset;
+  }
+
+  .item.selected > .additional.hidden-on-mobile {
+    display: unset;
+  }
+
+  .item.selected > .createdDate.hidden-on-mobile {
     display: unset;
   }
 }
