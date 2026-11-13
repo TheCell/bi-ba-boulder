@@ -60,6 +60,12 @@
   mask-image: url("data:image/svg+xml;utf8,#{$filter-svg}");
 }
 
+.filter-filled {
+  -webkit-mask-image: url("data:image/svg+xml;utf8,#{$filter-filled-svg}");
+  mask-image: url("data:image/svg+xml;utf8,#{$filter-filled-svg}");
+  background-color: $primary;
+}
+
 .tag-empty {
   -webkit-mask-image: url("data:image/svg+xml;utf8,#{$tag-empty-svg}");
   mask-image: url("data:image/svg+xml;utf8,#{$tag-empty-svg}");

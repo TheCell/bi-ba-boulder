@@ -1,8 +1,9 @@
 import {
-  AfterViewInit,
+  afterRenderEffect,
   ChangeDetectorRef,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   OnDestroy,
@@ -25,7 +26,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BoulderLoaderService } from '../../background-loading/boulder-loader.service';
 import { SpraywallLegendItem } from './spraywall-legend-item/spraywall-legend-item';
-import { debounceTime, filter, Subject, Subscription, switchMap } from 'rxjs';
+import { catchError, debounceTime, EMPTY, filter, Subject, Subscription, switchMap } from 'rxjs';
 import { SpraywallGradeFilterDialog } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog';
 import { SpraywallLegendItemPlaceholder } from './spraywall-legend-item-placeholder/spraywall-legend-item-placeholder';
 import { SpraywallGradeFilterDialogCloseData } from './spraywall-grade-filter-dialog/spraywall-grade-filter-dialog-close-data';
@@ -42,7 +43,7 @@ import { ToastService } from '../../core/toast-container/toast.service';
 import { CloseModalEvent } from '../../core/modal/modal/close-modal-event';
 import { ProblemRulesOverlay } from '../../render-overlays/problem-rules-overlay/problem-rules-overlay';
 import { CameraControls } from '../../render-overlays/camera-controls/camera-controls';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-spraywall',
@@ -62,11 +63,18 @@ import { toSignal } from '@angular/core/rxjs-interop';
   templateUrl: './spraywall.component.html',
   styleUrl: './spraywall.component.scss'
 })
-export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SpraywallComponent implements OnInit, OnDestroy {
   private infoModal = viewChild.required<Modal>('infoModal');
   private fontGradeFilterModal = viewChild.required<Modal>('fontGradeFilterModal');
+  private nameFilterModal = viewChild.required<Modal>('nameFilterModal');
   private confirmDeleteModal = viewChild.required<Modal>('confirmDelete');
   private scrollList = viewChild.required<ElementRef<HTMLElement>>('scrollList');
+  private loadingPlaceholder = viewChild<SpraywallLegendItemPlaceholder, ElementRef<HTMLElement>>(
+    'loadingPlaceholder',
+    {
+      read: ElementRef
+    }
+  );
 
   public authSessionStateService = inject(AuthSessionStateService);
   private spraywallsService = inject(SpraywallsService);
@@ -78,6 +86,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   private toastService = inject(ToastService);
   private boulderLogsService = inject(BoulderLogsService);
   private activatedRoute = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   private data = toSignal(this.activatedRoute.data, { requireSync: true });
   public test = computed(() => console.log(this.data()), this.data());
@@ -86,23 +95,44 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
   public currentRawModel?: ArrayBuffer;
   public spraywallId = this.activatedRoute.snapshot.params['id'];
 
-  public listOfProblems: SpraywallProblemDto[] = [];
+  public listOfProblems = signal<SpraywallProblemDto[]>([]);
   public selectedProblem?: SpraywallProblemDto = undefined;
   public boulderLog = signal<BoulderLogDto | undefined>(undefined);
   public currentFilter: SearchProblemsRequest = {};
+  public nameSearchInput = '';
   private selectedProblemIdFromQueryParam?: string;
 
-  public totalCount = 0;
-  private currentMaxPage = 1;
-  // private pageSize = 30;
-  private newEntriesLoading = false;
+  public totalCount = signal(0);
+  private currentMaxPage = signal(1);
+
+  private _newEntriesLoading = signal(true);
+  public newEntriesLoading = this._newEntriesLoading.asReadonly();
 
   private reloadSearchSubject = new Subject<void>();
   private loadBoulderLog = new Subject<string>();
   private subscription = new Subscription();
 
   public constructor() {
-    console.log(this.data());
+    afterRenderEffect((onCleanup: (cleanup: VoidFunction) => void): void => {
+      const placeholder: ElementRef<HTMLElement> | undefined = this.loadingPlaceholder();
+
+      this.listOfProblems();
+      if (!placeholder) {
+        return;
+      }
+
+      const observer: IntersectionObserver = new IntersectionObserver(
+        (entries: IntersectionObserverEntry[]): void => {
+          if (entries.some((entry: IntersectionObserverEntry): boolean => entry.isIntersecting)) {
+            this.loadNextPage();
+          }
+        },
+        { root: this.scrollList().nativeElement, rootMargin: '0px 0px 25px 0px' }
+      );
+      observer.observe(placeholder.nativeElement);
+      onCleanup((): void => observer.disconnect());
+    });
+
     this.subscription.add(
       this.activatedRoute.queryParamMap.subscribe({
         next: (queryParams) => {
@@ -115,21 +145,29 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.reloadSearchSubject
         .pipe(
+          takeUntilDestroyed(this.destroyRef),
           debounceTime(300),
-          switchMap(() => this.spraywallsService.searchSpraywallProblems(this.spraywallId, this.currentFilter))
+          switchMap(() =>
+            this.spraywallsService.searchSpraywallProblems(this.spraywallId, this.currentFilter).pipe(
+              catchError((): typeof EMPTY => {
+                this._newEntriesLoading.set(false);
+                this.toastService.showDanger('Error', 'Could not load routes. Please try again.');
+                return EMPTY;
+              })
+            )
+          )
         )
         .subscribe({
           next: (problemSearchResult: SpraywallProblemListDto) => {
-            this.newEntriesLoading = false;
-            if (problemSearchResult.currentPage > 0) {
-              this.listOfProblems.push(...problemSearchResult.problems);
+            this._newEntriesLoading.set(false);
+            this.currentMaxPage.set(problemSearchResult.currentPage);
+            if (problemSearchResult.currentPage > 1) {
+              this.listOfProblems.set([...this.listOfProblems(), ...problemSearchResult.problems]);
             } else {
-              this.listOfProblems = problemSearchResult.problems;
+              this.listOfProblems.set(problemSearchResult.problems);
             }
-            this.totalCount = problemSearchResult.totalCount;
+            this.totalCount.set(problemSearchResult.totalCount);
             this.trySelectProblemFromQueryParam();
-
-            this.changeDetectorRef.markForCheck();
           }
         })
     );
@@ -137,6 +175,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription.add(
       this.loadBoulderLog
         .pipe(
+          takeUntilDestroyed(this.destroyRef),
           filter(() => this.authSessionStateService.isLoggedIn()),
           switchMap((problemId) => this.boulderLogsService.getBoulderLogBySpraywall(problemId))
         )
@@ -155,10 +194,6 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  public ngAfterViewInit(): void {
-    this.scrollList().nativeElement.addEventListener('scroll', this.scrollEventListener);
-  }
-
   public ngOnInit() {
     this.boulderLoaderService.loadSpraywall(this.spraywall().spraywallModel, this.spraywallId).subscribe({
       next: (data: ArrayBuffer) => {
@@ -172,7 +207,6 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.subscription.unsubscribe();
-    this.scrollList().nativeElement.removeEventListener('scroll', this.scrollEventListener);
   }
 
   public onSelectedProblem(problem: SpraywallProblemDto): void {
@@ -183,9 +217,44 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  public onNameSearchChanged(event: Event): void {
+    const target: EventTarget | null = event.target;
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    this.nameSearchInput = target.value;
+    const name: string = this.nameSearchInput.trim();
+    const activeNameFilter: string | undefined = name.length >= 2 ? name : undefined;
+    if (this.currentFilter.name === activeNameFilter) {
+      return;
+    }
+
+    this.currentFilter.name = activeNameFilter;
+    this.resetFilterPageAndResultsPosition();
+    this.reloadSearchSubject.next();
+  }
+
+  public onNameFilterClicked(): void {
+    this.nameSearchInput = this.currentFilter.name ?? '';
+    this.nameFilterModal().openWithExternalContent();
+  }
+
+  public onResetAll(): void {
+    this.currentFilter.dateOrder = undefined;
+    this.currentFilter.gradeMax = undefined;
+    this.currentFilter.gradeMin = undefined;
+    this.currentFilter.name = undefined;
+    this.resetFilterPageAndResultsPosition();
+    this.reloadSearchSubject.next();
+    this.onResetSelection();
+    this._newEntriesLoading.set(true);
+  }
+
   public onResetSelection(updateUrl = true): void {
     this.selectedProblem = undefined;
     this.boulderLog.set(undefined);
+
     if (updateUrl) {
       this.updateRouteSelectionInUrl(undefined);
     }
@@ -268,38 +337,22 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  private scrollEventListener = () => {
-    this.scrollEvent();
-  };
-
-  private scrollEvent(): void {
-    if (this.currentScrollPosition() < 25 && this.listOfProblems.length < this.totalCount) {
-      this.loadNextPage();
-    }
-  }
-
-  private currentScrollPosition(): number {
-    const element = this.scrollList().nativeElement;
-    return Math.abs(element.scrollHeight - element.clientHeight - element.scrollTop);
-  }
-
   private loadNextPage(): void {
-    if (this.newEntriesLoading) {
+    if (this._newEntriesLoading() || this.listOfProblems().length >= this.totalCount()) {
       return;
     }
 
-    this.newEntriesLoading = true;
-    this.currentMaxPage = this.currentMaxPage + 1;
-    this.currentFilter.page = this.currentMaxPage;
+    this._newEntriesLoading.set(true);
+    this.currentFilter.page = this.currentMaxPage() + 1;
     this.reloadSearchSubject.next();
   }
 
   private resetFilterPageAndResultsPosition(): void {
-    this.currentMaxPage = 1;
+    this._newEntriesLoading.set(true);
+    this.currentMaxPage.set(1);
     this.currentFilter.page = 0;
-    this.totalCount = 0;
-    this.listOfProblems = [];
-    // this.onResetSelection();
+    this.totalCount.set(0);
+    this.listOfProblems.set([]);
   }
 
   public selectedRouteUrl(): string | undefined {
@@ -336,7 +389,7 @@ export class SpraywallComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const problemFromList = this.listOfProblems.find((problem) => problem.id === routeId);
+    const problemFromList = this.listOfProblems().find((problem) => problem.id === routeId);
     if (problemFromList) {
       this.setSelectedProblem(problemFromList, false);
       return;

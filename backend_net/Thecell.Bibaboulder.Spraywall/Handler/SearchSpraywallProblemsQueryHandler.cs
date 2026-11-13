@@ -9,6 +9,7 @@ using Thecell.Bibaboulder.Model;
 using Thecell.Bibaboulder.Model.Authorization;
 using Thecell.Bibaboulder.Model.Dto.Indoor;
 using Thecell.Bibaboulder.Model.Mapping;
+using Thecell.Bibaboulder.Model.Model.Indoor;
 using Thecell.Bibaboulder.Model.Services;
 
 namespace Thecell.Bibaboulder.Indoor.Handler;
@@ -53,11 +54,6 @@ public class SearchSpraywallProblemsQueryHandler : IQueryHandler<SearchSpraywall
             dbQuery = dbQuery.Where(p => p.FontGrade.HasValue && p.FontGrade.Value <= query.GradeMax.Value);
         }
 
-        if (!string.IsNullOrEmpty(query.Name))
-        {
-            dbQuery = dbQuery.Where(p => p.Name.Contains(query.Name));
-        }
-
         if (!string.IsNullOrEmpty(query.Creator))
         {
             dbQuery = dbQuery.Where(p => p.Creator.Username.Contains(query.Creator));
@@ -67,14 +63,45 @@ public class SearchSpraywallProblemsQueryHandler : IQueryHandler<SearchSpraywall
             ? dbQuery.OrderBy(p => !p.IsWip).ThenBy(p => p.CreatedDate)
             : dbQuery.OrderBy(p => !p.IsWip).ThenByDescending(p => p.CreatedDate);
 
-        var totalCount = await dbQuery.CountAsync();
         var page = Math.Max(1, query.Page);
         var offset = (page - 1) * PageSize;
 
-        var problems = await dbQuery
-            .Skip(offset)
-            .Take(PageSize)
-            .ToListAsync();
+        int totalCount;
+        List<SpraywallProblem> problems;
+        if (!string.IsNullOrWhiteSpace(query.Name))
+        {
+            var matches = (await dbQuery
+                    .Select(problem => new { problem.Id, problem.Name })
+                    .ToListAsync())
+                .Select(problem => new
+                {
+                    problem.Id,
+                    Match = SpraywallNameMatcher.FindBestMatch(problem.Name, query.Name)
+                })
+                .Where(result => result.Match.HasValue)
+                .OrderBy(result => result.Match!.Value.Distance)
+                .ToList();
+
+            totalCount = matches.Count;
+            var problemIds = matches
+                .Skip(offset)
+                .Take(PageSize)
+                .Select(result => result.Id)
+                .ToList();
+            var matchingProblems = await dbQuery
+                .Where(problem => problemIds.Contains(problem.Id))
+                .ToListAsync();
+            var problemsById = matchingProblems.ToDictionary(problem => problem.Id);
+            problems = problemIds.Select(problemId => problemsById[problemId]).ToList();
+        }
+        else
+        {
+            totalCount = await dbQuery.CountAsync();
+            problems = await dbQuery
+                .Skip(offset)
+                .Take(PageSize)
+                .ToListAsync();
+        }
 
         var creatorIds = problems.Select(p => p.CreatorId).Distinct().ToList();
         var creators = await _dbContext.Users

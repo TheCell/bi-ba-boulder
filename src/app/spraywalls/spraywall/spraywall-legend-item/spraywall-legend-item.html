@@ -7,13 +7,13 @@
   (click)="selectProblem()"
   (keypress)="selectProblem()"
   [id]="problem().id">
-  <span class="item-cell name">{{ problem().name }}</span>
-  <span class="item-cell description hidden-on-mobile">{{ problem().description }}</span>
   <span class="item-cell fontGrade">{{ problem().fontGrade ?? undefined | appFontGradePipe }}</span>
-  <span class="item-cell createdByName"
-    >{{ problem().createdByName }}<span class="show-on-mobile">
-      / {{ problem().createdDate | date:'dd.MM.yyyy' }}</span
-    ></span
-  >
+  <span class="item-cell name">
+    @if (nameMatch(); as match) { {{ problem().name.slice(0, match.startIndex) }}<mark
+      >{{ problem().name.slice(match.startIndex, match.startIndex + match.length) }}</mark
+    >{{ problem().name.slice(match.startIndex + match.length) }} } @else { {{ problem().name }} }
+  </span>
+  <span class="item-cell description hidden-on-mobile">{{ problem().description }}</span>
+  <span class="item-cell createdByName">{{ problem().createdByName }}</span>
   <span class="item-cell createdDate hidden-on-mobile">{{ problem().createdDate | date:'dd.MM.yyyy' }}</span>
 </li>

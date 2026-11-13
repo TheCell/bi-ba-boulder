@@ -199,6 +199,33 @@ public class SearchSpraywallProblemsTest
         Assert.Equal("Description_10", problem4.Description);
     }
 
+    [Fact]
+    public async Task SearchSpraywallProblems_FuzzyNameSearch_RanksExactMatchesBeforeTypos()
+    {
+        var creator = new UserBuilder().SetUsername("creator").Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(creator);
+
+        var spraywall = new SpraywallBuilder().SetName("Wall").Build();
+        await _dbContext.InsertEntityAndSaveChangesAsync(spraywall);
+
+        var exactMatch = new SpraywallProblemBuilder(creator, spraywall).SetName("Blud").Build();
+        var fuzzyMatch = new SpraywallProblemBuilder(creator, spraywall).SetName("Blue Slab").Build();
+        var nonMatch = new SpraywallProblemBuilder(creator, spraywall).SetName("Red Slab").Build();
+        await _dbContext.InsertEntitiesAndSaveChangesAsync([exactMatch, fuzzyMatch, nonMatch]);
+        AddMockImages(spraywall.Id, [exactMatch, fuzzyMatch]);
+
+        var handler = new SearchSpraywallProblemsQueryHandler(_dbContext, _currentUserService, _imageService);
+        var result = await handler.HandleAsync(new SearchSpraywallProblemsQuery
+        {
+            SpraywallId = spraywall.Id,
+            Name = "blud",
+            Page = 1
+        });
+
+        Assert.Equal(2, result.TotalCount);
+        Assert.Equal(["Blud", "Blue Slab"], result.Problems.Select(problem => problem.Name));
+    }
+
     private async Task<(Thecell.Bibaboulder.Model.Model.Indoor.Spraywall spraywall, List<User> users, List<SpraywallProblem> problems)> PrepareProblems()
     {
         var user1 = new UserBuilder()

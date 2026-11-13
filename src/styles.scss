@@ -30,20 +30,30 @@ body {
   cursor: pointer;
   padding: 5px 14px;
   background-color: $lightDark;
-  // min-width: 50px;
 }
 
 .button:hover, .button:focus {
   background-color: color-mix(in srgb, $dark 50%, $highlight 50%);
 }
 
-// todo: fix autofill styles
-// input:-webkit-autofill, select:-webkit-autofill, textarea:-webkit-autofill {
-//   background-color: $lightDark;
-// }
-
 textarea {
   border-top: 1px solid $lightDark;
   border-right: 1px solid $lightDark;
   border-left: 1px solid $lightDark;
+}
+
+.skeleton-loading {
+  animation: skeleton-loading 2s linear infinite;
+  background: linear-gradient(to right, transparent 8%, $gray 18%, transparent 33%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+}
+
+@keyframes skeleton-loading {
+  0%{
+    background-position-x: 100%;
+  }
+  100%{
+    background-position-x: -100%;
+  }
 }
