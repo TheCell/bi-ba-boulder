@@ -111,10 +111,8 @@ export class SpraywallComponent implements OnInit, OnDestroy {
 
   public constructor() {
     afterRenderEffect((onCleanup: (cleanup: VoidFunction) => void): void => {
-      console.log('afterRenderEffect');
-
       const placeholder: ElementRef<HTMLElement> | undefined = this.loadingPlaceholder();
-      // Recheck visibility after appending entries, even if the same placeholder remains visible.
+
       this.listOfProblems();
       if (!placeholder) {
         return;
